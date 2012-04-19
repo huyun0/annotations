@@ -24,7 +24,7 @@ define(['domReady!','jquery','interfaces/player_adapter'],function(domReay,$,Pla
         this.htmlElement = null;
         
         /** The current player status */
-        this.status = PlayerAdapter.STATUS.NOTHING;
+        this.status = PlayerAdapter.STATUS.INITIALISING;
         
         /** Define if a play request has be done when the player was not ready */
         this.waitToPlay = false;
@@ -41,8 +41,7 @@ define(['domReady!','jquery','interfaces/player_adapter'],function(domReay,$,Pla
             /**
              * Listen the events from the native player
              */
-            
-            $(targetElement).bind("canplay seeked",function(){
+            $(targetElement).bind("seeked canplay",function(){
                 self.status =  PlayerAdapter.STATUS.PAUSED;
                 self.triggerEvent(PlayerAdapter.EVENTS.READY);
                 if(self.waitToPlay)self.play();    
@@ -83,9 +82,9 @@ define(['domReady!','jquery','interfaces/player_adapter'],function(domReay,$,Pla
             });*/
             
             // Force to load the video if necessary
-            if(targetElement.readyState < 3){
-                targetElement.load();
+            if(targetElement.readyState < 1){
                 self.status = PlayerAdapter.STATUS.LOADING;
+                targetElement.load();
             }
             else{
                 self.status =  PlayerAdapter.STATUS.PAUSED;

@@ -25,7 +25,7 @@
                         
                         var allStatus = PlayerAdapter.STATUS;
                         var allEvents = PlayerAdapter.EVENTS;
-                        var expectedDuration = 52.20833206176758;
+                        var expectedDuration = 52.208;
                         
                         /**
                          * Start tests
@@ -100,7 +100,7 @@
                         
                         test("Duration", function() {
                                 playerAdapter.pause();
-                                equal(expectedDuration,playerAdapter.getDuration(),"Duration should be "+expectedDuration);
+                                ok(Math.abs(playerAdapter.getDuration()-expectedDuration)<0.05,"Duration should be "+expectedDuration);
                         });
                         
                         
@@ -140,9 +140,10 @@
         <h2 id="qunit-userAgent"></h2>
         <ol id="qunit-tests"></ol>
         <div id="qunit-fixture">test markup, will be hidden</div>
-        <video src="ressources/sintel_trailer.mp4" style="display:none">
-            <source src="ressources/sintel_trailer.mp4" type="video/mp4" />
-            <source src="ressources/sintel_trailer.ogg" type="video/ogg" />
+        <video style="display:none">
+            <source src="../resources/sintel_trailer.mp4" type="video/mp4" />
+	    <!-- Could not be include, to heavy. -->
+	    <!-- <source src="../resources/sintel_trailer.ogv" type="video/ogg" /> -->
         </video>
     </body>
 </html>
