@@ -14,9 +14,6 @@ define(['domReady!','jquery','interfaces/player_adapter'],function(domReay,$,Pla
         
         var self = this;
         
-        // Set the player adapter interface as prototype 
-        this.prototype = new PlayerAdapter();
-        
         /** Id of the player adapter */
         this.id = "PlayerAdapter"+targetElement.id;
         
@@ -24,7 +21,7 @@ define(['domReady!','jquery','interfaces/player_adapter'],function(domReay,$,Pla
         this.htmlElement = null;
         
         /** The current player status */
-        this.status = PlayerAdapter.STATUS.INITIALISING;
+        this.status = PlayerAdapter.STATUS.INITIALIZING;
         
         /** Define if a play request has be done when the player was not ready */
         this.waitToPlay = false;
@@ -33,7 +30,7 @@ define(['domReady!','jquery','interfaces/player_adapter'],function(domReay,$,Pla
         this.init = function(){
             
             // Create the HTML representation of the adapter
-            $('body').append(self.getHTMLTemplate(self.id));
+            $(targetElement).wrap(self.getHTMLTemplate(self.id));
             if($('#'+self.id).length == 0)
                 throw 'Cannot create HTML representation of the adapter';
             self.htmlElement = document.getElementById(self.id);
@@ -165,16 +162,17 @@ define(['domReady!','jquery','interfaces/player_adapter'],function(domReay,$,Pla
          * Get the HTML template for the html representation of the adapter
          */
         this.getHTMLTemplate = function(id){
-            return  '<div id="'+id+'" style="display:none;"> \
-                    \t <!-- Abstract targetElement for player adapter --> \
-                    </div>';
+            return  '<div id="'+id+'"/>';
         } 
         
         self.init();
         
         // Return the HTMLElement extended by the player adapter
-        return $.extend(self.htmlElement,this);
+        return $.extend(this,self.htmlElement);
     }
+    
+    // Set the player adapter interface as prototype 
+    PlayerAdapterHTML5.prototype = new PlayerAdapter();
     
     return PlayerAdapterHTML5;
     
