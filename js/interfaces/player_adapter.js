@@ -14,7 +14,7 @@ define(function(){
      * @enum {number}
      */
     PlayerAdapter.STATUS = {
-            INITIALISING: 'initialising',
+            INITIALIZING: 'initializing',
             LOADING: 'loading',
             PLAYING: 'playing',
             PAUSED: 'paused',
