@@ -94,14 +94,6 @@ define(function(){
     }
     
     /**
-     * Get the media element duration
-     * @return {double} duration
-     */
-    PlayerAdapter.prototype.getHTMLElement = function(){
-        throw "Function 'getDuration' must be implemented in player adapter!";
-    }
-    
-    /**
      * Get the listeners list for this object
      * @param {String} type event type
      * @param {boolean} If the user wish to initiate the capture
