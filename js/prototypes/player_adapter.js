@@ -6,7 +6,7 @@ define(function(){
      * @constructor
      * @prototype
      */
-    var PlayerAdapter = function(){}
+    var PlayerAdapter = function(){ this._init(); }
 
     /**
      * Enum for player status
@@ -34,10 +34,17 @@ define(function(){
             PAUSE: 'pa_pause',
             SEEKING: 'pa_seeking',
             READY: 'pa_ready',
-            TIMEUPDATE: 'timeupdate',
+            TIMEUPDATE: 'pa_timeupdate',
             ERROR: 'pa_error',
             ENDED: 'pa_ended'
     };
+    
+    /**
+     * Initilization method
+     */
+    PlayerAdapter.prototype._init = function(){
+        this._listeners = {};
+    }
     
     /**
      * Play the media element in the player.
@@ -85,7 +92,88 @@ define(function(){
     PlayerAdapter.prototype.getStatus = function(){
         throw "Function 'getDuration' must be implemented in player adapter!";
     }
-
+    
+    /**
+     * Get the media element duration
+     * @return {double} duration
+     */
+    PlayerAdapter.prototype.getHTMLElement = function(){
+        throw "Function 'getDuration' must be implemented in player adapter!";
+    }
+    
+    /**
+     * Get the listeners list for this object
+     * @param {String} type event type
+     * @param {boolean} If the user wish to initiate the capture
+     * @return {Element[]} listeners list
+     */
+    PlayerAdapter.prototype._getListeners= function(type, useCapture) {
+        var captype= (useCapture? '1' : '0')+type;
+        if (!(captype in this._listeners))
+            this._listeners[captype]= [];
+        return this._listeners[captype];
+    };
+    
+    /**
+     * Add listener for the given event type
+     * @param {String} type event type
+     * @parm {function} listener the new listener
+     * @param {boolean} If the user wish to initiate the capture
+     */
+    PlayerAdapter.prototype.addEventListener= function(type, listener, useCapture) {
+        var listeners= this._getListeners(type, useCapture);
+        var ix= listeners.indexOf(listener);
+        if (ix===-1)
+            listeners.push(listener);
+    };
+    
+    /**
+     * Remove listener for the given event type
+     * @param {String} type event type
+     * @parm {function} listener the listener to remove
+     * @param {boolean} If the user wish to initiate the capture
+     */
+    PlayerAdapter.prototype.removeEventListener= function(type, listener, useCapture) {
+        var listeners= this._getListeners(type, useCapture);
+        var ix= listeners.indexOf(listener);
+        if (ix!==-1)
+            listeners.splice(ix, 1);
+    };
+    
+    /**
+     * Dipatch the given event to the listeners
+     *
+     * @param {Event} evt the event to dispatch
+     */
+    PlayerAdapter.prototype.dispatchEvent= function(event,type) {
+        var eventType = type;
+        if(!type)
+            eventType=event.type;
+        
+        var listeners= this._getListeners(eventType, false).slice();
+        for (var i= 0; i<listeners.length; i++)
+            listeners[i].call(this, event);
+        return !event.defaultPrevented;
+    };
+    
+    /**
+    * Dispatch the given event
+    */
+    PlayerAdapter.prototype.triggerEvent = function(eventType){
+        
+        if (document.createEventObject){
+            // For IE
+            var evt = document.createEventObject();
+            // TODO: Test on IE!!!
+            return !this.dispatchEvent(evt,eventType);
+        }
+        else{
+            // For others browsers
+            var evt = document.createEvent("CustomEvent");
+            evt.initEvent(eventType, true, true ); // event type,bubbling,cancelable
+            return !this.dispatchEvent(evt,eventType);
+        }
+    }
     
     /**
      * Optional function to test interface implementation

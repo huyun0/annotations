@@ -1,6 +1,6 @@
-define(['domReady!','jquery','interfaces/player_adapter'],function(domReay,$,PlayerAdapter){
+define(['domReady!','jquery','prototypes/player_adapter'],function(domReay,$,PlayerAdapter){
     
-    
+
     /**
      * Implementation of the player adapter for the HTML5 native player
      *
@@ -28,12 +28,23 @@ define(['domReady!','jquery','interfaces/player_adapter'],function(domReay,$,Pla
         
         /** @constructor */
         this.init = function(){
-            
+        
             // Create the HTML representation of the adapter
             $(targetElement).wrap(self.getHTMLTemplate(self.id));
             if($('#'+self.id).length == 0)
                 throw 'Cannot create HTML representation of the adapter';
             self.htmlElement = document.getElementById(self.id);
+            
+            // Extend the current object with the HTML representation
+            $.extend(true,this,self.htmlElement);
+            
+            // Add PlayerAdapter the prototype 
+            this.__proto__ = new PlayerAdapter();
+            
+            // ...and ensure that his methods are used for the Events management 
+            this.dispatchEvent = this.__proto__.dispatchEvent;
+            this.addEventListener = this.__proto__.addEventListener;
+            this.removeEventListener = this.__proto__.removeEventListener;
             
             /**
              * Listen the events from the native player
@@ -88,6 +99,8 @@ define(['domReady!','jquery','interfaces/player_adapter'],function(domReay,$,Pla
                 self.triggerEvent(PlayerAdapter.EVENTS.READY);
                 if(self.waitToPlay)self.play();  
             }
+            
+            return this;
         }
         
         
@@ -139,40 +152,17 @@ define(['domReady!','jquery','interfaces/player_adapter'],function(domReay,$,Pla
          * ==================================*/
         
         /**
-         * Dispatch the given event
-         */
-        this.triggerEvent = function(event){
-            
-            if (document.createEventObject){
-                // For IE
-                var evt = document.createEventObject();
-                return self.htmlElement.fireEvent('on'+event,evt)
-            }
-            else{
-                // For others browsers
-                var evt = document.createEvent("HTMLEvents");
-                evt.initEvent(event, true, true ); // event type,bubbling,cancelable
-                return !self.htmlElement.dispatchEvent(evt);
-            }
-            
-            
-        }
-        
-        /**
          * Get the HTML template for the html representation of the adapter
          */
         this.getHTMLTemplate = function(id){
             return  '<div id="'+id+'"/>';
         } 
-        
-        self.init();
-        
-        // Return the HTMLElement extended by the player adapter
-        return $.extend(this,self.htmlElement);
+
+        return self.init();
     }
     
     // Set the player adapter interface as prototype 
-    PlayerAdapterHTML5.prototype = new PlayerAdapter();
+    //PlayerAdapterHTML5.prototype = new PlayerAdapter();
     
     return PlayerAdapterHTML5;
     

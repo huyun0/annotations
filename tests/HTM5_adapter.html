@@ -10,11 +10,11 @@
         <script data-main="../js/libs/require/config/test.js" src="../js/libs/require/require.js"></script>
         
         <script>
-            require(['../domReady',
-                     '../order!jquery',
-                     '../order!player_adapter_HTML5',
-                     '../order!interfaces/player_adapter',
-                     '../order!tests/qunit'],
+            require(['domReady',
+                     'order!jquery',
+                     'order!player_adapter_HTML5',
+                     'order!prototypes/player_adapter',
+                     'order!tests/qunit'],
                     
                 function(domReady,$,PlayerAdapterImpl,PlayerAdapter){
                 
@@ -35,7 +35,7 @@
                         
                         test("Initial status", function() {
                             var status = playerAdapter.getStatus();
-                            equal(true, (status === allStatus.LOADING || status === allStatus.PAUSED) , "Player status should be LOADING or PAUSED.");
+                            equal(true, (status === allStatus.INITIALIZING || status === allStatus.LOADING || status === allStatus.PAUSED) , "Player status should be LOADING or PAUSED.");
                             
                         });
                                                 
@@ -51,7 +51,7 @@
                         
                         asyncTest("Play", function() {
                                 
-                                $(playerAdapter).one(allEvents.PLAY,function(){
+                                $(playerAdapter).bind(allEvents.PLAY,function(){
                                     ok(true,"EVENT: Received PLAY event.");
                                     var status = playerAdapter.getStatus();
                                     equal(status,allStatus.PLAYING,"STATUS: Player status should be PLAYING.");
@@ -143,7 +143,7 @@
         <video style="display:none">
             <source src="../resources/sintel_trailer.mp4" type="video/mp4" />
 	    <!-- Could not be include, to heavy. -->
-	    <!-- <source src="../resources/sintel_trailer.ogv" type="video/ogg" /> -->
+	    <<source src="../resources/sintel_trailer.ogv" type="video/ogg" />
         </video>
     </body>
 </html>
