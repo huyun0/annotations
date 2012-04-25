@@ -1,4 +1,4 @@
-// Configuration for require.js
+// Tests configuration for require.js
 require.config({
     baseUrl: "../js",
     paths: {
@@ -10,7 +10,7 @@ require.config({
         'interfaces': 'interfaces',
         'order':'libs/require/order',
         'underscore': 'libs/underscore-min',
-	'tests':'libs/tests',
+	'tests': '../tests/js',
         'order':'libs/require/order',
 	'domReady':'libs/require/domReady'
     },

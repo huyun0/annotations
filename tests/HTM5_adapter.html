@@ -7,14 +7,14 @@
 	<meta name="description" content="Video annotations tool - Unit Tests">
 	<meta name="author" content="Entwine">
         <link rel="stylesheet" href="../style/qunit.css">
-        <script data-main="../js/libs/require/config/test.js" src="../js/libs/require/require.js"></script>
+        <script data-main="../js/libs/require/config/test-config.js" src="../js/libs/require/require.js"></script>
         
         <script>
             require(['domReady',
                      'order!jquery',
                      'order!player_adapter_HTML5',
                      'order!prototypes/player_adapter',
-                     'order!tests/qunit'],
+                     'order!libs/tests/qunit'],
                     
                 function(domReady,$,PlayerAdapterImpl,PlayerAdapter){
                 

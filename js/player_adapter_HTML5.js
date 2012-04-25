@@ -41,7 +41,7 @@ define(['domReady!','jquery','prototypes/player_adapter'],function(domReay,$,Pla
             // Add PlayerAdapter the prototype 
             this.__proto__ = new PlayerAdapter();
             
-            // ...and ensure that his methods are used for the Events management 
+            // ...and ensure that its methods are used for the Events management 
             this.dispatchEvent = this.__proto__.dispatchEvent;
             this.addEventListener = this.__proto__.addEventListener;
             this.removeEventListener = this.__proto__.removeEventListener;
