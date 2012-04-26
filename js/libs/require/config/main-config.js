@@ -7,10 +7,11 @@ require.config({
         'loader': 'libs/backbone/loader',
         'localstorage': 'libs/backbone/backbone.localStorage-min',
         'jquery': 'libs/jquery-1.7.2.min',
-        'prototypes': 'prototypes',
-        'order':'libs/require/config/order',
         'underscore': 'libs/underscore-min',
-        'domReady':'libs/require/config/domReady'
+        'templates': '../templates',
+        'order':'libs/require/config/order',
+        'domReady':'libs/require/config/domReady',
+        'text':'libs/require/config/text'
     },
     waitSeconds: 10
 });

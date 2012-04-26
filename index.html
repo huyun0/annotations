@@ -1,0 +1,110 @@
+<!doctype html>
+<!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
+
+<!--[if IE 7]>    <html class="no-js lt-ie9 lt-ie8" lang="en"> <![endif]-->
+
+<!--[if IE 8]>    <html class="no-js lt-ie9" lang="en"> <![endif]-->
+
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
+
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<title>Annotating Academic Video</title>
+	<meta name="description" content="Video annotations tool">
+	<meta name="author" content="">
+	<meta name="viewport" content="width=device-width">
+	<link rel="stylesheet" href="style/style.css">
+	<script data-main="js/libs/require/config/main-config" src="js/libs/require/require.js"></script>
+</head>
+<body>
+<!--[if lt IE 7]><p class=chromeframe>Your browser is <em>ancient!</em> <a href="http://browsehappy.com/">Upgrade to a different browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to experience this site.</p><![endif]-->
+
+
+
+    <div class="navbar navbar-fixed-top">
+
+      <div class="navbar-inner">
+
+        <div class="container-fluid">
+
+          <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+
+            <span class="icon-bar"></span>
+
+            <span class="icon-bar"></span>
+
+            <span class="icon-bar"></span>
+
+          </a>
+
+          <a class="brand" href="#">Annotating Academic video</a>
+
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+
+    <div class="container-fluid" id="main-container">
+	<div class="row-fluid">
+		<div class="span12" id="error-container"></div>
+	</div>
+	
+	<div class="row-fluid">
+		
+		<div class="span7" id="video-container">
+			<video style="width:100%" controls class="window" >
+				<source src="resources/sintel_trailer.mp4" type="video/mp4" />
+				<!-- Could not be include, to heavy. -->
+				<!-- <source src="../resources/sintel_trailer.ogv" type="video/ogg" /> -->
+			</video>
+		</div>
+		
+		
+		<div class="span5">
+			<div class="window" id="annotate-container">
+				<div class="navbar">
+					<div class="navbar-inner">
+					  <div class="container">
+					    <a class="brand" href="#">Annotate</a>
+					  </div>
+					</div>
+				</div>
+				<div class="well form-inline"> 	
+					<input  id="new-annotation" type="text" class="span4" placeholder="Insert annotation">
+					<button id="insert" type="button" class="btn">Insert</button>	
+				</div>
+			</div>
+		</div>
+		
+		<div class="span5">
+			<div class="window" id="list-container">
+				
+			</div>
+		</div>
+
+      </div>
+	
+    </div> <!-- /container -->
+    
+    <script type="text/template" id="list-annotation-tmpl">
+	<i class="jump-to icon-film"  title="Move to this annotation"></i>
+	<span class="start">{{time start}}</span>
+	 {{#if duration}}
+		- <span class="duration">Duration: {{end start start}}</span>
+	{{/if}}
+	<span class="category">Free text category</span>
+	<a data-toggle="collapse" data-target="#text-container{{id}}">collapse</a>
+	
+	<i class="delete icon-remove" title="Delete  annotation"></i>
+	<div id="text-container{{id}}" class="collapse in"><span class="text">{{text}}</span></div>
+	<!--<button id="stopduration">Stop duration</button>-->
+    </script>
+
+
+</body>
+</html>
