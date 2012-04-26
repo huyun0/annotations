@@ -1,0 +1,75 @@
+/*
+  Complete stylesheet for the annotations tool
+*/
+.standard_border_radius {
+  border-radius: 4px 4px 4px 4px;
+}
+.window {
+  background-color: #F5F5F5;
+  border: 1px solid #cdcdcd;
+  border-radius: 4px 4px 4px 4px;
+  background-size: 100% 100%;
+  box-shadow: inset 0px 0px 15px #a29d95;
+  -moz-box-shadow: inset 0px 0px 15px #a29d95;
+  -webkit-box-shadow: inset 0px 0px 15px #a29d95;
+  background-size: 100% 100%;
+  box-shadow: 0px 0px 5px #d9d2c0;
+  -moz-box-shadow: 0px 0px 5px #d9d2c0;
+  -webkit-box-shadow: 0px 0px 5px #d9d2c0;
+  margin-top: 20px;
+  overflow: scroll;
+  max-height: 45%;
+}
+#list-container div.annotation {
+  border-radius: 4px 4px 4px 4px;
+  background-color: #e3e3e3;
+  margin: 5px;
+  padding: 5px;
+}
+#list-container div.annotation i.delete {
+  float: right;
+}
+#list-container div.annotation i.delete:hover {
+  background-color: #ff6666;
+  border-radius: 10px 10px 10px 10px;
+}
+#list-container div.annotation i.jump-to:hover {
+  background-color: #8dbbde;
+}
+#list-container div.annotation .start,
+#list-container div.annotation .duration {
+  border-radius: 3px 3px 3px 3px;
+  background-color: #a9a9a9;
+  padding: 2px;
+  margin: 1px;
+  color: white;
+  font-family: monospace;
+  /*border: 1px solid darken(#F5F5F5, 30%);*/
+
+  background-size: 100% 100%;
+  box-shadow: 0px 0px 4px #a9a9a9;
+  -moz-box-shadow: 0px 0px 4px #a9a9a9;
+  -webkit-box-shadow: 0px 0px 4px #a9a9a9;
+  background-size: 100% 100%;
+  box-shadow: inset 0px 0px 4px #767676;
+  -moz-box-shadow: inset 0px 0px 4px #767676;
+  -webkit-box-shadow: inset 0px 0px 4px #767676;
+}
+#list-container div.annotation span.text {
+  display: block;
+  margin: 5px 2px 2px 2px;
+  padding: 4px;
+  border-radius: 3px 3px 3px 3px;
+  background-color: white;
+  background-size: 100% 100%;
+  box-shadow: 0px 0px 4px #a9a9a9;
+  -moz-box-shadow: 0px 0px 4px #a9a9a9;
+  -webkit-box-shadow: 0px 0px 4px #a9a9a9;
+}
+#list-container div.annotation .category {
+  border-radius: 3px 3px 3px 3px;
+  background-color: orange;
+  color: white;
+  padding: 2px;
+  font-size: 0.90em;
+}
