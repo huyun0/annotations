@@ -1,4 +1,4 @@
-define(["jquery","access","underscore","backbone"],function($,ACCESS){
+define(["jquery","models/user","access","underscore","backbone"],function($,User, ACCESS){
     
     /**
      * Annotation model
@@ -24,6 +24,10 @@ define(["jquery","access","underscore","backbone"],function($,ACCESS){
             
             var newAttr = {};
             $.extend(newAttr,{created_at:(new Date()).getTime(),id:this.cid},attr);
+            
+            if(newAttr.created_by && _.isObject(attr.created_by))
+                newAttr.created_by = new User(attr.created_by);
+                
             this.set(newAttr);  
         },
         

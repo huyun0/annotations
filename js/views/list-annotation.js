@@ -2,10 +2,12 @@ define(["jquery",
         "underscore",
         "prototypes/player_adapter",
         "models/annotation",
+        "models/user",
+        "text!templates/list-annotation.tmpl",
         "libs/handlebars",
         "backbone"],
        
-    function($,_not,PlayerAdapter,Annotation){
+    function($,_not,PlayerAdapter,Annotation,User,Template){
         
         /**
          * Transform time in seconds (i.e. 12.344) into a well formated time (01:12:04)
@@ -38,6 +40,16 @@ define(["jquery",
             else
                 return undefined;
         });
+        
+        /**
+         * Get nickname from user to display
+         */
+        Handlebars.registerHelper('nickname', function(user) {
+            if(user instanceof User)
+                return user.get("nickname");
+            else
+                return user.nickname;
+        });
 
 
         /**
@@ -51,7 +63,7 @@ define(["jquery",
           className: 'annotation',
           
           /** View template */
-          template: Handlebars.compile($('#list-annotation-tmpl').html()), 
+          template: Handlebars.compile(Template), 
           
           /** Annotation views list */
           annotationViews: {},

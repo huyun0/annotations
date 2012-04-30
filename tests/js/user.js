@@ -11,7 +11,7 @@ require(['domReady',
                 
                 module("User",  {
                         setup: function() {
-                            user = new User({user_id:'testid',nickname:'pinguin'});
+                            user = new User({user_extid:'testid',nickname:'pinguin'});
                         }
                 });
                 

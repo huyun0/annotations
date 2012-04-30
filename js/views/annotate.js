@@ -61,7 +61,12 @@ define(["jquery",
             if(!value || (!_.isNumber(time) || time < 0))
               return;
             
-            this.annotations.create({text:value, start:time});
+            var annotation = new Annotation({text:value, start:time});
+            
+            if(user)
+              annotation.set({created_by: user});
+              
+            this.annotations.add(annotation);
           }
           
         });

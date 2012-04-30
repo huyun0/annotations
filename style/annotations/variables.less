@@ -1,0 +1,20 @@
+/**
+ * Different style variable that can be use by all variables
+ */
+
+.inset-box-shadow (@x: 0, @y: 0, @blur: 1px, @color: #000) {
+  background-size: 100% 100%;
+  box-shadow: inset @arguments;
+  -moz-box-shadow: inset @arguments;
+  -webkit-box-shadow: inset @arguments;
+}
+
+.box-shadow (@x: 0, @y: 0, @blur: 1px, @color: #000) {
+  background-size: 100% 100%;
+  box-shadow: @arguments;
+  -moz-box-shadow: @arguments;
+  -webkit-box-shadow: @arguments;
+}
+
+@border_radius: 4px;
+.standard_border_radius{border-radius: @border_radius @border_radius @border_radius @border_radius;	}

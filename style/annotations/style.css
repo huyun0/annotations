@@ -1,6 +1,12 @@
 /*
   Complete stylesheet for the annotations tool
 */
+/**
+ * Style for the base element of the annotations tool
+ */
+/**
+ * Different style variable that can be use by all variables
+ */
 .standard_border_radius {
   border-radius: 4px 4px 4px 4px;
 }
@@ -8,6 +14,11 @@
   background-color: #F5F5F5;
   border: 1px solid #cdcdcd;
   border-radius: 4px 4px 4px 4px;
+  border-radius: 4px 4px 4px 4px;
+  background-size: 100% 100%;
+  box-shadow: inset 0px 0px 15px #a29d95;
+  -moz-box-shadow: inset 0px 0px 15px #a29d95;
+  -webkit-box-shadow: inset 0px 0px 15px #a29d95;
   background-size: 100% 100%;
   box-shadow: inset 0px 0px 15px #a29d95;
   -moz-box-shadow: inset 0px 0px 15px #a29d95;
@@ -16,11 +27,37 @@
   box-shadow: 0px 0px 5px #d9d2c0;
   -moz-box-shadow: 0px 0px 5px #d9d2c0;
   -webkit-box-shadow: 0px 0px 5px #d9d2c0;
-  margin-top: 20px;
-  overflow: scroll;
-  max-height: 45%;
+  background-size: 100% 100%;
+  box-shadow: 0px 0px 5px #d9d2c0;
+  -moz-box-shadow: 0px 0px 5px #d9d2c0;
+  -webkit-box-shadow: 0px 0px 5px #d9d2c0;
+  margin-bottom: 20px;
+  overflow: auto;
+  max-height: 40%;
+}
+/**
+ * Style for annotate view
+ */
+#new-annotation {
+  margin-bottom: -0.5px;
+  margin-left: -4px;
+  margin-right: -4px;
+}
+#annotate-form div {
+  padding: 5px;
+  text-align: center;
+}
+/**
+ * Style for annotations list
+ */
+/**
+ * Different style variable that can be use by all variables
+ */
+.standard_border_radius {
+  border-radius: 4px 4px 4px 4px;
 }
 #list-container div.annotation {
+  border-radius: 4px 4px 4px 4px;
   border-radius: 4px 4px 4px 4px;
   background-color: #e3e3e3;
   margin: 5px;
@@ -51,6 +88,14 @@
   -moz-box-shadow: 0px 0px 4px #a9a9a9;
   -webkit-box-shadow: 0px 0px 4px #a9a9a9;
   background-size: 100% 100%;
+  box-shadow: 0px 0px 4px #a9a9a9;
+  -moz-box-shadow: 0px 0px 4px #a9a9a9;
+  -webkit-box-shadow: 0px 0px 4px #a9a9a9;
+  background-size: 100% 100%;
+  box-shadow: inset 0px 0px 4px #767676;
+  -moz-box-shadow: inset 0px 0px 4px #767676;
+  -webkit-box-shadow: inset 0px 0px 4px #767676;
+  background-size: 100% 100%;
   box-shadow: inset 0px 0px 4px #767676;
   -moz-box-shadow: inset 0px 0px 4px #767676;
   -webkit-box-shadow: inset 0px 0px 4px #767676;
@@ -61,6 +106,10 @@
   padding: 4px;
   border-radius: 3px 3px 3px 3px;
   background-color: white;
+  background-size: 100% 100%;
+  box-shadow: 0px 0px 4px #a9a9a9;
+  -moz-box-shadow: 0px 0px 4px #a9a9a9;
+  -webkit-box-shadow: 0px 0px 4px #a9a9a9;
   background-size: 100% 100%;
   box-shadow: 0px 0px 4px #a9a9a9;
   -moz-box-shadow: 0px 0px 4px #a9a9a9;

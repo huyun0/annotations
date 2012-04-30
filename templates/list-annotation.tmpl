@@ -1,0 +1,18 @@
+<i class="jump-to icon-film"  title="Move to this annotation"></i>
+<span class="start">{{time start}}</span>
+ {{#if duration}}
+        - <span class="duration">Duration: {{end start start}}</span>
+{{/if}}
+<span class="category">Free text category</span>
+<a data-toggle="collapse" data-target="#text-container{{id}}">collapse</a>
+
+<i class="delete icon-remove" title="Delete  annotation"></i>
+<div id="text-container{{id}}" class="collapse in">
+        <span class="text">
+                {{text}}
+                {{#if created_by}}
+                <p align="right">created by {{nickname created_by}}</p>
+                {{/if}}
+        </span>
+</div>
+<!--<button id="stopduration">Stop duration</button>-->
