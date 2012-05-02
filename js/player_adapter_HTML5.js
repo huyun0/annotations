@@ -1,4 +1,4 @@
-define(['domReady!','jquery','prototypes/player_adapter'],function(domReay,$,PlayerAdapter){
+define(['domReady!','jquery','prototypes/player_adapter'],function(domReady,$,PlayerAdapter){
     
 
     /**

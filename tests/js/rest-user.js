@@ -82,7 +82,7 @@ require(['domReady',
                     
                     $.ajax({
                         type: "PUT",
-                        url: window.restUrl+"/test2.rtf",
+                        url: window.restUrl+"/users",
                         data: user.toJSON(),
                         /*beforeSend: function(xhr) {
                             xhr.setRequestHeader("Authorization", "GoogleLogin auth=" + token);
