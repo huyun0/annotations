@@ -4,10 +4,10 @@
         - <span class="duration">Duration: {{end start start}}</span>
 {{/if}}
 <span class="category">Free text category</span>
-<a data-toggle="collapse" data-target="#text-container{{id}}">collapse</a>
+<a class="collapse">collapse</a>
 
 <i class="delete icon-remove" title="Delete  annotation"></i>
-<div id="text-container{{id}}" class="collapse in">
+<div id="text-container{{id}}" class="{{#if collapsed}}collapse{{else}}in{{/if}}">
         <span class="text">
                 {{text}}
                 {{#if created_by}}

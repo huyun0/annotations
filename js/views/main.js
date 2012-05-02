@@ -134,7 +134,7 @@ define(["jquery",
         
         // If email is given, we set it to the user
         if(user && userEmail.val())
-            user.set({email:userEmail});
+            user.set({email:userEmail.val()});
         
         // If user not valid 
         if(!valid){

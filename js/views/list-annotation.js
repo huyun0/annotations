@@ -70,10 +70,13 @@ define(["jquery",
           
           deleted: false,
           
+          collapsed: false,
+          
           /** Events to handle */
           events: {
             "click .delete"             : "delete",
             "click .jump-to"            : "jumpTo",
+            "click .collapse"           : "collapse"
           },
           
            /**
@@ -84,7 +87,7 @@ define(["jquery",
                 throw "The annotations have to be given to the annotate view.";
               
             // Bind function to the good context 
-            _.bindAll(this,'render','delete','jumpTo');
+            _.bindAll(this,'render','delete','jumpTo','collapse');
             
             this.model = attr.annotation;
             
@@ -123,10 +126,21 @@ define(["jquery",
                 console.log('Alredy deleted view!');
                 return "";
             }
-            
+            this.model.set({collapsed: this.collapsed});
             this.$el.html(this.template(this.model.toJSON()));
             this.setElement(this.el);
             return this;
+          },
+          
+          /**
+           * Toggle the visibility of the text container
+           */
+          collapse: function(){
+            this.collapsed = !this.collapsed;
+            if(this.collapsed)
+                this.$el.find('div.in').collapse('hide');
+            else
+                this.$el.find('div.in').collapse('show');
           }
           
         });
