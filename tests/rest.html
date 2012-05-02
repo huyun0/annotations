@@ -1,0 +1,40 @@
+<!doctype html>
+
+    <head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<title>Annotating Academic Video - Models unit tests</title>
+	<meta name="description" content="Video annotations tool - Unit Tests">
+	<meta name="author" content="Entwine">
+        <link rel="stylesheet" href="../style/qunit.css">
+        <script data-main="../js/libs/require/config/test-config.js" src="../js/libs/require/require.js"></script>
+        
+        <script>
+            require(['domReady!',
+		     'order!jquery',
+		     'order!tests/rest-user',
+		     'order!libs/tests/qunit'
+		     ],
+                    
+                function(dd,$){
+		    
+		    $('button#start').on('click',function(){
+			window.restUrl = $('input#url').val();
+			QUnit.start();
+		    });
+		    
+		    
+		});
+        </script>
+
+    </head>
+    <body>
+	<h2>Insert the base url from the Rest Endpoint: <input id="url" type="text"></input><button id="start">Run Test</button></h2>
+        <h1 id="qunit-header">Rest</h1>
+        <h2 id="qunit-banner"></h2>
+        <div id="qunit-testrunner-toolbar"></div>
+        <h2 id="qunit-userAgent"></h2>
+        <ol id="qunit-tests"></ol>
+        <div id="qunit-fixture">test markup, will be hidden</div>
+    </body>
+</html>
