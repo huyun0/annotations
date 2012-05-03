@@ -5,12 +5,16 @@ define(["jquery",
         "views/list",
         "collections/users",
         "models/user",
+        "models/track",
+        "models/video",
+        "collections/videos",
+        "backbone-annotations-sync",
         "text!templates/user-login.tmpl",
         "backbone",
         "underscore",
         "libs/bootstrap/bootstrap.min"],
        
-       function($,PlayerAdapter,Annotations,Annotate,List,Users,User,LoginTmpl){
+       function($,PlayerAdapter,Annotations,Annotate,List,Users,User,Track,Video,Videos,AnnotationSync,LoginTmpl){
 
     /**
      * Main view of the application
@@ -44,19 +48,22 @@ define(["jquery",
         
         _.bindAll(this,"getCurrentUser","getAnnotations","createViews");
         
+        Backbone.sync = AnnotationSync;
+        
         this.playerAdapter = playerAdapter;
         
         this.loadingBox.find('.bar').width('20%');
         
         // Create a new users collection and get exciting local user
         this.users = new Users();
-        this.users.fetch()
+        this.users.fetch();
+        
         
         this.loadingBox.find('.bar').width('35%');
         
         // If a user has been saved locally, we take it as current user
         if(this.users.length >0){
-            window.user = this.users.pop();
+            window.annotationsUser = this.users.pop();
             this.createViews();
         }
         else{
@@ -66,7 +73,7 @@ define(["jquery",
             this.userModal.modal({show: true, backdrop: true, keyboard: false });
             this.userModal.on("hide",function(){
                 // If user not set, display the login window again
-                if(_.isUndefined(window.user))
+                if(_.isUndefined(window.annotationsUser))
                     setTimeout(function(){$('#user-login').modal('show')},5);
             });
         }
@@ -148,7 +155,7 @@ define(["jquery",
             user.save();        
         }
 
-        window.user = user;
+        window.annotationsUser = user;
         this.userModal.modal("toggle");
         
         if(!this.loaded)
@@ -162,9 +169,18 @@ define(["jquery",
        * Get all the annotations for the current user
        */
        getAnnotations: function(){
+        var videos = new Videos();
+        var video = new Video();
+        video.get("tracks").create({name:"default"})
+        var track = video.get("tracks").pop();
+        videos.add(video);
+        video.save();
+ 
+        
+        
         // Create an annotations collection an get all the annotations
-        this.annotations = new Annotations();
-        this.annotations.fetch();   
+        this.annotations = track.get("annotations");
+        this.annotations.fetch();
         
         /**
          *  Bind the basic annotations event to their related operation

@@ -1,26 +1,27 @@
 require(['domReady',
          'jquery',
-	 'models/user',
-         'collections/users',
+	 'models/video',
+         'collections/videos',
          'backbone-annotations-sync',
          'order!underscore',
          'order!backbone',
          'order!libs/tests/qunit'],
                     
-        function(domReady,$,User, Users, AnnotationSync){
+        function(domReady,$,Video, Videos, AnnotationSync){
         
             domReady(function(){
                 QUnit.config.autostart = false;
                 
-                var user, base_user, users;
+                var videos, base_video, videos;
                 
-                module("User",  {
+                module("Video",  {
                         setup: function() {
-                            users = new Users();
-                            user  = new User({user_extid:'testid',nickname:'pinguin'}); 
-                            users.add(user);
+                            videos = new Videos();
+                            video  = new Video();
+                            video.set({id:undefined}); // force to have no id
+                            videos.add(video);
                             Backbone.sync = AnnotationSync;
-                            base_user = user.clone();
+                            base_video = video.clone();
                             config = {
                                 restEndpointUrl: window.restUrl
                             };
@@ -28,10 +29,10 @@ require(['domReady',
                 });
                 
                 
-                test("Save user",function(){
+                test("Save video",function(){
                     stop();
                     
-                    AnnotationSync('update',user,{
+                    AnnotationSync('update',video,{
                                 error: function(error){
                                     ok(false, error);
                                     start();
@@ -40,28 +41,35 @@ require(['domReady',
                                 success: function(data){
                                     ok(true, "Saved successfully");
                                     
-                                    ok(user.get('id')!==undefined,"Id has been set");
+                                    ok(video.get('id')!==undefined,"Id has been set");
                                     start();
                                 }
                     },config);
 
                 })
                 
-                test("Get user",1,function(){
+                test("Get video",1,function(){
                     stop();
                     
-                    AnnotationSync('read',user,{
+                    /**
+                     * To test a get all, pass the collection (videos) and not the model
+                     * you should receive back
+                     */
+                    AnnotationSync('read',video,{
                                 error: function(error){
                                     ok(false, error);
                                     start();
                                 },
                                 
                                 success: function(data){
-                                    ok(true, "Got user in json:" + data);
+                                    ok(true, "Got video in json:" + data);
                                     start();
                                 }
                     },config);
                 })
+                
+                
+
                 
                  
             });

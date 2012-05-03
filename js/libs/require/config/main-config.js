@@ -5,7 +5,7 @@ require.config({
         'root': 'libs',
         'backbone':'libs/backbone/backbone-min',
         'loader': 'libs/backbone/loader',
-        'localstorage': 'libs/backbone/backbone.localStorage-min',
+        'localstorage': 'libs/backbone/backbone.localStorage',
         'jquery': 'libs/jquery-1.7.2.min',
         'underscore': 'libs/underscore-min',
         'templates': '../templates',
@@ -17,7 +17,7 @@ require.config({
 });
 
 // Bootstrap function for main app
-require(['order!jquery', 
+require(['domReady!,order!jquery', 
         'app'],
               
         function ($,app) {

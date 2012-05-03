@@ -1,37 +1,39 @@
 define(["jquery","access","underscore","backbone"],function($,ACCESS){
     
+    var Annotations;
+    
     /**
      * Track model
      * @class
      */
     var Track = Backbone.Model.extend({
-        id: 0,
-        name: "",
-        description: "",
-        settings: {},
-        
-        // Logs
-        created_at: 0,
-        created_by: null,
         
         defaults: {
             access: ACCESS.PUBLIC    
         },
         
         initialize: function(attr){
+            if(!Annotations)
+                Annotations = require("collections/annotations");
+            
             if(!attr || _.isUndefined(attr.name))
                 throw "'name' attribute is required";
             
             var newAttr = {};
-            $.extend(newAttr,{created_at:(new Date()).getTime(),id:this.cid},attr);
-            this.set(newAttr);  
+            $.extend(newAttr,{created_at:(new Date()).getTime()},attr);
+            this.set(newAttr);
+            
+            this.set({annotations: new Annotations([],this.collection.video,this)})
+            
+            if(!attr.id)
+                this.set({id:this.cid});
         },
         
         validate: function(attr){
             
             if(attr.id){
-                if((tmpId=this.get('id')) && tmpId!==attr.id)
-                    return "'id' attribute can not be modified after initialization!";
+                //if((tmpId=this.get('id')) && tmpId!==attr.id)
+                //    return "'id' attribute can not be modified after initialization!";
                 //if(!_.isNumber(attr.id))
                 //    return "'id' attribute must be a number!";
             }

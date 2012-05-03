@@ -1,4 +1,4 @@
-define(["jquery","models/user","underscore","backbone","localstorage"],function($,User){
+define(["jquery","models/user","order!underscore","order!backbone","order!localstorage"],function($,User){
     
     /**
      * Users collection
@@ -6,6 +6,7 @@ define(["jquery","models/user","underscore","backbone","localstorage"],function(
      */
     var Users = Backbone.Collection.extend({
         model: User,
+        url: "/users",
         localStorage: new Backbone.LocalStorage("Users")
     });
     

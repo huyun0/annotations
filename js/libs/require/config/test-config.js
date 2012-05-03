@@ -5,7 +5,7 @@ require.config({
         'root': 'libs',
         'backbone':'libs/backbone/backbone-min',
         'loader': 'libs/backbone/loader',
-        'localstorage': 'libs/backbone/backbone.localStorage-min',
+        'localstorage': 'libs/backbone/backbone.localStorage',
         'jquery': 'libs/jquery-1.7.2',
         'interfaces': 'interfaces',
         'order':'libs/require/order',

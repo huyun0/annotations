@@ -5,10 +5,6 @@ define(["jquery","models/user","access","underscore","backbone"],function($,User
      * @class
      */
     var Annotation = Backbone.Model.extend({
-        id: 0,
-        text: "",
-        start: 0.0,
-        duration: 0.0,
         
         defaults: {
             access: ACCESS.PUBLIC    
@@ -23,19 +19,22 @@ define(["jquery","models/user","access","underscore","backbone"],function($,User
                 throw "'start' attribute is required";
             
             var newAttr = {};
-            $.extend(newAttr,{created_at:(new Date()).getTime(),id:this.cid},attr);
+            $.extend(newAttr,{created_at:(new Date()).getTime()},attr);
             
             if(newAttr.created_by && _.isObject(attr.created_by))
                 newAttr.created_by = new User(attr.created_by);
                 
-            this.set(newAttr);  
+            this.set(newAttr);
+            
+            if(!attr.id)
+                this.set({id:this.cid});
         },
         
         validate: function(attr){
             
             if(attr.id){
-                if((tmpId=this.get('id')) && tmpId!==attr.id)
-                    return "'id' attribute can not be modified after initialization!";
+                //if((tmpId=this.get('id')) && tmpId!==attr.id)
+                //    return "'id' attribute can not be modified after initialization!";
                 if(!_.isNumber(attr.created_at))
                     return "'id' attribute must be a number!";
             }

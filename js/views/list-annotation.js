@@ -140,7 +140,7 @@ define(["jquery",
             if(this.collapsed)
                 this.$el.find('div.in').collapse('hide');
             else
-                this.$el.find('div.in').collapse('show');
+                this.$el.find('div.collapse').collapse('show');
           }
           
         });

@@ -5,23 +5,22 @@ define(["jquery","underscore","backbone"],function($){
      * @class
      */
     var User = Backbone.Model.extend({
-        id: 0,
-        user_extid: "",
-        nickname: "",
-        email: "",
         
         initialize: function(attr){
             if(_.isUndefined(attr.user_extid) || attr.user_extid == "" ||
                _.isUndefined(attr.nickname) || attr.nickname == "")
                 throw "'user_extid' and 'nickanme' attributes are required";
             
-            this.set(attr); 
+            this.set(attr);
+            
+            if(!attr.id)
+                this.set({id:this.cid});
         },
         
         validate: function(attr){
             if(attr.id){
-                if((tmpId=this.get('id')) && tmpId!==attr.id)
-                    return {attribute: "id", message: "'id' attribute can not be modified after initialization!"};
+                //if((tmpId=this.get('id')) && tmpId!==attr.id)
+                //    return {attribute: "id", message: "'id' attribute can not be modified after initialization!"};
                 if(!_.isNumber(attr.created_at))
                     return {attribute: "created_at", message: "'id' attribute must be a number!"};
             }
