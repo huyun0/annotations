@@ -1,11 +1,9 @@
-define(['domReady!',
-        'jquery',
-        'underscore',
-        'player_adapter_HTML5',
-        'models/annotation',
-        'views/main'],
+define(['order!jquery',
+        'order!underscore',
+        'order!player_adapter_HTML5',
+        'order!views/main'],
        
-       function(domReady,$, _, PlayerAdapter, Annotation, MainView) {
+       function($, _, PlayerAdapter, MainView) {
 
             return {
                 start: function() {

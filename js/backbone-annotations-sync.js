@@ -1,13 +1,8 @@
 define(["jquery",
-        "models/annotation",
-        "models/user",
-        "models/track",
-        "models/video",
-        "collections/users",
         "underscore",
         "backbone"],
        
-       function($,Annotation,User,Track,Video,Users){
+       function($){
           
             /**
              * Synchronisation module for the annotations tool
@@ -26,21 +21,25 @@ define(["jquery",
                          token: "Annotations-User-Auth-Token"
                     }
                },config);
-                
-               var returnValue, error = undefined;
                
                /**
                 * Get the URI for the given resource
                 *
                 * @param {Model, Collection} model model or collection to 
                 */
-               this.getURI = function(resource){
-                    if(resource.id !== undefined)
-                         return self.config.restEndpointUrl + resource.collection.url + "/" + resource.id;
-                    else if(resource.collection !== undefined)
+               this.getURI = function(resource, isPut){
+                    if(resource.id !== undefined){
+                         var uri = self.config.restEndpointUrl + resource.collection.url;
+                         if(!isPut)
+                              uri+="/" + resource.id;
+                         return uri;
+                    }
+                    else if(resource.collection !== undefined){
                          return self.config.restEndpointUrl + resource.collection.url;
-                    else
+                    }
+                    else{
                          return self.config.restEndpointUrl + resource.url;
+                    }
                }
                
                
@@ -48,8 +47,8 @@ define(["jquery",
                 * Errors callback for jQuery Ajax method. 
                 */
                this.setError = function(XMLHttpRequest, textStatus, errorThrown){
-                                  error = textStatus+", "+errorThrown;
                                   console.warn("Error during "+method+" of resource, "+XMLHttpRequest.status+", "+textStatus);
+                                  options.error(textStatus+", "+errorThrown);
                }
                
                /**
@@ -73,7 +72,7 @@ define(["jquery",
                     $.ajax({
                               async: false,
                               type: "POST",
-                              url: self.getURI(resource),
+                              url: self.getURI(resource, false),
                               dataType: "json",
                               data: JSON.parse(JSON.stringify(resource)),
                               beforeSend: self.setHeaderParams,
@@ -87,10 +86,10 @@ define(["jquery",
                                         
                                         // Set the resource id and ret
                                         resource.set({id:newId});
-                                        returnValue = resource.toJSON;
+                                        options.success(resource.toJSON());
                                    }
                                    else{
-                                        error = "Location not returned after resource creation.";
+                                        options.error("Location not returned after resource creation.");
                                    }
                               },
                               
@@ -107,11 +106,11 @@ define(["jquery",
                     $.ajax({
                               async: false,
                               type: "GET",
-                              url: self.getURI(resource),
+                              url: self.getURI(resource, false),
                               dataType: "json",
                               beforeSend: self.setHeaderParams,
                               success: function(data, textStatus, XMLHttpRequest){
-                                   returnValue = data;
+                                   options.success(data);
                               },
                               
                               error: self.setError
@@ -127,7 +126,7 @@ define(["jquery",
                     $.ajax({
                               async: false,
                               type: "GET",
-                              url: self.getURI(resource),
+                              url: self.getURI(resource, false),
                               dataType: "json",
                               beforeSend: self.setHeaderParams,
                               success: function(data, textStatus, XMLHttpRequest){
@@ -138,13 +137,13 @@ define(["jquery",
                                     */
                                    if(_.isObject(data)){
                                         if(_.each(data,function(element,index){
-                                             if(_.isObject(element))
-                                                  returnValue = element;
+                                             if(_.isArray(element))
+                                                  options.success(element);
                                         }));
                                    }
                                    
                                    if(_.isUndefined(returnValue))
-                                        error = "List not found in response";
+                                        options.error("List not found in response");
                               },
                               
                               error: self.setError
@@ -160,7 +159,7 @@ define(["jquery",
                     $.ajax({
                               async: false,
                               type: "PUT",
-                              url: self.getURI(resource),
+                              url: self.getURI(resource, true),
                               data: JSON.parse(JSON.stringify(resource)),
                               beforeSend: self.setHeaderParams,
                               success: function(data, textStatus, XMLHttpRequest){
@@ -174,12 +173,14 @@ define(["jquery",
                                         
                                         // Set the resource id and ret
                                         resource.set({id:newId});
+                                        
+                                        options.success(resource.toJSON()); 
                                    }
                                    else {
-                                        error = "Location not returned after resource "+action+".";
+                                        options.error("Location not returned after resource "+action+".");
                                    }
                                    
-                                   returnValue = resource.toJSON; 
+                                   
                               },
                               
                               error: self.setError
@@ -196,7 +197,8 @@ define(["jquery",
                     $.ajax({
                               async: false,
                               type: "DELETE",
-                              url: self.getURI(resource),
+                              crossDomain: true,
+                              url: self.getURI(resource, false),
                               dataType: "json",
                               beforeSend: self.setHeaderParams,
                               success: function(data, textStatus, XMLHttpRequest){
@@ -216,17 +218,14 @@ define(["jquery",
                     
                switch(method){  
                         case "create":  create(model); break;
+                        
+                        // if model.id exist, it is a model, otherwise a collection so we retrieve all its items
                         case "read":    model.id != undefined ? find(model) : findAll(model); break;  
                         case "update":  update(model); break;
                         case "delete":  destroy(model); break;
                }
 
                 
-                
-                if(returnValue)
-                    options.success(returnValue);
-                else
-                    options.error(error);
              
              };
              

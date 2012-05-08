@@ -1,4 +1,4 @@
-define(["jquery","underscore","backbone"],function($){
+define(["order!jquery","order!underscore","order!backbone"],function($){
     
     /**
      * User model
@@ -18,12 +18,12 @@ define(["jquery","underscore","backbone"],function($){
         },
         
         validate: function(attr){
-            if(attr.id){
-                //if((tmpId=this.get('id')) && tmpId!==attr.id)
-                //    return {attribute: "id", message: "'id' attribute can not be modified after initialization!"};
+            /*if(attr.id){
+                if((tmpId=this.get('id')) && tmpId!==attr.id)
+                    return {attribute: "id", message: "'id' attribute can not be modified after initialization!"};
                 if(!_.isNumber(attr.created_at))
                     return {attribute: "created_at", message: "'id' attribute must be a number!"};
-            }
+            }*/
             
             if(_.isUndefined(attr.user_extid) || (!_.isString(attr.nickname) && !_.isNumber(attr.user_extid)))
                 return {attribute: "user_extid", message: "'user_extid' must be a valid string or number."};

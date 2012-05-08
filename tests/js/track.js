@@ -1,10 +1,11 @@
 require(['domReady',
-         'order!jquery',
-         'order!models/track',
-         'order!access',
-         'order!libs/tests/qunit'],
+         'jquery',
+         'models/track',
+         'collections/tracks',
+         'access',
+         'libs/tests/qunit'],
                     
-        function(domReady,$,Track,ACCESS){
+        function(domReady,$,Track,Tracks, ACCESS){
         
             domReady(function(){
                 
@@ -12,7 +13,8 @@ require(['domReady',
 
                 module("Track",  {
                         setup: function() {
-                            track = new Track({name:'My test track'});
+                            var tracks = new Tracks([],{id:123,collection:{url:"test"}});
+                            track = tracks.create({name:'My test track'});
                         }
                 });
                 
@@ -36,7 +38,7 @@ require(['domReady',
                     track.set({created_at:12});
                     
                     var newDate = new Date().getTime();
-                    ok(newDate-track.get('created_at')<100, "Track  should has around "+newDate+" as created_at attribute.");
+                    ok(newDate-track.get('created_at')<100, "Track  should have around "+newDate+" as created_at attribute.");
                 });
                 
                 test("Description", function() {
@@ -50,7 +52,7 @@ require(['domReady',
                     
                     var desc = "Simple track created for unit tests.";
                     track.set({description:desc});
-                    equal(track.get('description'), desc, "Track  should has "+desc+" as description attribute.");
+                    equal(track.get('description'), desc, "Track  should have "+desc+" as description attribute.");
 
                 });
                 
@@ -65,7 +67,7 @@ require(['domReady',
                     
                     var newSettings = {color:"blue"};
                     track.set({settings:newSettings});
-                    equal(track.get('settings'), newSettings, "Track  should has "+newSettings+" as settings attribute.");
+                    equal(track.get('settings'), newSettings, "Track  should have "+newSettings+" as settings attribute.");
 
                 });
                 
@@ -79,7 +81,7 @@ require(['domReady',
                     track.set({access:"Tata"});
 
                     track.set({access:ACCESS.PRIVATE});
-                    equal(track.get('access'), ACCESS.PRIVATE, "track  should has "+ACCESS.PRIVATE+" as access attribute.");
+                    equal(track.get('access'), ACCESS.PRIVATE, "track  should have "+ACCESS.PRIVATE+" as access attribute.");
                 });   
             });
             

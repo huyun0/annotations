@@ -38,7 +38,7 @@ require(['domReady',
                     annotation.set({created_at:12});
                     
                     var newDate = new Date().getTime();
-                    ok(newDate-annotation.get('created_at')<100, "annotation  should has around "+newDate+" as created_at attribute.");
+                    ok(newDate-annotation.get('created_at')<100, "annotation  should have around "+newDate+" as created_at attribute.");
                 });
                 
                 test("Text", function() {
@@ -52,7 +52,7 @@ require(['domReady',
                     
                     var text = "Simple text created for unit tests.";
                     annotation.set({text:text});
-                    equal(annotation.get('text'), text, "annotation  should has "+text+" as text attribute.");
+                    equal(annotation.get('text'), text, "annotation  should have "+text+" as text attribute.");
 
                 });
                 
@@ -67,7 +67,7 @@ require(['domReady',
                     
                     var newStart = 12;
                     annotation.set({start:newStart});
-                    equal(annotation.get('start'), newStart, "annotation  should has "+newStart+" as start attribute.");
+                    equal(annotation.get('start'), newStart, "annotation  should have "+newStart+" as start attribute.");
                 });
                 
                 test("Duration", 3, function() {
@@ -84,7 +84,7 @@ require(['domReady',
                     
                     var newDuration = 12;
                     annotation.set({duration:newDuration});
-                    equal(annotation.get('duration'), newDuration, "annotation  should has "+newDuration+" as duration attribute.");
+                    equal(annotation.get('duration'), newDuration, "annotation  should have "+newDuration+" as duration attribute.");
                 });
                 
                 test("Access", function() {
@@ -97,7 +97,7 @@ require(['domReady',
                     annotation.set({access:"Tata"});
 
                     annotation.set({access:ACCESS.PRIVATE});
-                    equal(annotation.get('access'), ACCESS.PRIVATE, "annotation  should has "+ACCESS.PRIVATE+" as access attribute.");
+                    equal(annotation.get('access'), ACCESS.PRIVATE, "annotation  should have "+ACCESS.PRIVATE+" as access attribute.");
                 });
 
                 

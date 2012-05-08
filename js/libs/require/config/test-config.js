@@ -14,7 +14,7 @@ require.config({
         'order':'libs/require/order',
 	'domReady':'libs/require/domReady'
     },
-    waitSeconds: 10
+    waitSeconds: 30
 });
 
  

@@ -12,22 +12,20 @@ require(['domReady',
             domReady(function(){
                 QUnit.config.autostart = false;
                 
-                var user, base_user, users;
+                var user, base_user, users, config;
                 
-                module("User",  {
-                        setup: function() {
-                            users = new Users();
-                            user  = new User({user_extid:'testid',nickname:'pinguin'}); 
-                            users.add(user);
-                            Backbone.sync = AnnotationSync;
-                            base_user = user.clone();
-                            config = {
-                                restEndpointUrl: window.restUrl
-                            };
-                        }
-                });
+                users = new Users();
+                user  = new User({user_extid:'testid',nickname:'pinguin'}); 
+                users.add(user);
+                Backbone.sync = AnnotationSync;
+                base_user = user.clone();
+                config = {
+                    restEndpointUrl: window.restUrl
+                };
                 
-                
+                module("User");
+
+
                 test("Save user",function(){
                     stop();
                     
@@ -43,7 +41,8 @@ require(['domReady',
                                     ok(user.get('id')!==undefined,"Id has been set");
                                     start();
                                 }
-                    },config);
+                    },{
+                    restEndpointUrl: window.restUrl});
 
                 })
                 
@@ -60,7 +59,7 @@ require(['domReady',
                                     ok(true, "Got user in json:" + data);
                                     start();
                                 }
-                    },config);
+                    },{restEndpointUrl: window.restUrl});
                 })
                 
                  

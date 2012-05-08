@@ -17,11 +17,13 @@ require.config({
 });
 
 // Bootstrap function for main app
-require(['domReady!,order!jquery', 
-        'app'],
+require(['order!domReady',
+         'order!app'],
               
-        function ($,app) {
-            app.start();
+        function (domReady,app) {
+            domReady(function(){
+                app.start();
+            });
         }
 );
     

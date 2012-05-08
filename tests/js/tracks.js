@@ -13,15 +13,15 @@ require(['domReady',
 
                 module("Tracks",  {
                         setup: function() {
-                            tracks = new Tracks;
-                            track = new Track({name:"test track"});
-                            tracks.add([{name:"test1"},track]);
+                            tracks = new Tracks([],{id:123,collection:{ url:'test'}});
+                            track = tracks.create({name:"test track"});
+                            tracks.add([{name:"test1"}]);
                         }
                 });
                 
                 test("Add", 2, function() {
                     equal(tracks.size(),2,"Should have 2 elements");                 
-                    tracks.add(new Track({name:"test2"}));
+                    tracks.add([{name:"test2"}]);
                     equal(tracks.size(),3, "Should have 3 elements");
                 });
                 
@@ -34,6 +34,8 @@ require(['domReady',
                     tracks.remove(track)
                     equal(tracks.size(),1, "Should have 1 element");
                 });
+                
+                /* Persistence test for localstorage
                 
                 test("Persistence", function() {
                     tracks.fetch();
@@ -48,7 +50,7 @@ require(['domReady',
                     equal(newTracks.size(),1, "Should have 1 element");
                     
                     equal(savedTrack.get("id"),newTracks.pop().get('id'),"The id of the persistent track should be "+savedTrack.get("id"));
-                });
+                }); */
                   
             });
             

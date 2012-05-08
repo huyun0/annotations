@@ -38,7 +38,7 @@ require(['domReady',
                     
                     user.set({email:validEmail});
                     
-                    equal(validEmail, user.get("email") , "User should has "+validEmail+" as email address.");
+                    equal(validEmail, user.get("email") , "User should have "+validEmail+" as email address.");
                 });
                 
                 test("Nickname", function() {
@@ -46,7 +46,7 @@ require(['domReady',
 
                     user.set({nickname:newNickname});
                     
-                    equal(newNickname, user.get("nickname") , "User should has "+newNickname+" as nickname.");
+                    equal(newNickname, user.get("nickname") , "User should have "+newNickname+" as nickname.");
                 });
                 
             });

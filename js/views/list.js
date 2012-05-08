@@ -32,7 +32,7 @@ define(["jquery",
             if(!attr.annotations)
                 throw "The annotations have to be given to the annotate view.";
               
-            // Bind function to the good context 
+            // Bind functions to the good context 
             _.bindAll(this,'render','addOne','addList');
               
             this.annotations = attr.annotations;
@@ -93,10 +93,10 @@ define(["jquery",
            * Display the list
            */
           render: function(){
-            $(this.el).empty();
+            this.$el.empty();
             
             _.each(this.annotationViews,function(annView){
-                $(this.el).append(annView.render().$el);
+                this.$el.append(annView.render().$el);
             },this);
             
             return this;

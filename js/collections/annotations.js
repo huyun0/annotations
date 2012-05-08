@@ -1,12 +1,10 @@
-define(["jquery",
-        "models/annotation",
-        "models/video",
-        "models/track",
-        "underscore",
-        "backbone",
-        "localstorage"],
+define(["order!jquery",
+        "order!models/annotation",
+        "order!underscore",
+        "order!backbone",
+        "order!localstorage"],
     
-    function($,Annotation,Video,Track){
+    function($,Annotation){
     
         /**
          * Annotation collection
@@ -16,19 +14,25 @@ define(["jquery",
             model: Annotation,
             localStorage: new Backbone.LocalStorage("Annotations"),
             
-            initialize: function(models,video,track){
-                if(!(video && video instanceof Video))
-                    throw "The parent video of the annotations must be given!";
+            /**
+             * @constructor
+             */
+            initialize: function(models,track){
+                _.bindAll(this,"setUrl");
                 
-                this.url = "/videos/"+video.get("id");
-                
-                if(!(track && track instanceof Track)){
+                this.setUrl(track);
+            },
+            
+            /**
+             * Define the url from the collection with the given track
+             *
+             * @param {Track} track containing the annotations
+             */
+            setUrl: function(track){
+                if(!track || !track.id || !track.collection)
                      throw "The parent track of the annotations must be given!";
-                }
                 
-                this.url += "/tracks/"+track.get("id")+"/annotations";
-                
-                this.video = video;
+                this.url += track.collection.url+"/"+track.id+"/annotations";  
             }
         });
         

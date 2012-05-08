@@ -1,28 +1,44 @@
-define(["jquery", "require", "models/track", "underscore","backbone","localstorage"],function($,require){
+define(["order!jquery",
+        "order!models/track",
+        "order!underscore",
+        "order!backbone",
+        "order!localstorage"],
+       
+    function($,Track){
     
-    var Track = require("models/track");
-    
-    /**
-     * Tracks collection
-     * @class
-     */
-    var Tracks = Backbone.Collection.extend({
-        model: Track,
-        localStorage: new Backbone.LocalStorage("Tracks"),
+        /**
+         * Tracks collection
+         * @class
+         */
+        var Tracks = Backbone.Collection.extend({
+            model: Track,
+            localStorage: new Backbone.LocalStorage("Tracks"),
+            
+            /**
+             * @constructor
+             */
+            initialize: function(models,video){
         
-        initialize: function(models,video){     
-                var Video = require("models/video");
-    
-                if(!(video && video instanceof Video))
-                    throw "The parent video of the annotations must be given!";
+                    _.bindAll(this,"setUrl");
+                    
+                    this.setUrl(video);
+            },
+            
+            /**
+             * Define the url from the collection with the given video
+             *
+             * @param {Video} video containing the tracks
+             */
+            setUrl: function(video){
+                if(!video || !video.id || !video.collection)
+                     throw "The parent video of the tracks must be given!";
                 
-                this.url = "/videos/"+video.get("id")+"/tracks";
                 
-                this.video = video;
-        }
-    });
-    
-    return Tracks;
+                this.url += video.collection.url+"/"+video.id+"/annotations";  
+            }
+        });
+        
+        return Tracks;
 
 });
     
