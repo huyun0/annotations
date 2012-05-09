@@ -169,11 +169,10 @@ define(["jquery",
        * Get all the annotations for the current user
        */
        getAnnotations: function(){
-        var videos = new Videos();
-        var video = new Video();
+        var videos = new Videos;
+        var video = videos.create({video_extid:"test"});
         video.get("tracks").create({name:"default"})
         var track = video.get("tracks").pop();
-        videos.add(video);
         video.save();
  
         

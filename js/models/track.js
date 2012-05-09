@@ -28,8 +28,10 @@ define(["order!jquery",
                 this.set(newAttr);
                 
                 // If id not set, take the cid as default
-                if(!attr.id)
+                if(!attr.id){
                     this.set({id:this.cid});
+                    this.toCreate = true;
+                }
                 
                 this.set({annotations: new Annotations([],this)})
             },
@@ -62,7 +64,14 @@ define(["order!jquery",
                 if(attr.created_by && !(_.isNumber(attr.created_by) || attr.created_by instanceof User))
                     return "'created_by' attribute must be a number or an instance of 'User'";
                 
-            } 
+            },
+            
+            /**
+             * Modify the current url for the annotations collection
+             */
+            setUrl: function(){
+                this.get("annotations").setUrl(this);
+            }
         });
         
         return Track;

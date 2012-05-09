@@ -13,12 +13,12 @@
             require(['domReady!',
 		     'order!jquery',
 		     'order!tests/rest-user', // User tests file
-		     //'order!tests/rest-video-and-track', // Video tests file
+		     'order!tests/rest-video-and-track', // Video tests file
 		     //... add other test file here, files have to be in directory tests/js
 		     'order!libs/tests/qunit'
 		     ],
                     
-                function(dd,$){
+                function(domReady,$){
 		    
 		    $('button#start').on('click',function(){
 			window.restUrl = $('input#url').val();

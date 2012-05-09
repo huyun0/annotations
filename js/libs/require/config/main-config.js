@@ -18,9 +18,10 @@ require.config({
 
 // Bootstrap function for main app
 require(['order!domReady',
-         'order!app'],
+         'order!annotations-tool',
+         'order!annotations-tool-configuration'],
               
-        function (domReady,app) {
+        function (domReady,app,config) {
             domReady(function(){
                 app.start();
             });

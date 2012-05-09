@@ -13,8 +13,12 @@ define(["order!jquery","order!underscore","order!backbone"],function($){
             
             this.set(attr);
             
-            if(!attr.id)
-                this.set({id:this.cid});
+            if(!attr.id){
+                this.toCreate = true;
+            }
+            
+            this.POSTonPUT = true;
+            //    this.set({id:this.cid});
         },
         
         validate: function(attr){

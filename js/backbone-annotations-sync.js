@@ -15,7 +15,7 @@ define(["jquery",
                
                // Sync module configuration
                this.config = $.extend({
-                    restEndpointUrl: "http://localhost",
+                    restEndpointUrl: window.annotations ? window.annotations.restEndpointsUrl : "default",
                     headerParams: {
                          userId: "Annotations-User-Id",
                          token: "Annotations-User-Auth-Token"
@@ -27,10 +27,10 @@ define(["jquery",
                 *
                 * @param {Model, Collection} model model or collection to 
                 */
-               this.getURI = function(resource, isPut){
+               this.getURI = function(resource, withId){
                     if(resource.id !== undefined){
                          var uri = self.config.restEndpointUrl + resource.collection.url;
-                         if(!isPut)
+                         if(withId)
                               uri+="/" + resource.id;
                          return uri;
                     }
@@ -70,7 +70,7 @@ define(["jquery",
                 */
                var create = function(resource){
                     $.ajax({
-                              async: false,
+                              crossDomain: true,
                               type: "POST",
                               url: self.getURI(resource, false),
                               dataType: "json",
@@ -86,6 +86,9 @@ define(["jquery",
                                         
                                         // Set the resource id and ret
                                         resource.set({id:newId});
+                                        resource.toCreate = false;
+                                        if(resource.setUrl)
+                                             resource.setUrl();
                                         options.success(resource.toJSON());
                                    }
                                    else{
@@ -104,9 +107,9 @@ define(["jquery",
                 */
                var find = function(resource){
                     $.ajax({
-                              async: false,
+                              crossDomain: true,
                               type: "GET",
-                              url: self.getURI(resource, false),
+                              url: self.getURI(resource, true),
                               dataType: "json",
                               beforeSend: self.setHeaderParams,
                               success: function(data, textStatus, XMLHttpRequest){
@@ -124,7 +127,7 @@ define(["jquery",
                 */
                var findAll = function(resource){
                     $.ajax({
-                              async: false,
+                              crossDomain: true,
                               type: "GET",
                               url: self.getURI(resource, false),
                               dataType: "json",
@@ -135,14 +138,17 @@ define(["jquery",
                                     * TODO: In the future override the parse method from each collection
                                     *  to have more control on them
                                     */
+                                   var hasArray = false;
                                    if(_.isObject(data)){
                                         if(_.each(data,function(element,index){
-                                             if(_.isArray(element))
+                                             if(_.isArray(element)){
+                                                  hasArray = true;
                                                   options.success(element);
+                                             }
                                         }));
                                    }
                                    
-                                   if(_.isUndefined(returnValue))
+                                   if(!hasArray)
                                         options.error("List not found in response");
                               },
                               
@@ -157,14 +163,14 @@ define(["jquery",
                 */
                var update = function(resource){
                     $.ajax({
-                              async: false,
+                              crossDomain: true,
                               type: "PUT",
-                              url: self.getURI(resource, true),
+                              url: self.getURI(resource, !resource.toCreate),
                               data: JSON.parse(JSON.stringify(resource)),
                               beforeSend: self.setHeaderParams,
                               success: function(data, textStatus, XMLHttpRequest){
                                    
-                                   var action   = (XMLHttpRequest.status == 200 ? "update" : "creation");                          
+                                   var action   = (XMLHttpRequest.status == 201 ? "creation" : "update");                          
                                    var location = XMLHttpRequest.getResponseHeader('LOCATION');
                                    
                                    if(location){
@@ -173,8 +179,13 @@ define(["jquery",
                                         
                                         // Set the resource id and ret
                                         resource.set({id:newId});
-                                        
+                                        if(resource.setUrl)
+                                             resource.setUrl();
+                                        resource.toCreate = false;
                                         options.success(resource.toJSON()); 
+                                   }
+                                   else if(!resource.POSTonPUT && XMLHttpRequest.status != 201){
+                                        options.success(resource.toJSON());
                                    }
                                    else {
                                         options.error("Location not returned after resource "+action+".");
@@ -195,21 +206,17 @@ define(["jquery",
                 */
                var destroy = function(resource){
                     $.ajax({
-                              async: false,
+                              crossDomain: true,
                               type: "DELETE",
                               crossDomain: true,
-                              url: self.getURI(resource, false),
+                              url: self.getURI(resource, true),
                               dataType: "json",
                               beforeSend: self.setHeaderParams,
                               success: function(data, textStatus, XMLHttpRequest){
-                                   
-                                   if(XMLHttpRequest.status == 200){
-                                        returnValue = resource;
-                                   }
-                                   else{
-                                        error = "Waiting for status code 200 but got: "+XMLHttpRequest.status;
-                                        console.warn("Error during resource delete, "+XMLHttpRequest.status+", "+textStatus);  
-                                   }
+                                   if(XMLHttpRequest.status == 200)
+                                        options.success(resource); 
+                                   else
+                                        option.error("Waiting for status code 200 but got: "+XMLHttpRequest.status);
                               },
                               error: self.setError
                     });
@@ -217,11 +224,11 @@ define(["jquery",
                
                     
                switch(method){  
-                        case "create":  create(model); break;
+                        case "create":  (model.toCreate && !model.POSTonPUT) ? create(model) : update(model); break; break;
                         
                         // if model.id exist, it is a model, otherwise a collection so we retrieve all its items
                         case "read":    model.id != undefined ? find(model) : findAll(model); break;  
-                        case "update":  update(model); break;
+                        case "update":  (model.toCreate && !model.POSTonPUT) ? create(model) : update(model); break;
                         case "delete":  destroy(model); break;
                }
 

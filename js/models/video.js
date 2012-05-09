@@ -13,16 +13,16 @@ define(["jquery",
             
             initialize: function(attr){
                     
-                this.set({id: this.cid,
-                         created_at:(new Date()).getTime()
-                         });
+                this.set({created_at:(new Date()).getTime()});
     
-                if(!attr || !attr.id)
+                if(!attr || !attr.id){
                     this.set({id:this.cid});
+                    this.toCreate = true;
+                }
                 
                 this.set({tracks: new Tracks([],this)})
                 
-                this.basicSave = this.save;
+                this.POSTonPUT = true;
             },
             
             validate: function(attr){
@@ -46,7 +46,14 @@ define(["jquery",
                 
                 if(attr.tracks && !(attr.tracks instanceof Tracks))
                     return "'tracks' attribute must be an instance of 'Tracks'";
-            } 
+            },
+            
+            /**
+             * Modify the current url for the tracks collection
+             */
+            setUrl: function(){
+                this.get("tracks").setUrl(this);
+            }
         });
         
         return Video;

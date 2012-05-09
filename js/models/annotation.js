@@ -24,6 +24,8 @@ define(["order!jquery",
                 if(!attr || _.isUndefined(attr.start))
                     throw "'start' attribute is required";
                 
+                this.toCreate = true;
+                
                 var newAttr = {};
                 $.extend(newAttr,{created_at:(new Date()).getTime()},attr);
                 
@@ -32,8 +34,10 @@ define(["order!jquery",
                     
                 this.set(newAttr);
                 
-                if(!attr.id)
+                if(!attr.id){
                     this.set({id:this.cid});
+                    this.toCreate = true;
+                }
             },
             
             validate: function(attr){

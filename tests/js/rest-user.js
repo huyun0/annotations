@@ -15,7 +15,7 @@ require(['domReady',
                 var user, base_user, users, config;
                 
                 users = new Users();
-                user  = new User({user_extid:'testid',nickname:'pinguin'}); 
+                user  = new User({user_extid:'testid',user_id:'testid',nickname:'pinguin', email: "test@dot.com"}); 
                 users.add(user);
                 Backbone.sync = AnnotationSync;
                 base_user = user.clone();
@@ -56,7 +56,7 @@ require(['domReady',
                                 },
                                 
                                 success: function(data){
-                                    ok(true, "Got user in json:" + data);
+                                    ok(true, "Got user in json");
                                     start();
                                 }
                     },{restEndpointUrl: window.restUrl});
