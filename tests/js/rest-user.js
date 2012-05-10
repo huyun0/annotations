@@ -40,7 +40,7 @@ require(['domReady',
                     });
                 })
                 
-                test("Get user",1,function(){
+                test("Get user",function(){
                     stop();
                     
                     AnnotationSync('read',user,{
@@ -50,7 +50,11 @@ require(['domReady',
                                 },
                                 
                                 success: function(data){
-                                    ok(true, "Got user in json");
+                                    ok(_.isObject(data), "Got user in json");
+                                    ok(data.id, "Id is "+data.id);
+                                    equal(data.user_extid, user.get("user_extid"), "Extid is correct");
+                                    equal(data.nickname, user.get("nickname"), "Nickname is correct");
+                                    equal(data.email, user.get("email"), "Email is correct");
                                     start();
                                 }
                     });

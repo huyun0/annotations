@@ -36,7 +36,7 @@ define(["jquery",
                               return resource.collection.url;
                     }
                     else{
-                         return resource.url();
+                         return _.isFunction(resource.url)?resource.url():resource.url;
                     }
                }
                
@@ -70,6 +70,7 @@ define(["jquery",
                     $.ajax({
                               crossDomain: true,
                               type: "POST",
+                              async: false,
                               url: self.getURI(resource, false),
                               dataType: "json",
                               data: JSON.parse(JSON.stringify(resource)),
@@ -141,6 +142,7 @@ define(["jquery",
                                         if(_.each(data,function(element,index){
                                              if(_.isArray(element)){
                                                   hasArray = true;
+                                                  resource.add(element);
                                                   options.success(element);
                                              }
                                         }));
@@ -162,8 +164,9 @@ define(["jquery",
                var update = function(resource){
                     $.ajax({
                               crossDomain: true,
+                              async: false,
                               type: "PUT",
-                              url: self.getURI(resource, !resource.toCreate),
+                              url: self.getURI(resource, (!resource.toCreate && !resource.noPOST)),
                               data: JSON.parse(JSON.stringify(resource)),
                               beforeSend: self.setHeaderParams,
                               success: function(data, textStatus, XMLHttpRequest){
@@ -180,7 +183,7 @@ define(["jquery",
                                         if(resource.setUrl)
                                              resource.setUrl();
                                         resource.toCreate = false;
-                                        options.success(resource.toJSON()); 
+                                        options.success(resource.toJSON(),newId); 
                                    }
                                    else if(!resource.POSTonPUT && XMLHttpRequest.status != 201){
                                         options.success(resource.toJSON());

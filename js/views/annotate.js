@@ -63,8 +63,8 @@ define(["jquery",
             
             var annotation = new Annotation({text:value, start:time});
             
-            if(window.annotationsUser)
-              annotation.set({created_by: annotationsUser});
+            if(annotationsTool.user)
+              annotation.set({created_by: annotationsTool.user});
               
             this.annotations.add(annotation);
           }

@@ -38,12 +38,15 @@ define(["order!jquery",
             
             validate: function(attr){
                 
-                /*if(attr.id){
-                    if((tmpId=this.get('id')) && tmpId!==attr.id)
-                        return "'id' attribute can not be modified after initialization!";
-                    if(!_.isNumber(attr.id))
-                        return "'id' attribute must be a number!";
-                }*/
+                if(attr.id){
+                    if((tmpId=this.get('id')) && tmpId!==attr.id){
+                        this.id = attr.id;
+                        this.setUrl();
+                    }
+                    //    return "'id' attribute can not be modified after initialization!";
+                    //if(!_.isNumber(attr.id))
+                    //    return "'id' attribute must be a number!";
+                }
                 
                 if(attr.created_at){
                     if((tmpCreated=this.get('created_at')) && tmpCreated!==attr.created_at)
@@ -55,8 +58,8 @@ define(["order!jquery",
                 if(attr.description && !_.isString(attr.description))
                     return "'description' attribute must be a string";
                 
-                if(attr.settings && !_.isObject(attr.settings))
-                    return "'description' attribute must be an JSON Object";
+                if(attr.settings && !_.isString(attr.settings))
+                    return "'description' attribute must be a string";
                 
                 if(attr.access &&  !_.include(ACCESS,attr.access))
                     return "'access' attribute is not valid.";

@@ -19,12 +19,12 @@ define(['order!domReady',
             
             
             /* Function to get the current video id (video_extid) */
-            getVideoId: function(){
-                return _.last($('video')[0].src.split("/"));
+            getVideoExtId: function(){
+                return $('video')[0].id;
             },
             
             /* Function to get the user id from the current context (user_extid) */
-            getUserId: function(){
+            getUserExtId: function(){
                 return "default";
             }
         };

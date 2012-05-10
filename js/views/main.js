@@ -55,10 +55,10 @@ define(["jquery",
         this.loadingBox.find('.bar').width('20%');
         
         // Create a new users collection and get exciting local user
-        this.users = new Users();
-        Backbone.localSync("read",this.users,{
+        annotationsTool.users = new Users();
+        Backbone.localSync("read",annotationsTool.users,{
           success: function(data){
-              users.add(data);
+              annotationsTool.users.add(data);
           },
           error: function(error){
             console.warn(error);
@@ -69,8 +69,8 @@ define(["jquery",
         this.loadingBox.find('.bar').width('35%');
         
         // If a user has been saved locally, we take it as current user
-        if(this.users.length >0){
-            annotationsTool.user = this.users.pop();
+        if(annotationsTool.users.length >0){
+            annotationsTool.user = annotationsTool.users.at(0);
             this.createViews();
         }
         else{
@@ -94,21 +94,21 @@ define(["jquery",
         this.loadingBox.find('.bar').width('50%');
         
         this.loaded =true,
-        this.getAnnotations();
         
-        this.loadingBox.find('.bar').width('90%');
-        
-        // Create views to annotate and see annotations list
-        (new Annotate({playerAdapter: this.playerAdapter, annotations: this.annotations})).$el.show();
-        
-        this.loadingBox.find('.bar').width('100%');
-        
-        (new List({annotations: this.annotations})).$el.show();
-        
-        this.loadingBox.hide();
-        
-        $('#video-container').show();
-        
+        this.getAnnotations($.proxy(function(){
+          this.loadingBox.find('.bar').width('90%');
+          
+          // Create views to annotate and see annotations list
+          (new Annotate({playerAdapter: this.playerAdapter, annotations: this.annotations})).$el.show();
+          
+          this.loadingBox.find('.bar').width('100%');
+          
+          (new List({annotations: this.annotations})).$el.show();
+          
+          this.loadingBox.hide();
+          
+          $('#video-container').show();
+        },this));        
       },
       
 
@@ -120,7 +120,7 @@ define(["jquery",
        */
       getCurrentUser: function(){
         // Fields from the login form
-        var userId          = this.userModal.find('#user_extid');
+        var userId          = annotationsTool.getUserExtId();
         var userNickname    = this.userModal.find('#nickname');
         var userEmail       = this.userModal.find('#email');
         var userRemember    = this.userModal.find('#remember');
@@ -133,7 +133,7 @@ define(["jquery",
         
         // Try to create a new user
         try{
-            user = new User({user_extid: userId.val(), nickname: userNickname.val()});
+            user = annotationsTool.users.create({user_extid: userId, nickname: userNickname.val()});
             
             // Bind the error user to a function to display the errors
             user.bind('error',$.proxy(function(model,error){
@@ -158,9 +158,17 @@ define(["jquery",
         
         // If we have to remember the user
         if(userRemember.is(':checked')){
-            this.users.add(user);
-            user.save();        
+            annotationsTool.users.add(user);
+            Backbone.localSync("create",user,{
+              success: function(data){
+                  console.log("current user saved locally");
+              },
+              error: function(error){
+                console.warn(error);
+              }
+            })
         }
+        user.save();
 
         annotationsTool.user = user;
         this.userModal.modal("toggle");
@@ -175,33 +183,57 @@ define(["jquery",
       /**
        * Get all the annotations for the current user
        */
-       getAnnotations: function(){
-        var videos = new Videos;
-        var video = videos.create({video_extid:"test"});
-        video.get("tracks").create({name:"default"})
-        var track = video.get("tracks").pop();
-        video.save();
- 
+       getAnnotations: function(callback){
+        var videos,video,tracks, track;
         
-        
-        // Create an annotations collection an get all the annotations
-        this.annotations = track.get("annotations");
-        this.annotations.fetch();
-        
-        /**
-         *  Bind the basic annotations event to their related operation
-         */
-        this.annotations.bind('destroy',function(annotation){
-            this.annotations.remove(annotation);
+        var endGetAnnotations = $.proxy(function(){
+              this.annotations = track.get("annotations");
+              
+             // Create an annotations collection an get all the annotations
+             this.annotations.fetch();
+             
+             /**
+              *  Bind the basic annotations event to their related operation
+              */
+             this.annotations.bind('destroy',function(annotation){
+                 this.annotations.remove(annotation);
+             },this);
+             
+             this.annotations.bind('jumpto',function(start){
+                 this.playerAdapter.setCurrentTime(start);
+             },this);
+             
+             this.annotations.bind('add',function(annotation){
+                 annotation.save();
+             },this);
+             
+             callback();  
         },this);
         
-        this.annotations.bind('jumpto',function(start){
-            this.playerAdapter.setCurrentTime(start);
-        },this);
+        videos = new Videos;
+        videos.add({video_extid:annotationsTool.getVideoExtId()});
+        video = videos.at(0);
         
-        this.annotations.bind('add',function(annotation){
-            annotation.save();
+        // Wait that the video is well saved (to have a good id)
+        video.save(video,{
+            success: function(data){
+              video.fetch({success: function(){
+              tracks = video.get("tracks");
+              tracks.fetch({success: function(){
+                if(tracks.length == 0){
+                  tracks.add({name:"default"});
+                  track = tracks.at(0);
+                  track.save(track,{success: endGetAnnotations});
+                }
+                else{
+                  track = tracks.at(0);
+                  endGetAnnotations();
+                }
+              }});  
+            }}); 
+          }
         });
+
       }
     });
         
