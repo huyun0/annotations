@@ -12,31 +12,27 @@
         <script>
             require(['domReady!',
 		     'order!jquery',
+		     'order!annotations-tool-configuration',
 		     'order!tests/rest-user', // User tests file
-		     'order!tests/rest-video-and-track', // Video tests file
+		     'order!tests/rest-video-and-track',
 		     //... add other test file here, files have to be in directory tests/js
 		     'order!libs/tests/qunit'
 		     ],
                     
                 function(domReady,$){
-		    
-		    $('button#start').on('click',function(){
-			window.restUrl = $('input#url').val();
-			QUnit.start();
-		    });
-		    
-		    
+		    QUnit.config.reorder = false;
+		    QUnit.start();
 		});
         </script>
 
     </head>
     <body>
-	<h2>Insert the base url from the Rest Endpoint: <input id="url" type="text"></input><button id="start">Run Test</button></h2>
         <h1 id="qunit-header">Rest</h1>
         <h2 id="qunit-banner"></h2>
         <div id="qunit-testrunner-toolbar"></div>
         <h2 id="qunit-userAgent"></h2>
         <ol id="qunit-tests"></ol>
         <div id="qunit-fixture">test markup, will be hidden</div>
+	<video></video>
     </body>
 </html>

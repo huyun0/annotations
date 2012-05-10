@@ -9,18 +9,17 @@ define(["jquery",
              *
              * Has to be used to add persistence with the annotations model and the REST API
              */
-            var AnnotationsSync = function(method, model, options, config){
+            var AnnotationsSync = function(method, model, options){
              
                var self = this;
                
                // Sync module configuration
-               this.config = $.extend({
-                    restEndpointUrl: window.annotations ? window.annotations.restEndpointsUrl : "default",
+               this.config = {
                     headerParams: {
                          userId: "Annotations-User-Id",
                          token: "Annotations-User-Auth-Token"
                     }
-               },config);
+               };
                
                /**
                 * Get the URI for the given resource
@@ -28,17 +27,16 @@ define(["jquery",
                 * @param {Model, Collection} model model or collection to 
                 */
                this.getURI = function(resource, withId){
-                    if(resource.id !== undefined){
-                         var uri = self.config.restEndpointUrl + resource.collection.url;
-                         if(withId)
-                              uri+="/" + resource.id;
-                         return uri;
-                    }
-                    else if(resource.collection !== undefined){
-                         return self.config.restEndpointUrl + resource.collection.url;
+                    
+                    // If the resource has an id, it means that it's a model
+                    if(resource.collection !== undefined){
+                         if(withId && resource.id !== undefined)
+                              return resource.url();
+                         else
+                              return resource.collection.url;
                     }
                     else{
-                         return self.config.restEndpointUrl + resource.url;
+                         return resource.url();
                     }
                }
                
@@ -56,8 +54,8 @@ define(["jquery",
                 * Set the HTTP hedaer before to send the request
                 */
                this.setHeaderParams = function(xhr) {
-                                   if(!_.isUndefined(window.annotationUser))
-                                        xhr.setRequestHeader(self.config.headerParams.userId, annotationUser.get('id'));
+                                   if(!_.isUndefined(window.annotationsTool) && !_.isUndefined(window.annotationsTool.user))
+                                        xhr.setRequestHeader(self.config.headerParams.userId, annotationsTool.user.id);
                
                                    // Only for sprint 2
                                    // xhr.setRequestHeader(self.config.headerParams.token, token); 
@@ -223,12 +221,15 @@ define(["jquery",
                };
                
                     
-               switch(method){  
-                        case "create":  (model.toCreate && !model.POSTonPUT) ? create(model) : update(model); break; break;
+               switch(method){
+                         // If model has been created and is not a model with only PUT method supported, POST method is used
+                        case "create":
+                        case "update":
+                                        (model.toCreate && !model.noPOST) ? create(model) : update(model); break;
                         
-                        // if model.id exist, it is a model, otherwise a collection so we retrieve all its items
-                        case "read":    model.id != undefined ? find(model) : findAll(model); break;  
-                        case "update":  (model.toCreate && !model.POSTonPUT) ? create(model) : update(model); break;
+                        // If model.id exist, it is a model, otherwise a collection so we retrieve all its items
+                        case "read":    model.id != undefined ? find(model) : findAll(model); break;
+                        
                         case "delete":  destroy(model); break;
                }
 

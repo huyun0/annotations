@@ -32,7 +32,7 @@ define(["order!jquery",
                 if(!track || !track.id || !track.collection)
                      throw "The parent track of the annotations must be given!";
                 
-                this.url = track.collection.url+"/"+track.id+"/annotations";  
+                this.url = track.url() + "/annotations";  
             }
         });
         

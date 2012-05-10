@@ -1,5 +1,6 @@
 require(['domReady',
          'jquery',
+         'require',
 	 'models/user',
          'collections/users',
          'backbone-annotations-sync',
@@ -7,24 +8,19 @@ require(['domReady',
          'order!backbone',
          'order!libs/tests/qunit'],
                     
-        function(domReady,$,User, Users, AnnotationSync){
-        
+        function(domReady, $, require, User, Users, AnnotationSync){
             domReady(function(){
                 QUnit.config.autostart = false;
                 
                 var user, base_user, users, config;
                 
                 users = new Users();
-                user  = new User({user_extid:'testid',user_id:'testid',nickname:'pinguin', email: "test@dot.com"}); 
+                user  = new User({user_extid:'testid',nickname:'pinguin', email: "test@dot.com"}); 
                 users.add(user);
                 Backbone.sync = AnnotationSync;
                 base_user = user.clone();
-                config = {
-                    restEndpointUrl: window.restUrl
-                };
                 
                 module("User");
-
 
                 test("Save user",function(){
                     stop();
@@ -37,13 +33,11 @@ require(['domReady',
                                 
                                 success: function(data){
                                     ok(true, "Saved successfully");
-                                    
-                                    ok(user.get('id')!==undefined,"Id has been set");
+                                    ok(user.id!==undefined,"Id has been set");
+                                    window.annotationsTool.user = user;
                                     start();
                                 }
-                    },{
-                    restEndpointUrl: window.restUrl});
-
+                    });
                 })
                 
                 test("Get user",1,function(){
@@ -59,8 +53,8 @@ require(['domReady',
                                     ok(true, "Got user in json");
                                     start();
                                 }
-                    },{restEndpointUrl: window.restUrl});
-                })
+                    });
+                });
                 
                  
             });

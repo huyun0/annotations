@@ -34,7 +34,7 @@ define(["order!jquery",
                      throw "The parent video of the tracks must be given!";
                 
                 
-                this.url = video.collection.url+"/"+video.id+"/tracks";  
+                this.url = video.url() + "/tracks";  
             }
         });
         

@@ -12,8 +12,11 @@ define(["jquery",
          */
         var Users = Backbone.Collection.extend({
             model: User,
-            url: "/users",
-            localStorage: new Backbone.LocalStorage("Users")
+            localStorage: new Backbone.LocalStorage("Users"),
+            
+            initialize: function(){
+                this.url = window.annotationsTool.restEndpointsUrl + "/users";
+            }
         });
         
         return Users;

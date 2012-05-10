@@ -6,7 +6,7 @@ define(['order!jquery',
             
             return {
                 start: function() {
-                    var playerAdapter = annotations.playerAdapter;
+                    var playerAdapter = annotationsTool.playerAdapter;
                     
                     var mainView = new MainView(playerAdapter);
                 }

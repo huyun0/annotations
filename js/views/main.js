@@ -56,14 +56,21 @@ define(["jquery",
         
         // Create a new users collection and get exciting local user
         this.users = new Users();
-        this.users.fetch();
+        Backbone.localSync("read",this.users,{
+          success: function(data){
+              users.add(data);
+          },
+          error: function(error){
+            console.warn(error);
+          }
+        })
         
         
         this.loadingBox.find('.bar').width('35%');
         
         // If a user has been saved locally, we take it as current user
         if(this.users.length >0){
-            window.annotationsUser = this.users.pop();
+            annotationsTool.user = this.users.pop();
             this.createViews();
         }
         else{
@@ -73,7 +80,7 @@ define(["jquery",
             this.userModal.modal({show: true, backdrop: true, keyboard: false });
             this.userModal.on("hide",function(){
                 // If user not set, display the login window again
-                if(_.isUndefined(window.annotationsUser))
+                if(_.isUndefined(annotationsTool.user))
                     setTimeout(function(){$('#user-login').modal('show')},5);
             });
         }
@@ -155,7 +162,7 @@ define(["jquery",
             user.save();        
         }
 
-        window.annotationsUser = user;
+        annotationsTool.user = user;
         this.userModal.modal("toggle");
         
         if(!this.loaded)

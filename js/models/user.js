@@ -17,7 +17,9 @@ define(["order!jquery","order!underscore","order!backbone"],function($){
                 this.toCreate = true;
             }
             
-            this.POSTonPUT = true;
+            // Define that all post operation have to been done through PUT method
+            // see in wiki
+            this.noPOST = true;
             //    this.set({id:this.cid});
         },
         

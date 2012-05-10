@@ -22,7 +22,9 @@ define(["jquery",
                 
                 this.set({tracks: new Tracks([],this)})
                 
-                this.POSTonPUT = true;
+                // Define that all post operation have to been done through PUT method
+                // see in wiki
+                this.noPOST = true;
             },
             
             validate: function(attr){

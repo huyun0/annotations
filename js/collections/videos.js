@@ -12,8 +12,11 @@ define(["order!jquery",
          */
         var Videos = Backbone.Collection.extend({
             model: Video,
-            url: "/videos",
-            localStorage: new Backbone.LocalStorage("Videos")
+            localStorage: new Backbone.LocalStorage("Videos"),
+            
+            initialize: function(){
+                this.url = window.annotationsTool.restEndpointsUrl + "/videos";
+            }
         });
         
         return Videos;
