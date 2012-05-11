@@ -199,15 +199,15 @@ define(["jquery",
                  this.annotations.remove(annotation);
              },this);
              
-             this.annotations.bind('jumpto',function(start){
+             this.annotations.bind('reset',function(annotation){
+              
+              this.annotations.bind('jumpto',function(start){
                  this.playerAdapter.setCurrentTime(start);
+              },this);
+              
+              callback();
              },this);
-             
-             this.annotations.bind('add',function(annotation){
-                 annotation.save();
-             },this);
-             
-             callback();  
+               
         },this);
         
         videos = new Videos;

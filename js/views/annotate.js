@@ -67,6 +67,7 @@ define(["jquery",
               annotation.set({created_by: annotationsTool.user});
               
             this.annotations.add(annotation);
+            annotation.save();
           }
           
         });
