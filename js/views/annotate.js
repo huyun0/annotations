@@ -56,6 +56,7 @@ define(["jquery",
            */
           insert: function(){
             var value = this.input.val();
+            this.input.val('');
             var time = this.playerAdapter.getCurrentTime();
             
             if(!value || (!_.isNumber(time) || time < 0))

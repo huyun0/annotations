@@ -190,24 +190,20 @@ define(["jquery",
               this.annotations = track.get("annotations");
               
              // Create an annotations collection an get all the annotations
-             this.annotations.fetch();
-             
-             /**
-              *  Bind the basic annotations event to their related operation
-              */
-             this.annotations.bind('destroy',function(annotation){
-                 this.annotations.remove(annotation);
-             },this);
-             
-             this.annotations.bind('reset',function(annotation){
-              
+             this.annotations.fetch({success: $.proxy(function(){
               this.annotations.bind('jumpto',function(start){
                  this.playerAdapter.setCurrentTime(start);
               },this);
               
+              /**
+              *  Bind the basic annotations event to their related operation
+              */
+              this.annotations.bind('destroy',function(annotation){
+                 this.annotations.remove(annotation);
+              },this);
+             
               callback();
-             },this);
-               
+             }, this)});
         },this);
         
         videos = new Videos;
@@ -217,7 +213,7 @@ define(["jquery",
         // Wait that the video is well saved (to have a good id)
         video.save(video,{
             success: function(data){
-              video.fetch({success: function(){
+              //videos.fetch({success: function(){
               tracks = video.get("tracks");
               tracks.fetch({success: function(){
                 if(tracks.length == 0){
@@ -229,8 +225,8 @@ define(["jquery",
                   track = tracks.at(0);
                   endGetAnnotations();
                 }
-              }});  
-            }}); 
+              }});
+            //}}); 
           }
         });
 
