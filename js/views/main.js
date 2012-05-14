@@ -48,7 +48,7 @@ define(["jquery",
         
         _.bindAll(this,"getCurrentUser","getAnnotations","createViews");
         
-        Backbone.sync = AnnotationSync;
+        //Backbone.sync = AnnotationSync;
         
         this.playerAdapter = playerAdapter;
         
