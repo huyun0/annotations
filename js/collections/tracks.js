@@ -24,6 +24,10 @@ define(["order!jquery",
                     this.setUrl(video);
             },
             
+            parse: function(resp, xhr) {
+              return resp.tracks;
+            },
+            
             /**
              * Define the url from the collection with the given video
              *

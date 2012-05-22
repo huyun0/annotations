@@ -44,11 +44,25 @@ define(["jquery",
                     return $.ajax({
                          url: url,
                          async: false,
-                         success: function(data, textStatus, XMLHttpRequest) {                         
+                         success: function(data, textStatus, XMLHttpRequest) {
+                              // Update the resource and return
+                              resource.set({id: data.id});
+                              
+                              var created_at = data.created_at != null ? Date.parse(data.created_at): null;
+                              var updated_at = data.updated_at != null ? Date.parse(data.updated_at): null;
+                              var deleted_at = data.deleted_at != null ? Date.parse(data.deleted_at): null;
+                              
+                              resource.set({created_at: created_at});
+                              resource.set({created_by: data.created_by});
+                              resource.set({updated_at: updated_at});
+                              resource.set({updated_by: data.updated_by});
+                              resource.set({deleted_at: deleted_at});
+                              resource.set({deleted_by: data.deleted_by});
+                              
                               resource.toCreate = false;
                               if(resource.setUrl)
                                    resource.setUrl();
-                              options.success(data, textStatus, XMLHttpRequest);
+                              options.success(resource.toJSON());
                          },
                          error: self.setError
                     });

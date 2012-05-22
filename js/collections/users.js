@@ -16,6 +16,10 @@ define(["jquery",
             
             initialize: function(){
                 this.url = window.annotationsTool.restEndpointsUrl + "/users";
+            },
+            
+            parse: function(resp, xhr) {
+              return resp.users;
             }
         });
         

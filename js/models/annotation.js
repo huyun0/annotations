@@ -13,26 +13,25 @@ define(["order!jquery",
         var Annotation = Backbone.Model.extend({
             
             defaults: {
-                access: ACCESS.PUBLIC    
+                access: ACCESS.PUBLIC,
+                created_at: null,
+                created_by: null,
+                updated_at: null,
+                updated_by: null,
+                deleted_at: null,
+                deleted_by: null
             },
             
             // Logs
-            created_at: 0,
-            created_by: null,
+
             
             initialize: function(attr){
                 if(!attr || _.isUndefined(attr.start))
                     throw "'start' attribute is required";
                 
                 this.toCreate = true;
-                
-                var newAttr = {};
-                $.extend(newAttr,{created_at:(new Date()).getTime()},attr);
-                
-                if(newAttr.created_by && _.isObject(attr.created_by))
-                    newAttr.created_by = new User(attr.created_by);
                     
-                this.set(newAttr);
+                this.set(attr);
                 
                 if(!attr.id){
                     this.set({id:this.cid});
@@ -40,20 +39,20 @@ define(["order!jquery",
                 }
             },
             
+            parse: function(attr) {    
+                attr.created_at = attr.created_at != null ? Date.parse(attr.created_at): null;
+                attr.updated_at = attr.updated_at != null ? Date.parse(attr.updated_at): null;
+                attr.deleted_at = attr.deleted_at != null ? Date.parse(attr.deleted_at): null;
+                return attr;
+            },
+            
             validate: function(attr){
                 
                 if(attr.id){
                     //if((tmpId=this.get('id')) && tmpId!==attr.id)
-                    //    return "'id' attribute can not be modified after initialization!";
-                    if(!_.isNumber(attr.created_at))
+                    //    return "'id' attribute can not be modified after initialization!";              
+                    if(this.cid != attr.id && !_.isNumber(attr.id))
                         return "'id' attribute must be a number!";
-                }
-                
-                if(attr.created_at){
-                    if((tmpCreated=this.get('created_at')) && tmpCreated!==attr.created_at)
-                        return "'created_at' attribute can not be modified after initialization!";
-                    if(!_.isNumber(attr.created_at))
-                        return "'created_at' attribute must be a number!";
                 }
                 
                 if(attr.start &&  !_.isNumber(attr.start))
@@ -65,11 +64,34 @@ define(["order!jquery",
                 if(attr.duration &&  (!_.isNumber(attr.duration) || (_.isNumber(attr.duration) && attr.duration < 0)))
                     return "'duration' attribute must be a positive number";
                 
-                if(attr.access &&  !_.include(ACCESS,attr.access))
+                if(attr.access && !_.include(ACCESS,attr.access))
                     return "'access' attribute is not valid.";
                 
                 if(attr.created_by && !(_.isNumber(attr.created_by) || attr.created_by instanceof User))
                     return "'created_by' attribute must be a number or an instance of 'User'";
+            
+                if(attr.updated_by && !(_.isNumber(attr.updated_by) || attr.updated_by instanceof User))
+                    return "'updated_by' attribute must be a number or an instance of 'User'";
+                
+                if(attr.deleted_by && !(_.isNumber(attr.deleted_by) || attr.deleted_by instanceof User))
+                    return "'deleted_by' attribute must be a number or an instance of 'User'";
+            
+                if(attr.created_at){
+                    if((tmpCreated=this.get('created_at')) && tmpCreated!==attr.created_at)
+                        return "'created_at' attribute can not be modified after initialization!";
+                    if(!_.isNumber(attr.created_at))
+                        return "'created_at' attribute must be a number!";
+                }
+        
+                if(attr.updated_at){
+                    if(!_.isNumber(attr.updated_at))
+                        return "'updated_at' attribute must be a number!";
+                }
+
+                if(attr.deleted_at){
+                    if(!_.isNumber(attr.deleted_at))
+                        return "'deleted_at' attribute must be a number!";
+                }
                 
             } 
         });

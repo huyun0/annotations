@@ -213,7 +213,6 @@ define(["jquery",
         // Wait that the video is well saved (to have a good id)
         video.save(video,{
             success: function(data){
-              //videos.fetch({success: function(){
               tracks = video.get("tracks");
               tracks.fetch({success: function(){
                 if(tracks.length == 0){
@@ -226,7 +225,6 @@ define(["jquery",
                   endGetAnnotations();
                 }
               }});
-            //}}); 
           }
         });
 

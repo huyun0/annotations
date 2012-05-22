@@ -23,6 +23,10 @@ define(["order!jquery",
                 this.setUrl(track);
             },
             
+            parse: function(resp, xhr) {
+              return resp.items;
+            },
+            
             /**
              * Define the url from the collection with the given track
              *
