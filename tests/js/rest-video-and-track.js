@@ -29,6 +29,7 @@ require(['domReady',
                     var userExtId = window.annotationsTool.getUserExtId();
                     users.create({user_extid:userExtId,nickname:'pinguin', email: "test@dot.com"});
                     user = users.at(0);
+                    window.annotationsTool.user = user;
                 }
                 
                 var loadVideo = function(){

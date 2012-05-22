@@ -42,8 +42,11 @@ define(["jquery",
                
                this.getServerSideUpdates = function(url, resource, options) {
                     return $.ajax({
+                         crossDomain: true,
                          url: url,
                          async: false,
+                         dataType: "json",
+                         beforeSend: self.setHeaderParams,
                          success: function(data, textStatus, XMLHttpRequest) {                         
                               resource.toCreate = false;
                               if(resource.setUrl)
@@ -186,7 +189,6 @@ define(["jquery",
                     $.ajax({
                               crossDomain: true,
                               type: "DELETE",
-                              crossDomain: true,
                               url: self.getURI(resource, true),
                               dataType: "json",
                               beforeSend: self.setHeaderParams,

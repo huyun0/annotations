@@ -17,7 +17,7 @@ require(['domReady',
                 
                 users = new Users();
                 var userExtId = window.annotationsTool.getUserExtId();
-                user = new User({user_extid:userExtId,nickname:'pinguin', email: "test@dot.com"}); 
+                user = new User({user_extid:userExtId,nickname:'pinguin', email: "test@dot.com"});
                 users.add(user);
                 
                 module("User");
@@ -34,6 +34,7 @@ require(['domReady',
                         success: function(data){
                             ok(true, "Saved successfully");
                             ok(user.id!==undefined,"Id has been set");
+                            window.annotationsTool.user = user;
                             start();
                         }
                     });
