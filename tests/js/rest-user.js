@@ -64,6 +64,8 @@ require(['domReady',
                     });
                 });
                 
+                 /* Sprint X
+                
                 test("Delete user",1,function(){
                     stop();
                     AnnotationsSync('delete',user,{
@@ -92,7 +94,7 @@ require(['domReady',
                                     start();
                                 }
                     });
-                })
+                })  */
                 
                  /* USERS tests deleted from the API
                 module("Users", {
