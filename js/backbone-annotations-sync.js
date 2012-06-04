@@ -16,10 +16,12 @@ define(["jquery",
                // Sync module configuration
                this.config = {
                     headerParams: {
-                         userId: "Annotations-User-Id",
-                         token: "Annotations-User-Auth-Token"
+                         userId: "X-ANNOTATIONS-USER-ID",
+                         token: "X-ANNOTATIONS-USER-AUTH-TOKEN"
                     }
                };
+               
+               this.createdUserId = null;
                
                /**
                 * Get the URI for the given resource
@@ -40,14 +42,21 @@ define(["jquery",
                     }
                }
                
-               this.getServerSideUpdates = function(url, resource, options) {
+               this.getServerSideUpdates = function(url, resource, options, userId) {
+                    
+                    if(userId != undefined && !isNaN(userId) && userId != null)
+                         self.createdUserId = userId;
+                    
                     return $.ajax({
                          crossDomain: true,
                          url: url,
                          async: false,
                          dataType: "json",
                          beforeSend: self.setHeaderParams,
-                         success: function(data, textStatus, XMLHttpRequest) {                         
+                         success: function(data, textStatus, XMLHttpRequest) {
+                              // Reset user id
+                              self.createdUserId = null;
+                              
                               resource.toCreate = false;
                               if(resource.setUrl)
                                    resource.setUrl();
@@ -70,11 +79,14 @@ define(["jquery",
                 * Set the HTTP hedaer before to send the request
                 */
                this.setHeaderParams = function(xhr) {
-                                   if(!_.isUndefined(window.annotationsTool) && !_.isUndefined(window.annotationsTool.user))
-                                        xhr.setRequestHeader(self.config.headerParams.userId, annotationsTool.user.id);
+                    // Use request user id
+                    if(self.createdUserId != undefined && self.createdUserId != null) {
+                         xhr.setRequestHeader(self.config.headerParams.userId, self.createdUserId);
+                    } else if(!_.isUndefined(window.annotationsTool) && !_.isUndefined(window.annotationsTool.user))
+                         xhr.setRequestHeader(self.config.headerParams.userId, annotationsTool.user.id);
                
-                                   // Only for sprint 2
-                                   // xhr.setRequestHeader(self.config.headerParams.token, token); 
+                    // Only for sprint 2
+                    // xhr.setRequestHeader(self.config.headerParams.token, token); 
                };
                 
                /**
@@ -95,7 +107,8 @@ define(["jquery",
                                    // If create is successful but doesn't return a response, fire an extra GET.
                                    var location = XMLHttpRequest.getResponseHeader('Location');                                   
                                    if(location){
-                                        self.getServerSideUpdates(location, resource, options);
+                                        var userId = parseInt(XMLHttpRequest.getResponseHeader(self.config.headerParams.userId));
+                                        self.getServerSideUpdates(location, resource, options, userId);
                                    }
                                    else{
                                         options.error("Location not returned after resource creation.");
@@ -165,7 +178,8 @@ define(["jquery",
                                    var location = XMLHttpRequest.getResponseHeader('LOCATION');
                                    
                                    if(location){
-                                        self.getServerSideUpdates(location, resource, options);
+                                        var userId = parseInt(XMLHttpRequest.getResponseHeader(self.config.headerParams.userId));
+                                        self.getServerSideUpdates(location, resource, options, userId);
                                    }
                                    else if(!resource.POSTonPUT && XMLHttpRequest.status != 201){
                                         options.success(resource.toJSON());

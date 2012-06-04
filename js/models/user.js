@@ -38,16 +38,6 @@ define(["order!jquery",
                 //    this.set({id:this.cid});
             },
             
-            /*parse: function(response, xhr) {
-                // Get the id of the created resource through the url
-                var newId = parseInt(_.last(location.split("/")));
-                                        
-                // Set the resource id and return  
-                var attrs = {};
-                attrs.id = newId;
-                return attrs;
-            },*/
-            
             parse: function(attr) {    
                 attr.created_at = attr.created_at != null ? Date.parse(attr.created_at): null;
                 attr.updated_at = attr.updated_at != null ? Date.parse(attr.updated_at): null;
