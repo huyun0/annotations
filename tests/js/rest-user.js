@@ -57,8 +57,8 @@ require(['domReady',
                                     equal(data.email, user.get("email"), "Email is correct");
                                     ok(data.created_at, "Created_at date is set");
                                     equal(data.created_by, user.get('id'), "Created_by user id is correct");
-                                    equal(data.updated_at, null, "Updated_at date is correct (null)");
-                                    equal(data.updated_by, null, "Updated_by user is correct (null)");
+                                    ok(data.updated_at, "Updated_at date is set");
+                                    equal(data.updated_by, user.get('id'), "Updated_by user is correct");
                                     start();
                                 }
                     });
@@ -94,7 +94,7 @@ require(['domReady',
                     });
                 })
                 
-                 /* USERS tests */
+                 /* USERS tests deleted from the API
                 module("Users", {
                     
                     setup: function(){
@@ -128,7 +128,7 @@ require(['domReady',
                                     start();
                                 }
                     });
-                })
+                }) */
             });
             
 });

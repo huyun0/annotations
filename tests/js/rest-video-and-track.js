@@ -95,8 +95,8 @@ require(['domReady',
                                     equal(data.video_extid, video.get("video_extid"), "Extid is correct");
                                     ok(data.created_at, "Created_at date is set");
                                     equal(data.created_by, user.get('id'), "Created_by user id is correct");
-                                    equal(data.updated_at, null, "Updated_at date is correct (null)");
-                                    equal(data.updated_by, null, "Updated_by user id is correct (null)");
+                                    ok(data.updated_at, "Updated_at date is set");
+                                    equal(data.updated_by, user.get('id'), "Updated_by user id is correct");
                                     start();
                                 }
                     });
@@ -166,8 +166,8 @@ require(['domReady',
                                     equal(data.settings, track.get("settings"), "Settings are correct");
                                     ok(data.created_at, "Created_at date is set");
                                     equal(data.created_by, user.get('id'), "Created_by user id is correct");
-                                    equal(data.updated_at, null, "Updated_at date is correct (null)");
-                                    equal(data.updated_by, null, "Updated_by user id is correct (null)");
+                                    ok(data.updated_at, "Updated_at date is set");
+                                    equal(data.updated_by, user.get('id'), "Updated_by user id is correct");
                                     start();
                                 }
                     });
@@ -293,8 +293,8 @@ require(['domReady',
                                     equal(data.start, annotation.get("start"), "Start is correct");
                                     ok(data.created_at, "Created_at date is set");
                                     equal(data.created_by, user.get('id'), "Created_by user id is correct");
-                                    equal(data.updated_at, null, "Updated_at date is correct (null)");
-                                    equal(data.updated_by, null, "Updated_by user id is correct (null)");
+                                    ok(data.updated_at, "Updated_at date is set");
+                                    equal(data.updated_by, user.get('id'), "Updated_by user id is correct");
                                     start();
                                 }
                     });
@@ -332,8 +332,8 @@ require(['domReady',
                                 success: function(data){
                                     ok(true, "Get all annotations successfully");
                                     
-                                    ok(_.isArray(data.items), "Got all annotations");
-                                    equal(data.items.length, 1, "One item is successfully returned");
+                                    ok(_.isArray(data.annotations), "Got all annotations");
+                                    equal(data.annotations.length, 1, "One annotation is successfully returned");
                                     start();
                                 }
                     });
@@ -371,8 +371,8 @@ require(['domReady',
                                 success: function(data){
                                     ok(true, "Get all annotations successfully");
                                     
-                                    ok(_.isArray(data.items), "Got all annotations");
-                                    equal(data.items.length, 2, "Two items are successfully returned");
+                                    ok(_.isArray(data.annotations), "Got all annotations");
+                                    equal(data.annotations.length, 2, "Two annotations are successfully returned");
                                     start();
                                 }
                     });

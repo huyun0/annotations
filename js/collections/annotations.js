@@ -24,7 +24,7 @@ define(["order!jquery",
             },
             
             parse: function(resp, xhr) {
-              return resp.items;
+              return resp.annotations;
             },
             
             /**
