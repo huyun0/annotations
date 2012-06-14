@@ -74,9 +74,9 @@ define(["jquery",
           
           /** Events to handle */
           events: {
-            "click .delete"             : "delete",
-            "click .jump-to"            : "jumpTo",
-            "click .collapse"           : "collapse"
+            "click .delete"             : "deleteFull",
+            "click .select"             : "onSelect",
+            "click .collapse"           : "onCollapse"
           },
           
            /**
@@ -87,7 +87,7 @@ define(["jquery",
                 throw "The annotations have to be given to the annotate view.";
               
             // Bind function to the good context 
-            _.bindAll(this,'render','delete','jumpTo','collapse');
+            _.bindAll(this,'render','deleteFull','deleteView','onSelect','onSelected','onCollapse');
             
             this.model = attr.annotation;
             
@@ -95,18 +95,27 @@ define(["jquery",
             _.extend(this.model, Backbone.Events);
             
             this.model.bind('change', this.render);
+            this.model.bind('destroy', this.deleteView);
+            this.model.bind('selected', this.onSelected);
           },
           
           /**
-           * Delete the annotation
+           * Delete completely the annotation
            */
-          delete: function(){
+          deleteFull: function(){
             try{
                 this.model.destroy();
             }
             catch(error){
                 console.warn("Cannot delete model: "+error);
             }
+            this.deleteView();
+          },
+          
+          /**
+           * Delete only this annotation view
+           */
+          deleteView: function(){
             $(this.el).remove();
             this.deleted = true;
           },
@@ -133,9 +142,25 @@ define(["jquery",
           },
           
           /**
+           * Listener for click on this annotation
+           */
+          onSelect: function(){
+            this.model.trigger("selected",this.model);
+          },
+          
+          /**
+           * Listener for selection done on this annotation
+           */
+          onSelected: function(){
+            this.$el.parent().find('.selected').removeClass('selected');
+            this.$el.addClass('selected');
+            this.jumpTo();
+          },
+          
+          /**
            * Toggle the visibility of the text container
            */
-          collapse: function(){
+          onCollapse: function(){
             this.collapsed = !this.collapsed;
             if(this.collapsed)
                 this.$el.find('div.in').collapse('hide');

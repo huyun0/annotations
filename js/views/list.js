@@ -33,11 +33,12 @@ define(["jquery",
                 throw "The annotations have to be given to the annotate view.";
               
             // Bind functions to the good context 
-            _.bindAll(this,'render','addOne','addList');
+            _.bindAll(this,'render','addOne','addList','sortViewsbyTime');
               
             this.annotations = attr.annotations;
             this.annotations.bind('add', this.addOne);
             this.annotations.bind('remove',this.removeOne);
+            this.annotations.bind('change',this.sortViewsbyTime);
             this.addList(this.annotations.toArray());
           },
 

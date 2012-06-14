@@ -68,42 +68,55 @@
 
 	
 	<div class="row-fluid">
+		<div class="span7">	
 		
-		<!-- container for the video -->
-		<div class="span7" id="video-container" style="display:none">
-			<video id="example" style="width:100%" controls >
-				<source src="resources/sintel_trailer.mp4" type="video/mp4" />
-				<!-- Could not be include, to heavy. -->
-				<!-- <source src="../resources/sintel_trailer.ogv" type="video/ogg" /> -->
-			</video>
+			<!-- container for the video -->
+			<div class="span7" id="video-container" style="display:none">
+				<video id="example" style="width:100%" controls >
+					<source src="resources/sintel_trailer.mp4" type="video/mp4" />
+					<!-- Could not be include, to heavy. -->
+					<!-- <source src="../resources/sintel_trailer.ogv" type="video/ogg" /> -->
+				</video>
+			</div>
+			
+			<!-- container for the timeline-->
+			<div class="span7">
+				<div class="window" id="timeline-container" style="display:none">
+				</div>
+			</div>
+		
 		</div>
 		
-		<!-- container for the annotations insertion box -->
 		<div class="span5">
-			<div class="window" id="annotate-container" style="display:none">
-				<div class="navbar">
-					<div class="navbar-inner">
-					  <div class="container">
-					    <a class="brand" href="#">Annotate</a>
-					  </div>
+		
+			<!-- container for the annotations insertion box -->
+			<div class="span5">
+				<div class="window" id="annotate-container" style="display:none">
+					<div class="navbar">
+						<div class="navbar-inner">
+						  <div class="container">
+						    <a class="brand" href="#">Annotate</a>
+						  </div>
+						</div>
 					</div>
+	
+					<div class="control-group" id="annotate-form">
+					<div class="input-prepend input-append">
+						<span class="add-on"><i class="icon-comment"></i></span>
+						<input id="new-annotation" type="text" placeholder="Insert annotation">
+						<button id="insert" type="button" class="btn">Insert</button>	
+					</div>
+					</div>
+	
 				</div>
-
-				<div class="control-group" id="annotate-form">
-				<div class="input-prepend input-append">
-					<span class="add-on"><i class="icon-comment"></i></span>
-					<input id="new-annotation" type="text" placeholder="Insert annotation">
-					<button id="insert" type="button" class="btn">Insert</button>	
-				</div>
-				</div>
-
 			</div>
-		</div>
 		
-		<!-- container for the annotations list -->
-		<div class="span5">
-			<div class="window" id="list-container" style="display:none">
+			<!-- container for the annotations list -->
+			<div class="span5">
+				<div class="window" id="list-container" style="display:none">
+				</div>
 			</div>
+			
 		</div>
 
       </div>

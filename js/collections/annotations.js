@@ -24,7 +24,12 @@ define(["order!jquery",
             },
             
             parse: function(resp, xhr) {
-              return resp.annotations;
+              if(resp.annotations && _.isArray(resp.annotations))
+                return resp.annotations;
+              else if(_.isArray(resp))
+                return resp;
+              else
+                return null;
             },
             
             /**

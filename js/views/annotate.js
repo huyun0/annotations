@@ -8,7 +8,7 @@ define(["jquery",
     function($,_not,PlayerAdapter,Annotation,Annotations){
 
         /**
-         * Main view of the application
+         * View to add annotation
          */
         
         var Annotate = Backbone.View.extend({

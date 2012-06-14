@@ -3,6 +3,7 @@ define(["jquery",
         "collections/annotations",
         "views/annotate",
         "views/list",
+        "views/timeline",
         "collections/users",
         "models/user",
         "models/track",
@@ -14,7 +15,7 @@ define(["jquery",
         "underscore",
         "libs/bootstrap/bootstrap.min"],
        
-       function($,PlayerAdapter,Annotations,Annotate,List,Users,User,Track,Video,Videos,AnnotationSync,LoginTmpl){
+       function($,PlayerAdapter,Annotations,AnnotateView,ListView,TimelineView,Users,User,Track,Video,Videos,AnnotationSync,LoginTmpl){
 
     /**
      * Main view of the application
@@ -48,7 +49,15 @@ define(["jquery",
         
         _.bindAll(this,"getCurrentUser","getAnnotations","createViews");
         
-        Backbone.sync = AnnotationSync;
+        // Load the good storage module
+        if(window.annotationsTool.localStorage){
+          // Local storage module 
+          Backbone.sync = Backbone.localSync;
+        }
+        else{
+          // REST annotations storage module
+          Backbone.sync = AnnotationSync;
+        }
         
         this.playerAdapter = playerAdapter;
         
@@ -96,14 +105,21 @@ define(["jquery",
         this.loaded =true,
         
         this.getAnnotations($.proxy(function(){
-          this.loadingBox.find('.bar').width('90%');
+          
+          this.loadingBox.find('.bar').width('60%');
           
           // Create views to annotate and see annotations list
-          (new Annotate({playerAdapter: this.playerAdapter, annotations: this.annotations})).$el.show();
+          (new TimelineView({playerAdapter: this.playerAdapter}));
           
           this.loadingBox.find('.bar').width('100%');
           
-          (new List({annotations: this.annotations})).$el.show();
+          // Create views to annotate and see annotations list
+          (new AnnotateView({playerAdapter: this.playerAdapter, annotations: this.annotations})).$el.show();
+          
+          this.loadingBox.find('.bar').width('100%');
+          
+          // Create annotations list view
+          (new ListView({annotations: this.annotations})).$el.show();
           
           this.loadingBox.hide();
           
@@ -178,15 +194,18 @@ define(["jquery",
             
         return user;
       },
-      
-    
-      /**
-       * Get all the annotations for the current user
-       */
-       getAnnotations: function(callback){
-        var videos,video,tracks, track;
+       
+      // Get all the annotations for the current user       
+      getAnnotations: function(callback){
         
+        var videos,video,tracks, track;
+        videos = new Videos;
+        
+        /**
+         * @function to conclude the retrive of annotations
+         */
         var endGetAnnotations = $.proxy(function(){
+              
               this.annotations = track.get("annotations");
               
              // Create an annotations collection an get all the annotations
@@ -195,38 +214,68 @@ define(["jquery",
                  this.playerAdapter.setCurrentTime(start);
               },this);
               
-              /**
-              *  Bind the basic annotations event to their related operation
-              */
+              // Bind the basic annotations event to their related operation
               this.annotations.bind('destroy',function(annotation){
                  this.annotations.remove(annotation);
               },this);
+             
+              // Set the video for the annotations tool, could be used everywhere then
+              annotationsTool.video = video;
              
               callback();
              }, this)});
         },this);
         
-        videos = new Videos;
-        videos.add({video_extid:annotationsTool.getVideoExtId()});
-        video = videos.at(0);
-        
-        // Wait that the video is well saved (to have a good id)
-        video.save(video,{
-            success: function(data){
-              tracks = video.get("tracks");
-              tracks.fetch({success: function(){
-                if(tracks.length == 0){
-                  tracks.add({name:"default"});
-                  track = tracks.at(0);
-                  track.save(track,{success: endGetAnnotations});
-                }
-                else{
-                  track = tracks.at(0);
-                  endGetAnnotations();
-                }
-              }});
+
+        // If we are using the localstorage
+        if(window.annotationsTool.localStorage){
+          videos.fetch();
+          
+          if(videos.length == 0)
+            videos.add({video_extid:annotationsTool.getVideoExtId()});
+            
+          video = videos.at(0);
+          video.save();
+          tracks = video.get("tracks");
+          
+          if(tracks.length == 0){
+            tracks.add({name:"default"});
+            track = tracks.at(0);
+            track.save(track,{success: endGetAnnotations});
           }
-        });
+          else{
+            track = tracks.at(0);
+            endGetAnnotations();
+          }
+        }
+        // With Rest storage
+        else{
+          videos.add({video_extid:annotationsTool.getVideoExtId()});
+          video = videos.at(0);
+          
+          // Wait that the video is well saved (to have a good id)
+          video.save(video,{
+              success: function(data){
+                tracks = video.get("tracks");
+                tracks.fetch({
+                  success: function(){
+                    if(tracks.length == 0){
+                      tracks.add({name:"default"});
+                      track = tracks.at(0);
+                      track.save(track,{success: endGetAnnotations});
+                    }
+                    else{
+                      track = tracks.at(0);
+                      endGetAnnotations();
+                    }
+                  },
+                  error: function(){
+                    throw "Not able to get tracks from video "+video.get("id");
+                  }
+                });
+            }
+          });
+        }
 
       }
     });

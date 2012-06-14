@@ -29,14 +29,25 @@ define(["jquery",
                     this.toCreate = true;
                 }
                 
-                this.set({tracks: new Tracks([],this)})
+                if(attr.tracks && _.isArray(attr.tracks))
+                    this.set({tracks: new Tracks(attr.tracks,this)});
+                else
+                    this.set({tracks: new Tracks([],this)});
+                
+                // If localStorage used, we have to save the video at each change on the children
+                if(window.annotationsTool.localStorage){
+                    this.attributes['tracks'].bind('change',function(){
+                            this.save();
+                    },this);
+                }
                 
                 // Define that all post operation have to been done through PUT method
                 // see in wiki
                 this.noPOST = true;
+                
             },
             
-            parse: function(attr) {    
+            parse: function(attr) {
                 attr.created_at = attr.created_at != null ? Date.parse(attr.created_at): null;
                 attr.updated_at = attr.updated_at != null ? Date.parse(attr.updated_at): null;
                 attr.deleted_at = attr.deleted_at != null ? Date.parse(attr.deleted_at): null;

@@ -2,7 +2,7 @@
 require.config({
     baseUrl: "js",
     paths: {
-        'root': 'libs',
+        'timeline': 'libs/timeline-min.js',
         'backbone':'libs/backbone/backbone-min',
         'loader': 'libs/backbone/loader',
         'localstorage': 'libs/backbone/backbone.localStorage',

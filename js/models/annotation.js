@@ -19,7 +19,9 @@ define(["order!jquery",
                 updated_at: null,
                 updated_by: null,
                 deleted_at: null,
-                deleted_by: null
+                deleted_by: null,
+                start: 0,
+                end: 0
             },
             
             // Logs
@@ -43,6 +45,9 @@ define(["order!jquery",
                 attr.created_at = attr.created_at != null ? Date.parse(attr.created_at): null;
                 attr.updated_at = attr.updated_at != null ? Date.parse(attr.updated_at): null;
                 attr.deleted_at = attr.deleted_at != null ? Date.parse(attr.deleted_at): null;
+                attr.created_by = attr.created_by != null ? new User(attr.created_by): null;
+                attr.updated_by = attr.updated_by != null ? new User(attr.updated_by): null;
+                attr.deleted_by = attr.deleted_by != null ? new User(attr.deleted_by): null;
                 return attr;
             },
             
@@ -51,8 +56,8 @@ define(["order!jquery",
                 if(attr.id){
                     //if((tmpId=this.get('id')) && tmpId!==attr.id)
                     //    return "'id' attribute can not be modified after initialization!";              
-                    if(this.cid != attr.id && !_.isNumber(attr.id))
-                        return "'id' attribute must be a number!";
+                    //if(this.cid != attr.id && !_.isNumber(attr.id))
+                    //    return "'id' attribute must be a number!";
                 }
                 
                 if(attr.start &&  !_.isNumber(attr.start))
@@ -67,28 +72,28 @@ define(["order!jquery",
                 if(attr.access && !_.include(ACCESS,attr.access))
                     return "'access' attribute is not valid.";
                 
-                if(attr.created_by && !(_.isNumber(attr.created_by) || attr.created_by instanceof User))
+                if(!_.isNull(attr.created_by) && !(_.isNumber(attr.created_by) || attr.created_by instanceof User))
                     return "'created_by' attribute must be a number or an instance of 'User'";
             
-                if(attr.updated_by && !(_.isNumber(attr.updated_by) || attr.updated_by instanceof User))
+                if(!_.isNull(attr.updated_by) && !(_.isNumber(attr.updated_by) || attr.updated_by instanceof User))
                     return "'updated_by' attribute must be a number or an instance of 'User'";
                 
-                if(attr.deleted_by && !(_.isNumber(attr.deleted_by) || attr.deleted_by instanceof User))
+                if(!_.isNull(attr.deleted_by) && !(_.isNumber(attr.deleted_by) || attr.deleted_by instanceof User))
                     return "'deleted_by' attribute must be a number or an instance of 'User'";
             
-                if(attr.created_at){
+                if(!_.isNull(attr.created_at)){
                     if((tmpCreated=this.get('created_at')) && tmpCreated!==attr.created_at)
                         return "'created_at' attribute can not be modified after initialization!";
                     if(!_.isNumber(attr.created_at))
                         return "'created_at' attribute must be a number!";
                 }
         
-                if(attr.updated_at){
+                if(!_.isNull(attr.updated_at)){
                     if(!_.isNumber(attr.updated_at))
                         return "'updated_at' attribute must be a number!";
                 }
 
-                if(attr.deleted_at){
+                if(!_.isNull(attr.deleted_at)){
                     if(!_.isNumber(attr.deleted_at))
                         return "'deleted_at' attribute must be a number!";
                 }

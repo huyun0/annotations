@@ -35,10 +35,21 @@ define(["order!jquery",
                     this.toCreate = true;
                 }
                 
-                this.set({annotations: new Annotations([],this)})
+                if(attr.annotations && _.isArray(attr.annotations))
+                    this.set({annotations: new Annotations(attr.annotations,this)});
+                else
+                    this.set({annotations: new Annotations([],this)});
+                
+                // If localStorage used, we have to save the video at each change on the children
+                if(window.annotationsTool.localStorage){
+                    this.attributes['annotations'].bind('change',function(annotation){
+                            this.save();
+                            this.trigger("change");
+                    },this);
+                }
             },
             
-            parse: function(attr) {    
+            parse: function(attr) {
                 attr.created_at = attr.created_at != null ? Date.parse(attr.created_at): null;
                 attr.updated_at = attr.updated_at != null ? Date.parse(attr.updated_at): null;
                 attr.deleted_at = attr.deleted_at != null ? Date.parse(attr.deleted_at): null;

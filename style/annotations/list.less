@@ -4,10 +4,12 @@
 
 @import "variables.less";
 
+@color1: #F5F5F5; /* dark grey */
+
 #list-container{
     div.annotation{
         .standard_border_radius;
-        background-color: darken(#F5F5F5, 7%);
+        background-color: darken(@color1, 7%);
         margin: 5px;
         padding: 5px;
         
@@ -21,20 +23,20 @@
             }
         }
         
-        i.jump-to:hover{
+        i.select:hover{
            background-color: lighten(#66A3D2,10%); 
         }
         
         .start,.duration{
             border-radius: 3px 3px 3px 3px;
-            background-color: darken(#F5F5F5, 30%);
+            background-color: darken(@color1, 30%);
             padding: 2px;
             margin: 1px;
             color: white;
             font-family: monospace;
-            /*border: 1px solid darken(#F5F5F5, 30%);*/
-            .box-shadow(0px,0px,4px,darken(#F5F5F5,30%));
-            .inset-box-shadow(0px,0px,4px,darken(#F5F5F5,50%));
+            /*border: 1px solid darken(@color1, 30%);*/
+            .box-shadow(0px,0px,4px,darken(@color1,30%));
+            .inset-box-shadow(0px,0px,4px,darken(@color1,50%));
         }
         
         span.text{
@@ -43,7 +45,7 @@
             padding: 4px;
             border-radius: 3px 3px 3px 3px;
             background-color: white;
-            .box-shadow(0px,0px,4px,darken(#F5F5F5,30%));
+            .box-shadow(0px,0px,4px,darken(@color1,30%));
         }
         
         .category{
@@ -52,6 +54,10 @@
             color: white;
             padding: 2px;
             font-size: 0.90em;
+        }
+        
+        &.selected{
+           background-color: darken(@color1, 20%); 
         }
     }
 }

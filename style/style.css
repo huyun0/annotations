@@ -1,3 +1,4 @@
+@import "timeline/timeline.css";
 /*!
  * Bootstrap v2.0.2
  *
@@ -6024,6 +6025,28 @@ body {
   padding-top: 60px;
   padding-bottom: 40px;
 }
+.item-id,
+.group-id,
+.timeline-navigation-new {
+  display: none;
+}
+div.timeline-event {
+  background-color: rgba(249, 103, 38, 0.6);
+}
+div.timeline-event-selected {
+  background-color: rgba(245, 215, 115, 0.75);
+}
+div.timeline-groups-text {
+  font-weight: bold;
+  text-transform: capitalize;
+  font-size: 1.05em;
+}
+div.timeline-navigation {
+  position: relative;
+  bottom: 0px;
+  right: 0px;
+  height: 35px;
+}
 /*!
  * Bootstrap Responsive v2.0.2
  *
@@ -7269,6 +7292,7 @@ body {
 .standard_border_radius {
   border-radius: 4px 4px 4px 4px;
 }
+/* dark grey */
 #list-container div.annotation {
   border-radius: 4px 4px 4px 4px;
   border-radius: 4px 4px 4px 4px;
@@ -7283,7 +7307,7 @@ body {
   background-color: #ff6666;
   border-radius: 10px 10px 10px 10px;
 }
-#list-container div.annotation i.jump-to:hover {
+#list-container div.annotation i.select:hover {
   background-color: #8dbbde;
 }
 #list-container div.annotation .start,
@@ -7294,7 +7318,7 @@ body {
   margin: 1px;
   color: white;
   font-family: monospace;
-  /*border: 1px solid darken(#F5F5F5, 30%);*/
+  /*border: 1px solid darken(@color1, 30%);*/
 
   background-size: 100% 100%;
   box-shadow: 0px 0px 4px #a9a9a9;
@@ -7334,6 +7358,9 @@ body {
   color: white;
   padding: 2px;
   font-size: 0.90em;
+}
+#list-container div.annotation.selected {
+  background-color: #c2c2c2;
 }
 /* ===== Primary Styles ========================================================
    Author:
