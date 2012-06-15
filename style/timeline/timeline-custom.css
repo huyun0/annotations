@@ -1,5 +1,6 @@
 @import "timeline/timeline.css";
 .item-id,
+.annotation-id,
 .group-id,
 .timeline-navigation-new {
   display: none;

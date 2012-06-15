@@ -17,14 +17,6 @@ define(["jquery",
           /** Main container of the timeline */
           el: $('div#timeline-container'),
           
-          /** Events to handle by the main view */
-          events: {
-            //"keypress #new-annotation" : "insertOnEnter",
-            //"click #insert"            : "insert"     
-          },
-          
-          data: [],
-          
           /**
            * @constructor
            */
@@ -34,6 +26,8 @@ define(["jquery",
             
             //if(!attr.annotations)
             //   throw "The annotations have to be given to the annotate view.";
+            
+            this.data = [];
               
             _.bindAll(this,'addOne',
                            'addList',
@@ -42,7 +36,9 @@ define(["jquery",
                            'onTimelineItemChanged',
                            'onTimelineItemDeleted',
                            'onTimelineItemSelected',
+                           'onAnnotationDestroyed',
                            'getFormatedDate',
+                           'getSelectedItemAndAnnotation',
                            'getSelectedItemAndAnnotation');
             
 
@@ -61,7 +57,7 @@ define(["jquery",
               end: this.endDate,
               min: this.startDate,
               max: this.endDate,
-              //intervalMin: 5000,
+              intervalMin: 5000,
               showCustomTime: true,
               showNavigation: true,
               showMajorLabels: false,
@@ -95,21 +91,28 @@ define(["jquery",
             var group = track.get("name")+"<div class='group-id'>"+track.get("id")+"</div>";
             
             var addOneAnnotation = function(annotation){
-              this.timeline.addItem(
-                {
+              this.timeline.addItem({
                   start: this.getFormatedDate(annotation.get("start")),
                   end: this.getFormatedDate(annotation.get("start")+5),
-                  content: annotation.get("text")+"<div class='item-id'>"+annotation.get("id")+"</div>",
+                  content: "<div class='item'>"
+                              +annotation.get("text")
+                              +"<div class='annotation-id'>"+annotation.get("id")+"</div>",
                   group: group
-                }
-              );
+              });
+                
+                annotation.bind('destroy',this.onAnnotationDestroyed,this);
+                
+                annotation.bind('selected',function(){
+                  var itemId = this.getTimelineItemFromAnnotation(annotation).index;
+                  this.timeline.setSelection([{row: itemId}]);
+                },this);
+                
+                this.timeline.redraw();
             }
             
             annotations.each(addOneAnnotation,this);
             
             annotations.bind('add',addOneAnnotation, this);
-            
-            this.timeline.redraw();
           },
           
           /**
@@ -118,6 +121,11 @@ define(["jquery",
           addList: function(tracks){
             tracks.each(this.addOne,this);
           },
+          
+          
+          /* --------------------------------------
+            Listeners
+          ----------------------------------------*/
           
           /**
            * Listener for the player timeupdate 
@@ -137,6 +145,9 @@ define(["jquery",
             this.playerAdapter.setCurrentTime(newTime);
           },
           
+          /**
+           * Listener for item modification
+           */
           onTimelineItemChanged: function(){
             var values = this.getSelectedItemAndAnnotation();
             
@@ -148,24 +159,47 @@ define(["jquery",
             values.annotation.save();
           },
           
+          /**
+           * Listener for timeline item deletion
+           */
           onTimelineItemDeleted: function(){
             var annotation = this.getSelectedItemAndAnnotation().annotation;
+            
+            this.timeline.cancelDelete();
             
             if(annotation)
               annotation.destroy();
           },
           
+          /**
+           * Listener for timeline item selection
+           */          
           onTimelineItemSelected: function(){
             var annotation = this.getSelectedItemAndAnnotation().annotation;
             annotation.trigger("selected",annotation);
           },
           
+          /**
+           * Listener for annotation suppression 
+           */
+          onAnnotationDestroyed: function(annotation){
+            var value = this.getTimelineItemFromAnnotation(annotation);
+            
+            if(value){
+              this.timeline.deleteItem(value.index);
+            }
+          },
           
+          
+          /* --------------------------------------
+            Utils functions
+          ----------------------------------------*/
           
           /**
            * Get the formated date for the timeline with the given seconds
            *
            * @param {Double} time in seconds
+           * @returns {Date} formated date for timeline
            */
           getFormatedDate: function(seconds){
             var newDate = new Date(seconds*1000);
@@ -173,13 +207,25 @@ define(["jquery",
             return newDate;
           },
           
+          /**
+           * Transform the given date into a time in seconds
+           *
+           * @param {Date} formated date from timeline
+           * @returns {Double} time in seconds
+           */
           getTimeInSeconds: function(date){
             var time = date.getHours()*3600+date.getMinutes()*60+date.getSeconds()+date.getMilliseconds()/1000;
             return Number(time); // Ensue that is really a number
           },
           
+          /**
+           * Get the current selected annotion as object containing the timeline item and the annotation
+           *
+           * @param {Date}
+           * @returns {Object} Object containing the annotation and the timeline item. "{item: 'timeline-item', annotation: 'annotation-object'}"
+           */
           getSelectedItemAndAnnotation: function(){
-            var itemId = $('.timeline-event-selected .item-id').text();
+            var itemId = $('.timeline-event-selected .annotation-id').text();
             var selection = this.timeline.getSelection();
             
             if(selection.length == 0)
@@ -191,13 +237,41 @@ define(["jquery",
             var track = this.tracks.get(trackId);
             var annotation = track.get('annotations').get(itemId);
             
+            if(!annotation)
+              return undefined;
+            
             return {
                     annotation: annotation,
                     item: item
             };
-          }
+          },
           
-
+          /**
+           * Get the item related to the given annotation
+           *
+           * @param {Annotation} the annotation
+           * @returns {Object} an item object extend by an index parameter
+           */
+          getTimelineItemFromAnnotation: function(annotation){
+            var value = undefined;
+            var data = this.timeline.getData();
+            
+            _.each(data, function(item, idx){
+                if($(item.content).find('.annotation-id').text() == annotation.get('id'))
+                  value = _.extend(item,{index:idx});
+            });
+            
+            if(this.$el.find('.annotation-id:contains('+annotation.get('id')+')').length == 0)
+              return undefined;
+            
+            return value;
+          },
+          
+          
+          reset: function(){
+            this.timeline.deleteAllItems();
+            this.data = [];
+          }
           
         });
             

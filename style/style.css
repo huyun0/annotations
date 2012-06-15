@@ -6026,6 +6026,7 @@ body {
   padding-bottom: 40px;
 }
 .item-id,
+.annotation-id,
 .group-id,
 .timeline-navigation-new {
   display: none;
@@ -7300,18 +7301,24 @@ div.timeline-navigation {
   margin: 5px;
   padding: 5px;
 }
+#list-container div.annotation:hover {
+  cursor: default;
+}
 #list-container div.annotation i.delete {
   float: right;
 }
 #list-container div.annotation i.delete:hover {
+  cursor: pointer;
   background-color: #ff6666;
   border-radius: 10px 10px 10px 10px;
 }
 #list-container div.annotation i.select:hover {
+  cursor: pointer;
   background-color: #8dbbde;
 }
 #list-container div.annotation .start,
 #list-container div.annotation .duration {
+  cursor: default;
   border-radius: 3px 3px 3px 3px;
   background-color: #a9a9a9;
   padding: 2px;

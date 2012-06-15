@@ -40,14 +40,15 @@ define(["jquery",
       
       /** Events to handle by the main view */
       events: {
-        "click #save-user": "getCurrentUser"
+        "click #save-user": "login",
+        "click #logout" : "logout"
       },
       
       initialize: function(playerAdapter){
         if(!PlayerAdapter.prototype.isPrototypeOf(playerAdapter))
             throw "The player adapter is not valid! It must has PlayerAdapter as prototype.";
         
-        _.bindAll(this,"getCurrentUser","getAnnotations","createViews");
+        _.bindAll(this,"login","getAnnotations","createViews","checkUserAndLogin","loadLoginModal");
         
         // Load the good storage module
         if(window.annotationsTool.localStorage){
@@ -77,23 +78,8 @@ define(["jquery",
         
         this.loadingBox.find('.bar').width('35%');
         
-        // If a user has been saved locally, we take it as current user
-        if(annotationsTool.users.length >0){
-            annotationsTool.user = annotationsTool.users.at(0);
-            this.createViews();
-        }
-        else{
-            // Otherwise we load the login modal
-            this.$el.append(LoginTmpl);
-            this.userModal = $('#user-login');
-            this.userModal.modal({show: true, backdrop: true, keyboard: false });
-            this.userModal.on("hide",function(){
-                // If user not set, display the login window again
-                if(_.isUndefined(annotationsTool.user))
-                    setTimeout(function(){$('#user-login').modal('show')},5);
-            });
-        }
-
+        this.checkUserAndLogin();
+        
       },
         
       /**
@@ -109,17 +95,19 @@ define(["jquery",
           this.loadingBox.find('.bar').width('60%');
           
           // Create views to annotate and see annotations list
-          (new TimelineView({playerAdapter: this.playerAdapter}));
+          this.timelineView = new TimelineView({playerAdapter: this.playerAdapter});
           
           this.loadingBox.find('.bar').width('100%');
           
           // Create views to annotate and see annotations list
-          (new AnnotateView({playerAdapter: this.playerAdapter, annotations: this.annotations})).$el.show();
+          this.annotateView = new AnnotateView({playerAdapter: this.playerAdapter, annotations: this.annotations});
+          this.annotateView.$el.show();
           
           this.loadingBox.find('.bar').width('100%');
           
           // Create annotations list view
-          (new ListView({annotations: this.annotations})).$el.show();
+          this.listView = new ListView({annotations: this.annotations});
+          this.listView.$el.show();
           
           this.loadingBox.hide();
           
@@ -127,14 +115,68 @@ define(["jquery",
         },this));        
       },
       
-
+      checkUserAndLogin: function(){
+        // If a user has been saved locally, we take it as current user
+        if(annotationsTool.users.length >0){
+            annotationsTool.user = annotationsTool.users.at(0);
+            this.createViews();
+        }
+        else{
+          this.loadLoginModal();
+        }
+      },
+      
+      loadLoginModal: function(){
+        if(!this.userModal){
+            // Otherwise we load the login modal
+            this.$el.append(LoginTmpl);
+            this.userModal = $('#user-login');
+            this.userModal.modal({show: true, backdrop: true, keyboard: false });
+            this.userModal.on("hide",function(){
+                // If user not set, display the login window again
+                if(_.isUndefined(annotationsTool.user))
+                    setTimeout(function(){$('#user-login').modal('show')},5);
+            });
+        }
+        else{
+          this.userModal.find('#nickname')[0].value = '';
+          this.userModal.find('#email')[0].value = '';
+          this.userModal.find('#remember')[0].value = '';
+          this.userModal.modal("toggle");
+        }
+        
+      },
       
       /**
-       * Get the current user of the tool
+       * Log the user out
+       */
+      logout: function(){
+        // Hide/remove the views
+        $('#video-container').hide();
+        this.timelineView.$el.hide();
+        this.annotateView.$el.hide();
+        this.listView.$el.empty().hide();
+        this.timelineView.reset();
+        this.timelineView.remove();
+        
+        // Delete the different objects
+        delete annotationsTool.tracks;
+        delete annotationsTool.video;
+        delete annotationsTool.user;
+        delete this.listView;
+        
+        this.loaded = false;
+        this.loadingBox.find('.bar').width('0%');
+        this.loadingBox.show();
+        this.loadLoginModal();
+      },
+      
+      /**
+       * Log the current user of the tool
        *
        * @return {User} the current user
        */
-      getCurrentUser: function(){
+      login: function(){
         // Fields from the login form
         var userId          = annotationsTool.getUserExtId();
         var userNickname    = this.userModal.find('#nickname');

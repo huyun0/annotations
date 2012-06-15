@@ -40,6 +40,7 @@ define(["jquery",
             this.annotations.bind('remove',this.removeOne);
             this.annotations.bind('change',this.sortViewsbyTime);
             this.addList(this.annotations.toArray());
+            this.render();
           },
 
           /**
