@@ -21,8 +21,6 @@ define(["jquery",
                     }
                };
                
-               this.createdUserId = null;
-               
                /**
                 * Get the URI for the given resource
                 *
@@ -42,45 +40,6 @@ define(["jquery",
                     }
                }
                
-               this.getServerSideUpdates = function(url, resource, options, userId) {
-                    
-                    
-                    if(userId != undefined && !isNaN(userId) && userId != null)
-                         self.createdUserId = userId;
-                    
-                    return $.ajax({
-                         crossDomain: true,
-                         url: url,
-                         async: false,
-                         dataType: "json",
-                         beforeSend: self.setHeaderParams,
-                         success: function(data, textStatus, XMLHttpRequest) {
-                              // Reset user id
-                              self.createdUserId = null;
-                              
-                              // Update the resource and return
-                              resource.set({id: data.id});
-                              
-                              var created_at = data.created_at != null ? Date.parse(data.created_at): null;
-                              var updated_at = data.updated_at != null ? Date.parse(data.updated_at): null;
-                              var deleted_at = data.deleted_at != null ? Date.parse(data.deleted_at): null;
-                              
-                              resource.set({created_at: created_at});
-                              resource.set({created_by: data.created_by});
-                              resource.set({updated_at: updated_at});
-                              resource.set({updated_by: data.updated_by});
-                              resource.set({deleted_at: deleted_at});
-                              resource.set({deleted_by: data.deleted_by});
-                              
-                              resource.toCreate = false;
-                              if(resource.setUrl)
-                                   resource.setUrl();
-                              options.success(resource.toJSON());
-                         },
-                         error: self.setError
-                    });
-               }
-               
                /**
                 * Errors callback for jQuery Ajax method. 
                 */
@@ -95,9 +54,7 @@ define(["jquery",
                 */
                this.setHeaderParams = function(xhr) {
                     // Use request user id
-                    if(self.createdUserId != undefined && self.createdUserId != null) {
-                         xhr.setRequestHeader(self.config.headerParams.userId, self.createdUserId);
-                    } else if(!_.isUndefined(window.annotationsTool) && !_.isUndefined(window.annotationsTool.user))
+                    if(!_.isUndefined(window.annotationsTool) && !_.isUndefined(window.annotationsTool.user))
                          xhr.setRequestHeader(self.config.headerParams.userId, annotationsTool.user.id);
                
                     // Only for sprint 2
@@ -119,15 +76,19 @@ define(["jquery",
                               data: JSON.parse(JSON.stringify(resource)),
                               beforeSend: self.setHeaderParams,
                               success: function(data, textStatus, XMLHttpRequest){
-                                   // If create is successful but doesn't return a response, fire an extra GET.
-                                   var location = XMLHttpRequest.getResponseHeader('Location');                                   
-                                   if(location){
-                                        var userId = parseInt(XMLHttpRequest.getResponseHeader(self.config.headerParams.userId));
-                                        self.getServerSideUpdates(location, resource, options, userId);
-                                   }
-                                   else{
-                                        options.error("Location not returned after resource creation.");
-                                   }
+                                   // Update the resource and return
+                                   data.created_at = data.created_at != null ? Date.parse(data.created_at): null;
+                                   data.updated_at = data.updated_at != null ? Date.parse(data.updated_at): null;
+                                   data.deleted_at = data.deleted_at != null ? Date.parse(data.deleted_at): null;
+                                   
+                                   resource.set(data);
+                                   
+                                   resource.toCreate = false;
+                                   
+                                   if(resource.setUrl)
+                                        resource.setUrl();
+                                   
+                                   options.success(data, textStatus, XMLHttpRequest);
                               },
                               
                               error: self.setError
@@ -188,20 +149,18 @@ define(["jquery",
                               data: JSON.parse(JSON.stringify(resource)),
                               beforeSend: self.setHeaderParams,
                               success: function(data, textStatus, XMLHttpRequest){
+                                   // Update the resource and return
+                                   data.created_at = data.created_at != null ? Date.parse(data.created_at): null;
+                                   data.updated_at = data.updated_at != null ? Date.parse(data.updated_at): null;
+                                   data.deleted_at = data.deleted_at != null ? Date.parse(data.deleted_at): null;
                                    
-                                   var action   = (XMLHttpRequest.status == 201 ? "creation" : "update");
-                                   var location = XMLHttpRequest.getResponseHeader('LOCATION');
+                                   resource.set(data);
                                    
-                                   if(location){
-                                        var userId = parseInt(XMLHttpRequest.getResponseHeader(self.config.headerParams.userId));
-                                        self.getServerSideUpdates(location, resource, options, userId);
-                                   }
-                                   else if(!resource.POSTonPUT && XMLHttpRequest.status != 201){
-                                        options.success(resource.toJSON());
-                                   }
-                                   else {
-                                        options.error("Location not returned after resource "+action+".");
-                                   }
+                                   resource.toCreate = false;
+                                   
+                                   if(resource.setUrl)
+                                        resource.setUrl();
+                                   options.success(data, textStatus, XMLHttpRequest);
                               },
                               
                               error: self.setError
