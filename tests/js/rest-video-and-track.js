@@ -30,6 +30,7 @@ require(['domReady',
                     users.create({user_extid:userExtId,nickname:'pinguin', email: "test@dot.com"});
                     user = users.at(0);
                     window.annotationsTool.user = user;
+                    isUserLoaded = true;
                 }
                 
                 var loadVideo = function(){
