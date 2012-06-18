@@ -25,14 +25,21 @@ define(["jquery",
             initialize: function(attr){
                 
                 if(!attr || !attr.id){
-                    this.set({id:this.cid});
+                    // this.set({id:this.cid});
                     this.toCreate = true;
                 }
                 
+                // Check if tracks are given 
                 if(attr.tracks && _.isArray(attr.tracks))
                     this.set({tracks: new Tracks(attr.tracks,this)});
                 else
                     this.set({tracks: new Tracks([],this)});
+                
+                // Check if supported categories are given
+                if(attr.categories && _.isArray(attr.categories))
+                    this.set({categories: new Categories(attr.categories,this)});
+                else
+                    this.set({categories: new Categories([],this)});
                 
                 // If localStorage used, we have to save the video at each change on the children
                 if(window.annotationsTool.localStorage){
