@@ -107,7 +107,7 @@ define(["jquery",
                   this.timeline.setSelection([{row: itemId}]);
                 },this);
                 
-                this.timeline.redraw();
+                this.timeline.draw(this.timeline.getData(),this.options);
             }
             
             annotations.each(addOneAnnotation,this);
@@ -269,7 +269,21 @@ define(["jquery",
           
           
           reset: function(){
+            $(this.playerAdapter).unbind('pa_timeupdate',this.onPlayerTimeUpdate);
+            links.events.removeListener(this.timeline,'timechanged',this.onTimelineMoved);
+            links.events.removeListener(this.timeline,'change',this.onTimelineItemChanged);
+            links.events.removeListener(this.timeline,'delete',this.onTimelineItemDeleted);
+            links.events.removeListener(this.timeline,'select',this.onTimelineItemSelected);
+            this.tracks.each(function(track,item){
+              var annotations = track.get("annotations");
+              annotations.unbind('add'); 
+    
+            },this);
+            
+            this.$el.empty();
             this.timeline.deleteAllItems();
+            this.timeline = null;
+            delete this.timeline;
             this.data = [];
           }
           

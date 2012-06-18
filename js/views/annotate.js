@@ -35,7 +35,7 @@ define(["jquery",
             if(!attr.annotations)
                 throw "The annotations have to be given to the annotate view.";
               
-            _.bindAll(this,'insert','render');
+            _.bindAll(this,'insert','render','reset');
             
             this.annotations = attr.annotations;
             this.playerAdapter = attr.playerAdapter;
@@ -69,6 +69,11 @@ define(["jquery",
               
             this.annotations.add(annotation);
             annotation.save();
+          },
+          
+          reset: function(){
+            delete this.annotations;
+            this.undelegateEvents();
           }
           
         });
