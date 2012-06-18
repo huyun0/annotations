@@ -20,7 +20,10 @@ require(['domReady',
                 Backbone.sync = AnnotationsSync;
                 
                 var videos, videos, users, user, scales, scale, scale2, scaleValues, scaleValue, scaleValue2;
-                var isVideoLoaded, isUserLoaded, isScaleLoaded, isScaleValueLoaded = false;
+                var isVideoLoaded = false;
+                var isUserLoaded = false;
+                var isScaleLoaded = false;
+                var isScaleValueLoaded = false;
                 
                 Backbone.sync = AnnotationsSync;
                 

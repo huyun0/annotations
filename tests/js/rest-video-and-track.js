@@ -20,7 +20,10 @@ require(['domReady',
                 Backbone.sync = AnnotationsSync;
                 
                 var videos, videos, track, track2, tracks, annotation, annotation2, annotations, users, user;
-                var isVideoLoaded, isTrackLoaded, isAnnotationLoaded, isUserLoaded = false;
+                var isVideoLoaded = false;
+                var isTrackLoaded = false;
+                var isAnnotationLoaded = false;
+                var isUserLoaded = false;
                 
                 Backbone.sync = AnnotationsSync;
                 
@@ -75,6 +78,15 @@ require(['domReady',
                                 success: function(data){
                                     ok(true, "Saved successfully");
                                     ok(video.get('id')!==undefined,"Id has been set");
+                                    ok(_.isObject(data), "Got video in json");
+                                    ok(data.id, "Id is "+data.id);
+                                    equal(data.video_extid, video.get("video_extid"), "Extid is correct");
+                                    ok(data.created_at, "Created_at date is set");
+                                    equal(data.created_by, user.get('id'), "Created_by user id is correct");
+                                    ok(data.updated_at, "Updated_at date is set");
+                                    equal(data.updated_by, user.get('id'), "Updated_by user id is correct");     
+                                    equal(data.deleted_at, null, "Deleted_at date is wrong");
+                                    equal(data.deleted_by, null, "Deleted_by user is wrong");
                                     start();
                                 }
                     });
@@ -98,6 +110,8 @@ require(['domReady',
                                     equal(data.created_by, user.get('id'), "Created_by user id is correct");
                                     ok(data.updated_at, "Updated_at date is set");
                                     equal(data.updated_by, user.get('id'), "Updated_by user id is correct");
+                                    equal(data.deleted_at, null, "Deleted_at date is wrong");
+                                    equal(data.deleted_by, null, "Deleted_by user is wrong");
                                     start();
                                 }
                     });
@@ -144,6 +158,17 @@ require(['domReady',
                                 success: function(data){
                                     ok(true, "Saved successfully");
                                     ok(track.get('id')!==undefined,"Id has been set");
+                                    ok(_.isObject(data), "Got track in json");
+                                    ok(data.id, "Id is "+data.id);
+                                    equal(data.name, track.get("name"), "Name is correct");
+                                    equal(data.description, track.get("description"), "Description is correct");
+                                    equal(data.settings, track.get("settings"), "Settings are correct");
+                                    ok(data.created_at, "Created_at date is set");
+                                    equal(data.created_by, user.get('id'), "Created_by user id is correct");
+                                    ok(data.updated_at, "Updated_at date is set");
+                                    equal(data.updated_by, user.get('id'), "Updated_by user id is correct");
+                                    equal(data.deleted_at, null, "Deleted_at date is wrong");
+                                    equal(data.deleted_by, null, "Deleted_by user is wrong");
                                     start();
                                 }
                     });
@@ -169,6 +194,8 @@ require(['domReady',
                                     equal(data.created_by, user.get('id'), "Created_by user id is correct");
                                     ok(data.updated_at, "Updated_at date is set");
                                     equal(data.updated_by, user.get('id'), "Updated_by user id is correct");
+                                    equal(data.deleted_at, null, "Deleted_at date is wrong");
+                                    equal(data.deleted_by, null, "Deleted_by user is wrong");
                                     start();
                                 }
                     });
@@ -189,6 +216,8 @@ require(['domReady',
                                     equal(data.created_by, user.get('id'), "Created_by user id is correct");
                                     ok(data.updated_at, "Updated_at date is correct");
                                     equal(data.updated_by, user.get('id'), "Updated_by user id is correct");
+                                    equal(data.deleted_at, null, "Deleted_at date is wrong");
+                                    equal(data.deleted_by, null, "Deleted_by user is wrong");
                                     start();
                                 }
                     });
@@ -271,8 +300,17 @@ require(['domReady',
                                 
                                 success: function(data){
                                     ok(true, "Saved successfully");
-                                    
                                     ok(annotation.get('id')!==undefined,"Id has been set");
+                                    ok(_.isObject(data), "Got annotation in json");
+                                    ok(data.id, "Id is "+data.id);
+                                    equal(data.text, annotation.get("text"), "Text is correct");
+                                    equal(data.start, annotation.get("start"), "Start is correct");
+                                    ok(data.created_at, "Created_at date is set");
+                                    equal(data.created_by, user.get('id'), "Created_by user id is correct");
+                                    ok(data.updated_at, "Updated_at date is set");
+                                    equal(data.updated_by, user.get('id'), "Updated_by user id is correct");
+                                    equal(data.deleted_at, null, "Deleted_at date is wrong");
+                                    equal(data.deleted_by, null, "Deleted_by user is wrong");
                                     start();
                                 }
                     });
@@ -296,6 +334,8 @@ require(['domReady',
                                     equal(data.created_by, user.get('id'), "Created_by user id is correct");
                                     ok(data.updated_at, "Updated_at date is set");
                                     equal(data.updated_by, user.get('id'), "Updated_by user id is correct");
+                                    equal(data.deleted_at, null, "Deleted_at date is wrong");
+                                    equal(data.deleted_by, null, "Deleted_by user is wrong");
                                     start();
                                 }
                     });
@@ -316,6 +356,8 @@ require(['domReady',
                                     equal(data.created_by, user.get('id'), "Created_by user id is correct");
                                     ok(data.updated_at, "Updated_at date is correct");
                                     equal(data.updated_by, user.get('id'), "Updated_by user id is correct");
+                                    equal(data.deleted_at, null, "Deleted_at date is wrong");
+                                    equal(data.deleted_by, null, "Deleted_by user is wrong");
                                     start();
                                 }
                     });
@@ -332,7 +374,6 @@ require(['domReady',
                                 
                                 success: function(data){
                                     ok(true, "Get all annotations successfully");
-                                    
                                     ok(_.isArray(data.annotations), "Got all annotations");
                                     equal(data.annotations.length, 1, "One annotation is successfully returned");
                                     start();
@@ -353,7 +394,6 @@ require(['domReady',
                                 
                                 success: function(data){
                                     ok(true, "Saved successfully");
-                                    
                                     ok(annotation2.get('id')!==undefined,"Id has been set");
                                     start();
                                 }
@@ -371,7 +411,6 @@ require(['domReady',
                                 
                                 success: function(data){
                                     ok(true, "Get all annotations successfully");
-                                    
                                     ok(_.isArray(data.annotations), "Got all annotations");
                                     equal(data.annotations.length, 2, "Two annotations are successfully returned");
                                     start();
