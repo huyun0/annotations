@@ -34,7 +34,10 @@ define(["jquery",
               
             // Bind functions to the good context 
             _.bindAll(this,'render','addOne','addList','sortViewsbyTime');
-              
+            
+            
+            this.annotationViews = new Array();
+            
             this.annotations = attr.annotations;
             this.annotations.bind('add', this.addOne);
             this.annotations.bind('remove',this.removeOne);

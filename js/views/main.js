@@ -157,13 +157,14 @@ define(["jquery",
         this.annotateView.$el.hide();
         this.listView.$el.empty().hide();
         this.timelineView.reset();
-        this.timelineView.remove();
+        this.annotateView.reset();
         
         // Delete the different objects
         delete annotationsTool.tracks;
         delete annotationsTool.video;
         delete annotationsTool.user;
         delete this.listView;
+        delete this.timelineView;
         
         this.loaded = false;
         this.loadingBox.find('.bar').width('0%');
