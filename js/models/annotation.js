@@ -13,7 +13,7 @@ define(["order!jquery",
         var Annotation = Backbone.Model.extend({
             
             defaults: {
-                access: ACCESS.PUBLIC,
+                access: ACCESS.PRIVATE,
                 created_at: null,
                 created_by: null,
                 updated_at: null,

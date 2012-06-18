@@ -1,16 +1,15 @@
-define(["order!jquery",
-        "order!collections/annotations",
+define(["jquery",
         "order!access",
         "order!underscore",
         "order!backbone"],
+       
+    function($, ACCESS){
     
-    function($,Annotations,ACCESS){
-        
         /**
-         * Track model
+         * scale value model
          * @class
          */
-        var Track = Backbone.Model.extend({
+        var ScaleValue = Backbone.Model.extend({
             
             defaults: {
                 access: ACCESS.PRIVATE,
@@ -24,28 +23,15 @@ define(["order!jquery",
             
             initialize: function(attr){
                 
-                if(!attr || _.isUndefined(attr.name))
-                    throw "'name' attribute is required";
+                if(!attr  || _.isUndefined(attr.name) || attr.name == "" ||
+                   _.isUndefined(attr.value) || !_.isNumber(attr.value) ||
+                   _.isUndefined(attr.order) || !_.isNumber(attr.order))
+                    throw "'name, value, order' attributes are required";
                 
                 this.set(attr);
                 
-                // If id not set, take the cid as default
                 if(!attr.id){
-                    this.set({id:this.cid});
                     this.toCreate = true;
-                }
-                
-                if(attr.annotations && _.isArray(attr.annotations))
-                    this.set({annotations: new Annotations(attr.annotations,this)});
-                else
-                    this.set({annotations: new Annotations([],this)});
-                
-                // If localStorage used, we have to save the video at each change on the children
-                if(window.annotationsTool.localStorage){
-                    this.attributes['annotations'].bind('change',function(annotation){
-                            this.save();
-                            this.trigger("change");
-                    },this);
                 }
             },
             
@@ -65,17 +51,17 @@ define(["order!jquery",
                     }
                     //    return "'id' attribute can not be modified after initialization!";
                     //if(!_.isNumber(attr.id))
-                    //    return "'id' attribute must be a number!";
+                    //    return "'creat attribute must be a number!";
                 }
                 
-                if(attr.description && !_.isString(attr.description))
-                    return "'description' attribute must be a string";
+                if(attr.name && !_.isString(attr.name))
+                    return "'name' attribute must be a string";
                 
-                if(attr.settings && !_.isString(attr.settings))
-                    return "'description' attribute must be a string";
+                if(attr.value && !_.isNumber(attr.value))
+                    return "'value' attribute must be a number";
                 
-                if(attr.access &&  !_.include(ACCESS,attr.access))
-                    return "'access' attribute is not valid.";
+                if(attr.order && !_.isNumber(attr.order))
+                    return "'order' attribute must be a number";
                 
                 if(attr.created_by && !(_.isNumber(attr.created_by) || attr.created_by instanceof User))
                     return "'created_by' attribute must be a number or an instance of 'User'";
@@ -93,25 +79,14 @@ define(["order!jquery",
                         return "'created_at' attribute must be a number!";
                 }
         
-                if(attr.updated_at){
-                    if(!_.isNumber(attr.updated_at))
-                        return "'updated_at' attribute must be a number!";
-                }
+                if(attr.updated_at && !_.isNumber(attr.updated_at))
+                    return "'updated_at' attribute must be a number!";
 
-                if(attr.deleted_at){
-                    if(!_.isNumber(attr.deleted_at))
-                        return "'deleted_at' attribute must be a number!";
-                }
-            },
-            
-            /**
-             * Modify the current url for the annotations collection
-             */
-            setUrl: function(){
-                this.get("annotations").setUrl(this);
+                if(attr.deleted_at && !_.isNumber(attr.deleted_at))
+                    return "'deleted_at' attribute must be a number!";
             }
         });
         
-        return Track;
+        return ScaleValue;
     
 });
