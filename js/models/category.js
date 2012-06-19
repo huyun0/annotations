@@ -29,9 +29,12 @@ define(["order!jquery",
                 
                 this.set(attr);
                 
-                // If id not set, take the cid as default
+                // Check if the track has been initialized 
                 if(!attr.id){
-                    this.set({id:this.cid});
+                    // If local storage, we set the cid as id
+                    if(window.annotationsTool.localStorage)
+                        this.set({id:this.cid});
+                        
                     this.toCreate = true;
                 }
                 
@@ -63,9 +66,6 @@ define(["order!jquery",
                         this.id = attr.id;
                         this.setUrl();
                     }
-                    //    return "'id' attribute can not be modified after initialization!";
-                    //if(!_.isNumber(attr.id))
-                    //    return "'id' attribute must be a number!";
                 }
                 
                 if(attr.description && !_.isString(attr.description))

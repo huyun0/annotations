@@ -13,7 +13,7 @@ require(['domReady',
 
                 module("Track",  {
                         setup: function() {
-                            var tracks = new Tracks([],{id:123,collection:{url:"test"}});
+                            var tracks = new Tracks([],{id:123,collection:{url:"test"},url: function(){ return "test";}});
                             track = tracks.create({name:'My test track'});
                         }
                 });
@@ -26,19 +26,6 @@ require(['domReady',
                         ok(true,"Error catched: "+error);
                     };
 
-                });
-                
-                test("Created_at", function() {
-                    stop();
-                    track.bind('error',function(model,error){
-                            ok(true,"Can not be modified, error: " + error);
-                            track.unbind('error');
-                            start();
-                    });
-                    track.set({created_at:12});
-                    
-                    var newDate = new Date().getTime();
-                    ok(newDate-track.get('created_at')<100, "Track  should have around "+newDate+" as created_at attribute.");
                 });
                 
                 test("Description", function() {
@@ -65,7 +52,7 @@ require(['domReady',
                     });
                     track.set({settings:12});
                     
-                    var newSettings = {color:"blue"};
+                    var newSettings = "color=blue";
                     track.set({settings:newSettings});
                     equal(track.get('settings'), newSettings, "Track  should have "+newSettings+" as settings attribute.");
 

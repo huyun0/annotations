@@ -34,7 +34,7 @@ define(["order!jquery",
              * @param {Video} video containing the tracks
              */
             setUrl: function(video){
-                if(!video || !video.id || !video.collection)
+                if(!video || !video.collection)
                      throw "The parent video of the tracks must be given!";
                 
                 

@@ -30,7 +30,7 @@ define(["order!jquery",
              * @param {Video} video containing the scale
              */
             setUrl: function(video){
-                if(!video || !video.id || !video.collection) {
+                if(!video || !video.collection) {
                     this.url = window.annotationsTool.restEndpointsUrl + "/scales";
                 } else {
                     this.url = video.url() + "/scales";

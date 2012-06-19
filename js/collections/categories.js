@@ -22,7 +22,7 @@ define(["order!jquery",
                 
                 // If is not a template (copy in a video), we modify the url for this category
                 if(video)
-                    this.setUrl();
+                    this.setUrl(video);
             },
             
             parse: function(resp, xhr) {
@@ -40,7 +40,7 @@ define(["order!jquery",
              * @param {Category} video containing the category
              */
             setUrl: function(video){
-                if(!video || !video.id || !video.collection)
+                if(!video || !video.collection)
                      throw "The parent video of the categories must be given!";
                 
                 this.url = video.url() + "/categories";  

@@ -60,6 +60,10 @@ define(["jquery",
                     // Only for sprint 2
                     // xhr.setRequestHeader(self.config.headerParams.token, token); 
                };
+               
+               this.removeId = function(){
+                    
+               }
                 
                /**
                 * Method to send a GET request to the given url with the given resource

@@ -1,10 +1,11 @@
 define(["jquery",
         "collections/tracks",
+        "collections/categories",
         "order!access",
         "order!underscore",
         "order!backbone"],
        
-    function($, Tracks, ACCESS){
+    function($, Tracks, Categories, ACCESS){
     
         /**
          * video model
@@ -24,8 +25,12 @@ define(["jquery",
             
             initialize: function(attr){
                 
-                if(!attr || !attr.id){
-                    // this.set({id:this.cid});
+                // Check if the video has been initialized 
+                if(!attr.id){
+                    // If local storage, we set the cid as id
+                    if(window.annotationsTool.localStorage)
+                        this.set({id:this.cid});
+                        
                     this.toCreate = true;
                 }
                 
@@ -68,9 +73,6 @@ define(["jquery",
                         this.id = attr.id;
                         this.setUrl();
                     }
-                    //    return "'id' attribute can not be modified after initialization!";
-                    //if(!_.isNumber(attr.id))
-                    //    return "'creat attribute must be a number!";
                 }
                 
                 if(attr.tracks && !(attr.tracks instanceof Tracks))

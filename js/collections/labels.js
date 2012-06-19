@@ -11,7 +11,7 @@ define(["order!jquery",
          * @class
          */
         var Label = Backbone.Collection.extend({
-            model: Annotation,
+            model: Label,
             localStorage: new Backbone.LocalStorage("Labels"),
             
             /**
@@ -38,7 +38,7 @@ define(["order!jquery",
              * @param {Category} category containing the labels
              */
             setUrl: function(category){
-                if(!category || !category.id || !category.collection)
+                if(!category || !category.collection)
                      throw "The parent category of the labels must be given!";
                 
                 this.url = category.url() + "/labels";  

@@ -28,14 +28,18 @@ define(["order!jquery",
                 
                 this.set(attr);
                 
+                // Check if the category has been initialized 
                 if(!attr.id){
+                    // If local storage, we set the cid as id
+                    if(window.annotationsTool.localStorage)
+                        this.set({id:this.cid});
+                        
                     this.toCreate = true;
                 }
                 
                 // Define that all post operation have to been done through PUT method
                 // see in wiki
                 this.noPOST = true;
-                //    this.set({id:this.cid});
             },
             
             parse: function(attr) {    
@@ -46,12 +50,11 @@ define(["order!jquery",
             },
             
             validate: function(attr){
-                /*if(attr.id){
-                    if((tmpId=this.get('id')) && tmpId!==attr.id)
-                        return {attribute: "id", message: "'id' attribute can not be modified after initialization!"};
-                    if(!_.isNumber(attr.created_at))
-                        return {attribute: "created_at", message: "'id' attribute must be a number!"};
-                }*/
+                if(attr.id){
+                    if((tmpId=this.get('id')) && tmpId!==attr.id){
+                        this.id = attr.id;
+                    }
+                }
                 
                 if(_.isUndefined(attr.user_extid) || (!_.isString(attr.nickname) && !_.isNumber(attr.user_extid)))
                     return {attribute: "user_extid", message: "'user_extid' must be a valid string or number."};
