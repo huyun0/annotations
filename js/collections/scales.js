@@ -14,7 +14,7 @@ define(["order!jquery",
             model: Scale,
             localStorage: new Backbone.LocalStorage("Scales"),
             
-            initialize: function(video){
+            initialize: function(models, video){
                 _.bindAll(this, "setUrl");
                 
                 this.setUrl(video);
@@ -31,7 +31,7 @@ define(["order!jquery",
              */
             setUrl: function(video){
                 if(!video || !video.collection) {
-                    this.url = window.annotationsTool.restEndpointsUrl + "/scales";
+                    this.url = window.annotationsTool.restEndpointsUrl + "/scales";   
                 } else {
                     this.url = video.url() + "/scales";
                 }

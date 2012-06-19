@@ -14,7 +14,7 @@ define(["order!jquery",
             model: ScaleValue,
             localStorage: new Backbone.LocalStorage("ScaleValue"),
             
-            initialize: function(scale){
+            initialize: function(models, scale){
                 _.bindAll(this, "setUrl");
                 
                 this.setUrl(scale);

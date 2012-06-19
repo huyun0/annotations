@@ -38,20 +38,20 @@ require(['domReady',
                 
                 var loadVideo = function(){
                     videos = new Videos();
-                    videos.create({video_extid:'matterhorn123'});
+                    videos.create({video_extid:'matterhorn1234'});
                     video = videos.at(0);
                     isVideoLoaded = true;
                 };
                 
                 var loadScale = function(){
-                    scales = new Scales(video);
+                    scales = new Scales([], video);
                     scales.add({name:'quality',description:'the quality'});
                     scale = scales.at(0);
                     isScaleLoaded = true;
                 };
                 
                 var loadScaleValue = function() {
-                    scaleValues = new ScaleValues(scale);
+                    scaleValues = new ScaleValues([], scale);
                     scaleValues.add({name:'schwach',value:0.5,order:1});
                     scaleValue = scaleValues.at(0);
                     isScaleValueLoaded = true;
@@ -76,6 +76,14 @@ require(['domReady',
                                 success: function(data){
                                     ok(true, "Saved successfully");
                                     ok(scale.get('id')!==undefined,"Id has been set");
+                                    ok(_.isObject(data), "Got scale in json");
+                                    ok(data.id, "Id is "+data.id);
+                                    equal(data.name, scale.get("name"), "Name is correct");
+                                    equal(data.description, scale.get("description"), "Description is correct");
+                                    ok(data.created_at, "Created_at date is set");
+                                    equal(data.created_by, user.get('id'), "Created_by user id is correct");
+                                    ok(data.updated_at, "Updated_at date is set");
+                                    equal(data.updated_by, user.get('id'), "Updated_by user id is correct");
                                     start();
                                 }
                     });
@@ -94,6 +102,14 @@ require(['domReady',
                                 success: function(data){
                                     ok(true, "Saved successfully");
                                     ok(scale2.get('id')!==undefined,"Id has been set");
+                                    ok(_.isObject(data), "Got scale in json");
+                                    ok(data.id, "Id is "+data.id);
+                                    equal(data.name, scale2.get("name"), "Name is correct");
+                                    equal(data.description, scale2.get("description"), "Description is correct");
+                                    ok(data.created_at, "Created_at date is set");
+                                    equal(data.created_by, user.get('id'), "Created_by user id is correct");
+                                    ok(data.updated_at, "Updated_at date is set");
+                                    equal(data.updated_by, user.get('id'), "Updated_by user id is correct");
                                     start();
                                 }
                     });
@@ -152,7 +168,6 @@ require(['domReady',
                                 
                                 success: function(data){
                                     ok(true, "Get all scales successfully");
-                                    
                                     ok(_.isArray(data.scales), "Got all scales");
                                     equal(data.scales.length, 2, "Two scales are successfully returned");
                                     start();
@@ -181,6 +196,15 @@ require(['domReady',
                                 success: function(data){
                                     ok(true, "Saved successfully");
                                     ok(scaleValue.get('id')!==undefined,"Id has been set");
+                                    ok(_.isObject(data), "Got scaleValue in json");
+                                    ok(data.id, "Id is "+data.id);
+                                    equal(data.name, scaleValue.get("name"), "Name is correct");
+                                    equal(data.value, scaleValue.get("value"), "Value is correct");
+                                    equal(data.order, scaleValue.get("order"), "Order is correct");
+                                    ok(data.created_at, "Created_at date is set");
+                                    equal(data.created_by, user.get('id'), "Created_by user id is correct");
+                                    ok(data.updated_at, "Updated_at date is set");
+                                    equal(data.updated_by, user.get('id'), "Updated_by user id is correct");
                                     start();
                                 }
                     });
@@ -199,6 +223,15 @@ require(['domReady',
                                 success: function(data){
                                     ok(true, "Saved successfully");
                                     ok(scaleValue2.get('id')!==undefined,"Id has been set");
+                                    ok(_.isObject(data), "Got scaleValue in json");
+                                    ok(data.id, "Id is "+data.id);
+                                    equal(data.name, scaleValue2.get("name"), "Name is correct");
+                                    equal(data.value, scaleValue2.get("value"), "Value is correct");
+                                    equal(data.order, scaleValue2.get("order"), "Order is correct");
+                                    ok(data.created_at, "Created_at date is set");
+                                    equal(data.created_by, user.get('id'), "Created_by user id is correct");
+                                    ok(data.updated_at, "Updated_at date is set");
+                                    equal(data.updated_by, user.get('id'), "Updated_by user id is correct");
                                     start();
                                 }
                     });
@@ -213,11 +246,11 @@ require(['domReady',
                                 },
                                 
                                 success: function(data){
-                                    ok(_.isObject(data), "Got scale in json");
+                                    ok(_.isObject(data), "Got scaleValue in json");
                                     ok(data.id, "Id is "+data.id);
-                                    equal(data.name, scale.get("name"), "Name is correct");
-                                    equal(data.value, scale.get("value"), "Value is correct");
-                                    equal(data.order, scale.get("order"), "Order is correct");
+                                    equal(data.name, scaleValue.get("name"), "Name is correct");
+                                    equal(data.value, scaleValue.get("value"), "Value is correct");
+                                    equal(data.order, scaleValue.get("order"), "Order is correct");
                                     ok(data.created_at, "Created_at date is set");
                                     equal(data.created_by, user.get('id'), "Created_by user id is correct");
                                     ok(data.updated_at, "Updated_at date is set");
@@ -238,7 +271,7 @@ require(['domReady',
                                 
                                 success: function(data){
                                     ok(true, "Video updated");
-                                    equal("schwach", scale.get("name"), "Name is correct");
+                                    equal("schwach", scaleValue.get("name"), "Name is correct");
                                     ok(data.created_at, "Created_at date is set");
                                     equal(data.created_by, user.get('id'), "Created_by user id is correct");
                                     ok(data.updated_at, "Updated_at date is set");
@@ -258,9 +291,8 @@ require(['domReady',
                                 
                                 success: function(data){
                                     ok(true, "Get all scale values successfully");
-                                    
                                     ok(_.isArray(data.scaleValues), "Got all scale Values");
-                                    equal(data.scaleValues.length, 1, "Two annotations are successfully returned");
+                                    equal(data.scaleValues.length, 2, "Two scale values are successfully returned");
                                     start();
                                 }
                     });
@@ -275,36 +307,6 @@ require(['domReady',
                         if(!isScaleValueLoaded)loadScaleValue();
                     }
                 });
-                
-                test("Delete scale",1,function(){
-                    stop();
-                    AnnotationsSync('delete',scale,{
-                                error: function(error){
-                                    ok(false, error);
-                                    start();
-                                },
-                                
-                                success: function(data){
-                                    ok(true, "Scale deleted.");                                    
-                                    start();
-                                }
-                    });
-                })
-                
-                test("Get deleted scale",1,function(){
-                    stop();
-                    AnnotationsSync('read',scale,{
-                                error: function(error){
-                                    ok(true, "Try to get scale but should not exist: "+error);
-                                    start();
-                                },
-                                
-                                success: function(data){
-                                    ok(false, "Got scale");
-                                    start();
-                                }
-                    });
-                })
                 
                 test("Delete scale value",1,function(){
                     stop();
@@ -321,6 +323,21 @@ require(['domReady',
                     });
                 })
                 
+                test("Delete scale value 2",1,function(){
+                    stop();
+                    AnnotationsSync('delete',scaleValue2,{
+                                error: function(error){
+                                    ok(false, error);
+                                    start();
+                                },
+                                
+                                success: function(data){
+                                    ok(true, "Scale value 2 deleted.");                                    
+                                    start();
+                                }
+                    });
+                })
+                
                 test("Get deleted scale value",1,function(){
                     stop();
                     AnnotationsSync('read',scaleValue,{
@@ -331,6 +348,51 @@ require(['domReady',
                                 
                                 success: function(data){
                                     ok(false, "Got scale value");
+                                    start();
+                                }
+                    });
+                })
+                
+                test("Delete scale",1,function(){
+                    stop();
+                    AnnotationsSync('delete',scale,{
+                                error: function(error){
+                                    ok(false, error);
+                                    start();
+                                },
+                                
+                                success: function(data){
+                                    ok(true, "Scale deleted.");                                    
+                                    start();
+                                }
+                    });
+                })
+                
+                test("Delete scale 2",1,function(){
+                    stop();
+                    AnnotationsSync('delete',scale2,{
+                                error: function(error){
+                                    ok(false, error);
+                                    start();
+                                },
+                                
+                                success: function(data){
+                                    ok(true, "Scale 2 deleted.");                                    
+                                    start();
+                                }
+                    });
+                })
+                
+                test("Get deleted scale",1,function(){
+                    stop();
+                    AnnotationsSync('read',scale,{
+                                error: function(error){
+                                    ok(true, "Try to get scale but should not exist: "+error);
+                                    start();
+                                },
+                                
+                                success: function(data){
+                                    ok(false, "Got scale");
                                     start();
                                 }
                     });
