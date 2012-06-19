@@ -35,8 +35,7 @@ define(["order!jquery",
              */
             setUrl: function(video){
                 if(!video || !video.collection)
-                     throw "The parent video of the tracks must be given!";
-                
+                     throw "Parent video must be given!";
                 
                 this.url = video.url() + "/tracks";  
             }

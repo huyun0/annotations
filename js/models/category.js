@@ -4,7 +4,7 @@ define(["order!jquery",
         "order!underscore",
         "order!backbone"],
     
-    function($,ACCESS){
+    function($, Labels, ACCESS){
         
         /**
          * Category model
@@ -19,7 +19,8 @@ define(["order!jquery",
                 updated_at: null,
                 updated_by: null,
                 deleted_at: null,
-                deleted_by: null
+                deleted_by: null,
+                has_duration: true
             },
             
             initialize: function(attr){

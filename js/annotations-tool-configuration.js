@@ -15,7 +15,7 @@ define(['order!domReady',
         window.annotationsTool =  {
             
             /** Define if the localStorage should be used or not */
-            localStorage: true,
+            localStorage: false,
             
             /** Url from the annotations Rest Endpoints */
             restEndpointsUrl: "../../extended-annotations",

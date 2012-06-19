@@ -110,6 +110,7 @@ define(["jquery",
              */
             setUrl: function(){
                 this.get("tracks").setUrl(this);
+                this.get("categories").setUrl(this);
             }
         });
         

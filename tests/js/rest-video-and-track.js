@@ -44,7 +44,7 @@ require(['domReady',
                 };
                 
                 var loadTrack = function(){                    
-                        tracks = new Tracks([],video);
+                        tracks = new Tracks([], video);
                         tracks.add({name: "Test", description:'test track', settings: "test"});
                         track = tracks.at(0);
                         isTrackLoaded = true;
