@@ -15,13 +15,18 @@ define(["order!jquery",
             localStorage: new Backbone.LocalStorage("Scales"),
             
             initialize: function(models, video){
-                _.bindAll(this, "setUrl");
+                _.bindAll(this, "setUrl","addCopyFromTemplate");
                 
                 this.setUrl(video);
             },
             
             parse: function(resp, xhr) {
-              return resp.scales;
+                if(resp.scales && _.isArray(resp.scales))
+                    return resp.annotations;
+                else if(_.isArray(resp))
+                    return resp;
+                else
+                    return null;
             },
             
             /**
@@ -30,12 +35,52 @@ define(["order!jquery",
              * @param {Video} video containing the scale
              */
             setUrl: function(video){
-                if(!video || !video.collection) {
-                    this.url = window.annotationsTool.restEndpointsUrl + "/scales";   
-                } else {
-                    this.url = video.url() + "/scales";
+                if(!video || !video.collection){ // If a template
+                    this.url = window.annotationsTool.restEndpointsUrl + "/scales";
+                    this.isTemplate = true;
                 }
+                else{  // If not a template, we add video url      
+                    this.url = video.url() + "/scales";
+                    this.isTemplate = false;
+                }
+                
+                this.each(function(scale){
+                    scale.setUrl();
+                });
+            },
+            
+            /**
+             * Add a copy from the given template to this collection
+             *
+             * @param {Scale} template to copy 
+             */
+            addCopyFromTemplate: function(element){
+                
+                // Test if the given scale is really a template
+                if(!this.isTemplate && !_.isArray(element) && element.id){
+                    
+                    // Copy the element and remove useless parameters 
+                    var copyJSON = element.toJSON();
+                    delete copyJSON.id;
+                    delete copyJSON.created_at;
+                    delete copyJSON.created_by;
+                    delete copyJSON.updated_at;
+                    delete copyJSON.updated_by;
+                    delete copyJSON.deleted_by;
+                    delete copyJSON.deleted_at;
+                    delete copyJSON.labels;
+                    
+                    // add the copy url parameter for the backend
+                    copyJSON['copyUrl'] = "?scale_id="+element.id;
+                    
+                    return this.create(copyJSON);
+                    
+                    // TODO add localStorage version
+                }
+                
+                return null;
             }
+            
         });
         
         return Scales;

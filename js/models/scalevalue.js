@@ -33,6 +33,15 @@ define(["jquery",
                 if(!attr.id){
                     this.toCreate = true;
                 }
+                
+                // Check if the track has been initialized 
+                if(!attr.id){
+                    // If local storage, we set the cid as id
+                    if(window.annotationsTool.localStorage)
+                        this.set({id:this.cid});
+                        
+                    this.toCreate = true;
+                }
             },
             
             parse: function(attr) {
@@ -45,13 +54,9 @@ define(["jquery",
             validate: function(attr){
                 
                 if(attr.id){
-                    if((tmpId=this.get('id')) && tmpId!==attr.id){
+                    if(this.get('id') != attr.id){
                         this.id = attr.id;
-                        this.setUrl();
                     }
-                    //    return "'id' attribute can not be modified after initialization!";
-                    //if(!_.isNumber(attr.id))
-                    //    return "'creat attribute must be a number!";
                 }
                 
                 if(attr.name && !_.isString(attr.name))

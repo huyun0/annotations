@@ -7,7 +7,7 @@ require(['domReady',
          'collections/categories',
          'collections/videos',
          'collections/users',
-         'tests/backbone-annotations-sync-test',
+         'backbone-annotations-sync',
          'order!underscore',
          'order!backbone',
          'order!libs/tests/qunit'],
@@ -18,34 +18,40 @@ require(['domReady',
                 QUnit.config.autostart = false;
                 Backbone.sync = AnnotationsSync;
                 
-                var category, categories, videos, video, users, user, videoCategories;
+                var category, categories, videos, video, users, user, videoCategories, label, labels, videoLabels;
                 var setupLoaded = false;
                 
+                var loadUser = function(){
+                    users = new Users();
+                    var userExtId = window.annotationsTool.getUserExtId();
+                    users.create({user_extid:userExtId,nickname:'pinguin', email: "test@dot.com"});
+                    user = users.at(0);
+                    window.annotationsTool.user = user;
+                    isUserLoaded = true;
+                }
+                
                 var setup = function(){
-                    categories = new Categories([]);
-                    categories.create({
-                            name: "Test category",
-                            description: "Category created for the tests"
-                    });
-                    category = categories.at(0);
                     
-                    videos = new Videos();
-                    videos.add({video_extid:'matterhorn123'});
-                    video = videos.at(0);
-                    AnnotationsSync('update',video,{
-                                error: function(error){
-                                    console.warn(error);
-                                },
-                                
-                                success: function(data){
-                                    video.set(data);
-                                }
-                    });
-                    isVideoLoaded = true;
-                    
-                    videoCategories = video.get("categories");
-                    
-                    setupLoaded = true;
+                    if(!setupLoaded){
+                        loadUser();
+                        
+                        categories = new Categories([]);
+                        categories.create({
+                                name: "Test category",
+                                description: "Category created for the tests"
+                        });
+                        category = categories.at(0);
+                        labels = category.get("labels");
+                        
+                        videos = new Videos();                        
+                        video = videos.create({video_extid:'category'});
+
+                        isVideoLoaded = true;
+                        
+                        videoCategories = video.get("categories");
+                        
+                        setupLoaded = true;
+                    }
                 }
                 
                 
@@ -64,11 +70,11 @@ require(['domReady',
                         success: function(data){
                             ok(true, "Saved successfully");
                             ok(category.id!== undefined,"Id has been set");
-                            window.annotationsTool.category = category;
+                            category.set(category.parse(data));
                             start();
                         }
                     });
-                })
+                });
                 
                 test("Get a 'template' category",function(){
                     stop();
@@ -86,9 +92,9 @@ require(['domReady',
                                     equal(data.description, category.get("description"), "Description is correct");
                                     equal(data.has_duration, category.get("has_duration"), "Duration is correct");
                                     ok(data.created_at, "Created_at date is set");
-                                    // equal(data.created_by, user.get('id'), "Created_by category id is correct");
+                                    equal(data.created_by, user.get('id'), "Created_by category id is correct");
                                     ok(data.updated_at, "Updated_at date is set");
-                                    // equal(data.updated_by, user.get('id'), "Updated_by category is correct");
+                                    equal(data.updated_by, user.get('id'), "Updated_by category is correct");
                                     start();
                                 }
                     });
@@ -97,7 +103,9 @@ require(['domReady',
                 test("Add a category to a video",function(){
                     stop();
                     
-                    var copy = videoCategories.copyTemplate(category);
+                    var copy = videoCategories.addCopyFromTemplate(category);
+                    
+                    var data = copy.toJSON();
                                 
                     ok(_.isObject(data), "Got category in json");
                     ok(data.id, "Id is "+data.id);
@@ -106,9 +114,9 @@ require(['domReady',
                     equal(data.description, category.get("description"), "Description is correct");
                     equal(data.has_duration, category.get("has_duration"), "Duration is correct");
                     ok(data.created_at, "Created_at date is set");
-                    // equal(data.created_by, user.get('id'), "Created_by category id is correct");
+                    equal(data.created_by, user.get('id'), "Created_by category id is correct");
                     ok(data.updated_at, "Updated_at date is set");
-                    // equal(data.updated_by, user.get('id'), "Updated_by category is correct");
+                    equal(data.updated_by, user.get('id'), "Updated_by category is correct");
                     start();
 
                 });
@@ -127,12 +135,12 @@ require(['domReady',
                                     ok(data.id, "Id is "+data.id);
                                     notEqual(data.id,category.id, "Id is different as template category");
                                     equal(data.name, category.get("name"), "Name is correct");
-                                    equal(data.description, category.get("descriptoin"), "Description is correct");
+                                    equal(data.description, category.get("description"), "Description is correct");
                                     equal(data.has_duration, category.get("has_duration"), "Duration is correct");
                                     ok(data.created_at, "Created_at date is set");
-                                    // equal(data.created_by, user.get('id'), "Created_by category id is correct");
+                                    equal(data.created_by, user.get('id'), "Created_by category id is correct");
                                     ok(data.updated_at, "Updated_at date is set");
-                                    // equal(data.updated_by, user.get('id'), "Updated_by category is correct");
+                                    equal(data.updated_by, user.get('id'), "Updated_by category is correct");
                                     start();
                                 }
                     });
@@ -141,7 +149,10 @@ require(['domReady',
                 test("Update a 'template' category",function(){
                     stop();
                     
-                    AnnotationsSync('read',category,{
+                    var newName = "The new category from a video";
+                    category.set({name: newName});
+                    
+                    AnnotationsSync('update',category,{
                                 error: function(error){
                                     ok(false, error);
                                     start();
@@ -149,15 +160,13 @@ require(['domReady',
                                 
                                 success: function(data){
                                     ok(_.isObject(data), "Got category in json");
-                                    ok(data.id, "Id is "+data.id);
-                                    notEqual(data.id,category.id, "Id is different as template category");
-                                    equal(data.name, category.get("name"), "Name is correct");
+                                    equal(data.id,category.id, "Id is correct");
+                                    equal(data.name, newName, "Name is correct");
                                     equal(data.description, category.get("description"), "Description is correct");
                                     equal(data.has_duration, category.get("has_duration"), "Duration is correct");
                                     ok(data.created_at, "Created_at date is set");
-                                    // equal(data.created_by, user.get('id'), "Created_by category id is correct");
-                                    ok(data.updated_at, "Updated_at date is set");
-                                    // equal(data.updated_by, user.get('id'), "Updated_by category is correct");
+                                    equal(data.created_by, user.get('id'), "Created_by category id is correct");
+                                    equal(data.updated_by, user.get('id'), "Updated_by category is correct");
                                     start();
                                 }
                     });
@@ -166,7 +175,10 @@ require(['domReady',
                 test("Update a category from a video",function(){
                     stop();
                     
-                    AnnotationsSync('read',videoCategories.at(0),{
+                    var newName = "The new category from a video";
+                    videoCategories.at(0).set({name: newName});
+                    
+                    AnnotationsSync('update',videoCategories.at(0),{
                                 error: function(error){
                                     ok(false, error);
                                     start();
@@ -176,17 +188,149 @@ require(['domReady',
                                     ok(_.isObject(data), "Got category in json");
                                     ok(data.id, "Id is "+data.id);
                                     notEqual(data.id,category.id, "Id is different as template category");
-                                    equal(data.name, category.get("name"), "Name is correct");
+                                    equal(data.name, newName, "Name is correct");
                                     equal(data.description, category.get("description"), "Description is correct");
                                     equal(data.has_duration, category.get("has_duration"), "Duration is correct");
                                     ok(data.created_at, "Created_at date is set");
-                                    // equal(data.created_by, user.get('id'), "Created_by category id is correct");
-                                    ok(data.updated_at, "Updated_at date is set");
-                                    // equal(data.updated_by, user.get('id'), "Updated_by category is correct");
+                                    equal(data.created_by, user.get('id'), "Created_by category id is correct");
+                                    equal(data.updated_by, user.get('id'), "Updated_by category is correct");
                                     start();
                                 }
                     });
                 });
+            
+                
+                test("Get all 'template' categories", function(){
+                    stop();
+                    AnnotationsSync('read',categories,{
+                                error: function(error){
+                                    ok(false, error);
+                                    start();
+                                },
+                                
+                                success: function(data){
+                                    ok(true, "Get all categories successfully");
+                                    ok(_.isArray(data.categories), "Got all categories");
+                                    equal(data.categories.length, 1, "One categories are successfully returned");
+                                    start();
+                                }
+                    });
+                });
+                
+                test("Get all categories from video", function(){
+                    stop();
+                    AnnotationsSync('read',videoCategories,{
+                                error: function(error){
+                                    ok(false, error);
+                                    start();
+                                },
+                                
+                                success: function(data){
+                                    ok(true, "Get all categories successfully");
+                                    ok(_.isArray(data.categories), "Got all categories");
+                                    equal(data.categories.length, 1, "One categories are successfully returned");
+                                    start();
+                                }
+                    });
+                });
+                
+                
+                module("Labels",{ setup : setup });
+                
+                test("Create a 'template' label",function(){
+                    
+                    var categoryJSON = category.toJSON();
+                    delete categoryJSON.labels;
+                    
+                    label = labels.create({
+                        value: "Test label",
+                        abbreviation: "TL",
+                        category: categoryJSON
+                    })
+                    
+                    ok(label.id!== undefined,"Id has been set");
+                    ok(label.get("created_at"), "Created_at date is set");
+                    equal(label.get("created_by"), user.get('id'), "Created_by date id is correct");
+                    ok(label.get("updated_at"), "Updated_at date is set");
+                    equal(label.get("updated_by"), user.get('id'), "Updated_by date is correct");
+                });
+                
+                test("Get a 'template' label",function(){
+                    stop();
+                    
+                    
+                    AnnotationsSync('read',label,{
+                        
+                        error: function(error){
+                            ok(false, error);
+                            start();
+                        },
+                        
+                        success: function(data){
+                            ok(true, "Saved successfully");
+                            ok(label.id!== undefined,"Id has been set");
+                            ok(_.isObject(data), "Got label in json");
+                            equal(data.value, label.get("value"), "Value is correct");
+                            equal(data.abbreviation, label.get("abbreviation"), "Abreviation is correct");
+                            equal(data.category.id, label.get("category").id, "Category is correct");
+                            ok(data.created_at, "Created_at date is set");
+                            equal(data.created_by, user.get('id'), "Created_by category id is correct");
+                            ok(data.updated_at, "Updated_at date is set");
+                            equal(data.updated_by, user.get('id'), "Updated_by category is correct");
+                            start();
+                        }
+                    });
+                });
+                
+                test("Get all labels from a copied category",function(){
+                    stop();
+                    
+                    var copyWithLabel = videoCategories.addCopyFromTemplate(category);
+                    
+                    AnnotationsSync('read',copyWithLabel.get("labels"),{
+                        
+                        error: function(error){
+                            ok(false, error);
+                            start();
+                        },
+                        
+                        success: function(data){
+                            ok(true, "Get all labels successfully");
+                            ok(_.isArray(data.labels), "Got all label");
+                            equal(data.labels.length, 1, "One label are successfully returned");
+                            notEqual(data.labels[0].id,label.id, "Copied label has a different id");
+                            start();
+                        }
+                    });
+                });
+                
+                test("Update a 'template' label",function(){
+                    stop();
+                    
+                    var newValue = "Super!";
+                    label.set({value: newValue});
+                            
+                    AnnotationsSync('update',label,{
+            
+                                error: function(error){
+                                    ok(false, error);
+                                    start();
+                                },
+                                
+                                success: function(data){
+                                    ok(_.isObject(data), "Got category in json");
+                                    ok(data.id, "Id is "+data.id);
+                                    notEqual(data.id,category.id, "Id is different as template category");
+                                    equal(data.value, newValue,"Value setted correctly");
+                                    ok(data.created_at, "Created_at date is set");
+                                    equal(data.created_by, user.get('id'), "Created_by category id is correct");
+                                    equal(data.updated_by, user.get('id'), "Updated_by category is correct");
+                                    start();
+                                }
+                    });
+                });
+                
+                
             });
             
 });

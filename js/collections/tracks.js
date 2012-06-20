@@ -37,7 +37,11 @@ define(["order!jquery",
                 if(!video || !video.collection)
                      throw "Parent video must be given!";
                 
-                this.url = video.url() + "/tracks";  
+                this.url = video.url() + "/tracks";
+                
+                this.each(function(track){
+                    track.setUrl();
+                });
             }
         });
         

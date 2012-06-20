@@ -18,7 +18,7 @@ define(["order!jquery",
              * @constructor
              */
             initialize: function(models,video){
-                _.bindAll(this,"setUrl","copyTemplate");
+                _.bindAll(this,"setUrl","addCopyFromTemplate");
                 
                 this.setUrl(video);                    
             },
@@ -46,44 +46,42 @@ define(["order!jquery",
                     this.url = video.url() + "/categories";
                     this.isTemplate = false;
                 }
+                
+                this.each(function(category){
+                    category.setUrl();
+                });
             },
             
-            copyTemplate: function(element){
-
+            /**
+             * Add a copy from the given template to this collection
+             *
+             * @param {Category} template to copy 
+             */
+            addCopyFromTemplate: function(element){
+                
+                // Test if the given category is really a template
                 if(!this.isTemplate && !_.isArray(element) && element.id){
-                    var copy = element.toJSON();
-                    delete copy.id;
                     
-                    if(!window.annotationsTool.localStorage){
-                        $.ajax({
-                              crossDomain: true,
-                              type: "POST",
-                              async: false,
-                              url: this.url + "?category_id="+element.id,
-                              dataType: "json",
-                              data: JSON.parse(JSON.stringify(copy)),
-                              beforeSend: function(xhr) {
-                                            // Use request user id
-                                            if(!_.isUndefined(window.annotationsTool) && !_.isUndefined(window.annotationsTool.user))
-                                                xhr.setRequestHeader(self.config.headerParams.userId, annotationsTool.user.id);
-                                        },
-                              success: function(data, textStatus, XMLHttpRequest){
-                                   copy.set(data);
-                              },
-                              
-                              error: function(error){
-                                console.warn(error);
-                            }
-                        });
-                    }
+                    // Copy the element and remove useless parameters 
+                    var copyJSON = element.toJSON();
+                    delete copyJSON.id;
+                    delete copyJSON.created_at;
+                    delete copyJSON.created_by;
+                    delete copyJSON.updated_at;
+                    delete copyJSON.updated_by;
+                    delete copyJSON.deleted_by;
+                    delete copyJSON.deleted_at;
+                    delete copyJSON.labels;
                     
-                    this.add(copy);
+                    // add the copy url parameter for the backend
+                    copyJSON['copyUrl'] = "?category_id="+element.id;
                     
-                    return copy;
+                    return this.create(copyJSON);
+                    
+                    // TODO add localStorage version
                 }
                 
                 return null;
-
             }
         });
         

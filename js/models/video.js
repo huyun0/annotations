@@ -69,7 +69,7 @@ define(["jquery",
             validate: function(attr){
                 
                 if(attr.id){
-                    if((tmpId=this.get('id')) && tmpId!==attr.id){
+                    if(this.get('id') != attr.id){
                         this.id = attr.id;
                         this.setUrl();
                     }

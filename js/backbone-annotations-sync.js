@@ -66,7 +66,7 @@ define(["jquery",
                }
                 
                /**
-                * Method to send a GET request to the given url with the given resource
+                * Method to send a POST request to the given url with the given resource
                 *
                 * @param {Model, Collection} resource
                 */
@@ -80,10 +80,39 @@ define(["jquery",
                               data: JSON.parse(JSON.stringify(resource)),
                               beforeSend: self.setHeaderParams,
                               success: function(data, textStatus, XMLHttpRequest){
-                                   resource.set(data);
+                                   //resource.set(resource.parse(data));
                                    resource.toCreate = false;
                                    if(resource.setUrl)
                                         resource.setUrl();
+                                   options.success(data, textStatus, XMLHttpRequest);
+                              },
+                              
+                              error: self.setError
+                    });
+               }
+               
+               
+               /**
+                * Method to send a POST request to the given url with the given resource for copy
+                *
+                * @param {Model, Collection} resource
+                */
+               var copy = function(resource){
+                    $.ajax({
+                              crossDomain: true,
+                              type: "POST",
+                              async: false,
+                              url: self.getURI(resource, false)+resource.get("copyUrl"),
+                              dataType: "json",
+                              data: JSON.parse(JSON.stringify(resource)),
+                              beforeSend: self.setHeaderParams,
+                              success: function(data, textStatus, XMLHttpRequest){
+                                   //resource.set(resource.parse(data));
+                                   resource.toCreate = false;
+                                   if(resource.setUrl)
+                                        resource.setUrl();
+                                   
+                                   resource.unset("copyUrl");
                                    options.success(data, textStatus, XMLHttpRequest);
                               },
                               
@@ -145,7 +174,7 @@ define(["jquery",
                               data: JSON.parse(JSON.stringify(resource)),
                               beforeSend: self.setHeaderParams,
                               success: function(data, textStatus, XMLHttpRequest){
-                                   resource.set(data);
+                                   // resource.set(resource.parse(data));
                                    resource.toCreate = false;
                                    if(resource.setUrl)
                                         resource.setUrl();
@@ -183,8 +212,17 @@ define(["jquery",
                switch(method){
                          // If model has been created and is not a model with only PUT method supported, POST method is used
                         case "create":
-                        case "update":
-                                        (model.toCreate && !model.noPOST) ? create(model) : update(model); break;
+                        case "update":  if(model.toCreate && !model.noPOST){
+                                             if(model.get("copyUrl"))  // If it is a 'template' copy
+                                                  copy(model);
+                                             else
+                                                  create(model); // Otherwise simply create
+                                        }
+                                        else{
+                                             update(model);
+                                        }
+                                        break;
+
                         
                         // If model.id exist, it is a model, otherwise a collection so we retrieve all its items
                         case "read":    model.id != undefined ? find(model) : findAll(model); break;

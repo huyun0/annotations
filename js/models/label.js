@@ -33,7 +33,6 @@ define(["order!jquery",
                 if(!attr || _.isUndefined(attr.category))
                     throw "'category' attribute is required";
                 
-                this.toCreate = true;
                     
                 this.set(attr);
                 
@@ -51,16 +50,13 @@ define(["order!jquery",
                 attr.created_at = attr.created_at != null ? Date.parse(attr.created_at): null;
                 attr.updated_at = attr.updated_at != null ? Date.parse(attr.updated_at): null;
                 attr.deleted_at = attr.deleted_at != null ? Date.parse(attr.deleted_at): null;
-                attr.created_by = attr.created_by != null ? new User(attr.created_by): null;
-                attr.updated_by = attr.updated_by != null ? new User(attr.updated_by): null;
-                attr.deleted_by = attr.deleted_by != null ? new User(attr.deleted_by): null;
                 return attr;
             },
             
             validate: function(attr){
                 
                 if(attr.id){
-                    if((tmpId=this.get('id')) && tmpId!==attr.id){
+                    if(this.get('id') != attr.id){
                         this.id = attr.id;
                     }
                 }

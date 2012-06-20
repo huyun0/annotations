@@ -60,6 +60,10 @@ define(["jquery",
                     // Only for sprint 2
                     // xhr.setRequestHeader(self.config.headerParams.token, token); 
                };
+               
+               this.removeId = function(){
+                    
+               }
                 
                /**
                 * Method to send a GET request to the given url with the given resource
@@ -76,18 +80,10 @@ define(["jquery",
                               data: JSON.parse(JSON.stringify(resource)),
                               beforeSend: self.setHeaderParams,
                               success: function(data, textStatus, XMLHttpRequest){
-                                   // Update the resource and return
-                                   data.created_at = data.created_at != null ? Date.parse(data.created_at): null;
-                                   data.updated_at = data.updated_at != null ? Date.parse(data.updated_at): null;
-                                   data.deleted_at = data.deleted_at != null ? Date.parse(data.deleted_at): null;
-                                   
-                                   resource.set(data);
-                                   
+                                   resource.set(resource.parse(data));
                                    resource.toCreate = false;
-                                   
                                    if(resource.setUrl)
                                         resource.setUrl();
-                                   
                                    options.success(data, textStatus, XMLHttpRequest);
                               },
                               
@@ -149,15 +145,8 @@ define(["jquery",
                               data: JSON.parse(JSON.stringify(resource)),
                               beforeSend: self.setHeaderParams,
                               success: function(data, textStatus, XMLHttpRequest){
-                                   // Update the resource and return
-                                   data.created_at = data.created_at != null ? Date.parse(data.created_at): null;
-                                   data.updated_at = data.updated_at != null ? Date.parse(data.updated_at): null;
-                                   data.deleted_at = data.deleted_at != null ? Date.parse(data.deleted_at): null;
-                                   
-                                   resource.set(data);
-                                   
+                                   resource.set(resource.parse(data));
                                    resource.toCreate = false;
-                                   
                                    if(resource.setUrl)
                                         resource.setUrl();
                                    options.success(data, textStatus, XMLHttpRequest);

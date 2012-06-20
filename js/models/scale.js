@@ -1,9 +1,10 @@
 define(["jquery",
         "order!access",
+        "order!collections/scalevalues",
         "order!underscore",
         "order!backbone"],
        
-    function($, ACCESS){
+    function($, ACCESS, ScaleValues){
     
         /**
          * scale model
@@ -27,8 +28,30 @@ define(["jquery",
                 
                 this.set(attr);
                 
+                if(attr.scaleValues && _.isArray(attr.scaleValues))
+                    this.set({scaleValues: new ScaleValues(attr.labels,this)});
+                else
+                    this.set({scaleValues: new ScaleValues([],this)});
+                
+                // Check if the track has been initialized 
+                if(!attr.id){
+                    // If local storage, we set the cid as id
+                    if(window.annotationsTool.localStorage)
+                        this.set({id:this.cid});
+                        
+                    this.toCreate = true;
+                }
+                
                 if(!attr.id){
                     this.toCreate = true;
+                }
+                
+                // If localStorage used, we have to save the video at each change on the children
+                if(window.annotationsTool.localStorage){
+                    this.attributes['scaleValues'].bind('change',function(scalevalue){
+                            this.save();
+                            this.trigger("change");
+                    },this);
                 }
             },
             
@@ -42,13 +65,10 @@ define(["jquery",
             validate: function(attr){
                 
                 if(attr.id){
-                    if((tmpId=this.get('id')) && tmpId!==attr.id){
+                    if(this.get('id') != attr.id){
                         this.id = attr.id;
                         this.setUrl();
                     }
-                    //    return "'id' attribute can not be modified after initialization!";
-                    //if(!_.isNumber(attr.id))
-                    //    return "'creat attribute must be a number!";
                 }
                 
                 if(attr.name && !_.isString(attr.name))
@@ -78,6 +98,13 @@ define(["jquery",
 
                 if(attr.deleted_at && !_.isNumber(attr.deleted_at))
                     return "'deleted_at' attribute must be a number!";
+            },
+            
+            /**
+             * Modify the current url for the annotations collection
+             */
+            setUrl: function(){
+                this.get("scaleValues").setUrl(this);
             }
         });
         

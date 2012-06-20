@@ -8,7 +8,7 @@ require(['domReady',
          'collections/scales',
          'models/scalevalue',
          'collections/scalevalues',
-         'tests/backbone-annotations-sync-test',
+         'backbone-annotations-sync',
          'order!underscore',
          'order!backbone',
          'order!libs/tests/qunit'],
@@ -19,7 +19,7 @@ require(['domReady',
                 QUnit.config.autostart = false;
                 Backbone.sync = AnnotationsSync;
                 
-                var videos, videos, users, user, scales, scale, scale2, scaleValues, scaleValue, scaleValue2;
+                var videos, videos, users, user, scales, videoScales, scale, scale2, scaleValues, scaleValue, scaleValue2;
                 var isVideoLoaded = false;
                 var isUserLoaded = false;
                 var isScaleLoaded = false;
@@ -44,7 +44,8 @@ require(['domReady',
                 };
                 
                 var loadScale = function(){
-                    scales = new Scales([], video);
+                    scales = new Scales([]);
+                    videoScales = new Scales([],video);
                     scales.add({name:'quality',description:'the quality'});
                     scale = scales.at(0);
                     isScaleLoaded = true;
@@ -75,15 +76,15 @@ require(['domReady',
                                 
                                 success: function(data){
                                     ok(true, "Saved successfully");
-                                    ok(scale.get('id')!==undefined,"Id has been set");
+                                    ok(data.id!==undefined,"Id has been set");
                                     ok(_.isObject(data), "Got scale in json");
-                                    ok(data.id, "Id is "+data.id);
                                     equal(data.name, scale.get("name"), "Name is correct");
                                     equal(data.description, scale.get("description"), "Description is correct");
                                     ok(data.created_at, "Created_at date is set");
                                     equal(data.created_by, user.get('id'), "Created_by user id is correct");
                                     ok(data.updated_at, "Updated_at date is set");
                                     equal(data.updated_by, user.get('id'), "Updated_by user id is correct");
+                                    scale.set(scale.parse(data));
                                     start();
                                 }
                     });
@@ -101,7 +102,7 @@ require(['domReady',
                                 
                                 success: function(data){
                                     ok(true, "Saved successfully");
-                                    ok(scale2.get('id')!==undefined,"Id has been set");
+                                    ok(data.id!==undefined,"Id has been set");
                                     ok(_.isObject(data), "Got scale in json");
                                     ok(data.id, "Id is "+data.id);
                                     equal(data.name, scale2.get("name"), "Name is correct");
@@ -110,10 +111,29 @@ require(['domReady',
                                     equal(data.created_by, user.get('id'), "Created_by user id is correct");
                                     ok(data.updated_at, "Updated_at date is set");
                                     equal(data.updated_by, user.get('id'), "Updated_by user id is correct");
+                                    scale2.set(scale2.parse(data));
                                     start();
                                 }
                     });
                 })
+                
+                test("Add scale 1 to a video",function(){
+                    stop();
+                    
+                    var copy = videoScales.addCopyFromTemplate(scale);
+                    
+                    var data = copy.toJSON();
+                                
+                    ok(_.isObject(data), "Got category in json");
+                    ok(data.id, "Id is "+data.id);
+                    notEqual(data.id,scale.id, "Id is different as template scale");
+                    ok(data.created_at, "Created_at date is set");
+                    equal(data.created_by, user.get('id'), "Created_by category id is correct");
+                    ok(data.updated_at, "Updated_at date is set");
+                    equal(data.updated_by, user.get('id'), "Updated_by category is correct");
+                    start();
+
+                });
                 
                 test("Get scale",function(){
                     stop(); 
@@ -148,7 +168,7 @@ require(['domReady',
                                 
                                 success: function(data){
                                     ok(true, "Video updated");
-                                    equal("quantity", scale.get("name"), "Name is correct");
+                                    equal("quantity", data.name, "Name is correct");
                                     ok(data.created_at, "Created_at date is set");
                                     equal(data.created_by, user.get('id'), "Created_by user id is correct");
                                     ok(data.updated_at, "Updated_at date is set");
@@ -195,7 +215,7 @@ require(['domReady',
                                 
                                 success: function(data){
                                     ok(true, "Saved successfully");
-                                    ok(scaleValue.get('id')!==undefined,"Id has been set");
+                                    ok(data.id!==undefined,"Id has been set");
                                     ok(_.isObject(data), "Got scaleValue in json");
                                     ok(data.id, "Id is "+data.id);
                                     equal(data.name, scaleValue.get("name"), "Name is correct");
@@ -205,6 +225,7 @@ require(['domReady',
                                     equal(data.created_by, user.get('id'), "Created_by user id is correct");
                                     ok(data.updated_at, "Updated_at date is set");
                                     equal(data.updated_by, user.get('id'), "Updated_by user id is correct");
+                                    scaleValue.set(scaleValue.parse(data));
                                     start();
                                 }
                     });
@@ -222,7 +243,7 @@ require(['domReady',
                                 
                                 success: function(data){
                                     ok(true, "Saved successfully");
-                                    ok(scaleValue2.get('id')!==undefined,"Id has been set");
+                                    ok(data.id!==undefined,"Id has been set");
                                     ok(_.isObject(data), "Got scaleValue in json");
                                     ok(data.id, "Id is "+data.id);
                                     equal(data.name, scaleValue2.get("name"), "Name is correct");
@@ -232,6 +253,7 @@ require(['domReady',
                                     equal(data.created_by, user.get('id'), "Created_by user id is correct");
                                     ok(data.updated_at, "Updated_at date is set");
                                     equal(data.updated_by, user.get('id'), "Updated_by user id is correct");
+                                    scaleValue2.set(scaleValue2.parse(data));
                                     start();
                                 }
                     });
@@ -260,6 +282,28 @@ require(['domReady',
                     });
                 });
                 
+                test("Get all scale values from a copied scale",function(){
+                    stop();
+                    
+                    var copyWithScaleValue = videoScales.addCopyFromTemplate(scale);
+                    
+                    AnnotationsSync('read',copyWithScaleValue.get("scaleValues"),{
+                        
+                        error: function(error){
+                            ok(false, error);
+                            start();
+                        },
+                        
+                        success: function(data){
+                            ok(true, "Get all scale values successfully");
+                            ok(_.isArray(data.scaleValues), "Got all label");
+                            equal(data.scaleValues.length, 2, "Two scale values are successfully returned");
+                            notEqual(data.scaleValues[0].id,scaleValue.id, "Copied scale value has a different id");
+                            start();
+                        }
+                    });
+                });
+                
                 test("Update scale value",function(){
                     stop();
                     scaleValue.set("name", "schwach");
@@ -271,7 +315,7 @@ require(['domReady',
                                 
                                 success: function(data){
                                     ok(true, "Video updated");
-                                    equal("schwach", scaleValue.get("name"), "Name is correct");
+                                    equal("schwach", data.name, "Name is correct");
                                     ok(data.created_at, "Created_at date is set");
                                     equal(data.created_by, user.get('id'), "Created_by user id is correct");
                                     ok(data.updated_at, "Updated_at date is set");
