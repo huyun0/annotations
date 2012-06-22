@@ -3,10 +3,14 @@ define(["jquery",
         "prototypes/player_adapter",
         "models/annotation",
         "collections/annotations",
+        "text!templates/timeline-group.tmpl",
+        "text!templates/timeline-item.tmpl",
+        "text!templates/timeline-modal-group.tmpl",
+        "libs/handlebars",
         "libs/timeline-min",
         "backbone"],
        
-    function($,_not,PlayerAdapter,Annotation,Annotations){
+    function($,_not,PlayerAdapter,Annotation,Annotations,GroupTmpl,ItemTmpl,ModalGroupTmpl){
 
         /**
          * Timeline view
@@ -16,6 +20,24 @@ define(["jquery",
           
           /** Main container of the timeline */
           el: $('div#timeline-container'),
+          
+          /** group template */
+          groupTemplate: Handlebars.compile(GroupTmpl),
+          
+          /** item template */
+          itemTemplate: Handlebars.compile(ItemTmpl),
+          
+          /** Modal template for group insertion */
+          modalGroupTemplate: Handlebars.compile(ModalGroupTmpl),
+          
+          /** Events to handle by the timeline view */
+          events: {
+            "click #add-track"            : "loadAddTrackModal",
+            "click .delete"               : "deleteTrack"
+          },
+          
+          /** Constant for void item content */
+          VOID_ITEM: "",
           
           /**
            * @constructor
@@ -31,12 +53,14 @@ define(["jquery",
               
             _.bindAll(this,'addOne',
                            'addList',
+                           'addTrack',
                            'onPlayerTimeUpdate',
                            'onTimelineMoved',
                            'onTimelineItemChanged',
                            'onTimelineItemDeleted',
                            'onTimelineItemSelected',
                            'onAnnotationDestroyed',
+                           'getVoidItem',
                            'getFormatedDate',
                            'getSelectedItemAndAnnotation',
                            'getSelectedItemAndAnnotation');
@@ -62,11 +86,21 @@ define(["jquery",
               showNavigation: true,
               showMajorLabels: false,
               minHeight: "200",
-              axisOnTop: true
+              axisOnTop: true,
+              groupsWidth: "150px",
+              eventMarginAxis: 0,
+              eventMargin: 0,
+              groupsChangeable: true
             };
             
-            this.timeline = new links.Timeline(this.el);
+            this.timeline = new links.Timeline(this.$el.find("#timeline")[0]);
             this.timeline.draw(this.data,this.options);
+            
+            // Ensure that the timeline is redraw on window resize
+            var self = this;
+            $(window).resize(function(){
+              self.timeline.redraw();
+            })
             
             $(this.playerAdapter).bind('pa_timeupdate',this.onPlayerTimeUpdate);
             links.events.addListener(this.timeline,'timechanged',this.onTimelineMoved);
@@ -87,17 +121,21 @@ define(["jquery",
            * @param {Annotation} the annotation to add as view
            */
           addOne: function(track){
+            
+            // Add void item
+            this.timeline.addItem(this.getVoidItem(track));
+            
             var annotations = track.get("annotations");
-            var group = track.get("name")+"<div class='group-id'>"+track.get("id")+"</div>";
             
             var addOneAnnotation = function(annotation){
+              var annJSON = annotation.toJSON();
+              annJSON.track = track.get('id');
+              
               this.timeline.addItem({
                   start: this.getFormatedDate(annotation.get("start")),
                   end: this.getFormatedDate(annotation.get("start")+5),
-                  content: "<div class='item'>"
-                              +annotation.get("text")
-                              +"<div class='annotation-id'>"+annotation.get("id")+"</div>",
-                  group: group
+                  content: this.itemTemplate(annJSON),
+                  group: this.groupTemplate(track.toJSON())
               });
                 
                 annotation.bind('destroy',this.onAnnotationDestroyed,this);
@@ -111,8 +149,10 @@ define(["jquery",
             }
             
             annotations.each(addOneAnnotation,this);
-            
             annotations.bind('add',addOneAnnotation, this);
+            annotations.bind('remove',$.proxy(function(annotation){
+                this.onAnnotationDestroyed(annotation, track);
+            },this), this);
           },
           
           /**
@@ -120,6 +160,63 @@ define(["jquery",
            */
           addList: function(tracks){
             tracks.each(this.addOne,this);
+          },
+          
+          /**
+           * Get a void item for the given track
+           *
+           * @param {Track} given track owning the void item
+           */
+          getVoidItem: function(track){
+              return {
+                start: this.startDate-5000,
+                end: this.startDate-4500,
+                content: this.VOID_ITEM,
+                group: this.groupTemplate(track.toJSON())
+              }
+          },
+          
+          addTrack: function(param){
+            // If group already exist, we do nothing
+            if(this.timeline.findGroup(param.name))
+              return;
+            
+            var track = this.tracks.create(param);
+            
+            this.timeline.addItem(this.getVoidItem(track));
+            
+            this.timeline.redraw();
+          },
+          
+          loadAddTrackModal: function(){
+            if(!this.groupModal){
+                // Otherwise we load the login modal
+                this.$el.append(this.modalGroupTemplate);
+                this.groupModal = $('#modal-add-group');
+                this.groupModal.modal({show: true, backdrop: false, keyboard: true });
+                var self = this;
+                this.groupModal.find('a#add-group').bind("click",function(){
+                    if(self.groupModal.find('#name')[0].value == ''){
+                      self.groupModal.find('.alert #content').html("Name is required!");
+                      self.groupModal.find('.alert').show();
+                      return;
+                    }
+                    
+                    self.addTrack({
+                      name: self.groupModal.find('#name')[0].value,
+                      description: self.groupModal.find('#description')[0].value
+                    },this)
+                    
+                    self.groupModal.modal("toggle");
+                });
+            }
+            else{
+              this.groupModal.find('.alert #content').html("");
+              this.groupModal.find('.alert').hide();
+              this.groupModal.find('#name')[0].value = '';
+              this.groupModal.find('#description')[0].value = '';
+              this.groupModal.modal("toggle");
+            }
           },
           
           
@@ -156,7 +253,25 @@ define(["jquery",
             
             values.annotation.set({start: this.getTimeInSeconds(values.item.start)});
             values.annotation.set({duration: this.getTimeInSeconds(values.item.end)-this.getTimeInSeconds(values.item.start)});
-            values.annotation.save();
+            
+            if(values.newTrack.id != values.oldTrack.id){
+              
+              values.oldTrack.get('annotations').remove(values.annotation);
+              values.newTrack.get('annotations').add(values.annotation);
+              
+              var newItem = this.getTimelineItemFromAnnotation(values.annotation);
+              var htmlElement = this.$el.find('.annotation-id:contains('+$(newItem.content).find('.annotation-id').text()+')').parent().parent()[0];
+              var index = this.timeline.getItemIndex(htmlElement);
+              this.timeline.setSelection([{row: index}]);
+              
+              this.playerAdapter.setCurrentTime(this.getTimeInSeconds(newItem.start));
+              
+              if(window.annotationsTool.localStorage){
+                  values.newTrack.save();
+                  values.oldTrack.save();
+                  annotationsTool.video.save();  
+              }
+            }
           },
           
           /**
@@ -182,12 +297,16 @@ define(["jquery",
           /**
            * Listener for annotation suppression 
            */
-          onAnnotationDestroyed: function(annotation){
-            var value = this.getTimelineItemFromAnnotation(annotation);
+          onAnnotationDestroyed: function(annotation, track){
+            var value = this.getTimelineItemFromAnnotation(annotation, track);
             
             if(value){
               this.timeline.deleteItem(value.index);
             }
+          },
+          
+          deleteTrack: function(event){
+            console.log("ok");
           },
           
           
@@ -232,17 +351,20 @@ define(["jquery",
               return undefined;
             
             var item = this.timeline.getItem(selection[0].row);
-            var trackId = $(item.group).text();
-            
-            var track = this.tracks.get(trackId);
-            var annotation = track.get('annotations').get(itemId);
+            var newTrackId = $(item.group).find('.track-id').text();
+            var oldTrackId = $(item.content).find('.track-id').text();
+            var oldTrack = this.tracks.get(oldTrackId);
+            var newTrack = this.tracks.get(newTrackId);
+            var annotation = oldTrack.get('annotations').get(itemId);
             
             if(!annotation)
               return undefined;
             
             return {
                     annotation: annotation,
-                    item: item
+                    item: item,
+                    newTrack: newTrack,
+                    oldTrack: oldTrack
             };
           },
           
@@ -252,11 +374,14 @@ define(["jquery",
            * @param {Annotation} the annotation
            * @returns {Object} an item object extend by an index parameter
            */
-          getTimelineItemFromAnnotation: function(annotation){
+          getTimelineItemFromAnnotation: function(annotation, track){
             var value = undefined;
             var data = this.timeline.getData();
             
             _.each(data, function(item, idx){
+                if(track && $(item.content).find('.track-id').text()!=track.id)
+                  return;
+              
                 if($(item.content).find('.annotation-id').text() == annotation.get('id'))
                   value = _.extend(item,{index:idx});
             });
@@ -267,20 +392,29 @@ define(["jquery",
             return value;
           },
           
-          
+          /**
+           * Reset the view
+           */
           reset: function(){
+            
+            this.$el.hide();
+            
+            // Remove all event listener
             $(this.playerAdapter).unbind('pa_timeupdate',this.onPlayerTimeUpdate);
             links.events.removeListener(this.timeline,'timechanged',this.onTimelineMoved);
             links.events.removeListener(this.timeline,'change',this.onTimelineItemChanged);
             links.events.removeListener(this.timeline,'delete',this.onTimelineItemDeleted);
             links.events.removeListener(this.timeline,'select',this.onTimelineItemSelected);
+            this.undelegateEvents();
+            
             this.tracks.each(function(track,item){
               var annotations = track.get("annotations");
               annotations.unbind('add'); 
     
             },this);
             
-            this.$el.empty();
+            // Remove all elements
+            this.$el.find('#timeline').empty();
             this.timeline.deleteAllItems();
             this.timeline = null;
             delete this.timeline;

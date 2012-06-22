@@ -26,16 +26,16 @@ define(["order!jquery",
                    _.isUndefined(attr.nickname) || attr.nickname == "")
                     throw "'user_extid' and 'nickanme' attributes are required";
                 
-                this.set(attr);
-                
                 // Check if the category has been initialized 
                 if(!attr.id){
                     // If local storage, we set the cid as id
                     if(window.annotationsTool.localStorage)
-                        this.set({id:this.cid});
+                        attr['id'] = this.cid;
                         
                     this.toCreate = true;
                 }
+                
+                this.set(attr);
                 
                 // Define that all post operation have to been done through PUT method
                 // see in wiki

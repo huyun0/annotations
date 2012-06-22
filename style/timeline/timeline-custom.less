@@ -1,11 +1,12 @@
 @import "timeline/timeline.css";
 
-.item-id, .annotation-id, .group-id,.timeline-navigation-new {
+.item-id, .annotation-id, .group-id, .track-id, .timeline-navigation-new {
    display: none;
 }
 
 div.timeline-event {
     background-color: rgba(249, 103, 38, 0.6);
+    z-index: 2;
 }
 
 div.timeline-event-selected {
@@ -16,13 +17,65 @@ div.timeline-groups-text{
     font-weight: bold;
     text-transform:capitalize;
     font-size: 1.05em;
+    z-index:1;
+    background-color: white;
+    position: absolute;
+    width: 2000px;
+    padding: 4px;
+    top: -4px;
+    box-shadow: 2px 2px 1px black;
+    
+    div.content{
+        float: left;
+        padding: 3px;
+    }
+    
+    &.selected {
+        border: 5px dashed lighten(grey,20%);
+    }
+    
+    i.delete:hover {
+        cursor: pointer;
+        background-color: #F66;
+        border-radius: 10px 10px 10px 10px;
+    }
+    
+    i.delete {
+        float: left;
+    }
+}
+
+div.timeline-customtime {
+    z-index: 3;
 }
 
 div.timeline-navigation{
+    z-index: 4;
     position: relative;
     bottom: 0px;
     right: 0px;
     height: 35px;
+}
+
+div.timeline-frame > div:first-child{
+    z-index: 2;
+    border-left: 2px solid grey;
+}
+
+div.timeline-groups-axis{
+    
+    z-index: 1;
+    
+    overflow: visible;
+    
+    .timeline-axis-grid-minor{
+        border: none;
+        display: none;
+    }
+}
+
+div.timeline-axis-grid-minor{
+    z-index: 2;
 }
 
 

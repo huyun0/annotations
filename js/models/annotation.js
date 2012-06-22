@@ -32,17 +32,17 @@ define(["order!jquery",
                     throw "'start' attribute is required";
                 
                 this.toCreate = true;
-                    
-                this.set(attr);
                 
                 // Check if the category has been initialized 
                 if(!attr.id){
                     // If local storage, we set the cid as id
                     if(window.annotationsTool.localStorage)
-                        this.set({id:this.cid});
+                        attr['id'] = this.cid;
                         
                     this.toCreate = true;
                 }
+                
+                this.set(attr);
             },
             
             parse: function(attr) {    
@@ -71,15 +71,6 @@ define(["order!jquery",
                 
                 if(attr.access && !_.include(ACCESS,attr.access))
                     return "'access' attribute is not valid.";
-                
-                if(!_.isNull(attr.created_by) && !(_.isNumber(attr.created_by) || attr.created_by instanceof User))
-                    return "'created_by' attribute must be a number or an instance of 'User'";
-            
-                if(!_.isNull(attr.updated_by) && !(_.isNumber(attr.updated_by) || attr.updated_by instanceof User))
-                    return "'updated_by' attribute must be a number or an instance of 'User'";
-                
-                if(!_.isNull(attr.deleted_by) && !(_.isNumber(attr.deleted_by) || attr.deleted_by instanceof User))
-                    return "'deleted_by' attribute must be a number or an instance of 'User'";
             
                 if(!_.isNull(attr.created_at)){
                     if((tmpCreated=this.get('created_at')) && tmpCreated!==attr.created_at)

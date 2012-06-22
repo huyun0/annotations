@@ -37,7 +37,7 @@ define(["jquery",
               
             _.bindAll(this,'insert','render','reset');
             
-            this.annotations = attr.annotations;
+            this.tracks = annotationsTool.video.get("tracks");
             this.playerAdapter = attr.playerAdapter;
             this.input = this.$('#new-annotation');
 
@@ -65,14 +65,18 @@ define(["jquery",
             var annotation = new Annotation({text:value, start:time});
             
             if(annotationsTool.user)
-              annotation.set({created_by: annotationsTool.user});
+              annotation.set({created_by: annotationsTool.user.id});
               
-            this.annotations.add(annotation);
+            this.tracks.at(0).get("annotations").add(annotation);
             annotation.save();
           },
           
+          /**
+           * Reset the view
+           */
           reset: function(){
-            delete this.annotations;
+            this.$el.hide();
+            delete this.tracks;
             this.undelegateEvents();
           }
           

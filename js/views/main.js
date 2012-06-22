@@ -153,9 +153,9 @@ define(["jquery",
       logout: function(){
         // Hide/remove the views
         $('#video-container').hide();
-        this.timelineView.$el.hide();
-        this.annotateView.$el.hide();
-        this.listView.$el.empty().hide();
+        
+        
+        
         this.timelineView.reset();
         this.annotateView.reset();
         
@@ -163,8 +163,6 @@ define(["jquery",
         delete annotationsTool.tracks;
         delete annotationsTool.video;
         delete annotationsTool.user;
-        delete this.listView;
-        delete this.timelineView;
         
         this.loaded = false;
         this.loadingBox.find('.bar').width('0%');
@@ -196,7 +194,7 @@ define(["jquery",
             
             // Bind the error user to a function to display the errors
             user.bind('error',$.proxy(function(model,error){
-                this.userModal.find('#'+error.attribute).parentsUntil('form').addClass('error')
+                this.userModal.find('#'+error.attribute).parentsUntil('form').addClass('error');
                 userError.find('#content').append(error.message+"<br/>");
                 valid=false;
             },this));
@@ -241,32 +239,47 @@ define(["jquery",
       // Get all the annotations for the current user       
       getAnnotations: function(callback){
         
-        var videos,video,tracks, track;
+        var videos,video,tracks;
         videos = new Videos;
         
         /**
          * @function to conclude the retrive of annotations
          */
         var endGetAnnotations = $.proxy(function(){
-              
-              this.annotations = track.get("annotations");
-              
-             // Create an annotations collection an get all the annotations
-             this.annotations.fetch({success: $.proxy(function(){
-              this.annotations.bind('jumpto',function(start){
+          
+            // Function to add the different listener to the annotations
+            var addAnnotationsListeners = $.proxy(function(annotations){
+
+              annotations.bind('jumpto',function(start){
                  this.playerAdapter.setCurrentTime(start);
               },this);
               
-              // Bind the basic annotations event to their related operation
-              this.annotations.bind('destroy',function(annotation){
-                 this.annotations.remove(annotation);
+              annotations.bind('destroy',function(annotation){
+                 annotations.remove(annotation);
               },this);
              
               // Set the video for the annotations tool, could be used everywhere then
-              annotationsTool.video = video;
-             
-              callback();
-             }, this)});
+              annotationsTool.video = video;  
+            },this);
+          
+            // Get all annotations
+            tracks.each(function(track){
+              var annotations = track.get("annotations");
+              
+              if(window.annotationsTool.localStorage){
+                addAnnotationsListeners(annotations);
+              }
+              else{
+                // Create an annotations collection an get all the annotations
+                annotations.fetch({success: $.proxy(function(){
+                  addAnnotationsListeners(annotations);
+                }, this)});
+              }
+            }, this);
+            
+            this.annotations = tracks.at(0).get("annotations");
+            callback();
+            
         },this);
         
 
@@ -283,11 +296,10 @@ define(["jquery",
           
           if(tracks.length == 0){
             tracks.add({name:"default"});
-            track = tracks.at(0);
+            var track = tracks.at(0);
             track.save(track,{success: endGetAnnotations});
           }
           else{
-            track = tracks.at(0);
             endGetAnnotations();
           }
         }
@@ -301,6 +313,7 @@ define(["jquery",
               success: function(data){
                 tracks = video.get("tracks");
                 tracks.fetch({
+                  
                   success: function(){
                     if(tracks.length == 0){
                       tracks.add({name:"default"});
@@ -308,7 +321,6 @@ define(["jquery",
                       track.save(track,{success: endGetAnnotations});
                     }
                     else{
-                      track = tracks.at(0);
                       endGetAnnotations();
                     }
                   },

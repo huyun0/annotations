@@ -29,7 +29,7 @@ define(["jquery",
                 if(!attr.id){
                     // If local storage, we set the cid as id
                     if(window.annotationsTool.localStorage)
-                        this.set({id:this.cid});
+                        attr['id'] = this.cid;
                         
                     this.toCreate = true;
                 }

@@ -27,9 +27,7 @@ define(["jquery",
                    _.isUndefined(attr.value) || !_.isNumber(attr.value) ||
                    _.isUndefined(attr.order) || !_.isNumber(attr.order))
                     throw "'name, value, order' attributes are required";
-                
-                this.set(attr);
-                
+
                 if(!attr.id){
                     this.toCreate = true;
                 }
@@ -42,6 +40,8 @@ define(["jquery",
                         
                     this.toCreate = true;
                 }
+                
+                this.set(attr);
             },
             
             parse: function(attr) {
@@ -55,7 +55,7 @@ define(["jquery",
                 
                 if(attr.id){
                     if(this.get('id') != attr.id){
-                        this.id = attr.id;
+                        attr['id'] = this.cid;
                     }
                 }
                 

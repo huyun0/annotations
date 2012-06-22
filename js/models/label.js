@@ -33,17 +33,17 @@ define(["order!jquery",
                 if(!attr || _.isUndefined(attr.category))
                     throw "'category' attribute is required";
                 
-                    
-                this.set(attr);
-                
                 // Check if the track has been initialized 
                 if(!attr.id){
                     // If local storage, we set the cid as id
                     if(window.annotationsTool.localStorage)
-                        this.set({id:this.cid});
+                        attr['id'] = this.cid;
                         
                     this.toCreate = true;
                 }
+                
+                this.set(attr);
+                
             },
             
             parse: function(attr) {    

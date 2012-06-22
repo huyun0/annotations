@@ -28,21 +28,19 @@ define(["order!jquery",
                 if(!attr || _.isUndefined(attr.name))
                     throw "'name' attribute is required";
                 
-                this.set(attr);
-                
                 // Check if the track has been initialized 
                 if(!attr.id){
                     // If local storage, we set the cid as id
                     if(window.annotationsTool.localStorage)
-                        this.set({id:this.cid});
+                        attr['id'] = this.cid;
                         
                     this.toCreate = true;
                 }
                 
                 if(attr.labels && _.isArray(attr.labels))
-                    this.set({labels: new Labels(attr.labels,this)});
+                    this.set({'labels' : new Labels(attr.labels,this)});
                 else
-                    this.set({labels: new Labels([],this)});
+                    this.set({'labels' : new Labels([],this)});
                 
                 // If localStorage used, we have to save the video at each change on the children
                 if(window.annotationsTool.localStorage){
@@ -51,6 +49,8 @@ define(["order!jquery",
                             this.trigger("change");
                     },this);
                 }
+                
+                this.set(attr);
             },
             
             parse: function(attr) {

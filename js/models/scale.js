@@ -26,7 +26,7 @@ define(["jquery",
                 if(!attr  || _.isUndefined(attr.name) || attr.name == "")
                     throw "'name' attribute is required";
                 
-                this.set(attr);
+                
                 
                 if(attr.scaleValues && _.isArray(attr.scaleValues))
                     this.set({scaleValues: new ScaleValues(attr.labels,this)});
@@ -37,14 +37,12 @@ define(["jquery",
                 if(!attr.id){
                     // If local storage, we set the cid as id
                     if(window.annotationsTool.localStorage)
-                        this.set({id:this.cid});
+                        attr['id'] = this.cid;
                         
                     this.toCreate = true;
                 }
                 
-                if(!attr.id){
-                    this.toCreate = true;
-                }
+                this.set(attr);
                 
                 // If localStorage used, we have to save the video at each change on the children
                 if(window.annotationsTool.localStorage){
