@@ -153,7 +153,8 @@ define(["jquery",
       logout: function(){
         // Hide/remove the views
         $('#video-container').hide();
-        
+        annotationsTool.playerAdapter.pause();
+        annotationsTool.playerAdapter.setCurrentTime(0);
         
         
         this.timelineView.reset();
