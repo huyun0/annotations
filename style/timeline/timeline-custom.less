@@ -6,7 +6,7 @@
 
 div.timeline-event {
     background-color: rgba(249, 103, 38, 0.6);
-    z-index: 2;
+    z-index: 3;
 }
 
 div.timeline-event-selected {
@@ -29,20 +29,41 @@ div.timeline-groups-text{
         padding: 3px;
     }
     
+    div.timeline-group {
+        height: 30px;
+        z-index: 3;
+        
+        &:hover{
+            cursor: pointer;
+            background-color: lighten(grey, 40%)
+        }
+    }
+    
     &.selected {
         background-color: lighten(grey, 30%);
+        
+        div.timeline-group:hover{
+            background-color: inherit;
+        }
     }
     
-    i.delete:hover {
-        cursor: pointer;
-        background-color: #F66;
-        border-radius: 10px 10px 10px 10px;
-    }
-    
-    i.delete {
+    i.delete{
+        
+        z-index: 4;
         float: left;
+        
+        &:hover {
+            cursor: pointer;
+            background-color: #F66;
+            border-radius: 10px 10px 10px 10px;
+        }
     }
+    
+
+   
 }
+
+
 
 div.timeline-customtime {
     z-index: 3;

@@ -6034,7 +6034,7 @@ body {
 }
 div.timeline-event {
   background-color: rgba(249, 103, 38, 0.6);
-  z-index: 2;
+  z-index: 3;
 }
 div.timeline-event-selected {
   background-color: rgba(245, 215, 115, 0.75);
@@ -6054,16 +6054,28 @@ div.timeline-groups-text div.content {
   float: left;
   padding: 3px;
 }
+div.timeline-groups-text div.timeline-group {
+  height: 30px;
+  z-index: 3;
+}
+div.timeline-groups-text div.timeline-group:hover {
+  cursor: pointer;
+  background-color: #e6e6e6;
+}
 div.timeline-groups-text.selected {
   background-color: #cdcdcd;
+}
+div.timeline-groups-text.selected div.timeline-group:hover {
+  background-color: inherit;
+}
+div.timeline-groups-text i.delete {
+  z-index: 4;
+  float: left;
 }
 div.timeline-groups-text i.delete:hover {
   cursor: pointer;
   background-color: #F66;
   border-radius: 10px 10px 10px 10px;
-}
-div.timeline-groups-text i.delete {
-  float: left;
 }
 div.timeline-customtime {
   z-index: 3;
