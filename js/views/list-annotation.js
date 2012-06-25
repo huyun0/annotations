@@ -47,6 +47,8 @@ define(["jquery",
         Handlebars.registerHelper('nickname', function(user) {
             if(user instanceof User)
                 return user.get("nickname");
+            else if(!_.isObject(user))
+                return window.annotationsTool.users.get(user).get("nickname");
             else
                 return user.nickname;
         });
@@ -96,6 +98,7 @@ define(["jquery",
             
             this.model.bind('change', this.render);
             this.model.bind('destroy', this.deleteView);
+            this.model.bind('remove', this.deleteView);
             this.model.bind('selected', this.onSelected);
           },
           

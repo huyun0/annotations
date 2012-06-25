@@ -27,12 +27,21 @@ define(["jquery",
                    _.isUndefined(attr.value) || !_.isNumber(attr.value) ||
                    _.isUndefined(attr.order) || !_.isNumber(attr.order))
                     throw "'name, value, order' attributes are required";
-                
-                this.set(attr);
-                
+
                 if(!attr.id){
                     this.toCreate = true;
                 }
+                
+                // Check if the track has been initialized 
+                if(!attr.id){
+                    // If local storage, we set the cid as id
+                    if(window.annotationsTool.localStorage)
+                        this.set({id:this.cid});
+                        
+                    this.toCreate = true;
+                }
+                
+                this.set(attr);
             },
             
             parse: function(attr) {
@@ -45,13 +54,9 @@ define(["jquery",
             validate: function(attr){
                 
                 if(attr.id){
-                    if((tmpId=this.get('id')) && tmpId!==attr.id){
-                        this.id = attr.id;
-                        this.setUrl();
+                    if(this.get('id') != attr.id){
+                        attr['id'] = this.cid;
                     }
-                    //    return "'id' attribute can not be modified after initialization!";
-                    //if(!_.isNumber(attr.id))
-                    //    return "'creat attribute must be a number!";
                 }
                 
                 if(attr.name && !_.isString(attr.name))

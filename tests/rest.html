@@ -15,11 +15,21 @@
 		     'order!annotations-tool-configuration',
 		     'order!tests/rest-user', // User tests file
 		     'order!tests/rest-video-and-track',
+		     'order!tests/rest-scale-and-scalevalue',
+		     'order!tests/rest-category-and-label',
 		     //... add other test file here, files have to be in directory tests/js
 		     'order!libs/tests/qunit'
 		     ],
                     
                 function(domReady,$){
+		    $('button').click(function() {
+			$.ajax({
+			  type: 'DELETE',
+			  async: false,
+			  url: window.annotationsTool.restEndpointsUrl + '/reset'
+			});
+		    });
+		    
 		    QUnit.config.reorder = false;
 		    QUnit.start();
 		});
@@ -27,6 +37,7 @@
 
     </head>
     <body>
+	<button type="button">Clear DB Tables!</button>
         <h1 id="qunit-header">Rest</h1>
         <h2 id="qunit-banner"></h2>
         <div id="qunit-testrunner-toolbar"></div>

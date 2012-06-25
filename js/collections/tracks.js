@@ -34,11 +34,14 @@ define(["order!jquery",
              * @param {Video} video containing the tracks
              */
             setUrl: function(video){
-                if(!video || !video.id || !video.collection)
-                     throw "The parent video of the tracks must be given!";
+                if(!video || !video.collection)
+                     throw "Parent video must be given!";
                 
+                this.url = video.url() + "/tracks";
                 
-                this.url = video.url() + "/tracks";  
+                this.each(function(track){
+                    track.setUrl();
+                });
             }
         });
         

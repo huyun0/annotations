@@ -69,7 +69,7 @@
 		<div class="span7">	
 		
 			<!-- container for the video -->
-			<div class="span7" id="video-container" style="display:none">
+			<div id="video-container" style="display:none">
 				<video id="example" style="width:100%" controls >
 					<source src="resources/sintel_trailer.mp4" type="video/mp4" />
 					<!-- Could not be include, to heavy. -->
@@ -78,8 +78,20 @@
 			</div>
 			
 			<!-- container for the timeline-->
-			<div class="span7">
+			<div>
 				<div class="window" id="timeline-container" style="display:none">
+					<div class="navbar">
+						<div class="navbar-inner">
+						  <div class="container-fluid">
+						    <span class="window-title">Tracks</span>
+						    
+						    <ul class="nav pull-right">
+							<li><a id="add-track">+ Add track</a></li>
+						    </ul>
+						  </div>
+						</div>
+					</div>
+					<div id="timeline"></div>
 				</div>
 			</div>
 
@@ -88,12 +100,12 @@
 		<div class="span5">
 		
 			<!-- container for the annotations insertion box -->
-			<div class="span5">
+			<div>
 				<div class="window" id="annotate-container" style="display:none">
 					<div class="navbar">
 						<div class="navbar-inner">
 						  <div class="container">
-						    <a class="brand" href="#">Annotate</a>
+						    <span class="window-title">Annotate</span>
 						  </div>
 						</div>
 					</div>
@@ -110,8 +122,9 @@
 			</div>
 		
 			<!-- container for the annotations list -->
-			<div class="span5">
+			<div>
 				<div class="window" id="list-container" style="display:none">
+					
 				</div>
 			</div>
 			

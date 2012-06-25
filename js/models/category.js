@@ -1,31 +1,34 @@
-define(["jquery",
-        "collections/tracks",
-        "collections/categories",
+define(["order!jquery",
+        "order!collections/labels",
         "order!access",
         "order!underscore",
         "order!backbone"],
-       
-    function($, Tracks, Categories, ACCESS){
     
+    function($, Labels, ACCESS){
+        
         /**
-         * video model
+         * Category model
          * @class
          */
-        var Video = Backbone.Model.extend({
+        var Category = Backbone.Model.extend({
             
             defaults: {
-                access: ACCESS.PRIVATE,
+                access: ACCESS.PUBLIC,
                 created_at: null,
                 created_by: null,
                 updated_at: null,
                 updated_by: null,
                 deleted_at: null,
-                deleted_by: null
+                deleted_by: null,
+                has_duration: true
             },
             
             initialize: function(attr){
                 
-                // Check if the video has been initialized 
+                if(!attr || _.isUndefined(attr.name))
+                    throw "'name' attribute is required";
+                
+                // Check if the track has been initialized 
                 if(!attr.id){
                     // If local storage, we set the cid as id
                     if(window.annotationsTool.localStorage)
@@ -34,29 +37,20 @@ define(["jquery",
                     this.toCreate = true;
                 }
                 
-                // Check if tracks are given 
-                if(attr.tracks && _.isArray(attr.tracks))
-                    this.set({tracks: new Tracks(attr.tracks,this)});
+                if(attr.labels && _.isArray(attr.labels))
+                    this.set({'labels' : new Labels(attr.labels,this)});
                 else
-                    this.set({tracks: new Tracks([],this)});
-                
-                // Check if supported categories are given
-                if(attr.categories && _.isArray(attr.categories))
-                    this.set({categories: new Categories(attr.categories,this)});
-                else
-                    this.set({categories: new Categories([],this)});
+                    this.set({'labels' : new Labels([],this)});
                 
                 // If localStorage used, we have to save the video at each change on the children
                 if(window.annotationsTool.localStorage){
-                    this.attributes['tracks'].bind('change',function(){
+                    this.attributes['labels'].bind('change',function(label){
                             this.save();
+                            this.trigger("change");
                     },this);
                 }
                 
-                // Define that all post operation have to been done through PUT method
-                // see in wiki
-                this.noPOST = true;
-                
+                this.set(attr);
             },
             
             parse: function(attr) {
@@ -75,8 +69,14 @@ define(["jquery",
                     }
                 }
                 
-                if(attr.tracks && !(attr.tracks instanceof Tracks))
-                    return "'tracks' attribute must be an instance of 'Tracks'";
+                if(attr.description && !_.isString(attr.description))
+                    return "'description' attribute must be a string";
+                
+                if(attr.settings && !_.isString(attr.settings))
+                    return "'description' attribute must be a string";
+                
+                if(attr.access &&  !_.include(ACCESS,attr.access))
+                    return "'access' attribute is not valid.";
                 
                 if(attr.created_by && !(_.isNumber(attr.created_by) || attr.created_by instanceof User))
                     return "'created_by' attribute must be a number or an instance of 'User'";
@@ -106,14 +106,13 @@ define(["jquery",
             },
             
             /**
-             * Modify the current url for the tracks collection
+             * Modify the current url for the annotations collection
              */
             setUrl: function(){
-                this.get("tracks").setUrl(this);
-                this.get("categories").setUrl(this);
+                this.get("labels").setUrl(this);
             }
         });
         
-        return Video;
+        return Category;
     
 });

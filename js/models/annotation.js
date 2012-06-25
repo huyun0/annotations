@@ -32,32 +32,36 @@ define(["order!jquery",
                     throw "'start' attribute is required";
                 
                 this.toCreate = true;
-                    
-                this.set(attr);
                 
+                // Check if the category has been initialized 
                 if(!attr.id){
-                    this.set({id:this.cid});
+                    // If local storage, we set the cid as id
+                    if(window.annotationsTool.localStorage)
+                        attr['id'] = this.cid;
+                        
                     this.toCreate = true;
                 }
+                
+                // Add backbone events to the model 
+                _.extend(this, Backbone.Events);
+                
+                this.set(attr);
             },
             
             parse: function(attr) {    
                 attr.created_at = attr.created_at != null ? Date.parse(attr.created_at): null;
                 attr.updated_at = attr.updated_at != null ? Date.parse(attr.updated_at): null;
                 attr.deleted_at = attr.deleted_at != null ? Date.parse(attr.deleted_at): null;
-                attr.created_by = attr.created_by != null ? new User(attr.created_by): null;
-                attr.updated_by = attr.updated_by != null ? new User(attr.updated_by): null;
-                attr.deleted_by = attr.deleted_by != null ? new User(attr.deleted_by): null;
                 return attr;
             },
             
             validate: function(attr){
                 
                 if(attr.id){
-                    //if((tmpId=this.get('id')) && tmpId!==attr.id)
-                    //    return "'id' attribute can not be modified after initialization!";              
-                    //if(this.cid != attr.id && !_.isNumber(attr.id))
-                    //    return "'id' attribute must be a number!";
+                    if(this.get('id') != attr.id){
+                        this.id = attr.id;
+                        this.trigger('ready',this);
+                    }
                 }
                 
                 if(attr.start &&  !_.isNumber(attr.start))
@@ -71,15 +75,6 @@ define(["order!jquery",
                 
                 if(attr.access && !_.include(ACCESS,attr.access))
                     return "'access' attribute is not valid.";
-                
-                if(!_.isNull(attr.created_by) && !(_.isNumber(attr.created_by) || attr.created_by instanceof User))
-                    return "'created_by' attribute must be a number or an instance of 'User'";
-            
-                if(!_.isNull(attr.updated_by) && !(_.isNumber(attr.updated_by) || attr.updated_by instanceof User))
-                    return "'updated_by' attribute must be a number or an instance of 'User'";
-                
-                if(!_.isNull(attr.deleted_by) && !(_.isNumber(attr.deleted_by) || attr.deleted_by instanceof User))
-                    return "'deleted_by' attribute must be a number or an instance of 'User'";
             
                 if(!_.isNull(attr.created_at)){
                     if((tmpCreated=this.get('created_at')) && tmpCreated!==attr.created_at)

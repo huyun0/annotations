@@ -27,20 +27,6 @@ require(['domReady',
 
                 });
                 
-                
-                test("Created_at", function() {
-                    stop();
-                    annotation.bind('error',function(model,error){
-                            ok(true,"Can not be modified, error: " + error);
-                            annotation.unbind('error');
-                            start();
-                    });
-                    annotation.set({created_at:12});
-                    
-                    var newDate = new Date().getTime();
-                    ok(newDate-annotation.get('created_at')<100, "annotation  should have around "+newDate+" as created_at attribute.");
-                });
-                
                 test("Text", function() {
                     stop();
                     annotation.bind('error',function(model,error){

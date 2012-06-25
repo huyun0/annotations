@@ -1,62 +1,65 @@
 define(["order!jquery",
-        "order!models/scale",
+        "order!models/category",
         "order!underscore",
         "order!backbone",
         "order!localstorage"],
-       
-    function($,Scale){
+    
+    function($,Category){
     
         /**
-         * Scales collection
+         * Category collection
          * @class
          */
-        var Scales = Backbone.Collection.extend({
-            model: Scale,
-            localStorage: new Backbone.LocalStorage("Scales"),
+        var Categories = Backbone.Collection.extend({
+            model: Category,
+            localStorage: new Backbone.LocalStorage("Categories"),
             
-            initialize: function(models, video){
-                _.bindAll(this, "setUrl","addCopyFromTemplate");
+            /**
+             * @constructor
+             */
+            initialize: function(models,video){
+                _.bindAll(this,"setUrl","addCopyFromTemplate");
                 
-                this.setUrl(video);
+                this.setUrl(video);                    
             },
             
             parse: function(resp, xhr) {
-                if(resp.scales && _.isArray(resp.scales))
-                    return resp.annotations;
-                else if(_.isArray(resp))
-                    return resp;
-                else
-                    return null;
+              if(resp.categories && _.isArray(resp.categories))
+                return resp.annotations;
+              else if(_.isArray(resp))
+                return resp;
+              else
+                return null;
             },
             
             /**
              * Define the url from the collection with the given video
              *
-             * @param {Video} video containing the scale
+             * @param {Category} video containing the category
              */
             setUrl: function(video){
                 if(!video || !video.collection){ // If a template
-                    this.url = window.annotationsTool.restEndpointsUrl + "/scales";
+                    this.url = window.annotationsTool.restEndpointsUrl + "/categories";
                     this.isTemplate = true;
                 }
                 else{  // If not a template, we add video url      
-                    this.url = video.url() + "/scales";
+                    this.url = video.url() + "/categories";
                     this.isTemplate = false;
                 }
                 
-                this.each(function(scale){
-                    scale.setUrl();
+                this.each(function(category){
+                    category.setUrl();
                 });
             },
             
             /**
              * Add a copy from the given template to this collection
              *
-             * @param {Scale} template to copy 
+             * @param {Category} template to copy 
              */
             addCopyFromTemplate: function(element){
                 
-                // Test if the given scale is really a template
+                // Test if the given category is really a template
                 if(!this.isTemplate && !_.isArray(element) && element.id){
                     
                     // Copy the element and remove useless parameters 
@@ -71,7 +74,7 @@ define(["order!jquery",
                     delete copyJSON.labels;
                     
                     // add the copy url parameter for the backend
-                    copyJSON['copyUrl'] = "?scale_id="+element.id;
+                    copyJSON['copyUrl'] = "?category_id="+element.id;
                     
                     return this.create(copyJSON);
                     
@@ -80,10 +83,9 @@ define(["order!jquery",
                 
                 return null;
             }
-            
         });
         
-        return Scales;
+        return Categories;
 
 });
     

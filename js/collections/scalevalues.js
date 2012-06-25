@@ -30,7 +30,7 @@ define(["order!jquery",
              * @param {Scale} scale containing the scale value
              */
             setUrl: function(scale){
-                if(!scale || !scale.id || !scale.collection)
+                if(!scale || !scale.collection)
                     throw "The parent scale of the scale value must be given!";
                 
                 this.url = scale.url() + "/scalevalues";

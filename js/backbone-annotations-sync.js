@@ -21,8 +21,6 @@ define(["jquery",
                     }
                };
                
-               this.createdUserId = null;
-               
                /**
                 * Get the URI for the given resource
                 *
@@ -42,30 +40,6 @@ define(["jquery",
                     }
                }
                
-               this.getServerSideUpdates = function(url, resource, options, userId) {
-                    
-                    if(userId != undefined && !isNaN(userId) && userId != null)
-                         self.createdUserId = userId;
-                    
-                    return $.ajax({
-                         crossDomain: true,
-                         url: url,
-                         async: false,
-                         dataType: "json",
-                         beforeSend: self.setHeaderParams,
-                         success: function(data, textStatus, XMLHttpRequest) {
-                              // Reset user id
-                              self.createdUserId = null;
-                              
-                              resource.toCreate = false;
-                              if(resource.setUrl)
-                                   resource.setUrl();
-                              options.success(data, textStatus, XMLHttpRequest);
-                         },
-                         error: self.setError
-                    });
-               }
-               
                /**
                 * Errors callback for jQuery Ajax method. 
                 */
@@ -80,17 +54,19 @@ define(["jquery",
                 */
                this.setHeaderParams = function(xhr) {
                     // Use request user id
-                    if(self.createdUserId != undefined && self.createdUserId != null) {
-                         xhr.setRequestHeader(self.config.headerParams.userId, self.createdUserId);
-                    } else if(!_.isUndefined(window.annotationsTool) && !_.isUndefined(window.annotationsTool.user))
+                    if(!_.isUndefined(window.annotationsTool) && !_.isUndefined(window.annotationsTool.user))
                          xhr.setRequestHeader(self.config.headerParams.userId, annotationsTool.user.id);
                
                     // Only for sprint 2
                     // xhr.setRequestHeader(self.config.headerParams.token, token); 
                };
+               
+               this.removeId = function(){
+                    
+               }
                 
                /**
-                * Method to send a GET request to the given url with the given resource
+                * Method to send a POST request to the given url with the given resource
                 *
                 * @param {Model, Collection} resource
                 */
@@ -104,15 +80,40 @@ define(["jquery",
                               data: JSON.parse(JSON.stringify(resource)),
                               beforeSend: self.setHeaderParams,
                               success: function(data, textStatus, XMLHttpRequest){
-                                   // If create is successful but doesn't return a response, fire an extra GET.
-                                   var location = XMLHttpRequest.getResponseHeader('Location');                                   
-                                   if(location){
-                                        var userId = parseInt(XMLHttpRequest.getResponseHeader(self.config.headerParams.userId));
-                                        self.getServerSideUpdates(location, resource, options, userId);
-                                   }
-                                   else{
-                                        options.error("Location not returned after resource creation.");
-                                   }
+                                   //resource.set(resource.parse(data));
+                                   resource.toCreate = false;
+                                   if(resource.setUrl)
+                                        resource.setUrl();
+                                   options.success(data, textStatus, XMLHttpRequest);
+                              },
+                              
+                              error: self.setError
+                    });
+               }
+               
+               
+               /**
+                * Method to send a POST request to the given url with the given resource for copy
+                *
+                * @param {Model, Collection} resource
+                */
+               var copy = function(resource){
+                    $.ajax({
+                              crossDomain: true,
+                              type: "POST",
+                              async: false,
+                              url: self.getURI(resource, false)+resource.get("copyUrl"),
+                              dataType: "json",
+                              data: JSON.parse(JSON.stringify(resource)),
+                              beforeSend: self.setHeaderParams,
+                              success: function(data, textStatus, XMLHttpRequest){
+                                   //resource.set(resource.parse(data));
+                                   resource.toCreate = false;
+                                   if(resource.setUrl)
+                                        resource.setUrl();
+                                   
+                                   resource.unset("copyUrl");
+                                   options.success(data, textStatus, XMLHttpRequest);
                               },
                               
                               error: self.setError
@@ -173,20 +174,11 @@ define(["jquery",
                               data: JSON.parse(JSON.stringify(resource)),
                               beforeSend: self.setHeaderParams,
                               success: function(data, textStatus, XMLHttpRequest){
-                                   
-                                   var action   = (XMLHttpRequest.status == 201 ? "creation" : "update");
-                                   var location = XMLHttpRequest.getResponseHeader('LOCATION');
-                                   
-                                   if(location){
-                                        var userId = parseInt(XMLHttpRequest.getResponseHeader(self.config.headerParams.userId));
-                                        self.getServerSideUpdates(location, resource, options, userId);
-                                   }
-                                   else if(!resource.POSTonPUT && XMLHttpRequest.status != 201){
-                                        options.success(resource.toJSON());
-                                   }
-                                   else {
-                                        options.error("Location not returned after resource "+action+".");
-                                   }
+                                   // resource.set(resource.parse(data));
+                                   resource.toCreate = false;
+                                   if(resource.setUrl)
+                                        resource.setUrl();
+                                   options.success(data, textStatus, XMLHttpRequest);
                               },
                               
                               error: self.setError
@@ -220,8 +212,17 @@ define(["jquery",
                switch(method){
                          // If model has been created and is not a model with only PUT method supported, POST method is used
                         case "create":
-                        case "update":
-                                        (model.toCreate && !model.noPOST) ? create(model) : update(model); break;
+                        case "update":  if(model.toCreate && !model.noPOST){
+                                             if(model.get("copyUrl"))  // If it is a 'template' copy
+                                                  copy(model);
+                                             else
+                                                  create(model); // Otherwise simply create
+                                        }
+                                        else{
+                                             update(model);
+                                        }
+                                        break;
+
                         
                         // If model.id exist, it is a model, otherwise a collection so we retrieve all its items
                         case "read":    model.id != undefined ? find(model) : findAll(model); break;
