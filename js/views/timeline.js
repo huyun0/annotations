@@ -172,7 +172,7 @@ define(["jquery",
                   this.timeline.setSelection([{row: itemId}]);
                 },this);
                 
-                this.timeline.redraw();
+                //this.timeline.redraw();
             }
             
             annotations.each(addOneAnnotation,this);
