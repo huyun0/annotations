@@ -60,6 +60,7 @@ define(["jquery",
                            'onTimelineItemChanged',
                            'onTimelineItemDeleted',
                            'onTimelineItemSelected',
+                           'onTimelineItemAdded',
                            'onAnnotationDestroyed',
                            'getVoidItem',
                            'getFormatedDate',
@@ -111,6 +112,7 @@ define(["jquery",
             links.events.addListener(this.timeline,'change',this.onTimelineItemChanged);
             links.events.addListener(this.timeline,'delete',this.onTimelineItemDeleted);
             links.events.addListener(this.timeline,'select',this.onTimelineItemSelected);
+            links.events.addListener(this.timeline,'add',this.onTimelineItemAdded);
             
             this.tracks = annotationsTool.video.get("tracks");
             this.tracks.bind('add',this.addOne,this);
@@ -336,6 +338,13 @@ define(["jquery",
             
             if(annotation)
               annotation.destroy();
+          },
+          
+          /**
+           * Listener for item insertion on timeline
+           */
+          onTimelineItemAdded: function(){
+            this.timeline.cancelAdd();
           },
           
           /**
