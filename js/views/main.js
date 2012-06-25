@@ -100,13 +100,13 @@ define(["jquery",
           this.loadingBox.find('.bar').width('100%');
           
           // Create views to annotate and see annotations list
-          this.annotateView = new AnnotateView({playerAdapter: this.playerAdapter, annotations: this.annotations});
+          this.annotateView = new AnnotateView({playerAdapter: this.playerAdapter});
           this.annotateView.$el.show();
           
           this.loadingBox.find('.bar').width('100%');
           
           // Create annotations list view
-          this.listView = new ListView({annotations: this.annotations});
+          this.listView = new ListView();
           this.listView.$el.show();
           
           this.loadingBox.hide();
@@ -259,7 +259,10 @@ define(["jquery",
               },this);
              
               // Set the video for the annotations tool, could be used everywhere then
-              annotationsTool.video = video;  
+              annotationsTool.video = video;
+              
+              annotationsTool.selectedTrack = tracks.at(0);
+              callback();
             },this);
           
             // Get all annotations
@@ -276,9 +279,6 @@ define(["jquery",
                 }, this)});
               }
             }, this);
-            
-            this.annotations = tracks.at(0).get("annotations");
-            callback();
             
         },this);
         

@@ -31,16 +31,12 @@ define(["jquery",
           initialize: function(attr){
             if(!attr.playerAdapter || !PlayerAdapter.prototype.isPrototypeOf(attr.playerAdapter))
                 throw "The player adapter is not valid! It must has PlayerAdapter as prototype.";
-            
-            if(!attr.annotations)
-                throw "The annotations have to be given to the annotate view.";
               
             _.bindAll(this,'insert','render','reset');
             
             this.tracks = annotationsTool.video.get("tracks");
             this.playerAdapter = attr.playerAdapter;
             this.input = this.$('#new-annotation');
-
           },
           
           /**
@@ -67,8 +63,10 @@ define(["jquery",
             if(annotationsTool.user)
               annotation.set({created_by: annotationsTool.user.id});
               
-            this.tracks.at(0).get("annotations").add(annotation);
-            annotation.save();
+            annotationsTool.selectedTrack.get("annotations").add(annotation);
+            annotation.save({
+              success: function(){console.log("saved");}  
+            });
           },
           
           /**

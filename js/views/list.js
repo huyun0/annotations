@@ -28,24 +28,30 @@ define(["jquery",
           /**
            * @constructor
            */
-          initialize: function(attr){
-            if(!attr.annotations)
-                throw "The annotations have to be given to the annotate view.";
-              
+          initialize: function(attr){  
             // Bind functions to the good context 
-            _.bindAll(this,'render','addOne','addList','sortViewsbyTime','reset');
+            _.bindAll(this,'render','addTrack','addAnnotation','addList','sortViewsbyTime','reset');
             
             this.annotationViews = new Array();
             
             this.tracks = annotationsTool.video.get("tracks");
-            this.tracks.each(function(track){
-              var ann = track.get("annotations");
-              ann.bind('add', this.addOne);
-              ann.bind('change',this.sortViewsbyTime);
-              this.addList(ann.toArray()); 
-            }, this);
+            this.tracks.bind('add',this.addTrack);
+            this.tracks.each(this.addTrack, this);
 
             this.render();
+          },
+          
+          /**
+           * Add one track
+           *
+           * @param {Track} track to add
+           */
+          addTrack: function(track){
+              var ann = track.get("annotations");
+              ann.bind('add', this.addAnnotation);
+              ann.bind('remove',this.removeOne);
+              ann.bind('change',this.sortViewsbyTime);
+              this.addList(ann.toArray());
           },
 
           /**
@@ -53,7 +59,7 @@ define(["jquery",
            *
            * @param {Annotation} the annotation to add as view
            */
-          addOne: function(addAnnotation){
+          addAnnotation: function(addAnnotation){
             this.annotationViews.push(new AnnotationView({annotation:addAnnotation}));
             this.sortViewsbyTime();
           },

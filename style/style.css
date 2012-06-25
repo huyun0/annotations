@@ -6048,15 +6048,14 @@ div.timeline-groups-text {
   position: absolute;
   width: 2000px;
   padding: 4px;
-  top: -4px;
-  box-shadow: 2px 2px 1px black;
+  top: -6px;
 }
 div.timeline-groups-text div.content {
   float: left;
   padding: 3px;
 }
 div.timeline-groups-text.selected {
-  border: 5px dashed #b3b3b3;
+  background-color: #cdcdcd;
 }
 div.timeline-groups-text i.delete:hover {
   cursor: pointer;

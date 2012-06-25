@@ -42,6 +42,9 @@ define(["order!jquery",
                     this.toCreate = true;
                 }
                 
+                // Add backbone events to the model 
+                _.extend(this, Backbone.Events);
+                
                 this.set(attr);
             },
             
@@ -57,6 +60,7 @@ define(["order!jquery",
                 if(attr.id){
                     if(this.get('id') != attr.id){
                         this.id = attr.id;
+                        this.trigger('ready',this);
                     }
                 }
                 
