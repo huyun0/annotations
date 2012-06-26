@@ -247,8 +247,8 @@ define(["jquery",
                 this.groupModal = $('#modal-add-group');
                 this.groupModal.modal({show: true, backdrop: false, keyboard: true });
                 var self = this;
-                this.groupModal.find('a#add-group').bind("click",function(){
-                    if(self.groupModal.find('#name')[0].value == ''){
+                var insertTrack = function(){
+                  if(self.groupModal.find('#name')[0].value == ''){
                       self.groupModal.find('.alert #content').html("Name is required!");
                       self.groupModal.find('.alert').show();
                       return;
@@ -260,6 +260,13 @@ define(["jquery",
                     },this)
                     
                     self.groupModal.modal("toggle");
+                };
+                
+                this.groupModal.find('a#add-group').bind("click",insertTrack);
+                this.groupModal.bind("keypress",function(event){
+                  if(event.keyCode == 13){
+                    insertTrack();  
+                  }
                 });
             }
             else{
