@@ -56,6 +56,18 @@ define(['domReady!','jquery','prototypes/player_adapter'],function(domReady,$,Pl
             });
             
             $(targetElement).bind("play",function(){
+                if(self.toPause){
+                    self.pause();
+                    try{
+                        self.setCurrentTime(0);
+                    }
+                    catch(error){
+                        console.warn(error);
+                        // Hack for safari
+                        self.triggerEvent(PlayerAdapter.EVENTS.READY);
+                    }
+
+                }
                self.status =  PlayerAdapter.STATUS.PLAYING;
                self.triggerEvent(PlayerAdapter.EVENTS.PLAY);
             });
@@ -92,13 +104,15 @@ define(['domReady!','jquery','prototypes/player_adapter'],function(domReady,$,Pl
             // Force to load the video if necessary
             if(targetElement.readyState < 1){
                 self.status = PlayerAdapter.STATUS.LOADING;
-                targetElement.load();
             }
             else{
                 self.status =  PlayerAdapter.STATUS.PAUSED;
                 self.triggerEvent(PlayerAdapter.EVENTS.READY);
                 if(self.waitToPlay)self.play();  
             }
+            
+            targetElement.play();
+            self.toPause = true;
             
             return this;
         }
