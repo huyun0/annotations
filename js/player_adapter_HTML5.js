@@ -61,7 +61,7 @@ define(['domReady!','jquery','prototypes/player_adapter'],function(domReady,$,Pl
             });
             
             $(targetElement).bind("pause",function(){
-               self.status =  PlayerAdapter.STATUS.PAUSE;
+               self.status =  PlayerAdapter.STATUS.PAUSED;
                self.triggerEvent(PlayerAdapter.EVENTS.PAUSE);
             });
             

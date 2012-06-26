@@ -275,6 +275,20 @@ define(["jquery",
           onPlayerTimeUpdate: function(){
             var newDate = this.getFormatedDate(this.playerAdapter.getCurrentTime());
             this.timeline.setCustomTime(newDate);
+            
+            
+            // Select the good items
+            var data = this.timeline.getData();
+            var selection = new Array();
+            
+            _.each(data,function(item,index){
+              if((item.start <= newDate) && (item.end >= newDate)){
+                selection.push({row:index});
+              }
+            },this);
+            
+            this.timeline.setSelection(selection);
+            
           },
           
           /**
@@ -283,14 +297,23 @@ define(["jquery",
            * @param {Event} Event object
            */
           onTimelineMoved: function(event){
+            var hasToPlay = (this.playerAdapter.getStatus() == PlayerAdapter.STATUS.PLAYING);
+            this.playerAdapter.pause();
+            
             var newTime = this.getTimeInSeconds(event.time);
             this.playerAdapter.setCurrentTime(newTime);
+            
+            if(hasToPlay)
+              this.playerAdapter.play();
           },
           
           /**
            * Listener for item modification
            */
           onTimelineItemChanged: function(){
+            var hasToPlay = (this.playerAdapter.getStatus() == PlayerAdapter.STATUS.PLAYING);
+            this.playerAdapter.pause();
+            
             var values = this.getSelectedItemAndAnnotation();
             
             if(!values)
@@ -301,28 +324,34 @@ define(["jquery",
 
             // Function called when all changed have been applied
             var finalizeChanges = $.proxy(function(){
-              var newItem = this.getTimelineItemFromAnnotation(values.annotation);
-              var htmlElement = this.$el.find('.annotation-id:contains('+$(newItem.content).find('.annotation-id').text()+')').parent().parent()[0];
+              var htmlElement = this.$el.find('.annotation-id:contains('+values.annotation.id+')').parent().parent()[0];
               var index = this.timeline.getItemIndex(htmlElement);
+              var newItem = this.timeline.getItem(index);
               this.timeline.setSelection([{row: index}]);
               this.playerAdapter.setCurrentTime(this.getTimeInSeconds(newItem.start));
               
-              values.annotation.save();
               values.oldTrack.save();
               annotationsTool.video.save();
               this.timeline.redraw();
+              if(hasToPlay)
+                this.playerAdapter.play();             
             },this);
             
             if(values.newTrack.id != values.oldTrack.id){
-              values.oldTrack.get('annotations').remove(values.annotation);
-              setTimeout(function(){
-                values.newTrack.get('annotations').add(values.annotation);
-                values.newTrack.save();
-                finalizeChanges();
-              }, 250);
+              var annJSON = values.annotation.toJSON();
+              delete annJSON.id;
+              
+              values.annotation.destroy({
+                success: $.proxy(function(){
+                    values.oldTrack.get('annotations').remove(values.annotation);
+                    values.annotation = values.newTrack.get('annotations').create(annJSON);
+                    values.annotation.bind('ready',finalizeChanges,this);
+                },this)
+              });
             }
             else{
               finalizeChanges();
+              values.annotation.save();
             }
             
             
@@ -336,8 +365,12 @@ define(["jquery",
             
             this.timeline.cancelDelete();
             
-            if(annotation)
+            if(annotation){
               annotation.destroy();
+              
+              if(annotationsTool.localStorage)
+                annotationsTool.video.save();
+            }
           },
           
           /**
@@ -351,6 +384,7 @@ define(["jquery",
            * Listener for timeline item selection
            */          
           onTimelineItemSelected: function(){
+            this.playerAdapter.pause();
             var annotation = this.getSelectedItemAndAnnotation().annotation;
             annotation.trigger("selected",annotation);
           },
@@ -490,8 +524,16 @@ define(["jquery",
             var newTrack = this.tracks.get(newTrackId);
             var annotation = oldTrack.get('annotations').get(itemId);
             
-            if(!annotation)
-              return undefined;
+            if(!annotation){
+               /* If annotation has been had shortly before in the collection, can get id with "get" function
+                  So a loop is needed */
+               oldTrack.get('annotations').each(function(ann){
+                if(ann.id == itemId){
+                  annotation = ann;
+                  return;
+                }
+               });
+            }
             
             return {
                     annotation: annotation,

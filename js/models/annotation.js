@@ -31,8 +31,6 @@ define(["order!jquery",
                 if(!attr || _.isUndefined(attr.start))
                     throw "'start' attribute is required";
                 
-                this.toCreate = true;
-                
                 // Check if the category has been initialized 
                 if(!attr.id){
                     // If local storage, we set the cid as id
@@ -60,6 +58,8 @@ define(["order!jquery",
                 if(attr.id){
                     if(this.get('id') != attr.id){
                         this.id = attr.id;
+                        this.attributes['id'] = attr.id;
+                        this.toCreate = false;
                         this.trigger('ready',this);
                     }
                 }

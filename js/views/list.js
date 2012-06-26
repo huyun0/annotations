@@ -30,13 +30,16 @@ define(["jquery",
            */
           initialize: function(attr){  
             // Bind functions to the good context 
-            _.bindAll(this,'render','addTrack','addAnnotation','addList','sortViewsbyTime','reset');
+            _.bindAll(this,'render','addTrack','addAnnotation','addList','sortViewsbyTime','reset','updateSelection');
             
             this.annotationViews = new Array();
             
             this.tracks = annotationsTool.video.get("tracks");
             this.tracks.bind('add',this.addTrack);
             this.tracks.each(this.addTrack, this);
+            
+            this.playerAdapter = annotationsTool.playerAdapter;
+            $(this.playerAdapter).bind(PlayerAdapter.EVENTS.TIMEUPDATE,this.updateSelection);
 
             this.render();
           },
@@ -50,6 +53,7 @@ define(["jquery",
               var ann = track.get("annotations");
               ann.bind('add', this.addAnnotation);
               ann.bind('remove',this.removeOne);
+              ann.bind('destroy',this.removeOne);
               ann.bind('change',this.sortViewsbyTime);
               this.addList(ann.toArray());
           },
@@ -60,6 +64,13 @@ define(["jquery",
            * @param {Annotation} the annotation to add as view
            */
           addAnnotation: function(addAnnotation){
+            
+            // If annotation has not id, we save it to have an id
+            if(!addAnnotation.id){
+                addAnnotation.bind('ready',this.addAnnotation, this);
+                return;
+            }
+            
             this.annotationViews.push(new AnnotationView({annotation:addAnnotation}));
             this.sortViewsbyTime();
           },
@@ -75,6 +86,31 @@ define(["jquery",
             
             if(!annotationsList.length==0)
               this.sortViewsbyTime();
+          },
+          
+          updateSelection: function(){
+            if(this.playerAdapter.getStatus() != PlayerAdapter.STATUS.PLAYING)
+              return;
+            
+            this.$el.find('.selected').removeClass('selected');
+            
+            var currentTime = this.playerAdapter.getCurrentTime();
+            
+            _.each(this.annotationViews,function(view){
+              var start = view.model.get('start');
+              
+              if(_.isNumber(view.model.get('duration'))){
+                var end = start + view.model.get('duration');
+              
+                if(start <= currentTime && end >= currentTime)
+                  view.selectVisually();  
+              }
+              else{
+                if(start <= currentTime && start+5 >= currentTime)
+                  view.selectVisually(); 
+              }
+
+            },this);
           },
           
           /**

@@ -22,7 +22,8 @@ define(["jquery",
           /** Events to handle by the main view */
           events: {
             "keypress #new-annotation" : "insertOnEnter",
-            "click #insert"            : "insert"     
+            "click #insert"            : "insert",
+            "focusin #new-annotation"   : "onFocusIn"
           },
           
           /**
@@ -32,7 +33,9 @@ define(["jquery",
             if(!attr.playerAdapter || !PlayerAdapter.prototype.isPrototypeOf(attr.playerAdapter))
                 throw "The player adapter is not valid! It must has PlayerAdapter as prototype.";
               
-            _.bindAll(this,'insert','render','reset');
+            _.bindAll(this,'insert','render','reset', 'onFocusIn');
+            
+            this.continueVideo = false;
             
             this.tracks = annotationsTool.video.get("tracks");
             this.playerAdapter = attr.playerAdapter;
@@ -66,6 +69,27 @@ define(["jquery",
             annotationsTool.selectedTrack.get("annotations").add(annotation);
             annotation.save({
               success: function(){console.log("saved");}  
+            });
+            
+            if(this.continueVideo)
+              this.playerAdapter.play();
+          },
+          
+          /**
+           * Listener for when a user start to write a new annotation,
+           * manage if the video has to be or not paused.
+           */
+          onFocusIn: function(){
+            if(!this.$el.find('#pause-video').attr('checked') || (this.playerAdapter.getStatus() == PlayerAdapter.STATUS.PAUSED))
+              return;
+              
+            this.continueVideo = true;
+            this.playerAdapter.pause();
+            
+            // If the video is moved, or played, we do no continue the video after insertion
+            $(this.playerAdapter).one(PlayerAdapter.EVENTS.TIMEUPDATE,function(){
+              this.continueVideo = false;
+              console.log('video start again');
             });
           },
           

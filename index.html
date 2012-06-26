@@ -55,7 +55,7 @@
 	<!-- Loading box -->
 	<div class="hero-unit" id="loading">
 		<h1>Loading</h1>
-		<p>The annotations tool create the views</p>
+		<p class='info'>The annotations tool create the views</p>
 		<p>
 			<div class="progress progress-striped active">
 				<div class="bar" style="width: 10%;"></div>
@@ -71,9 +71,8 @@
 			<!-- container for the video -->
 			<div id="video-container" style="display:none">
 				<video id="example" style="width:100%" controls >
-					<source src="resources/sintel_trailer.mp4" type="video/mp4" />
-					<!-- Could not be include, to heavy. -->
-					<!-- <source src="../resources/sintel_trailer.ogv" type="video/ogg" /> -->
+					<source src="resources/sintel-trailer.mp4" type="video/mp4" />
+					<source src="resources/sintel_trailer.ogv" type="video/ogg" /> 
 				</video>
 			</div>
 			
@@ -94,7 +93,7 @@
 					<div id="timeline"></div>
 				</div>
 			</div>
-
+		
 		</div>
 		
 		<div class="span5">
@@ -114,8 +113,14 @@
 					<div class="input-prepend input-append">
 						<span class="add-on"><i class="icon-comment"></i></span>
 						<input id="new-annotation" type="text" placeholder="Insert annotation">
+						
 						<button id="insert" type="button" class="btn">Insert</button>	
 					</div>
+
+					<div class="controls">
+						<label class="checkbox inline">
+						    <input id="pause-video" type="checkbox"> Pause video during writing
+					        </label>
 					</div>
 	
 				</div>

@@ -89,7 +89,7 @@ define(["jquery",
                 throw "The annotations have to be given to the annotate view.";
               
             // Bind function to the good context 
-            _.bindAll(this,'render','deleteFull','deleteView','onSelect','onSelected','onCollapse');
+            _.bindAll(this,'render','deleteFull','deleteView','onSelect','onSelected','selectVisually','onCollapse');
             
             this.model = attr.annotation;
             
@@ -108,6 +108,8 @@ define(["jquery",
           deleteFull: function(){
             try{
                 this.model.destroy();
+                if(annotationsTool.localStorage)
+                    annotationsTool.video.save();
             }
             catch(error){
                 console.warn("Cannot delete model: "+error);
@@ -135,7 +137,6 @@ define(["jquery",
            */
           render: function(){
             if(this.deleted){
-                console.log('Alredy deleted view!');
                 return "";
             }
             this.model.set({collapsed: this.collapsed});
@@ -156,8 +157,16 @@ define(["jquery",
            */
           onSelected: function(){
             this.$el.parent().find('.selected').removeClass('selected');
-            this.$el.addClass('selected');
+            this.selectVisually();
             this.jumpTo();
+          },
+          
+          
+          /**
+           * Show the selection on the annotation presentation
+           */
+          selectVisually: function(){
+            this.$el.addClass('selected');
           },
           
           /**

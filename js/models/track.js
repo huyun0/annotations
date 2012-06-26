@@ -69,8 +69,10 @@ define(["order!jquery",
                 if(attr.id){
                     if(this.get('id') != attr.id){
                         this.id = attr.id;
-                        this.trigger('ready',this);
+                        this.attributes['id'] = attr.id;
+                        this.toCreate = false;
                         this.setUrl();
+                        this.trigger('ready',this);
                     }
                 }
                 

@@ -62,6 +62,7 @@ define(["jquery",
         
         this.playerAdapter = playerAdapter;
         
+        
         this.loadingBox.find('.bar').width('20%');
         
         // Create a new users collection and get exciting local user
@@ -75,10 +76,17 @@ define(["jquery",
           }
         })
         
-        
         this.loadingBox.find('.bar').width('35%');
         
-        this.checkUserAndLogin();
+        
+        if(playerAdapter.getStatus() ===     PlayerAdapter.STATUS.PAUSED){
+           this.checkUserAndLogin();
+        }
+        else{
+          $(playerAdapter).bind('pa_ready',$.proxy(this.checkUserAndLogin(),this));
+          this.loadingBox.find('.info').text('Initializing the player.');
+        }
+       
         
       },
         
