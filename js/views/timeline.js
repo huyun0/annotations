@@ -547,13 +547,24 @@ define(["jquery",
             
             if(!annotation){
                /* If annotation has been had shortly before in the collection, can get id with "get" function
-                  So a loop is needed */
+                  So a loop is needed
+                  TODO find a better solution
+                  */
                oldTrack.get('annotations').each(function(ann){
                 if(ann.id == itemId){
                   annotation = ann;
                   return;
                 }
                });
+            }
+            
+            if(!newTrack){
+              this.tracks.each(function(track){
+                if(track.id == newTrackId){
+                  newTrack = track;
+                  return;
+                }
+              })
             }
             
             return {

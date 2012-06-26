@@ -83,7 +83,7 @@ define(["jquery",
            this.checkUserAndLogin();
         }
         else{
-          $(playerAdapter).bind('pa_ready',$.proxy(this.checkUserAndLogin(),this));
+          $(playerAdapter).one(PlayerAdapter.EVENTS.READY,this.checkUserAndLogin);
           this.loadingBox.find('.info').text('Initializing the player.');
         }
        

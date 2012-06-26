@@ -38,10 +38,10 @@ define(["order!jquery",
              * @param {Track} track containing the annotations
              */
             setUrl: function(track){
-                if(!track || !track.collection)
+                if(!track)
                      throw "The parent track of the annotations must be given!";
-                
-                this.url = track.url() + "/annotations";  
+                else if(track.collection)
+                    this.url = track.url() + "/annotations";  
             }
         });
         
