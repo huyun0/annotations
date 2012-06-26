@@ -110,6 +110,7 @@ define(["jquery",
             
             $(this.playerAdapter).bind('pa_timeupdate',this.onPlayerTimeUpdate);
             links.events.addListener(this.timeline,'timechanged',this.onTimelineMoved);
+            links.events.addListener(this.timeline,'timechange',this.onTimelineMoved);
             links.events.addListener(this.timeline,'change',this.onTimelineItemChanged);
             links.events.addListener(this.timeline,'delete',this.onTimelineItemDeleted);
             links.events.addListener(this.timeline,'select',this.onTimelineItemSelected);
@@ -303,13 +304,13 @@ define(["jquery",
            * @param {Event} Event object
            */
           onTimelineMoved: function(event){
-            var hasToPlay = (this.playerAdapter.getStatus() == PlayerAdapter.STATUS.PLAYING);
+            this.hasToPlay = (this.playerAdapter.getStatus() == PlayerAdapter.STATUS.PLAYING);
             this.playerAdapter.pause();
             
             var newTime = this.getTimeInSeconds(event.time);
             this.playerAdapter.setCurrentTime(newTime);
             
-            if(hasToPlay)
+            if(this.hasToPlay)
               this.playerAdapter.play();
           },
           
