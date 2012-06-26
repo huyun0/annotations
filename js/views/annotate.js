@@ -33,13 +33,22 @@ define(["jquery",
             if(!attr.playerAdapter || !PlayerAdapter.prototype.isPrototypeOf(attr.playerAdapter))
                 throw "The player adapter is not valid! It must has PlayerAdapter as prototype.";
               
-            _.bindAll(this,'insert','render','reset', 'onFocusIn');
+            // Set the current context for all these functions
+            _.bindAll(this,'insert','render','reset', 'onFocusIn','changeTrack');
             
+            // Parameter for stop on write
             this.continueVideo = false;
             
-            this.tracks = annotationsTool.video.get("tracks");
-            this.playerAdapter = attr.playerAdapter;
+            // New annotation input
             this.input = this.$('#new-annotation');
+            
+            // Print selected track
+            this.trackDIV = this.$el.find('.currentTrack')
+            this.changeTrack(annotationsTool.selectedTrack);
+            
+            this.tracks = annotationsTool.video.get("tracks");
+            this.tracks.bind('selected_track',this.changeTrack,this);
+            this.playerAdapter = attr.playerAdapter;
           },
           
           /**
@@ -73,6 +82,22 @@ define(["jquery",
             
             if(this.continueVideo)
               this.playerAdapter.play();
+          },
+          
+          /**
+           * Change the current selected track by the given one
+           */
+          changeTrack: function(track){
+            // If the track is valid, we set it
+            if(track){
+              this.input.attr("disabled", false);
+              this.trackDIV.html('<b>Selected track: </b>'+track.get("name"));
+            }
+            else{
+              // Otherwise, we disable the input and inform the user that no track is set
+              this.input.attr("disabled", true);
+              this.trackDIV.html("<span class='notrack'>Select a track!</span>");
+            }
           },
           
           /**

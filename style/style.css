@@ -7338,6 +7338,9 @@ div.timeline-axis-grid-minor {
 .window .navbar .nav > li > a {
   padding: 5px 5px 5px 5px;
 }
+.window .navbar .nav > li > a:hover {
+  cursor: pointer;
+}
 /**
  * Style for annotate view
  */
@@ -7349,6 +7352,10 @@ div.timeline-axis-grid-minor {
 #annotate-form div {
   padding: 5px;
   text-align: center;
+}
+.notrack {
+  color: red;
+  font-weight: bold;
 }
 /**
  * Style for annotations list

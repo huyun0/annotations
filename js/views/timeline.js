@@ -101,7 +101,8 @@ define(["jquery",
             var self = this;
             $(window).resize(function(){
               self.timeline.redraw();
-              self.onTrackSelected(null,annotationsTool.selectedTrack.id);
+              if(annotationsTool.selectedTrack)
+                self.onTrackSelected(null,annotationsTool.selectedTrack.id);
             })
             
             $(window).bind('selectTrack', $.proxy(this.onTrackSelected,self));
@@ -123,7 +124,8 @@ define(["jquery",
             this.onTrackSelected(null,annotationsTool.selectedTrack.id);
             
             this.timeline.redraw = function(){
-              self.onTrackSelected(null,annotationsTool.selectedTrack.id);
+              if(annotationsTool.selectedTrack)
+                self.onTrackSelected(null,annotationsTool.selectedTrack.id);
             }
             
           },
@@ -222,6 +224,10 @@ define(["jquery",
             
             track.save();
             annotationsTool.video.save();
+            
+            // If no track selected, we use the new one
+            if(!annotationsTool.selectedTrack)
+              annotationsTool.selectedTrack = track;
             
             
             this.timeline.redraw();
@@ -459,8 +465,13 @@ define(["jquery",
                 annotationsTool.video.save();
                 
                 // If the track was selected
-                if(annotationsTool.selectedTrack.id == track.id)
-                  self.onTrackSelected(null,self.tracks.at(0).id);
+                if(!annotationsTool.selectedTrack || annotationsTool.selectedTrack.id == track.id){
+                  
+                  if(self.tracks.length > 0)  // If there is still other tracks
+                    self.onTrackSelected(null,self.tracks.at(0).id);
+                  else // if no more tracks
+                    self.onTrackSelected(null,undefined);
+                }
                 else
                   self.onTrackSelected(null,annotationsTool.selectedTrack.id);
               }
@@ -475,7 +486,14 @@ define(["jquery",
            */
           onTrackSelected: function(event,trackId){
             var track = this.tracks.get(trackId);
+            
+            // If the track does not exist, and it has been thrown by an event
+            if(!track && event)
+              return;
+            
             annotationsTool.selectedTrack = track;
+            this.tracks.trigger('selected_track',track);
+            
             this.$el.find('div.selected').removeClass('selected');
             this.$el.find('.timeline-group .track-id:contains('+trackId+')').parent().parent().addClass('selected');
           },
