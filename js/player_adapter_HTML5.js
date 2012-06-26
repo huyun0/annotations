@@ -57,6 +57,7 @@ define(['domReady!','jquery','prototypes/player_adapter'],function(domReady,$,Pl
             
             $(targetElement).bind("play",function(){
                 if(self.toPause){
+                    self.toPause = false;
                     self.pause();
                     try{
                         self.setCurrentTime(0);
