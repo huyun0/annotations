@@ -345,7 +345,7 @@ define(["jquery",
                 success: $.proxy(function(){
                     values.oldTrack.get('annotations').remove(values.annotation);
                     values.annotation = values.newTrack.get('annotations').create(annJSON);
-                    if(!annotation.id)
+                    if(!values.annotation.id)
                       values.annotation.bind('ready',finalizeChanges,this);
                     else
                       finalizeChanges();
