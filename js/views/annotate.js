@@ -23,7 +23,8 @@ define(["jquery",
           events: {
             "keypress #new-annotation" : "insertOnEnter",
             "click #insert"            : "insert",
-            "focusin #new-annotation"   : "onFocusIn"
+            "keydown #new-annotation"  : "onFocusIn",
+            "focusout #new-annotation" : "onFocusOut"
           },
           
           /**
@@ -114,8 +115,15 @@ define(["jquery",
             // If the video is moved, or played, we do no continue the video after insertion
             $(this.playerAdapter).one(PlayerAdapter.EVENTS.TIMEUPDATE,function(){
               this.continueVideo = false;
-              console.log('video start again');
             });
+          },
+          
+          /**
+           * Listener for when we leave the annotation input
+           */
+          onFocusOut: function(){
+            this.continueVideo = false;
+            this.playerAdapter.play();
           },
           
           /**
