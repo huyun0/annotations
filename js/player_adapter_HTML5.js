@@ -65,7 +65,7 @@ define(['domReady!','jquery','prototypes/player_adapter'],function(domReady,$,Pl
                     catch(error){
                         console.warn(error);
                         // Hack for safari
-                        self.triggerEvent(PlayerAdapter.EVENTS.READY);
+                        //self.triggerEvent(PlayerAdapter.EVENTS.READY);
                     }
 
                 }
