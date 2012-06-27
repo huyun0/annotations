@@ -78,13 +78,13 @@ define(["jquery",
         
         this.loadingBox.find('.bar').width('35%');
         
+        this.loadingBox.find('.info').text('Initializing the player.');
         
         if(playerAdapter.getStatus() ===     PlayerAdapter.STATUS.PAUSED){
            this.checkUserAndLogin();
         }
         else{
-          $(playerAdapter).one(PlayerAdapter.EVENTS.READY,this.checkUserAndLogin);
-          this.loadingBox.find('.info').text('Initializing the player.');
+          $(playerAdapter).one(PlayerAdapter.EVENTS.READY+' '+PlayerAdapter.EVENTS.PAUSE,this.checkUserAndLogin);
         }
        
         
