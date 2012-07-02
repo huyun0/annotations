@@ -122,8 +122,10 @@ define(["jquery",
            * Listener for when we leave the annotation input
            */
           onFocusOut: function(){
-            this.continueVideo = false;
-            this.playerAdapter.play();
+            if(this.continueVideo){
+              this.continueVideo = false;
+              this.playerAdapter.play();
+            }
           },
           
           /**

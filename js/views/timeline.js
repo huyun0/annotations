@@ -7,7 +7,7 @@ define(["jquery",
         "text!templates/timeline-item.tmpl",
         "text!templates/timeline-modal-group.tmpl",
         "libs/handlebars",
-        "libs/timeline-min",
+        "libs/timeline",
         "backbone"],
        
     function($,_not,PlayerAdapter,Annotation,Annotations,GroupTmpl,ItemTmpl,ModalGroupTmpl){
@@ -238,11 +238,14 @@ define(["jquery",
           /**
            * Load the modal window to add a new track
            */
-          loadAddTrackModal: function(){
+          loadAddTrackModal: function(event){
             
-            // Test if the modal window has already been initialized
-            if(!this.groupModal){
-                // Otherwise we load the login modal
+            // If the modal is already loaded and displayed, we do nothing
+            if($('div#modal-add-group.modal.in').length > 0){
+              return;
+            }
+            else if(!this.groupModal){
+                // Otherwise we load the login modal if not loaded
                 this.$el.append(this.modalGroupTemplate);
                 this.groupModal = $('#modal-add-group');
                 this.groupModal.modal({show: true, backdrop: false, keyboard: true });
@@ -270,6 +273,7 @@ define(["jquery",
                 });
             }
             else{
+              // if the modal has already been initialized, we reset input and show modal
               this.groupModal.find('.alert #content').html("");
               this.groupModal.find('.alert').hide();
               this.groupModal.find('#name')[0].value = '';

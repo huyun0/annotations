@@ -6082,10 +6082,8 @@ div.timeline-customtime {
 }
 div.timeline-navigation {
   z-index: 4;
-  position: relative;
-  bottom: 0px;
-  right: 0px;
   height: 35px;
+  border-left: 0px;
 }
 div.timeline-frame > div:first-child {
   z-index: 2;
