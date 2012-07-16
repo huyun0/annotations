@@ -30,7 +30,7 @@ define(["jquery",
            */
           initialize: function(attr){  
             // Bind functions to the good context 
-            _.bindAll(this,'render','addTrack','addAnnotation','addList','sortViewsbyTime','reset','updateSelection');
+            _.bindAll(this,'render','addTrack','addAnnotation','addList','sortViewsbyTime','reset','updateSelection','unselect');
             
             this.annotationViews = new Array();
             
@@ -89,10 +89,10 @@ define(["jquery",
           },
           
           updateSelection: function(){
-            if(this.playerAdapter.getStatus() != PlayerAdapter.STATUS.PLAYING)
-              return;
+            //if(this.playerAdapter.getStatus() != PlayerAdapter.STATUS.PLAYING)
+            //  return;
             
-            this.$el.find('.selected').removeClass('selected');
+            this.unselect();
             
             var currentTime = this.playerAdapter.getCurrentTime();
             
@@ -111,6 +111,13 @@ define(["jquery",
               }
 
             },this);
+          },
+          
+          /**
+           * Function to unselect all items
+           */
+          unselect: function(){
+            this.$el.find('.selected').removeClass('selected');
           },
           
           /**

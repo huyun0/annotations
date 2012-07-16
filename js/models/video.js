@@ -14,7 +14,7 @@ define(["jquery",
         var Video = Backbone.Model.extend({
             
             defaults: {
-                access: ACCESS.PRIVATE,
+                access: ACCESS.PUBLIC,
                 created_at: null,
                 created_by: null,
                 updated_at: null,

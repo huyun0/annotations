@@ -1857,7 +1857,7 @@ links.Timeline.prototype.redrawDragAreas = function () {
                 left = this.timeToScreen(item.start),
                 right = this.timeToScreen(item.end),
                 top = item.top,
-                height = item.height;
+                height = item.height*2;
 
             dragLeft.style.left = left + 'px';
             dragLeft.style.top = top + 'px';
@@ -2352,6 +2352,9 @@ links.Timeline.prototype.recalcSize = function() {
         for (var i = 0, iMax = items.length; i < iMax; i++) {
             var item = items[i],
                 group = item.group;
+                
+            // ENTWINE    
+            
 
             if (group) {
                 item.top = group.top;
@@ -3541,7 +3544,7 @@ links.Timeline.prototype.createItem = function(itemData) {
         'content': itemData.content,
         'type': itemData.end ? 'range' : this.options.style,
         'group': this.findGroup(itemData.group),
-        'top': 0,
+        'top': 3,
         'left': 0,
         'width': 0,
         'height': 0,
@@ -3842,6 +3845,16 @@ links.Timeline.prototype.unselectItem = function() {
  */
 links.Timeline.prototype.stackEvents = function(animate) {
     if (this.options.stackEvents == false || this.groups.length > 0) {
+        /*if(this.groups.length > 0) {
+            var sortedItems = [];
+            var itemsGroup = this.stackOrderAndGroup(this.items);
+            for(g in itemsGroup){
+                sortedItems = sortedItems.concat(itemsGroup[g]);
+            }
+            var finalItems = this.stackEventsForGroup(itemsGroup);
+            this.stackMoveToFinal(sortedItems, finalItems);
+        }*/
+        
         // under this conditions we refuse to stack the events
         return;
     }
@@ -3887,6 +3900,152 @@ links.Timeline.prototype.stackEvents = function(animate) {
         this.recalcSize();
     }
 };
+
+/** =====================================================================
+ *   START ENTWINE SPECIFIC PART
+ *  =================================================================== */
+
+/**
+ *
+ *
+ */
+links.Timeline.prototype.stackEventsForGroup = function(itemsGroup){
+    
+    var animate = false;
+    
+    
+    var size = this.size,
+    axisTop = size.axis.top,
+    options = this.options,
+    axisOnTop = options.axisOnTop,
+    eventMargin = options.eventMargin,
+    eventMarginAxis = options.eventMarginAxis,
+    finalGroups = {},
+    finalItems = [];
+    
+    for(var g in itemsGroup) {
+        var group = itemsGroup[g];
+        var finalGroup = new Array(); 
+    
+        // initialize final positions
+        for (var i = 0, iMax = group.length; i < iMax; i++) {
+            var item = group[i],
+                top,
+                left,
+                right,
+                bottom,
+                height = item.height,
+                width = item.width;
+    
+            if (axisOnTop) {
+                top = axisTop + eventMarginAxis + eventMargin / 2;
+            }
+            else {
+                top = axisTop - height - eventMarginAxis - eventMargin / 2;
+            }
+            bottom = top + height;
+    
+            switch (item.type) {
+                case 'range':
+                case 'dot':
+                    left = this.timeToScreen(item.start);
+                    right = item.end ? this.timeToScreen(item.end) : left + width;
+                    break;
+    
+                case 'box':
+                    left = this.timeToScreen(item.start) - width / 2;
+                    right = left + width;
+                    break;
+            }
+    
+            finalGroup[i] = {
+                'left': left,
+                'top': top,
+                'right': right,
+                'bottom': bottom,
+                'height': height,
+                'item': item
+            };
+        }
+    
+        // calculate new, non-overlapping positions
+        for (var i = 0, iMax = finalGroup.length; i < iMax; i++) {
+                
+                var finalItem = finalGroup[i];
+                var collidingItem = null;
+                
+                do {
+                    // TODO: optimize checking for overlap. when there is a gap without items, 
+                    //  you only need to check for items from the next item on, not from zero
+                    collidingItem = this.stackEventsCheckOverlap(finalGroup, i, 0, i-1);
+                    if (collidingItem != null) {
+                        // There is a collision. Reposition the event above the colliding element
+                        if (axisOnTop) {
+                            finalItem.top = collidingItem.top + eventMargin;
+                        }
+                        else {
+                            finalItem.top = collidingItem.top - eventMargin;
+                        }
+                        finalItem.bottom = group[i].group.top  + finalItem.top + finalItem.height;
+                    }
+                } while (collidingItem);
+                
+        }
+        
+        finalItems = finalItems.concat(finalGroup);
+    
+    }
+
+    return finalItems;
+}
+
+
+/**
+ * Order the items in the array this.items. The order is determined via:
+ * - Ranges go before boxes and dots.
+ * - The item with the left most location goes first
+ * @param {Array} items        Array with items
+ * @return {Array} groups Object with arrays from grouped items by group
+ */
+links.Timeline.prototype.stackOrderAndGroup = function(items) {
+    
+    var groups = {};
+
+    var f = function (a, b) {
+        if (a.type == 'range' && b.type != 'range') {
+            return -1;
+        }
+
+        if (a.type != 'range' && b.type == 'range') {
+            return 1;
+        }
+
+        return (a.left - b.left);
+    };
+
+    items.sort(f);
+    
+    for (i=0; i<items.length; i++){
+        var item = items[i];
+        
+        // If the end date is not valid, we continue to next item
+        if(!item.end.getTime)
+            continue;
+        
+        // Add group if necessary
+        var groupName = item.group.content;
+        if(groups[groupName] === undefined)
+            groups[groupName] = new Array();
+            
+        groups[groupName].push(item);
+    }
+
+    return groups;
+};
+
+/** =====================================================================
+ *   END ENTWINE SPECIFIC PART
+ *  =================================================================== */
 
 
 /**
