@@ -6055,7 +6055,7 @@ div.timeline-groups-text div.content {
   padding: 3px;
 }
 div.timeline-groups-text div.timeline-group {
-  height: 30px;
+  height: 55px;
   z-index: 3;
 }
 div.timeline-groups-text div.timeline-group:hover {
@@ -6099,6 +6099,47 @@ div.timeline-groups-axis .timeline-axis-grid-minor {
 }
 div.timeline-axis-grid-minor {
   z-index: 2;
+}
+/* Overlapping version */
+div.timeline-event-content {
+  overflow: visible;
+  margin: 0px;
+}
+div.timeline-event-selected {
+  background: none;
+  z-index: 10;
+}
+div.timeline-event-selected div.item {
+  background-color: rgba(245, 215, 115, 0.75);
+}
+div.timeline-event {
+  background: none;
+}
+div.timeline-event-range {
+  margin-top: 28px;
+  border: none;
+}
+div.item {
+  background-color: rgba(249, 103, 38, 0.6);
+  padding: 5px;
+  border-radius: 3px;
+  overflow: hidden;
+}
+div.item span {
+  float: left;
+  width: 65%;
+  overflow: hidden;
+}
+div.item i.delete {
+  float: right;
+}
+div.item i.delete:hover {
+  cursor: pointer;
+  background-color: #ff6666;
+  border-radius: 10px 10px 10px 10px;
+}
+div.timeline-navigation-delete {
+  display: none;
 }
 /*!
  * Bootstrap Responsive v2.0.2
@@ -7321,7 +7362,7 @@ div.timeline-axis-grid-minor {
   -moz-box-shadow: 0px 0px 5px #d9d2c0;
   -webkit-box-shadow: 0px 0px 5px #d9d2c0;
   margin-bottom: 20px;
-  overflow: auto;
+  overflow: hidden;
   max-height: 40%;
 }
 .window .window-title {

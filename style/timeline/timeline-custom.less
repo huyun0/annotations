@@ -30,7 +30,7 @@ div.timeline-groups-text{
     }
     
     div.timeline-group {
-        height: 30px;
+        height: 55px;
         z-index: 3;
         
         &:hover{
@@ -92,6 +92,58 @@ div.timeline-groups-axis{
 
 div.timeline-axis-grid-minor{
     z-index: 2;
+}
+
+
+/* Overlapping version */
+div.timeline-event-content {
+    overflow: visible;
+    margin: 0px;
+}
+
+div.timeline-event-selected {
+    background: none;
+    z-index: 10;
+    
+    div.item{
+        background-color: rgba(245, 215, 115, 0.75);
+    }
+}
+
+div.timeline-event {
+    background: none;
+}
+
+div.timeline-event-range {
+    margin-top: 28px;
+    border: none;
+}
+
+div.item{
+    background-color: rgba(249, 103, 38, 0.6);
+    padding: 5px;
+    border-radius: 3px;
+    overflow: hidden;
+    
+    span{
+        float: left;
+        width: 65%;
+        overflow: hidden;
+    }
+    
+    i.delete{
+            float: right;
+            
+            &:hover{
+                cursor: pointer;
+                background-color: lighten(red,20%);
+                border-radius: 10px 10px 10px 10px;
+            }
+    }
+}
+
+div.timeline-navigation-delete{
+    display: none;
 }
 
 

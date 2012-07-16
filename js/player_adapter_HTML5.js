@@ -49,7 +49,7 @@ define(['domReady!','jquery','prototypes/player_adapter'],function(domReady,$,Pl
             /**
              * Listen the events from the native player
              */
-            $(targetElement).bind("seeked canplay",function(){
+            $(targetElement).bind("canplay durationchange",function(){
                 self.status =  PlayerAdapter.STATUS.PAUSED;
                 self.triggerEvent(PlayerAdapter.EVENTS.READY);
                 if(self.waitToPlay)self.play();    
@@ -101,16 +101,6 @@ define(['domReady!','jquery','prototypes/player_adapter'],function(domReady,$,Pl
                self.status =  PlayerAdapter.STATUS.ERROR_UNSUPPORTED_MEDIA;
                self.triggerEvent(PlayerAdapter.EVENTS.ERROR);
             });*/
-            
-            // Force to load the video if necessary
-            if(targetElement.readyState < 1){
-                self.status = PlayerAdapter.STATUS.LOADING;
-            }
-            else{
-                self.status =  PlayerAdapter.STATUS.PAUSED;
-                self.triggerEvent(PlayerAdapter.EVENTS.READY);
-                if(self.waitToPlay)self.play();  
-            }
             
             targetElement.play();
             self.toPause = true;

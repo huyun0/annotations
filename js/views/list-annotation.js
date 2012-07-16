@@ -99,7 +99,7 @@ define(["jquery",
             this.model.bind('change', this.render);
             this.model.bind('destroy', this.deleteView);
             this.model.bind('remove', this.deleteView);
-            this.model.bind('selected', this.onSelected);
+            this.model.bind('selected selected_timeline', this.onSelected);
           },
           
           /**

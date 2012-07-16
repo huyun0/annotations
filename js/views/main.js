@@ -81,7 +81,7 @@ define(["order!jquery",
         
         this.loadingBox.find('.info').text('Initializing the player.');
         
-        if(playerAdapter.getStatus() ===     PlayerAdapter.STATUS.PAUSED){
+        if(playerAdapter.getStatus() ===  PlayerAdapter.STATUS.PAUSED){
            this.checkUserAndLogin();
         }
         else{
@@ -252,14 +252,33 @@ define(["order!jquery",
         var videos,video,tracks;
         videos = new Videos;
         
-        /**
+                /**
          * @function to conclude the retrive of annotations
          */
         var endGetAnnotations = $.proxy(function(){
           
+            // Set the video for the annotations tool, could be used everywhere then
+            annotationsTool.video = video;
+            
+            var selectedTrack = tracks.at(0);
+            
+            if(!selectedTrack.get('id')){
+              selectedTrack.bind('ready',function(){
+                endGetAnnotations();
+                return;
+              },this);
+            }
+            else{
+              annotationsTool.selectedTrack = selectedTrack;
+            }
+            
+            // Use to know if all the tracks have been fetched
+            var remindingFetchingTrack = tracks.length;
+          
             // Function to add the different listener to the annotations
-            var addAnnotationsListeners = $.proxy(function(annotations){
-
+            var addAnnotationsListeners = $.proxy(function(track){
+              var annotations = track.get("annotations");
+              
               annotations.bind('jumpto',function(start){
                  this.playerAdapter.setCurrentTime(start);
               },this);
@@ -267,25 +286,22 @@ define(["order!jquery",
               annotations.bind('destroy',function(annotation){
                  annotations.remove(annotation);
               },this);
-             
-              // Set the video for the annotations tool, could be used everywhere then
-              annotationsTool.video = video;
-              
-              annotationsTool.selectedTrack = tracks.at(0);
-              callback();
+        
+              if(--remindingFetchingTrack == 0)
+                callback();
             },this);
           
             // Get all annotations
-            tracks.each(function(track){
+            tracks.each(function(track,index){
               var annotations = track.get("annotations");
               
               if(window.annotationsTool.localStorage){
-                addAnnotationsListeners(annotations);
+                addAnnotationsListeners(track);
               }
               else{
                 // Create an annotations collection an get all the annotations
                 annotations.fetch({success: $.proxy(function(){
-                  addAnnotationsListeners(annotations);
+                        addAnnotationsListeners(track);
                 }, this)});
               }
             }, this);
