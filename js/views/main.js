@@ -126,7 +126,7 @@ define(["order!jquery",
              loadVideoDependantView();
           }
           else{
-            $(this.playerAdapter).one(PlayerAdapter.EVENTS.READY+' '+PlayerAdapter.EVENTS.PAUSE,loadVideoDependantView());
+            $(this.playerAdapter).one(PlayerAdapter.EVENTS.READY+' '+PlayerAdapter.EVENTS.PAUSE,loadVideoDependantView);
           }
           
         },this));        
