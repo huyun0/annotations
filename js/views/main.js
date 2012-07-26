@@ -49,7 +49,9 @@ define(["order!jquery",
         if(!PlayerAdapter.prototype.isPrototypeOf(playerAdapter))
             throw "The player adapter is not valid! It must has PlayerAdapter as prototype.";
         
-        _.bindAll(this,"login","getAnnotations","createViews","checkUserAndLogin","loadLoginModal");
+        _.bindAll(this,"login","getAnnotations","createViews","checkUserAndLogin","loadLoginModal","setLoadingProgress");
+        
+        this.setLoadingProgress(10,"Starting tool.");
         
         // Load the good storage module
         if(window.annotationsTool.localStorage){
@@ -64,7 +66,7 @@ define(["order!jquery",
         this.playerAdapter = playerAdapter;
         
         
-        this.loadingBox.find('.bar').width('20%');
+        this.setLoadingProgress(20,"Get users saved locally.");
         
         // Create a new users collection and get exciting local user
         annotationsTool.users = new Users();
@@ -75,56 +77,64 @@ define(["order!jquery",
           error: function(error){
             console.warn(error);
           }
-        })
+        });
         
-        this.loadingBox.find('.bar').width('35%');
-        
-        this.loadingBox.find('.info').text('Initializing the player.');
-        
-        if(playerAdapter.getStatus() ===  PlayerAdapter.STATUS.PAUSED){
-           this.checkUserAndLogin();
-        }
-        else{
-          $(playerAdapter).one(PlayerAdapter.EVENTS.READY+' '+PlayerAdapter.EVENTS.PAUSE,this.checkUserAndLogin);
-        }
-       
-        
+        this.checkUserAndLogin();        
       },
         
       /**
        * Create the views for the annotations
        */
       createViews: function(){
-        this.loadingBox.find('.bar').width('50%');
+        this.setLoadingProgress(40,"Start creating views.");
         
-        this.loaded =true,
+        this.loaded = true,
         
-        this.getAnnotations($.proxy(function(){
+        this.setLoadingProgress(45,"Start loading video.");
+        $('#video-container').show();
+        
+        this.getAnnotations($.proxy(function(){  
+         
+          /**
+           * Loading the video dependant views
+           */
+          var loadVideoDependantView = $.proxy(function(){
+              this.setLoadingProgress(60,"Start creating views.");
+              
+              // Create views with Timeline
+              this.setLoadingProgress(70,"Creating timeline.");
+              this.timelineView = new TimelineView({playerAdapter: this.playerAdapter});
+              
+              // Create views to annotate and see annotations list
+              this.setLoadingProgress(80,"Creating annotatie view.");
+              this.annotateView = new AnnotateView({playerAdapter: this.playerAdapter});
+              this.annotateView.$el.show();
+              
+              // Create annotations list view
+              this.setLoadingProgress(90,"Creating list view.");
+              this.listView = new ListView();
+              this.listView.$el.show();
+              
+              this.setLoadingProgress(100,"Ready.");
+              this.loadingBox.hide();            
+          },this);
           
-          this.loadingBox.find('.bar').width('60%');
+          // Initialize the player
+          this.loadingBox.find('.info').text('Initializing the player.');
           
-          // Create views to annotate and see annotations list
-          this.timelineView = new TimelineView({playerAdapter: this.playerAdapter});
+          if(this.playerAdapter.getStatus() ===  PlayerAdapter.STATUS.PAUSED){
+             loadVideoDependantView();
+          }
+          else{
+            $(this.playerAdapter).one(PlayerAdapter.EVENTS.READY+' '+PlayerAdapter.EVENTS.PAUSE,loadVideoDependantView());
+          }
           
-          this.loadingBox.find('.bar').width('100%');
-          
-          // Create views to annotate and see annotations list
-          this.annotateView = new AnnotateView({playerAdapter: this.playerAdapter});
-          this.annotateView.$el.show();
-          
-          this.loadingBox.find('.bar').width('100%');
-          
-          // Create annotations list view
-          this.listView = new ListView();
-          this.listView.$el.show();
-          
-          this.loadingBox.hide();
-          
-          $('#video-container').show();
         },this));        
       },
       
       checkUserAndLogin: function(){
+        this.setLoadingProgress(30,"Get current user.");
+        
         // If a user has been saved locally, we take it as current user
         if(annotationsTool.users.length >0){
             annotationsTool.user = annotationsTool.users.at(0);
@@ -186,6 +196,8 @@ define(["order!jquery",
        * @return {User} the current user
        */
       login: function(){
+        this.setLoadingProgress(30,"User login.");
+        
         // Fields from the login form
         var userId          = annotationsTool.getUserExtId();
         var userNickname    = this.userModal.find('#nickname');
@@ -358,6 +370,17 @@ define(["order!jquery",
           });
         }
 
+      },
+      
+      /**
+       * Update loading box with given percent & message
+       * 
+       * @param {Integer} percent loaded of the tool
+       * @param {String} current loading operation message
+       */
+      setLoadingProgress: function(percent, message){
+        this.loadingBox.find('.bar').width(percent+'%');
+        this.loadingBox.find('.info').text(message);
       }
     });
         
