@@ -42,14 +42,15 @@ define(["order!jquery",
       /** Events to handle by the main view */
       events: {
         "click #save-user": "login",
-        "click #logout" : "logout"
+        "click #logout" : "logout",
+        "keydown #user-login": "loginOnInsert"
       },
       
       initialize: function(playerAdapter){
         if(!PlayerAdapter.prototype.isPrototypeOf(playerAdapter))
             throw "The player adapter is not valid! It must has PlayerAdapter as prototype.";
         
-        _.bindAll(this,"login","getAnnotations","createViews","checkUserAndLogin","loadLoginModal","setLoadingProgress");
+        _.bindAll(this,"login","loginOnInsert","getAnnotations","createViews","checkUserAndLogin","loadLoginModal","setLoadingProgress","logout");
         
         this.setLoadingProgress(10,"Starting tool.");
         
@@ -194,6 +195,15 @@ define(["order!jquery",
         this.loadingBox.find('.bar').width('0%');
         this.loadingBox.show();
         this.loadLoginModal();
+      },
+      
+      
+      /**
+       * Login by pressing "Enter" key
+       */
+      loginOnInsert: function(e){
+        if(e.keyCode == 13)
+              this.login();
       },
       
       /**
