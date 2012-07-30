@@ -78,7 +78,7 @@ define(["jquery",
           events: {
             "click .delete"             : "deleteFull",
             "click .select"             : "onSelect",
-            "click .collapse"           : "onCollapse"
+            "click .collapse"           : "onCollapse",
           },
           
            /**
@@ -100,6 +100,10 @@ define(["jquery",
             this.model.bind('destroy', this.deleteView);
             this.model.bind('remove', this.deleteView);
             this.model.bind('selected selected_timeline', this.onSelected);
+            
+            this.track = attr.track;
+            if(!this.track)
+                this.track = annotationsTool.selectedTrack;
           },
           
           /**
@@ -140,7 +144,9 @@ define(["jquery",
                 return "";
             }
             this.model.set({collapsed: this.collapsed});
-            this.$el.html(this.template(this.model.toJSON()));
+            var modelJSON = this.model.toJSON();
+            modelJSON.track = this.track.get("name");
+            this.$el.html(this.template(modelJSON));
             this.setElement(this.el);
             return this;
           },
@@ -174,6 +180,9 @@ define(["jquery",
            */
           onCollapse: function(){
             this.collapsed = !this.collapsed;
+            
+            this.$el.find('.collapse > i').toggleClass('icon-plus').toggleClass('icon-minus');
+            
             if(this.collapsed)
                 this.$el.find('div.in').collapse('hide');
             else

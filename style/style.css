@@ -7426,12 +7426,7 @@ div#reset-zoom {
 #list-container div.annotation i.delete {
   float: right;
 }
-#list-container div.annotation i.delete:hover {
-  cursor: pointer;
-  background-color: #ff6666;
-  border-radius: 10px 10px 10px 10px;
-}
-#list-container div.annotation i.select:hover {
+#list-container div.annotation i:hover {
   cursor: pointer;
   background-color: #8dbbde;
 }
@@ -7478,12 +7473,23 @@ div#reset-zoom {
   -moz-box-shadow: 0px 0px 4px #a9a9a9;
   -webkit-box-shadow: 0px 0px 4px #a9a9a9;
 }
-#list-container div.annotation .category {
+#list-container div.annotation span.category {
   border-radius: 3px 3px 3px 3px;
   background-color: orange;
   color: white;
   padding: 2px;
   font-size: 0.90em;
+}
+#list-container div.annotation span.track {
+  border-radius: 3px 3px 3px 3px;
+  background-color: #0099e6;
+  color: white;
+  padding: 3px;
+  font-size: 0.90em;
+}
+#list-container div.annotation span.user {
+  font-style: italic;
+  font-weight: bold;
 }
 #list-container div.annotation.selected {
   background-color: #c2c2c2;

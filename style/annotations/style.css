@@ -32,8 +32,23 @@
   -moz-box-shadow: 0px 0px 5px #d9d2c0;
   -webkit-box-shadow: 0px 0px 5px #d9d2c0;
   margin-bottom: 20px;
-  overflow: auto;
+  overflow: hidden;
   max-height: 40%;
+}
+.window .window-title {
+  color: white;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  float: left;
+  display: block;
+  font-size: 14px;
+  padding: 5px 5px 5px 5px;
+  line-height: 19px;
+}
+.window .navbar .nav > li > a {
+  padding: 5px 5px 5px 5px;
+}
+.window .navbar .nav > li > a:hover {
+  cursor: pointer;
 }
 /**
  * Style for annotate view
@@ -47,6 +62,10 @@
   padding: 5px;
   text-align: center;
 }
+.notrack {
+  color: red;
+  font-weight: bold;
+}
 /**
  * Style for annotations list
  */
@@ -56,6 +75,7 @@
 .standard_border_radius {
   border-radius: 4px 4px 4px 4px;
 }
+/* dark grey */
 #list-container div.annotation {
   border-radius: 4px 4px 4px 4px;
   border-radius: 4px 4px 4px 4px;
@@ -63,25 +83,26 @@
   margin: 5px;
   padding: 5px;
 }
+#list-container div.annotation:hover {
+  cursor: default;
+}
 #list-container div.annotation i.delete {
   float: right;
 }
-#list-container div.annotation i.delete:hover {
-  background-color: #ff6666;
-  border-radius: 10px 10px 10px 10px;
-}
-#list-container div.annotation i.jump-to:hover {
+#list-container div.annotation i:hover {
+  cursor: pointer;
   background-color: #8dbbde;
 }
 #list-container div.annotation .start,
 #list-container div.annotation .duration {
+  cursor: default;
   border-radius: 3px 3px 3px 3px;
   background-color: #a9a9a9;
   padding: 2px;
   margin: 1px;
   color: white;
   font-family: monospace;
-  /*border: 1px solid darken(#F5F5F5, 30%);*/
+  /*border: 1px solid darken(@color1, 30%);*/
 
   background-size: 100% 100%;
   box-shadow: 0px 0px 4px #a9a9a9;
@@ -115,10 +136,24 @@
   -moz-box-shadow: 0px 0px 4px #a9a9a9;
   -webkit-box-shadow: 0px 0px 4px #a9a9a9;
 }
-#list-container div.annotation .category {
+#list-container div.annotation span.category {
   border-radius: 3px 3px 3px 3px;
   background-color: orange;
   color: white;
   padding: 2px;
   font-size: 0.90em;
+}
+#list-container div.annotation span.track {
+  border-radius: 3px 3px 3px 3px;
+  background-color: #0099e6;
+  color: white;
+  padding: 3px;
+  font-size: 0.90em;
+}
+#list-container div.annotation span.user {
+  font-style: italic;
+  font-weight: bold;
+}
+#list-container div.annotation.selected {
+  background-color: #c2c2c2;
 }

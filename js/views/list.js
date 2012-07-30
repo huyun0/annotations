@@ -55,7 +55,7 @@ define(["jquery",
               ann.bind('remove',this.removeOne);
               ann.bind('destroy',this.removeOne);
               ann.bind('change',this.sortViewsbyTime);
-              this.addList(ann.toArray());
+              this.addList(ann.toArray(),track);
           },
 
           /**
@@ -79,9 +79,9 @@ define(["jquery",
           /**
            * Add a list of annotation, creating a view for each of them
            */
-          addList: function(annotationsList){
+          addList: function(annotationsList,track){
             _.each(annotationsList,function(annotation){
-              this.annotationViews.push(new AnnotationView({annotation:annotation}));
+              this.annotationViews.push(new AnnotationView({annotation:annotation,track:track}));
             },this);
             
             if(!annotationsList.length==0)

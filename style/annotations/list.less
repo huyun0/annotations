@@ -3,7 +3,7 @@
  */
 
 @import "variables.less";
-
+ 
 @color1: #F5F5F5; /* dark grey */
 
 #list-container{
@@ -17,19 +17,16 @@
             cursor: default;    
         }
         
-        i.delete{
-            float: right;
+        i{
+            
+            &.delete{
+               float: right; 
+            }
             
             &:hover{
                 cursor: pointer;
-                background-color: lighten(red,20%);
-                border-radius: 10px 10px 10px 10px;
+                background-color: lighten(#66A3D2,10%); 
             }
-        }
-        
-        i.select:hover{
-           cursor: pointer;
-           background-color: lighten(#66A3D2,10%); 
         }
         
         .start,.duration{
@@ -54,12 +51,25 @@
             .box-shadow(0px,0px,4px,darken(@color1,30%));
         }
         
-        .category{
+        span.category{
             border-radius: 3px 3px 3px 3px;
             background-color: orange;
             color: white;
             padding: 2px;
             font-size: 0.90em;
+        }
+        
+        span.track{
+            border-radius: 3px 3px 3px 3px;
+            background-color: lighten(#005580,20%);
+            color: white;
+            padding: 3px;
+            font-size: 0.90em;  
+        }
+        
+        span.user{
+            font-style: italic;
+            font-weight: bold;
         }
         
         &.selected{
