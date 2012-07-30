@@ -162,9 +162,10 @@ define(["jquery",
            * Reset the view
            */
           reset: function(){
-            this.listView.$el.empty().hide();
+            this.$el.hide();
             delete this.annotationViews;
             delete this.tracks;
+            this.undelegateEvents();
           }
           
         });

@@ -119,6 +119,8 @@ define(["order!jquery",
               this.loadingBox.hide();            
           },this);
           
+          this.playerAdapter.load();
+          
           // Initialize the player
           this.loadingBox.find('.info').text('Initializing the player.');
           
@@ -170,6 +172,9 @@ define(["order!jquery",
        * Log the user out
        */
       logout: function(){
+        // Stop the video
+        this.playerAdapter.pause();
+        
         // Hide/remove the views
         $('#video-container').hide();
         annotationsTool.playerAdapter.pause();
@@ -178,6 +183,7 @@ define(["order!jquery",
         
         this.timelineView.reset();
         this.annotateView.reset();
+        this.listView.reset();
         
         // Delete the different objects
         delete annotationsTool.tracks;
