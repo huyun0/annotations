@@ -32,7 +32,8 @@ define(["jquery",
           
           /** Events to handle by the timeline view */
           events: {
-            "click #add-track"            : "loadAddTrackModal"
+            "click #add-track"            : "loadAddTrackModal",
+            "click #reset-zoom"            : "onTimelineResetZoom"
           },
           
           /** Constant for void item content */
@@ -72,6 +73,7 @@ define(["jquery",
                            'getTopForStacking',
                            'getTrackTempFix',
                            'getAnnotationTempFix',
+                           'onTimelineResetZoom',
                            'reset');
             
 
@@ -483,6 +485,13 @@ define(["jquery",
             if(value){
               this.timeline.deleteItem(value.index);
             }
+          },
+          
+          /**
+           * Reset the timeline zoom to see the whole timeline
+           */
+          onTimelineResetZoom: function(){
+            this.timeline.setVisibleChartRange(this.startDate, this.endDate);
           },
           
           /**
