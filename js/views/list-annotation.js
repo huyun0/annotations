@@ -65,7 +65,7 @@ define(["jquery",
           className: 'annotation',
           
           /** View template */
-          template: Handlebars.compile(Template), 
+          template: Handlebars.compile(Template),
           
           /** Annotation views list */
           annotationViews: {},
@@ -78,7 +78,7 @@ define(["jquery",
           events: {
             "click .delete"             : "deleteFull",
             "click .select"             : "onSelect",
-            "click .collapse"           : "onCollapse",
+            "click .collapse"           : "onCollapse"
           },
           
            /**
@@ -101,6 +101,9 @@ define(["jquery",
             this.model.bind('remove', this.deleteView);
             this.model.bind('selected selected_timeline', this.onSelected);
             
+            // Type use for delete operation
+            this.typeForDelete = annotationsTool.deleteOperation.targetTypes.ANNOTATION;
+            
             this.track = attr.track;
             if(!this.track)
                 this.track = annotationsTool.selectedTrack;
@@ -110,15 +113,7 @@ define(["jquery",
            * Delete completely the annotation
            */
           deleteFull: function(){
-            try{
-                this.model.destroy();
-                if(annotationsTool.localStorage)
-                    annotationsTool.video.save();
-            }
-            catch(error){
-                console.warn("Cannot delete model: "+error);
-            }
-            this.deleteView();
+            annotationsTool.deleteOperation.start(this.model,this.typeForDelete);
           },
           
           /**

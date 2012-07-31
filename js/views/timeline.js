@@ -79,6 +79,10 @@ define(["jquery",
 
             this.playerAdapter = attr.playerAdapter;
             
+            // Type use for delete operation
+            this.typeForDeleteAnnotation = annotationsTool.deleteOperation.targetTypes.ANNOTATION;
+            this.typeForDeleteTrack = annotationsTool.deleteOperation.targetTypes.TRACK;
+            
             
             this.endDate = this.getFormatedDate(this.playerAdapter.getDuration());
             this.startDate = new Date(this.endDate.getFullYear(),this.endDate.getMonth(),this.endDate.getDate(),0,0,0);
@@ -129,10 +133,7 @@ define(["jquery",
               var annotation = this.getAnnotationTempFix(annotationId,track);
               
               if(annotation)
-                annotation.destroy();
-              
-              if(annotationsTool.localStorage)
-                annotationsTool.video.save();
+                annotationsTool.deleteOperation.start(annotation,this.typeForDeleteAnnotation);
               
             },self));
             
@@ -452,12 +453,7 @@ define(["jquery",
             
             this.timeline.cancelDelete();
             
-            if(annotation){
-              annotation.destroy();
-              
-              if(annotationsTool.localStorage)
-                annotationsTool.video.save();
-            }
+            annotationsTool.deleteOperation.start(annotation,this.typeForDeleteAnnotation);
           },
           
           /**
@@ -508,43 +504,17 @@ define(["jquery",
             if(!track)
               return;
             
-            var annotations = track.get("annotations");
-            
-            /**
-             * Recursive function to delete synchronously all annotations
-             */
-            var destroyAnnotation = function(){
-              // End state, no more annotation
-              if(annotations.length == 0)
-                return;
-              
-              var annotation = annotations.at(0);
-              annotation.destroy({
-                error: function(){
-                  throw "Cannot delete annotation!";
-                },
-                success: function(){
-                  annotations.remove(annotation);
-                  destroyAnnotation();
-                }
-              });
-            };
-            
-            // Call the recursive function 
-            destroyAnnotation();
-            
-            var items = this.timeline.getData().slice();
-            var newItems = new Array();
-  
-            _.each(items, function(item, index){
-              if($(item.group).find('.track-id').text() != track.id)
-                newItems.push(item);
-            },this);
-            
             // Destroy the track and redraw the timeline
             var self = this;
-            track.destroy({
-              success: function(){
+            var callback = function(){
+                var items = self.timeline.getData().slice();
+                var newItems = new Array();
+      
+                _.each(items, function(item, index){
+                  if($(item.group).find('.track-id').text() != track.id)
+                    newItems.push(item);
+                },this);
+              
                 self.timeline.draw(newItems, self.options);
                 self.tracks.remove(track);
                 annotationsTool.video.save();
@@ -559,8 +529,9 @@ define(["jquery",
                 }
                 else
                   self.onTrackSelected(null,annotationsTool.selectedTrack.id);
-              }
-            });            
+            };
+            
+            annotationsTool.deleteOperation.start(track,this.typeForDeleteTrack,callback);
           },
           
           /**
