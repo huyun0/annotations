@@ -93,8 +93,11 @@ define(["jquery",
             
             this.model = attr.annotation;
             
+            this.id = this.model.get("id");
+            
             // Add backbone events to the model 
             _.extend(this.model, Backbone.Events);
+            
             
             this.model.bind('change', this.render);
             this.model.bind('destroy', this.deleteView);
@@ -141,7 +144,7 @@ define(["jquery",
             this.model.set({collapsed: this.collapsed});
             var modelJSON = this.model.toJSON();
             modelJSON.track = this.track.get("name");
-            this.$el.html(this.template(modelJSON));
+            this.$el.html(this.template(modelJSON)).attr('id',this.model.get("id"));
             this.setElement(this.el);
             return this;
           },

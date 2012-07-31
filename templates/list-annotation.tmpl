@@ -1,4 +1,4 @@
-<i class="select icon-film"  title="Move to this annotation"></i>
+<i class="select icon-film"  href="#{{id}}" title="Move to this annotation"></i>
 <span class="start">{{time start}}</span>
  {{#if duration}}
         - <span class="duration">{{end start duration}}</span>
@@ -19,4 +19,5 @@
                 {{/if}}
         </span>
 </div>
+<a href="#{{id}}" class="proxy-anchor"></a>
 <!--<button id="stopduration">Stop duration</button>-->

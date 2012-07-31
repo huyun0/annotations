@@ -4,6 +4,7 @@ define(["jquery",
         "models/annotation",
         "collections/annotations",
         "views/list-annotation",
+        "scrollspy",
         "backbone"],
        
     function($,_not,PlayerAdapter,Annotation,Annotations,AnnotationView){
@@ -30,7 +31,7 @@ define(["jquery",
            */
           initialize: function(attr){  
             // Bind functions to the good context 
-            _.bindAll(this,'render','addTrack','addAnnotation','addList','sortViewsbyTime','reset','updateSelection','unselect');
+            _.bindAll(this,'render','addTrack','addAnnotation','addList','sortViewsbyTime','reset','updateSelection','unselect','doClick');
             
             this.annotationViews = new Array();
             
@@ -96,18 +97,33 @@ define(["jquery",
             
             var currentTime = this.playerAdapter.getCurrentTime();
             
-            _.each(this.annotationViews,function(view){
+            // Tag for element selection
+            var firstSelection = true;
+            
+            _.each(this.annotationViews,function(view,index){
+              
               var start = view.model.get('start');
               
               if(_.isNumber(view.model.get('duration'))){
                 var end = start + view.model.get('duration');
               
-                if(start <= currentTime && end >= currentTime)
-                  view.selectVisually();  
+                if(start <= currentTime && end >= currentTime){
+                  view.selectVisually();
+                  
+                  if(firstSelection){
+                    this.doClick(view.$el.find('a.proxy-anchor')[0]);
+                    firstSelection = false;
+                  }
+                }
               }
-              else{
-                if(start <= currentTime && start+5 >= currentTime)
-                  view.selectVisually(); 
+              else if(start <= currentTime && start+5 >= currentTime){
+                  view.selectVisually();
+
+                  if(firstSelection){
+                    this.doClick(view.$el.find('a.proxy-anchor')[0]);
+                    firstSelection = false;
+                  }
+                
               }
 
             },this);
@@ -166,6 +182,21 @@ define(["jquery",
             delete this.annotationViews;
             delete this.tracks;
             this.undelegateEvents();
+          },
+          
+          /**
+           * Simple function to simulate a click on the given element
+           *
+           * @param {DOM Element} el click event target
+           */
+          doClick: function eventFire(el){
+            if (el.fireEvent) {
+              (el.fireEvent('onclick'));
+            } else {
+              var evObj = document.createEvent('Events');
+              evObj.initEvent("click", true, false);
+              el.dispatchEvent(evObj);
+            }
           }
           
         });

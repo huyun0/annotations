@@ -3,6 +3,7 @@ require.config({
     baseUrl: "js",
     paths: {
         'timeline': 'libs/timeline-min.js',
+        'scrollspy': 'libs/bootstrap/scrollspy',
         'backbone':'libs/backbone/backbone-min',
         'loader': 'libs/backbone/loader',
         'localstorage': 'libs/backbone/backbone.localStorage',
