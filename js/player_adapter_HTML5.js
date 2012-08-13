@@ -26,6 +26,8 @@ define(['domReady!','jquery','prototypes/player_adapter'],function(domReady,$,Pl
         /** Define if a play request has be done when the player was not ready */
         this.waitToPlay = false;
         
+        this.initialized = false;
+        
         /** @constructor */
         this.init = function(){
         
@@ -50,30 +52,38 @@ define(['domReady!','jquery','prototypes/player_adapter'],function(domReady,$,Pl
              * Listen the events from the native player
              */
             $(targetElement).bind("canplay durationchange",function(){
+                console.log("duration change to "+self.getDuration()+", readyState: "+targetElement.readyState);
+                
+                // If duration is still not valid
+                if(isNaN(self.getDuration() && targetElement.readyState >= 1))
+                    return;
+                
+                if(!self.initialized){
+                    //targetElement.pause();
+                    //targetElement.muted = false;
+                    self.initialized = true;
+                }
+                
+                // If duration is valid, we chanded status
                 self.status =  PlayerAdapter.STATUS.PAUSED;
                 self.triggerEvent(PlayerAdapter.EVENTS.READY);
-                if(self.waitToPlay)self.play();    
+                
+                if(self.waitToPlay)
+                    self.play();    
             });
             
             $(targetElement).bind("play",function(){
-                if(self.toPause){
-                    self.toPause = false;
-                    self.pause();
-                    try{
-                        self.setCurrentTime(0);
-                    }
-                    catch(error){
-                        console.warn(error);
-                        // Hack for safari
-                        //self.triggerEvent(PlayerAdapter.EVENTS.READY);
-                    }
-
-                }
+                if(!self.initialized)
+                    return;
+                
                self.status =  PlayerAdapter.STATUS.PLAYING;
                self.triggerEvent(PlayerAdapter.EVENTS.PLAY);
             });
             
             $(targetElement).bind("pause",function(){
+                if(!self.initialized)
+                    return;
+                
                self.status =  PlayerAdapter.STATUS.PAUSED;
                self.triggerEvent(PlayerAdapter.EVENTS.PAUSE);
             });
@@ -102,8 +112,10 @@ define(['domReady!','jquery','prototypes/player_adapter'],function(domReady,$,Pl
                self.triggerEvent(PlayerAdapter.EVENTS.ERROR);
             });*/
             
+            //targetElement.muted = true;
             targetElement.play();
-            self.toPause = true;
+            targetElement.pause();
+            
             
             return this;
         }
@@ -115,15 +127,19 @@ define(['domReady!','jquery','prototypes/player_adapter'],function(domReady,$,Pl
         
         this.play = function(){
             // Can the player start now?
-            if(self.status != PlayerAdapter.STATUS.PLAYING &&
-               self.status != PlayerAdapter.STATUS.PAUSED &&
-               self.status != PlayerAdapter.STATUS.ENDED){
-                self.waitToPlay = true;
-            }  
-            else{
-                // If yes, we play it  
-                targetElement.play();
-                self.waitToPlay = false;
+            switch(self.status){
+                case PlayerAdapter.STATUS.INITIALIZING:
+                case PlayerAdapter.STATUS.LOADING:
+                    self.waitToPlay = true;
+                    break;
+                case PlayerAdapter.STATUS.SEEKING:
+                case PlayerAdapter.STATUS.PAUSED:
+                case PlayerAdapter.STATUS.PLAYING:
+                case PlayerAdapter.STATUS.ENDED:
+                    // If yes, we play it  
+                    targetElement.play();
+                    self.waitToPlay = false;
+                    break;
             }
         };
 
@@ -160,7 +176,7 @@ define(['domReady!','jquery','prototypes/player_adapter'],function(domReady,$,Pl
          * Get the HTML template for the html representation of the adapter
          */
         this.getHTMLTemplate = function(id){
-            return  '<div id="'+id+'"/>';
+            return  '<div id="'+id+'"></div>';
         } 
 
         return self.init();

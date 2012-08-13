@@ -14,14 +14,14 @@ define(function(){
      * @enum {number}
      */
     PlayerAdapter.STATUS = {
-            INITIALIZING: 'initializing',
-            LOADING: 'loading',
-            PLAYING: 'playing',
-            PAUSED: 'paused',
-            SEEKING: 'seeking',
-            ENDED: 'ended',
-            ERROR_NETWORK: 'error_network',
-            ERROR_UNSUPPORTED_MEDIA: 'error_unsupported_media'      
+            INITIALIZING: 0,
+            LOADING: 1,
+            SEEKING: 2,
+            PAUSED: 3,
+            PLAYING: 4,
+            ENDED: 5,
+            ERROR_NETWORK: 6,
+            ERROR_UNSUPPORTED_MEDIA: 7      
     };
     
     /**

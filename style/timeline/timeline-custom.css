@@ -112,6 +112,9 @@ div.item i.delete:hover {
   background-color: #ff6666;
   border-radius: 10px 10px 10px 10px;
 }
+div.item:hover {
+  cursor: pointer;
+}
 div.timeline-navigation-delete {
   display: none;
 }
@@ -121,4 +124,7 @@ div#reset-zoom {
   position: relative;
   float: right;
   padding: 8px;
+}
+div#reset-zoom:hover {
+  cursor: pointer;
 }
