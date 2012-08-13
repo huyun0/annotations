@@ -177,9 +177,9 @@ define(["order!jquery",
         this.playerAdapter.pause();
         
         // Hide/remove the views
-        $('#video-container').hide();
         annotationsTool.playerAdapter.pause();
         annotationsTool.playerAdapter.setCurrentTime(0);
+        $('#video-container').hide();
         
         
         this.timelineView.reset();
