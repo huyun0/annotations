@@ -32,7 +32,6 @@ define(['order!jquery',
                         return target.get("text");
                     },
                     destroy: function(target,callback){
-                        console.log("Delete annotation");
 
                         target.destroy({
                             
@@ -153,7 +152,7 @@ define(['order!jquery',
                             });
                             
                             // Show the modal
-                            self.deleteModal.modal("toggle");
+                            self.deleteModal.modal("show");
                         };
                         
                         var mainView = new MainView(playerAdapter);

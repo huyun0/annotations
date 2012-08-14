@@ -127,8 +127,6 @@ define(["jquery",
             $(window).bind('deleteTrack', $.proxy(this.onDeleteTrack,self));
             $(window).bind('deleteAnnotation',$.proxy(function(event,annotationId,trackId){
               
-              console.log("Delete annotation "+annotationId+" on track "+trackId);
-              
               var track = this.getTrackTempFix(trackId);
               var annotation = this.getAnnotationTempFix(annotationId,track);
               
