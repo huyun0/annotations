@@ -309,6 +309,12 @@ define(["jquery",
                     insertTrack();  
                   }
                 });
+                
+                this.groupModal.on("shown",$.proxy(function(){
+                  this.groupModal.find('#name').focus();
+                },this));
+                
+                this.groupModal.find('#name').focus();
             }
             else{
               // if the modal has already been initialized, we reset input and show modal

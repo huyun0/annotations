@@ -52,8 +52,6 @@ define(['domReady!','jquery','prototypes/player_adapter'],function(domReady,$,Pl
              * Listen the events from the native player
              */
             $(targetElement).bind("canplay durationchange",function(){
-                console.log("duration change to "+self.getDuration()+", readyState: "+targetElement.readyState);
-                
                 // If duration is still not valid
                 if(isNaN(self.getDuration() && targetElement.readyState >= 1))
                     return;
