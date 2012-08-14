@@ -100,6 +100,8 @@ define(["order!jquery",
            * Loading the video dependant views
            */
           var loadVideoDependantView = $.proxy(function(){
+              console.log("Duration:"+this.playerAdapter.getDuration());
+            
               this.setLoadingProgress(60,"Start creating views.");
               
               // Create views with Timeline
@@ -126,6 +128,7 @@ define(["order!jquery",
           this.loadingBox.find('.info').text('Initializing the player.');
           
           if(this.playerAdapter.getStatus() ===  PlayerAdapter.STATUS.PAUSED){
+             console.log("Duration:"+this.playerAdapter.getDuration());
              loadVideoDependantView();
           }
           else{

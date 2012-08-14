@@ -77,6 +77,9 @@ define(["jquery",
                 if(attr.deleted_by && !(_.isNumber(attr.deleted_by) || attr.deleted_by instanceof User))
                     return "'deleted_by' attribute must be a number or an instance of 'User'";
                 
+                if(attr.access && !_.include(ACCESS,attr.access))
+                    return "'access' attribute is not valid.";
+                
                 if(attr.created_at){
                     if((tmpCreated=this.get('created_at')) && tmpCreated!==attr.created_at)
                         return "'created_at' attribute can not be modified after initialization!";
