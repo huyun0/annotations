@@ -1,8 +1,7 @@
 require(['domReady',
          'order!jquery',
          'order!models/scalevalue',
-         'order!access',
-         'order!libs/tests/qunit'],
+         'order!access'],
                     
         function(domReady,$,ScaleValue,ACCESS){
         

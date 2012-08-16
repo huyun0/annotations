@@ -5,8 +5,7 @@ require(['domReady',
          'collections/users',
          'tests/backbone-annotations-sync-test',
          'order!underscore',
-         'order!backbone',
-         'order!libs/tests/qunit'],
+         'order!backbone'],
                     
         function(domReady, $, require, User, Users, AnnotationsSync){
             domReady(function(){

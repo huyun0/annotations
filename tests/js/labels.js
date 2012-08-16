@@ -3,8 +3,7 @@ require(['domReady',
          'order!models/label',
          'order!models/category',
          'order!collections/labels',
-         'order!access',
-         'order!libs/tests/qunit'],
+         'order!access'],
                     
         function(domReady,$,Label,Category,Labels,ACCESS){
         

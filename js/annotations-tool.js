@@ -116,11 +116,21 @@ define(['order!jquery',
                     self.deleteModalContent  = self.deleteModal.find(".modal-body");
             };
             
+            /**
+             * Function to load the video file
+             *
+             * This part is specific to each integration of the annotation tool
+             */
+            self.loadVideo = function(){
+                // Add your loading code here!
+            }
+            
             
             return {            
                 
                 start: function() {
                         self.initDeleteModal();
+                        self.loadVideo();  
                     
                         var playerAdapter = annotationsTool.playerAdapter;
                         

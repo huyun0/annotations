@@ -2,8 +2,7 @@ require(['domReady',
          'order!jquery',
          'order!models/scale',
          'order!collections/scales',
-         'order!access',
-         'order!libs/tests/qunit'],
+         'order!access'],
                     
         function(domReady,$,Scale,Scales,ACCESS){
         

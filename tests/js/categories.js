@@ -2,8 +2,7 @@ require(['domReady',
          'order!jquery',
          'order!models/category',
          'order!collections/categories',
-         'order!access',
-         'order!libs/tests/qunit'],
+         'order!access'],
                     
         function(domReady,$,Category,Categories,ACCESS){
         

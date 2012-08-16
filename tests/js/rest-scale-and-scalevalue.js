@@ -10,8 +10,7 @@ require(['domReady',
          'collections/scalevalues',
          'backbone-annotations-sync',
          'order!underscore',
-         'order!backbone',
-         'order!libs/tests/qunit'],
+         'order!backbone'],
                     
         function(domReady, $, User, Users, Video, Videos, Scale, Scales, ScaleValue, ScaleValues, AnnotationsSync){
         

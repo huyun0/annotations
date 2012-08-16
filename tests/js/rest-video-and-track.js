@@ -10,8 +10,7 @@ require(['domReady',
          'collections/annotations',
          'tests/backbone-annotations-sync-test',
          'order!underscore',
-         'order!backbone',
-         'order!libs/tests/qunit'],
+         'order!backbone'],
                     
         function(domReady, $, User, Users, Video, Videos, Track, Tracks, Annotatoin, Annotations, AnnotationsSync){
         

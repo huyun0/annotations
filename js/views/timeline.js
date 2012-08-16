@@ -46,11 +46,6 @@ define(["jquery",
            * @constructor
            */
           initialize: function(attr){
-            if(!attr.playerAdapter || !PlayerAdapter.prototype.isPrototypeOf(attr.playerAdapter))
-                throw "The player adapter is not valid! It must has PlayerAdapter as prototype.";
-            
-            //if(!attr.annotations)
-            //   throw "The annotations have to be given to the annotate view.";
             
             this.data = [];
               

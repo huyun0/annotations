@@ -47,7 +47,7 @@ define(["order!jquery",
       },
       
       initialize: function(playerAdapter){
-        if(!PlayerAdapter.prototype.isPrototypeOf(playerAdapter))
+        if(!PlayerAdapter.prototype.isPrototypeOf(playerAdapter.__proto__))
             throw "The player adapter is not valid! It must has PlayerAdapter as prototype.";
         
         _.bindAll(this,"login","loginOnInsert","getAnnotations","createViews","checkUserAndLogin","loadLoginModal","setLoadingProgress","logout");

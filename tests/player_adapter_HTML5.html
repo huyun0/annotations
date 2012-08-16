@@ -8,21 +8,22 @@
         <meta name="author" content="Entwine">
         <link rel="stylesheet" href="../style/qunit.css">
         <script data-main="../js/libs/require/config/test-config.js" src="../js/libs/require/require.js"></script>
+        <script type="text/javascript" src="../js/libs/tests/qunit.js"></script>
         
         <script>
             require(['domReady',
                      'order!jquery',
                      'order!player_adapter_HTML5',
-                     'order!prototypes/player_adapter',
-                     'order!libs/tests/qunit'],
+                     'order!prototypes/player_adapter'],
                     
-                function(domReady,$,PlayerAdapterImpl,PlayerAdapter){
+                function(domReady,$, PlayerAdapterImpl,PlayerAdapter){
                 
                     domReady(function(){
                         QUnit.config.reorder = false;
                         QUnit.config.autostart = false;
                         
                         var playerAdapter = new PlayerAdapterImpl($('video')[0]);
+                        playerAdapter.load();
                         
                         var allStatus = PlayerAdapter.STATUS;
                         var allEvents = PlayerAdapter.EVENTS;
@@ -37,9 +38,7 @@
                         
                         test("Initial status", function() {
                             var status = playerAdapter.getStatus();
-                            console.log("Status: "+status);
                             equal((status == allStatus.INITIALIZING || status == allStatus.LOADING || status == allStatus.PAUSED) , true, "Player status should be LOADING or PAUSED.");
-                            
                         });
                          
                         
@@ -101,7 +100,7 @@
                         });
                         
                         
-                        test("Seeking", 2, function() {
+                        /*test("Seeking", 2, function() {
                                 stop();
                                 
                                 $(playerAdapter).one(allEvents.SEEKING,function(){
@@ -115,7 +114,7 @@
                                 
                                 playerAdapter.setCurrentTime(expectedDuration-2.3);
                                 
-                        });
+                        });*/
                         
                         test("Ended", 2, function() {
                                 stop();
@@ -131,8 +130,6 @@
                                 
                                 playerAdapter.play();
                         });
-                        
-                   
                         
                         QUnit.start();
                     });

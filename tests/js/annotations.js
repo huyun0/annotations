@@ -2,8 +2,7 @@ require(['domReady',
          'order!jquery',
          'order!models/annotation',
          'order!collections/annotations',
-         'order!access',
-         'order!libs/tests/qunit'],
+         'order!access'],
                     
         function(domReady,$,Annotation,Annotations,ACCESS){
         

@@ -9,8 +9,7 @@ require(['domReady',
          'collections/users',
          'backbone-annotations-sync',
          'order!underscore',
-         'order!backbone',
-         'order!libs/tests/qunit'],
+         'order!backbone'],
                     
         function(domReady, $, require, Category, Video, User, Categories, Videos, Users, AnnotationsSync){
             

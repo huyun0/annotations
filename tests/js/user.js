@@ -1,7 +1,6 @@
 require(['domReady',
          'order!jquery',
-	 'order!models/user',
-         'order!libs/tests/qunit'
+	 'order!models/user'
          ],
                     
         function(domReady,$,User){

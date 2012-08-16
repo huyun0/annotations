@@ -39,6 +39,8 @@ define(function(){
             ENDED: 'pa_ended'
     };
     
+    PlayerAdapter.prototype._listeners = {};
+    
     /**
      * Initilization method
      */
@@ -101,9 +103,9 @@ define(function(){
      */
     PlayerAdapter.prototype._getListeners= function(type, useCapture) {
         var captype= (useCapture? '1' : '0')+type;
-        if (!(captype in this._listeners))
-            this._listeners[captype]= [];
-        return this._listeners[captype];
+        if (!(captype in this.__proto__._listeners))
+            this.__proto__._listeners[captype]= [];
+        return this.__proto__._listeners[captype];
     };
     
     /**
@@ -156,13 +158,15 @@ define(function(){
         if (document.createEventObject){
             // For IE
             var evt = document.createEventObject();
-            // TODO: Test on IE!!!
+            evt.type = eventType;
+
             return !this.dispatchEvent(evt,eventType);
         }
         else{
             // For others browsers
             var evt = document.createEvent("CustomEvent");
             evt.initEvent(eventType, true, true ); // event type,bubbling,cancelable
+            
             return !this.dispatchEvent(evt,eventType);
         }
     }

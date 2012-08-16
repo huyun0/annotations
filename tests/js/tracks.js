@@ -2,8 +2,7 @@ require(['domReady',
          'order!jquery',
          'order!models/track',
          'order!collections/tracks',
-         'order!access',
-         'order!libs/tests/qunit'],
+         'order!access'],
                     
         function(domReady,$,Track,Tracks,ACCESS){
         
