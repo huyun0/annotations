@@ -396,12 +396,13 @@ define(["jquery",
                                    duration: this.getTimeInSeconds(values.item.end)-this.getTimeInSeconds(values.item.start)});
 
             // Function called when all changed have been applied
-            var finalizeChanges = $.proxy(function(){
+            var finalizeChanges = $.proxy(function(moved){
               var htmlElement = this.$el.find('.annotation-id:contains('+values.annotation.id+')').parent().parent()[0];
               var index = this.timeline.getItemIndex(htmlElement);
               var newItem = this.timeline.getItem(index);
-              //this.timeline.selectItem(index);
-              this.playerAdapter.setCurrentTime(this.getTimeInSeconds(newItem.start));
+              
+              if(moved)
+                this.timeline.selectItem(index);
               
               values.oldTrack.save();
               values.newTrack.save();
@@ -425,16 +426,16 @@ define(["jquery",
                       values.annotation = values.newTrack.get('annotations').create(annJSON);
                       
                       if(!values.annotation.id)
-                        values.annotation.bind('ready',finalizeChanges,this);
+                        values.annotation.bind('ready',function(){finalizeChanges(true);},this);
                       else{
-                          finalizeChanges();
+                          finalizeChanges(true);
                       } 
                     },150);
                 },this)
               });
             }
             else{
-              finalizeChanges();
+              finalizeChanges(false);
               values.annotation.save();
               
               if(annotationsTool.localStorage){
