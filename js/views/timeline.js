@@ -68,7 +68,6 @@ define(["jquery",
                            'getTopForStacking',
                            'getTrackTempFix',
                            'getAnnotationTempFix',
-                           'onWindowResize',
                            'onTimelineResetZoom',
                            'reset');
             
@@ -112,7 +111,12 @@ define(["jquery",
             this.timeline.draw(this.data,this.options);
             
             // Ensure that the timeline is redraw on window resize
-            $(window).bind('resize',this.onWindowResize);
+            var self = this;
+            $(window).resize(function(){
+              self.timeline.redraw();
+              if(annotationsTool.selectedTrack)
+                self.onTrackSelected(null,annotationsTool.selectedTrack.id);
+            })
             
             $(window).bind('selectTrack', $.proxy(this.onTrackSelected,self));
             $(window).bind('deleteTrack', $.proxy(this.onDeleteTrack,self));
@@ -142,7 +146,6 @@ define(["jquery",
             this.timeline.setCustomTime(this.startDate);
             this.onTrackSelected(null,annotationsTool.selectedTrack.id);
             
-            var self = this;
             this.timeline.redraw = function(){
               if(annotationsTool.selectedTrack)
                 self.onTrackSelected(null,annotationsTool.selectedTrack.id);
@@ -550,15 +553,6 @@ define(["jquery",
             this.$el.find('.timeline-group .track-id:contains('+trackId+')').parent().parent().addClass('selected');
           },
           
-          /**
-           * Listener for window resizing
-           */
-          onWindowResize: function(){
-            this.timeline.redraw();
-              if(annotationsTool.selectedTrack)
-                this.onTrackSelected(null,annotationsTool.selectedTrack.id);
-          },
-          
           /* --------------------------------------
             Utils functions
           ----------------------------------------*/
@@ -796,11 +790,6 @@ define(["jquery",
             links.events.removeListener(this.timeline,'change',this.onTimelineItemChanged);
             links.events.removeListener(this.timeline,'delete',this.onTimelineItemDeleted);
             links.events.removeListener(this.timeline,'select',this.onTimelineItemSelected);
-            $(window).unbind('selectTrack');
-            $(window).unbind('deleteTrack');
-            $(window).unbind('deleteAnnotation');
-            $(window).unbind('resize',this.onWindowResize);
-              
             this.undelegateEvents();
             
             this.tracks.each(function(track,item){
