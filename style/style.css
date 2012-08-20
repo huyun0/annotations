@@ -6090,8 +6090,16 @@ div.timeline-customtime {
 }
 div.timeline-navigation {
   z-index: 4;
-  height: 35px;
+  height: 45px;
   border-left: 0px;
+}
+div.timeline-navigation div.timeline-navigation-new,
+div.timeline-navigation div.timeline-navigation-delete,
+div.timeline-navigation div.timeline-navigation-zoom-in,
+div.timeline-navigation div.timeline-navigation-zoom-out,
+div.timeline-navigation div.timeline-navigation-move-left,
+div.timeline-navigation div.timeline-navigation-move-right {
+  height: 22px;
 }
 div.timeline-frame > div:first-child {
   z-index: 2;
@@ -6152,14 +6160,14 @@ div.item:hover {
 div.timeline-navigation-delete {
   display: none;
 }
-div#reset-zoom {
+div.timeline-bottom-controls {
   z-index: 50;
   display: block;
   position: relative;
   float: right;
   padding: 8px;
 }
-div#reset-zoom:hover {
+div.timeline-bottom-controls:hover {
   cursor: pointer;
 }
 /*!

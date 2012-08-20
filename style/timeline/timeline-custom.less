@@ -78,8 +78,12 @@ div.timeline-customtime {
 
 div.timeline-navigation{
     z-index: 4; 
-    height: 35px;
+    height: 45px;
     border-left: 0px;
+    
+    div.timeline-navigation-new, div.timeline-navigation-delete, div.timeline-navigation-zoom-in, div.timeline-navigation-zoom-out, div.timeline-navigation-move-left, div.timeline-navigation-move-right{
+        height: 22px;
+    }
 }
 
 div.timeline-frame > div:first-child{
@@ -160,7 +164,7 @@ div.timeline-navigation-delete{
 }
 
 
-div#reset-zoom{
+div.timeline-bottom-controls{
     z-index: 50;
     display: block;
     position: relative;
@@ -171,6 +175,8 @@ div#reset-zoom{
         cursor:pointer;
     }
 }
+
+
 
 
 
