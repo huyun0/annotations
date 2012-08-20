@@ -30,9 +30,6 @@ define(["order!jquery",
       /** The player adapter passed during initialization part */
       playerAdapter: null,
       
-      /** Describe if the complete tool has already been loaded */
-      loaded: false,
-      
       /** jQuery element for the user login */
       userModal: null,
       
@@ -89,10 +86,9 @@ define(["order!jquery",
       createViews: function(){
         this.setLoadingProgress(40,"Start creating views.");
         
-        this.loaded = true,
+        $('#video-container').show();
         
         this.setLoadingProgress(45,"Start loading video.");
-        $('#video-container').show();
         
         this.getAnnotations($.proxy(function(){  
          
@@ -117,7 +113,10 @@ define(["order!jquery",
               this.listView.$el.show();
               
               this.setLoadingProgress(100,"Ready.");
-              this.loadingBox.hide();            
+              this.loadingBox.hide();
+              
+              // Show logout button
+              $('a#logout').css('display','block');
           },this);
           
           this.playerAdapter.load();
@@ -176,6 +175,9 @@ define(["order!jquery",
         // Stop the video
         this.playerAdapter.pause();
         
+         // Hide logout button
+        $('a#logout').hide();
+        
         // Hide/remove the views
         annotationsTool.playerAdapter.pause();
         annotationsTool.playerAdapter.setCurrentTime(0);
@@ -191,7 +193,6 @@ define(["order!jquery",
         delete annotationsTool.video;
         delete annotationsTool.user;
         
-        this.loaded = false;
         this.loadingBox.find('.bar').width('0%');
         this.loadingBox.show();
         this.loadLoginModal();
@@ -268,8 +269,7 @@ define(["order!jquery",
         annotationsTool.user = user;
         this.userModal.modal("toggle");
         
-        if(!this.loaded)
-            this.createViews();
+        this.createViews();    
             
         return user;
       },

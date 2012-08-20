@@ -7393,6 +7393,9 @@ div#reset-zoom:hover {
 .window .navbar .nav > li > a:hover {
   cursor: pointer;
 }
+.navbar a#logout {
+  display: none;
+}
 /**
  * Style for annotate view
  */
