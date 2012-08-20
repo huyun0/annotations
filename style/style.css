@@ -6062,6 +6062,13 @@ div.timeline-groups-text div.timeline-group:hover {
   cursor: pointer;
   background-color: #e6e6e6;
 }
+div.timeline-groups-text div.timeline-group div.content {
+  width: 125px;
+  overflow: hidden;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 div.timeline-groups-text.selected {
   background-color: #cdcdcd;
 }

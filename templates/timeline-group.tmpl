@@ -1,5 +1,5 @@
 <div class="timeline-group" onclick="$(window).trigger('selectTrack', ['{{id}}'])">
     <div class="track-id">{{id}}</div>
-    <a onclick="$(window).trigger('selectTrack', ['{{id}}'])"><div class="content">{{name}}</div></a>
-    <i onclick="$(window).trigger('deleteTrack', ['{{id}}'])" class="delete icon-remove" title="Delete  annotation"></i>
+    <a onclick="$(window).trigger('selectTrack', ['{{id}}'])"><div class="content" title="{{name}}">{{name}}</div></a>
+    <i onclick="$(window).trigger('deleteTrack', ['{{id}}'])" class="delete icon-remove" title="Delete  track"></i>
 </div>
