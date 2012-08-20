@@ -6078,7 +6078,8 @@ div.timeline-groups-text.selected div.timeline-group:hover {
 div.timeline-groups-text i.delete {
   z-index: 4;
   float: left;
-  margin-top: 5.5px;
+  margin-top: 5px;
+  margin-right: 4px;
 }
 div.timeline-groups-text i.delete:hover {
   cursor: pointer;

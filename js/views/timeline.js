@@ -8,6 +8,8 @@ define(["jquery",
         "text!templates/timeline-modal-group.tmpl",
         "libs/handlebars",
         "libs/timeline",
+        "libs/bootstrap/tooltip",
+        "libs/bootstrap/popover",
         "backbone"],
        
     function($,_not,PlayerAdapter,Annotation,Annotations,GroupTmpl,ItemTmpl,ModalGroupTmpl){
@@ -80,13 +82,15 @@ define(["jquery",
             this.typeForDeleteTrack = annotationsTool.deleteOperation.targetTypes.TRACK;
             
             
-            this.endDate = this.getFormatedDate(this.playerAdapter.getDuration());
-            this.startDate = new Date(this.endDate.getFullYear(),this.endDate.getMonth(),this.endDate.getDate(),0,0,0);
+            this.endDate = this.getFormatedDate(this.playerAdapter.getDuration()+2);
+            this.startDate = new Date(this.endDate.getFullYear(),this.endDate.getMonth(),this.endDate.getDate(),0,0,3);
             
             this.options = {
               width:  "100%",
               height: "auto",
               style: "box",
+              scale: links.Timeline.StepDate.SCALE.MILLISECOND,
+              step: 1,
               showButtonAdd: false,
               editable: true,
               start: this.startDate,
@@ -100,8 +104,8 @@ define(["jquery",
               minHeight: "200",
               axisOnTop: true,
               groupsWidth: "150px",
-              animate: false,
-              animateZoom: false,
+              animate: true,
+              animateZoom: true,
               eventMarginAxis: 0,
               eventMargin: 0,
               dragAreaWidth: 5,
@@ -146,8 +150,11 @@ define(["jquery",
             this.timeline.redraw = function(){
               if(annotationsTool.selectedTrack)
                 self.onTrackSelected(null,annotationsTool.selectedTrack.id);
+              
+              $('div.timeline-group .content').popover({});
             }
             this.timeline.setAutoScale(false);
+            $('div.timeline-group .content').popover({});
             
           },
 
@@ -502,7 +509,7 @@ define(["jquery",
             
             // Destroy the track and redraw the timeline
             var self = this;
-            var callback = function(){
+            var callback = $.proxy(function(){
                 var items = self.timeline.getData().slice();
                 var newItems = new Array();
       
@@ -525,7 +532,9 @@ define(["jquery",
                 }
                 else
                   self.onTrackSelected(null,annotationsTool.selectedTrack.id);
-            };
+                  
+                this.timeline.redraw();
+            },this);
             
             annotationsTool.deleteOperation.start(track,this.typeForDeleteTrack,callback);
           },
