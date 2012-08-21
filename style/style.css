@@ -6032,6 +6032,9 @@ body {
 .timeline-navigation-new {
   display: none;
 }
+/*div#timeline{
+    overflow-y: scroll;
+}*/
 div.timeline-event {
   background-color: rgba(249, 103, 38, 0.6);
   z-index: 3;

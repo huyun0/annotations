@@ -21,7 +21,6 @@ define(["order!jquery",
     /**
      * Main view of the application
      */
-    
     var MainView = Backbone.View.extend({
       
       /** Main container of the appplication */
@@ -47,7 +46,15 @@ define(["order!jquery",
         if(!PlayerAdapter.prototype.isPrototypeOf(playerAdapter.__proto__))
             throw "The player adapter is not valid! It must has PlayerAdapter as prototype.";
         
-        _.bindAll(this,"login","loginOnInsert","getAnnotations","createViews","checkUserAndLogin","loadLoginModal","setLoadingProgress","logout");
+        _.bindAll(this,"login",
+                       "logout",
+                       "loginOnInsert",
+                       "checkUserAndLogin",
+                       "getAnnotations",
+                       "createViews",
+                       "loadLoginModal",
+                       "setLoadingProgress",
+                       "onWindowResize");
         
         this.setLoadingProgress(10,"Starting tool.");
         
@@ -77,7 +84,9 @@ define(["order!jquery",
           }
         });
         
-        this.checkUserAndLogin();        
+        this.checkUserAndLogin(); 
+
+        $(window).resize(this.onWindowResize);       
       },
         
       /**
@@ -133,6 +142,12 @@ define(["order!jquery",
           
         },this));        
       },
+
+
+      ////////////////////////
+      // Login/out function //
+      ////////////////////////
+
       
       checkUserAndLogin: function(){
         this.setLoadingProgress(30,"Get current user.");
@@ -280,7 +295,7 @@ define(["order!jquery",
         var videos,video,tracks;
         videos = new Videos;
         
-                /**
+        /**
          * @function to conclude the retrive of annotations
          */
         var endGetAnnotations = $.proxy(function(){
@@ -387,6 +402,23 @@ define(["order!jquery",
         }
 
       },
+
+      /**
+       * Listener for window resizing
+       */
+      onWindowResize: function(){
+        // If views are not set
+        if(!this.annotateView || !this.listView || !this.timelineView)
+          return;
+
+        var windowHeight = $(window).height();
+
+        this.listView.$el.height(windowHeight-this.annotateView.$el.height()-100);
+      },
+
+      ////////////
+      // Utils  //
+      ////////////
       
       /**
        * Update loading box with given percent & message
