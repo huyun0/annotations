@@ -1,27 +1,29 @@
 <!doctype html>
 
     <head>
-	<meta charset="utf-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-	<title>Annotating Academic Video - HTML5 Player Adapter tests</title>
-	<meta name="description" content="Video annotations tool - Unit Tests">
-	<meta name="author" content="Entwine">
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Annotating Academic Video - HTML5 Player Adapter tests</title>
+        <meta name="description" content="Video annotations tool - Unit Tests">
+        <meta name="author" content="Entwine">
         <link rel="stylesheet" href="../style/qunit.css">
         <script data-main="../js/libs/require/config/test-config.js" src="../js/libs/require/require.js"></script>
+        <script type="text/javascript" src="../js/libs/tests/qunit.js"></script>
         
         <script>
             require(['domReady',
                      'order!jquery',
                      'order!player_adapter_HTML5',
-                     'order!prototypes/player_adapter',
-                     'order!libs/tests/qunit'],
+                     'order!prototypes/player_adapter'],
                     
-                function(domReady,$,PlayerAdapterImpl,PlayerAdapter){
+                function(domReady,$, PlayerAdapterImpl,PlayerAdapter){
                 
                     domReady(function(){
+                        QUnit.config.reorder = false;
                         QUnit.config.autostart = false;
                         
                         var playerAdapter = new PlayerAdapterImpl($('video')[0]);
+                        playerAdapter.load();
                         
                         var allStatus = PlayerAdapter.STATUS;
                         var allEvents = PlayerAdapter.EVENTS;
@@ -32,26 +34,18 @@
                          */
                         
                         module("HTML5 Adapter");
+                         
                         
                         test("Initial status", function() {
                             var status = playerAdapter.getStatus();
-                            equal(true, (status === allStatus.INITIALIZING || status === allStatus.LOADING || status === allStatus.PAUSED) , "Player status should be LOADING or PAUSED.");
-                            
+                            equal((status == allStatus.INITIALIZING || status == allStatus.LOADING || status == allStatus.PAUSED) , true, "Player status should be LOADING or PAUSED.");
                         });
-                                                
-                        if(playerAdapter.getStatus() === allStatus.LOADING){
-                            asyncTest("Player is loading, so we wait for the ready event", function() {
-                                    $(playerAdapter).one(allEvents.READY,function(){
-                                        ok(true,"Received READY event.");
-                                        start();
-                                    });
-                            });
-                         };
                          
                         
-                        asyncTest("Play", function() {
+                        test("Play", function() {
+                                stop();
                                 
-                                $(playerAdapter).bind(allEvents.PLAY,function(){
+                                $(playerAdapter).one(allEvents.PLAY,function(){
                                     ok(true,"EVENT: Received PLAY event.");
                                     var status = playerAdapter.getStatus();
                                     equal(status,allStatus.PLAYING,"STATUS: Player status should be PLAYING.");
@@ -63,14 +57,15 @@
 
                         
                         
-                        asyncTest("Pause", function() {
+                        test("Pause", function() {
+                                stop();
                                 
                                 playerAdapter.play();
                                 
                                 $(playerAdapter).one(allEvents.PAUSE,function(){
                                     ok(true,"EVENT: Received PAUSE event.");
                                     var status = playerAdapter.getStatus();
-                                    equal(status,allStatus.PLAUSED,"STATUS: Player status should be PLAUSED.");
+                                    equal(status,allStatus.PAUSED,"STATUS: Player status should be PLAUSED.");
                                     start();
                                 });
                                 
@@ -78,7 +73,8 @@
                         });
                         
                         
-                        asyncTest("CurrentTime", function() {
+                        test("CurrentTime", function() {
+                                stop();
                                 playerAdapter.pause();
                                 
                                 var newTime = 12.5;
@@ -104,16 +100,26 @@
                         });
                         
                         
-                        asyncTest("Ended", 4, function() {
-                                playerAdapter.pause();
-                                
-                                playerAdapter.setCurrentTime(expectedDuration-1.0);
+                        /*test("Seeking", 2, function() {
+                                stop();
                                 
                                 $(playerAdapter).one(allEvents.SEEKING,function(){
+                                    playerAdapter.pause();
                                     ok(true,"EVENT: Received SEEKING event.");
                                     var status = playerAdapter.getStatus();
                                     equal(status,allStatus.SEEKING,"STATUS: Player status should be SEEKING.");
+                                    start();
+                                    stop();
                                 });
+                                
+                                playerAdapter.setCurrentTime(expectedDuration-2.3);
+                                
+                        });*/
+                        
+                        test("Ended", 2, function() {
+                                stop();
+                                
+                                playerAdapter.setCurrentTime(expectedDuration-1.3);
                                 
                                 $(playerAdapter).one(allEvents.ENDED,function(){
                                     ok(true,"EVENT: Received ENDED event.");
@@ -124,8 +130,6 @@
                                 
                                 playerAdapter.play();
                         });
-                        
-                   
                         
                         QUnit.start();
                     });
@@ -141,9 +145,8 @@
         <ol id="qunit-tests"></ol>
         <div id="qunit-fixture">test markup, will be hidden</div>
         <video style="display:none">
-            <source src="../resources/sintel_trailer.mp4" type="video/mp4" />
-	    <!-- Could not be include, to heavy. -->
-	    <!-- <source src="../resources/sintel_trailer.ogv" type="video/ogg" /> -->
+            <source src="resources/sinteltrailer.mp4" type="video/mp4" />
+            <source src="resources/sinteltrailer.ogv" type="video/ogg" />
         </video>
     </body>
 </html>

@@ -52,7 +52,7 @@ define(["jquery",
            */
           addTrack: function(track){
               var ann = track.get("annotations");
-              ann.bind('add', this.addAnnotation);
+              ann.bind('add', $.proxy(function(newAnnotation){this.addAnnotation(newAnnotation,track)},this));
               ann.bind('remove',this.removeOne);
               ann.bind('destroy',this.removeOne);
               ann.bind('change',this.sortViewsbyTime);
@@ -64,7 +64,7 @@ define(["jquery",
            *
            * @param {Annotation} the annotation to add as view
            */
-          addAnnotation: function(addAnnotation){
+          addAnnotation: function(addAnnotation,track){
             
             // If annotation has not id, we save it to have an id
             if(!addAnnotation.id){
@@ -72,7 +72,7 @@ define(["jquery",
                 return;
             }
             
-            this.annotationViews.push(new AnnotationView({annotation:addAnnotation}));
+            this.annotationViews.push(new AnnotationView({annotation:addAnnotation,track:track}));
             this.sortViewsbyTime();
           },
           

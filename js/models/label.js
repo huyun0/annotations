@@ -42,6 +42,8 @@ define(["order!jquery",
                     this.toCreate = true;
                 }
                 
+                this.set('category',attr.category);
+                
                 this.set(attr);
                 
             },
@@ -76,7 +78,6 @@ define(["order!jquery",
                 if(attr.category &&  !_.isObject(attr.category))
                     return "'category' attribute must be a JSON Object!";
 
-                
                 if(attr.access && !_.include(ACCESS,attr.access))
                     return "'access' attribute is not valid.";
                 

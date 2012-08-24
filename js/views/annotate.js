@@ -31,8 +31,6 @@ define(["jquery",
            * @constructor
            */
           initialize: function(attr){
-            if(!attr.playerAdapter || !PlayerAdapter.prototype.isPrototypeOf(attr.playerAdapter))
-                throw "The player adapter is not valid! It must has PlayerAdapter as prototype.";
               
             // Set the current context for all these functions
             _.bindAll(this,'insert','render','reset', 'onFocusIn','changeTrack');

@@ -8,6 +8,10 @@ define(['domReady!','jquery','prototypes/player_adapter'],function(domReady,$,Pl
      */
     PlayerAdapterHTML5 = function(targetElement){
         
+        // Allow to use HTMLElement with MS IE < 9
+        if(!HTMLElement)
+            var HTMLElement = Element;
+        
         // Check if the given target Element is valid 
         if(typeof targetElement == "undefined" || targetElement == null || !(targetElement instanceof HTMLElement))
             throw "The given target element must not be null and have to be a vaild HTMLElement!";
@@ -35,6 +39,7 @@ define(['domReady!','jquery','prototypes/player_adapter'],function(domReady,$,Pl
             $(targetElement).wrap(self.getHTMLTemplate(self.id));
             if($('#'+self.id).length == 0)
                 throw 'Cannot create HTML representation of the adapter';
+            
             self.htmlElement = document.getElementById(self.id);
             
             // Extend the current object with the HTML representation
@@ -45,24 +50,21 @@ define(['domReady!','jquery','prototypes/player_adapter'],function(domReady,$,Pl
             
             // ...and ensure that its methods are used for the Events management 
             this.dispatchEvent = this.__proto__.dispatchEvent;
+            this.triggerEvent = this.__proto__.triggerEvent;
             this.addEventListener = this.__proto__.addEventListener;
             this.removeEventListener = this.__proto__.removeEventListener;
+            this._getListeners = this.__proto__._getListeners;
             
             /**
              * Listen the events from the native player
              */
             $(targetElement).bind("canplay durationchange",function(){
-                console.log("duration change to "+self.getDuration()+", readyState: "+targetElement.readyState);
-                
                 // If duration is still not valid
-                if(isNaN(self.getDuration() && targetElement.readyState >= 1))
+                if(isNaN(self.getDuration()) || targetElement.readyState < 1)
                     return;
                 
-                if(!self.initialized){
-                    //targetElement.pause();
-                    //targetElement.muted = false;
+                if(!self.initialized)
                     self.initialized = true;
-                }
                 
                 // If duration is valid, we chanded status
                 self.status =  PlayerAdapter.STATUS.PAUSED;
@@ -107,16 +109,6 @@ define(['domReady!','jquery','prototypes/player_adapter'],function(domReady,$,Pl
                self.triggerEvent(PlayerAdapter.EVENTS.ERROR);
             });
             
-            /*$(targetElement).bind("emptied",function(){
-               self.status =  PlayerAdapter.STATUS.ERROR_UNSUPPORTED_MEDIA;
-               self.triggerEvent(PlayerAdapter.EVENTS.ERROR);
-            });*/
-            
-            //targetElement.muted = true;
-            targetElement.play();
-            targetElement.pause();
-            
-            
             return this;
         }
         
@@ -148,6 +140,9 @@ define(['domReady!','jquery','prototypes/player_adapter'],function(domReady,$,Pl
         };
         
         this.load = function(){
+            self.initialized = false;
+            self.status = PlayerAdapter.STATUS.INITIALIZING;
+            targetElement.load();
             targetElement.load();
         };
         

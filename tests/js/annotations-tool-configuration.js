@@ -29,6 +29,11 @@ define(['order!domReady',
             /* Function to get the user id from the current context (user_extid) */
             getUserExtId: function(){
                 return "default";
+            },
+            
+            /* Function to load the video */
+            loadVideo: function(){
+                
             }
         };
             

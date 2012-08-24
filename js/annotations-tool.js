@@ -32,7 +32,6 @@ define(['order!jquery',
                         return target.get("text");
                     },
                     destroy: function(target,callback){
-                        console.log("Delete annotation");
 
                         target.destroy({
                             
@@ -117,11 +116,21 @@ define(['order!jquery',
                     self.deleteModalContent  = self.deleteModal.find(".modal-body");
             };
             
+            /**
+             * Function to load the video file
+             *
+             * This part is specific to each integration of the annotation tool
+             */
+            self.loadVideo = function(){
+                // Add your loading code here!
+            }
+            
             
             return {            
                 
                 start: function() {
                         self.initDeleteModal();
+                        self.loadVideo();  
                     
                         var playerAdapter = annotationsTool.playerAdapter;
                         
@@ -153,7 +162,7 @@ define(['order!jquery',
                             });
                             
                             // Show the modal
-                            self.deleteModal.modal("toggle");
+                            self.deleteModal.modal("show");
                         };
                         
                         var mainView = new MainView(playerAdapter);

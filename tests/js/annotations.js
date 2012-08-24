@@ -2,18 +2,21 @@ require(['domReady',
          'order!jquery',
          'order!models/annotation',
          'order!collections/annotations',
-         'order!access',
-         'order!libs/tests/qunit'],
+         'order!access'],
                     
         function(domReady,$,Annotation,Annotations,ACCESS){
         
             domReady(function(){
                 
                 var annotations,annotation = null;
+                
+                window.annotationsTool = {
+                    localStorage: true
+                }
 
                 module("Annotations",  {
                         setup: function() {
-                            annotations = new Annotations([],{id: 123, collection:{url:'test'}});
+                            annotations = new Annotations([],{id: 123, collection:{}, url:function(){return 'test';}});
                             annotation = new Annotation({start:5});
                             annotations.add([{start:4},annotation]);
                         }
@@ -35,23 +38,6 @@ require(['domReady',
                     equal(annotations.size(),1, "Should have 1 element");
                 });
                 
-                
-                /* Persistence test for localstorage
-                  
-                test("Persistence", function() {
-                    annotations.fetch();
-                    annotations.each(function(a){a.save();});
-                    annotations.each(function(a){a.destroy()});
-                    var savedAnnotation = new Annotation({start:12});
-                    annotations.add(savedAnnotation);
-                    savedAnnotation.save();
-                    
-                    var newAnnotations = new Annotations;
-                    newAnnotations.fetch();
-                    equal(newAnnotations.size(),1, "Should have 1 element");
-                    
-                    equal(savedAnnotation.get("id"),newAnnotations.pop().get('id'),"The id of the persistent annotation should be "+savedAnnotation.get("id"));
-                });*/
                   
             });
             

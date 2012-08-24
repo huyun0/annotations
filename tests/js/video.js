@@ -1,8 +1,7 @@
 require(['domReady',
          'order!jquery',
          'order!models/video',
-         'order!collections/videos',
-         'order!libs/tests/qunit'],
+         'order!collections/videos'],
                     
         function(domReady, $, Video, Videos){
         

@@ -38,10 +38,12 @@ define(["order!jquery",
              * @param {Category} category containing the labels
              */
             setUrl: function(category){
-                if(!category || !category.collection)
-                     throw "The parent category of the labels must be given!";
-                
-                this.url = category.url() + "/labels";  
+                if(!category){
+                    throw "The parent category of the labels must be given!";
+                }
+                else if(category.collection){
+                    this.url = category.url() + "/labels";  
+                }
             }
         });
         

@@ -21,7 +21,6 @@ define(["order!jquery",
     /**
      * Main view of the application
      */
-    
     var MainView = Backbone.View.extend({
       
       /** Main container of the appplication */
@@ -29,9 +28,6 @@ define(["order!jquery",
       
       /** The player adapter passed during initialization part */
       playerAdapter: null,
-      
-      /** Describe if the complete tool has already been loaded */
-      loaded: false,
       
       /** jQuery element for the user login */
       userModal: null,
@@ -47,10 +43,18 @@ define(["order!jquery",
       },
       
       initialize: function(playerAdapter){
-        if(!PlayerAdapter.prototype.isPrototypeOf(playerAdapter))
+        if(!PlayerAdapter.prototype.isPrototypeOf(playerAdapter.__proto__))
             throw "The player adapter is not valid! It must has PlayerAdapter as prototype.";
         
-        _.bindAll(this,"login","loginOnInsert","getAnnotations","createViews","checkUserAndLogin","loadLoginModal","setLoadingProgress","logout");
+        _.bindAll(this,"login",
+                       "logout",
+                       "loginOnInsert",
+                       "checkUserAndLogin",
+                       "getAnnotations",
+                       "createViews",
+                       "loadLoginModal",
+                       "setLoadingProgress",
+                       "onWindowResize");
         
         this.setLoadingProgress(10,"Starting tool.");
         
@@ -80,7 +84,9 @@ define(["order!jquery",
           }
         });
         
-        this.checkUserAndLogin();        
+        this.checkUserAndLogin(); 
+
+        $(window).resize(this.onWindowResize);       
       },
         
       /**
@@ -89,10 +95,9 @@ define(["order!jquery",
       createViews: function(){
         this.setLoadingProgress(40,"Start creating views.");
         
-        this.loaded = true,
+        $('#video-container').show();
         
         this.setLoadingProgress(45,"Start loading video.");
-        $('#video-container').show();
         
         this.getAnnotations($.proxy(function(){  
          
@@ -117,7 +122,10 @@ define(["order!jquery",
               this.listView.$el.show();
               
               this.setLoadingProgress(100,"Ready.");
-              this.loadingBox.hide();            
+              this.loadingBox.hide();
+              
+              // Show logout button
+              $('a#logout').css('display','block');
           },this);
           
           this.playerAdapter.load();
@@ -134,6 +142,12 @@ define(["order!jquery",
           
         },this));        
       },
+
+
+      ////////////////////////
+      // Login/out function //
+      ////////////////////////
+
       
       checkUserAndLogin: function(){
         this.setLoadingProgress(30,"Get current user.");
@@ -176,10 +190,13 @@ define(["order!jquery",
         // Stop the video
         this.playerAdapter.pause();
         
+         // Hide logout button
+        $('a#logout').hide();
+        
         // Hide/remove the views
-        $('#video-container').hide();
         annotationsTool.playerAdapter.pause();
         annotationsTool.playerAdapter.setCurrentTime(0);
+        $('#video-container').hide();
         
         
         this.timelineView.reset();
@@ -191,7 +208,6 @@ define(["order!jquery",
         delete annotationsTool.video;
         delete annotationsTool.user;
         
-        this.loaded = false;
         this.loadingBox.find('.bar').width('0%');
         this.loadingBox.show();
         this.loadLoginModal();
@@ -268,8 +284,7 @@ define(["order!jquery",
         annotationsTool.user = user;
         this.userModal.modal("toggle");
         
-        if(!this.loaded)
-            this.createViews();
+        this.createViews();    
             
         return user;
       },
@@ -280,7 +295,7 @@ define(["order!jquery",
         var videos,video,tracks;
         videos = new Videos;
         
-                /**
+        /**
          * @function to conclude the retrive of annotations
          */
         var endGetAnnotations = $.proxy(function(){
@@ -387,6 +402,23 @@ define(["order!jquery",
         }
 
       },
+
+      /**
+       * Listener for window resizing
+       */
+      onWindowResize: function(){
+        // If views are not set
+        if(!this.annotateView || !this.listView || !this.timelineView)
+          return;
+
+        var windowHeight = $(window).height();
+
+        this.listView.$el.height(windowHeight-this.annotateView.$el.height()-100);
+      },
+
+      ////////////
+      // Utils  //
+      ////////////
       
       /**
        * Update loading box with given percent & message

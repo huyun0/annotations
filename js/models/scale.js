@@ -26,10 +26,8 @@ define(["jquery",
                 if(!attr  || _.isUndefined(attr.name) || attr.name == "")
                     throw "'name' attribute is required";
                 
-                
-                
                 if(attr.scaleValues && _.isArray(attr.scaleValues))
-                    this.set({scaleValues: new ScaleValues(attr.labels,this)});
+                    this.set({scaleValues: new ScaleValues(attr.scaleValues,this)});
                 else
                     this.set({scaleValues: new ScaleValues([],this)});
                 
@@ -83,6 +81,9 @@ define(["jquery",
                 
                 if(attr.deleted_by && !(_.isNumber(attr.deleted_by) || attr.deleted_by instanceof User))
                     return "'deleted_by' attribute must be a number or an instance of 'User'";
+                
+                if(attr.access && !_.include(ACCESS,attr.access))
+                    return "'access' attribute is not valid.";
                 
                 if(attr.created_at){
                     if((tmpCreated=this.get('created_at')) && tmpCreated!==attr.created_at)

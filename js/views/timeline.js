@@ -8,6 +8,8 @@ define(["jquery",
         "text!templates/timeline-modal-group.tmpl",
         "libs/handlebars",
         "libs/timeline",
+        "libs/bootstrap/tooltip",
+        "libs/bootstrap/popover",
         "backbone"],
        
     function($,_not,PlayerAdapter,Annotation,Annotations,GroupTmpl,ItemTmpl,ModalGroupTmpl){
@@ -46,11 +48,6 @@ define(["jquery",
            * @constructor
            */
           initialize: function(attr){
-            if(!attr.playerAdapter || !PlayerAdapter.prototype.isPrototypeOf(attr.playerAdapter))
-                throw "The player adapter is not valid! It must has PlayerAdapter as prototype.";
-            
-            //if(!attr.annotations)
-            //   throw "The annotations have to be given to the annotate view.";
             
             this.data = [];
               
@@ -73,6 +70,7 @@ define(["jquery",
                            'getTopForStacking',
                            'getTrackTempFix',
                            'getAnnotationTempFix',
+                           'onWindowResize',
                            'onTimelineResetZoom',
                            'reset');
             
@@ -84,13 +82,15 @@ define(["jquery",
             this.typeForDeleteTrack = annotationsTool.deleteOperation.targetTypes.TRACK;
             
             
-            this.endDate = this.getFormatedDate(this.playerAdapter.getDuration());
-            this.startDate = new Date(this.endDate.getFullYear(),this.endDate.getMonth(),this.endDate.getDate(),0,0,0);
+            this.endDate = this.getFormatedDate(this.playerAdapter.getDuration()+2);
+            this.startDate = new Date(this.endDate.getFullYear(),this.endDate.getMonth(),this.endDate.getDate(),0,0,3);
             
             this.options = {
               width:  "100%",
               height: "auto",
               style: "box",
+              scale: links.Timeline.StepDate.SCALE.MILLISECOND,
+              step: 1,
               showButtonAdd: false,
               editable: true,
               start: this.startDate,
@@ -104,8 +104,8 @@ define(["jquery",
               minHeight: "200",
               axisOnTop: true,
               groupsWidth: "150px",
-              animate: false,
-              animateZoom: false,
+              animate: true,
+              animateZoom: true,
               eventMarginAxis: 0,
               eventMargin: 0,
               dragAreaWidth: 5,
@@ -116,18 +116,11 @@ define(["jquery",
             this.timeline.draw(this.data,this.options);
             
             // Ensure that the timeline is redraw on window resize
-            var self = this;
-            $(window).resize(function(){
-              self.timeline.redraw();
-              if(annotationsTool.selectedTrack)
-                self.onTrackSelected(null,annotationsTool.selectedTrack.id);
-            })
+            $(window).bind('resize',this.onWindowResize);
             
             $(window).bind('selectTrack', $.proxy(this.onTrackSelected,self));
             $(window).bind('deleteTrack', $.proxy(this.onDeleteTrack,self));
             $(window).bind('deleteAnnotation',$.proxy(function(event,annotationId,trackId){
-              
-              console.log("Delete annotation "+annotationId+" on track "+trackId);
               
               var track = this.getTrackTempFix(trackId);
               var annotation = this.getAnnotationTempFix(annotationId,track);
@@ -153,11 +146,15 @@ define(["jquery",
             this.timeline.setCustomTime(this.startDate);
             this.onTrackSelected(null,annotationsTool.selectedTrack.id);
             
+            var self = this;
             this.timeline.redraw = function(){
               if(annotationsTool.selectedTrack)
                 self.onTrackSelected(null,annotationsTool.selectedTrack.id);
+              
+              $('div.timeline-group .content').popover({});
             }
             this.timeline.setAutoScale(false);
+            $('div.timeline-group .content').popover({});
             
           },
 
@@ -309,6 +306,12 @@ define(["jquery",
                     insertTrack();  
                   }
                 });
+                
+                this.groupModal.on("shown",$.proxy(function(){
+                  this.groupModal.find('#name').focus();
+                },this));
+                
+                this.groupModal.find('#name').focus();
             }
             else{
               // if the modal has already been initialized, we reset input and show modal
@@ -393,12 +396,13 @@ define(["jquery",
                                    duration: this.getTimeInSeconds(values.item.end)-this.getTimeInSeconds(values.item.start)});
 
             // Function called when all changed have been applied
-            var finalizeChanges = $.proxy(function(){
+            var finalizeChanges = $.proxy(function(moved){
               var htmlElement = this.$el.find('.annotation-id:contains('+values.annotation.id+')').parent().parent()[0];
               var index = this.timeline.getItemIndex(htmlElement);
               var newItem = this.timeline.getItem(index);
-              //this.timeline.selectItem(index);
-              this.playerAdapter.setCurrentTime(this.getTimeInSeconds(newItem.start));
+              
+              if(moved)
+                this.timeline.selectItem(index);
               
               values.oldTrack.save();
               values.newTrack.save();
@@ -422,16 +426,16 @@ define(["jquery",
                       values.annotation = values.newTrack.get('annotations').create(annJSON);
                       
                       if(!values.annotation.id)
-                        values.annotation.bind('ready',finalizeChanges,this);
+                        values.annotation.bind('ready',function(){finalizeChanges(true);},this);
                       else{
-                          finalizeChanges();
+                          finalizeChanges(true);
                       } 
                     },150);
                 },this)
               });
             }
             else{
-              finalizeChanges();
+              finalizeChanges(false);
               values.annotation.save();
               
               if(annotationsTool.localStorage){
@@ -506,7 +510,7 @@ define(["jquery",
             
             // Destroy the track and redraw the timeline
             var self = this;
-            var callback = function(){
+            var callback = $.proxy(function(){
                 var items = self.timeline.getData().slice();
                 var newItems = new Array();
       
@@ -529,7 +533,9 @@ define(["jquery",
                 }
                 else
                   self.onTrackSelected(null,annotationsTool.selectedTrack.id);
-            };
+                  
+                this.timeline.redraw();
+            },this);
             
             annotationsTool.deleteOperation.start(track,this.typeForDeleteTrack,callback);
           },
@@ -552,6 +558,15 @@ define(["jquery",
             
             this.$el.find('div.selected').removeClass('selected');
             this.$el.find('.timeline-group .track-id:contains('+trackId+')').parent().parent().addClass('selected');
+          },
+          
+          /**
+           * Listener for window resizing
+           */
+          onWindowResize: function(){
+            this.timeline.redraw();
+              if(annotationsTool.selectedTrack)
+                this.onTrackSelected(null,annotationsTool.selectedTrack.id);
           },
           
           /* --------------------------------------
@@ -791,6 +806,11 @@ define(["jquery",
             links.events.removeListener(this.timeline,'change',this.onTimelineItemChanged);
             links.events.removeListener(this.timeline,'delete',this.onTimelineItemDeleted);
             links.events.removeListener(this.timeline,'select',this.onTimelineItemSelected);
+            $(window).unbind('selectTrack');
+            $(window).unbind('deleteTrack');
+            $(window).unbind('deleteAnnotation');
+            $(window).unbind('resize',this.onWindowResize);
+              
             this.undelegateEvents();
             
             this.tracks.each(function(track,item){
