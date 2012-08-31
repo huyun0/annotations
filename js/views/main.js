@@ -1,3 +1,19 @@
+/**
+ *  Copyright 2012, Entwine GmbH, Switzerland
+ *  Licensed under the Educational Community License, Version 2.0
+ *  (the "License"); you may not use this file except in compliance
+ *  with the License. You may obtain a copy of the License at
+ *
+ *  http://www.osedu.org/licenses/ECL-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing,
+ *  software distributed under the License is distributed on an "AS IS"
+ *  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ *  or implied. See the License for the specific language governing
+ *  permissions and limitations under the License.
+ *
+ */
+
 define(["order!jquery",
         "order!prototypes/player_adapter",
         "order!collections/annotations",
@@ -14,7 +30,8 @@ define(["order!jquery",
         "order!backbone",
         "order!localstorage",
         "order!underscore",
-        "order!libs/bootstrap/bootstrap.min"],
+        "order!libs/bootstrap/bootstrap.min",
+        "order!libs/bootstrap/tab"],
        
        function($,PlayerAdapter,Annotations,AnnotateView,ListView,TimelineView,Users,User,Track,Video,Videos,AnnotationSync,LoginTmpl){
 
@@ -86,7 +103,9 @@ define(["order!jquery",
         
         this.checkUserAndLogin(); 
 
-        $(window).resize(this.onWindowResize);       
+        $(window).resize(this.onWindowResize);   
+
+        this.onWindowResize();  
       },
         
       /**
@@ -360,7 +379,9 @@ define(["order!jquery",
             videos.add({video_extid:annotationsTool.getVideoExtId()});
             
           video = videos.at(0);
+          annotationsTool.video = video;
           video.save();
+
           tracks = video.get("tracks");
           
           if(tracks.length == 0){
@@ -376,6 +397,7 @@ define(["order!jquery",
         else{
           videos.add({video_extid:annotationsTool.getVideoExtId()});
           video = videos.at(0);
+          annotationsTool.video = video;
           
           // Wait that the video is well saved (to have a good id)
           video.save(video,{

@@ -1,9 +1,9 @@
-<i class="select icon-film"  href="#{{id}}" title="Move to this annotation"></i>
+<i class="select icon-film"  id="{{id}}" href="#{{id}}" title="Move to this annotation"></i>
 <span class="start">{{time start}}</span>
  {{#if duration}}
         - <span class="duration">{{end start duration}}</span>
 {{/if}}
-<span class="category">Free text category</span>
+<span class="category" {{#if label.category}}style="background-color:{{label.category.settings.color}}"{{/if}}>{{#if label}}{{label.category.name}}{{else}}Free text category{{/if}}</span>
 
 <i class="delete icon-remove" title="Delete  annotation"></i>
 
@@ -13,7 +13,7 @@
 
 <div id="text-container{{id}}" class="{{#if collapsed}}out{{else}}in{{/if}}">
         <span class="text">
-                {{text}}
+                {{#if label}}<b>{{label.abbreviation}}</b>{{/if}}  {{text}}
                 {{#if created_by}}
                 <p align="right">added by <span class="user">{{nickname created_by}}</span> on <span class="track">{{track}}</span></p>
                 {{/if}}

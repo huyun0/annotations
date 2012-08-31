@@ -1,3 +1,19 @@
+/**
+ *  Copyright 2012, Entwine GmbH, Switzerland
+ *  Licensed under the Educational Community License, Version 2.0
+ *  (the "License"); you may not use this file except in compliance
+ *  with the License. You may obtain a copy of the License at
+ *
+ *  http://www.osedu.org/licenses/ECL-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing,
+ *  software distributed under the License is distributed on an "AS IS"
+ *  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ *  or implied. See the License for the specific language governing
+ *  permissions and limitations under the License.
+ *
+ */
+    
 define(["jquery",
         "underscore",
         "prototypes/player_adapter",
@@ -76,9 +92,9 @@ define(["jquery",
           
           /** Events to handle */
           events: {
-            "click .delete"             : "deleteFull",
-            "click .select"             : "onSelect",
-            "click .collapse"           : "onCollapse"
+            "click i.delete"             : "deleteFull",
+            "click .select"              : "onSelect",
+            "click a.collapse"           : "onCollapse"
           },
           
            /**
@@ -98,7 +114,6 @@ define(["jquery",
             // Add backbone events to the model 
             _.extend(this.model, Backbone.Events);
             
-            
             this.model.bind('change', this.render);
             this.model.bind('destroy', this.deleteView);
             this.model.bind('remove', this.deleteView);
@@ -107,9 +122,12 @@ define(["jquery",
             // Type use for delete operation
             this.typeForDelete = annotationsTool.deleteOperation.targetTypes.ANNOTATION;
             
-            this.track = attr.track;
-            if(!this.track)
+            if(attr.track)
+                this.track = attr.track;
+            else
                 this.track = annotationsTool.selectedTrack;
+
+            return this.render();
           },
           
           /**
@@ -141,11 +159,11 @@ define(["jquery",
             if(this.deleted){
                 return "";
             }
-            this.model.set({collapsed: this.collapsed});
+            this.model.set({collapsed: this.collapsed}, {silent:true});
             var modelJSON = this.model.toJSON();
             modelJSON.track = this.track.get("name");
-            this.$el.html(this.template(modelJSON)).attr('id',this.model.get("id"));
-            this.setElement(this.el);
+            this.$el.html(this.template(modelJSON));
+            this.delegateEvents(this.events);
             return this;
           },
           

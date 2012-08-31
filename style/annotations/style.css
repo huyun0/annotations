@@ -15,6 +15,7 @@
   border: 1px solid #cdcdcd;
   border-radius: 4px 4px 4px 4px;
   border-radius: 4px 4px 4px 4px;
+  border-radius: 4px 4px 4px 4px;
   background-size: 100% 100%;
   box-shadow: inset 0px 0px 15px #a29d95;
   -moz-box-shadow: inset 0px 0px 15px #a29d95;
@@ -23,6 +24,14 @@
   box-shadow: inset 0px 0px 15px #a29d95;
   -moz-box-shadow: inset 0px 0px 15px #a29d95;
   -webkit-box-shadow: inset 0px 0px 15px #a29d95;
+  background-size: 100% 100%;
+  box-shadow: inset 0px 0px 15px #a29d95;
+  -moz-box-shadow: inset 0px 0px 15px #a29d95;
+  -webkit-box-shadow: inset 0px 0px 15px #a29d95;
+  background-size: 100% 100%;
+  box-shadow: 0px 0px 5px #d9d2c0;
+  -moz-box-shadow: 0px 0px 5px #d9d2c0;
+  -webkit-box-shadow: 0px 0px 5px #d9d2c0;
   background-size: 100% 100%;
   box-shadow: 0px 0px 5px #d9d2c0;
   -moz-box-shadow: 0px 0px 5px #d9d2c0;
@@ -50,17 +59,128 @@
 .window .navbar .nav > li > a:hover {
   cursor: pointer;
 }
+.navbar a#logout {
+  display: none;
+}
 /**
  * Style for annotate view
  */
-#new-annotation {
-  margin-bottom: -0.5px;
-  margin-left: -4px;
-  margin-right: -4px;
+/**
+ * Different style variable that can be use by all variables
+ */
+.standard_border_radius {
+  border-radius: 4px 4px 4px 4px;
+}
+#annotate-form {
+  padding: 5px;
 }
 #annotate-form div {
   padding: 5px;
   text-align: center;
+}
+#annotate-form .currentTrack {
+  text-align: left;
+}
+#annotate-form .currentTrack span.title {
+  font-weight: bold;
+}
+#annotate-form .insert-fields,
+#annotate-form .stop-fields {
+  display: inline-block;
+}
+#annotate-form #input-container {
+  width: 100%;
+  text-align: left;
+}
+#annotate-form #input-container #new-annotation {
+  width: 68%;
+  margin-bottom: -0.5px;
+  margin-left: -4px;
+  margin-right: -4px;
+}
+#annotate-container .navbar {
+  margin-bottom: 0px;
+}
+#annotate-container h3 {
+  line-height: 18px;
+  padding-top: 8px;
+  padding-right: 8px;
+}
+#annotate-container #label-tabs-contents div {
+  padding: 0px;
+}
+#annotate-container #label-tabs-contents div.carousel {
+  height: 200px;
+  overflow: scroll;
+}
+#annotate-container #label-tabs-contents div.carousel .category-item {
+  height: 100%;
+}
+#annotate-container #label-tabs-contents div.carousel .category-item .catItem-header {
+  padding: 5px;
+  font-size: 14px;
+  background-color: #e3e3e3;
+  text-shadow: 1px 1px 1px black;
+  font-weight: bold;
+  border-radius: 4px 4px 0px 0px;
+  color: white;
+}
+#annotate-container #label-tabs-contents div.carousel .category-item .label-item {
+  padding: 3px;
+  background-color: #ffffff;
+  margin-top: 2px;
+  height: 16px;
+}
+#annotate-container #label-tabs-contents div.carousel .category-item .label-item .item-abbreviation {
+  float: left;
+  padding: 3px;
+  font-weight: bold;
+}
+#annotate-container #label-tabs-contents div.carousel .category-item .label-item .item-value {
+  float: left;
+  padding: 3px;
+}
+#annotate-container #label-tabs-contents div.carousel .category-item .label-item .item-icon {
+  float: right;
+}
+#annotate-container #label-tabs-contents div.carousel .category-item .label-item:last-child {
+  border-radius: 0px 0px 4px 4px;
+}
+#annotate-container #label-tabs-contents div.carousel .category-item .label-item:hover {
+  cursor: pointer;
+  background-color: darkGray;
+  color: white;
+  background-size: 100% 100%;
+  box-shadow: 0px 0px 4px #969696;
+  -moz-box-shadow: 0px 0px 4px #969696;
+  -webkit-box-shadow: 0px 0px 4px #969696;
+  background-size: 100% 100%;
+  box-shadow: 0px 0px 4px #969696;
+  -moz-box-shadow: 0px 0px 4px #969696;
+  -webkit-box-shadow: 0px 0px 4px #969696;
+  background-size: 100% 100%;
+  box-shadow: 0px 0px 4px #969696;
+  -moz-box-shadow: 0px 0px 4px #969696;
+  -webkit-box-shadow: 0px 0px 4px #969696;
+  background-size: 100% 100%;
+  box-shadow: inset 0px 0px 4px #636363;
+  -moz-box-shadow: inset 0px 0px 4px #636363;
+  -webkit-box-shadow: inset 0px 0px 4px #636363;
+  background-size: 100% 100%;
+  box-shadow: inset 0px 0px 4px #636363;
+  -moz-box-shadow: inset 0px 0px 4px #636363;
+  -webkit-box-shadow: inset 0px 0px 4px #636363;
+  background-size: 100% 100%;
+  box-shadow: inset 0px 0px 4px #636363;
+  -moz-box-shadow: inset 0px 0px 4px #636363;
+  -webkit-box-shadow: inset 0px 0px 4px #636363;
+}
+#annotate-container #label-tabs-contents div div.pagination {
+  margin: 10px;
+  height: 0px;
+}
+#annotate-container #label-tabs-contents div div.pagination a {
+  line-height: 24px;
 }
 .notrack {
   color: red;
@@ -77,13 +197,13 @@
 }
 /* dark grey */
 #list-container {
-  max-height: 600px;
   overflow: auto;
 }
 #list-container a.proxy-anchor {
   display: none;
 }
 #list-container div.annotation {
+  border-radius: 4px 4px 4px 4px;
   border-radius: 4px 4px 4px 4px;
   border-radius: 4px 4px 4px 4px;
   background-color: #e3e3e3;
@@ -120,6 +240,14 @@
   -moz-box-shadow: 0px 0px 4px #a9a9a9;
   -webkit-box-shadow: 0px 0px 4px #a9a9a9;
   background-size: 100% 100%;
+  box-shadow: 0px 0px 4px #a9a9a9;
+  -moz-box-shadow: 0px 0px 4px #a9a9a9;
+  -webkit-box-shadow: 0px 0px 4px #a9a9a9;
+  background-size: 100% 100%;
+  box-shadow: inset 0px 0px 4px #767676;
+  -moz-box-shadow: inset 0px 0px 4px #767676;
+  -webkit-box-shadow: inset 0px 0px 4px #767676;
+  background-size: 100% 100%;
   box-shadow: inset 0px 0px 4px #767676;
   -moz-box-shadow: inset 0px 0px 4px #767676;
   -webkit-box-shadow: inset 0px 0px 4px #767676;
@@ -134,6 +262,10 @@
   padding: 4px;
   border-radius: 3px 3px 3px 3px;
   background-color: white;
+  background-size: 100% 100%;
+  box-shadow: 0px 0px 4px #a9a9a9;
+  -moz-box-shadow: 0px 0px 4px #a9a9a9;
+  -webkit-box-shadow: 0px 0px 4px #a9a9a9;
   background-size: 100% 100%;
   box-shadow: 0px 0px 4px #a9a9a9;
   -moz-box-shadow: 0px 0px 4px #a9a9a9;

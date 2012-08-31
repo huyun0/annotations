@@ -36,6 +36,13 @@ div.timeline-groups-text div.timeline-group:hover {
   cursor: pointer;
   background-color: #e6e6e6;
 }
+div.timeline-groups-text div.timeline-group div.content {
+  width: 122px;
+  overflow: hidden;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 div.timeline-groups-text.selected {
   background-color: #cdcdcd;
 }
@@ -45,6 +52,8 @@ div.timeline-groups-text.selected div.timeline-group:hover {
 div.timeline-groups-text i.delete {
   z-index: 4;
   float: left;
+  margin-top: 5px;
+  margin-right: 4px;
 }
 div.timeline-groups-text i.delete:hover {
   cursor: pointer;
@@ -56,8 +65,16 @@ div.timeline-customtime {
 }
 div.timeline-navigation {
   z-index: 4;
-  height: 35px;
+  height: 45px;
   border-left: 0px;
+}
+div.timeline-navigation div.timeline-navigation-new,
+div.timeline-navigation div.timeline-navigation-delete,
+div.timeline-navigation div.timeline-navigation-zoom-in,
+div.timeline-navigation div.timeline-navigation-zoom-out,
+div.timeline-navigation div.timeline-navigation-move-left,
+div.timeline-navigation div.timeline-navigation-move-right {
+  height: 22px;
 }
 div.timeline-frame > div:first-child {
   z-index: 2;
@@ -83,7 +100,7 @@ div.timeline-event-selected {
   background: none;
   z-index: 10;
 }
-div.timeline-event-selected div.item {
+div.timeline-event-selected div.timeline-item {
   background-color: rgba(245, 215, 115, 0.75);
 }
 div.timeline-event {
@@ -93,38 +110,38 @@ div.timeline-event-range {
   margin-top: 28px;
   border: none;
 }
-div.item {
-  background-color: rgba(249, 103, 38, 0.6);
-  padding: 5px;
-  border-radius: 3px;
-  overflow: hidden;
-}
-div.item span {
-  float: left;
-  width: 65%;
-  overflow: hidden;
-}
-div.item i.delete {
-  float: right;
-}
-div.item i.delete:hover {
-  cursor: pointer;
-  background-color: #ff6666;
-  border-radius: 10px 10px 10px 10px;
-}
-div.item:hover {
-  cursor: pointer;
-}
 div.timeline-navigation-delete {
   display: none;
 }
-div#reset-zoom {
+div.timeline-bottom-controls {
   z-index: 50;
   display: block;
   position: relative;
   float: right;
   padding: 8px;
 }
-div#reset-zoom:hover {
+div.timeline-bottom-controls:hover {
+  cursor: pointer;
+}
+div.timeline-item {
+  background-color: rgba(249, 103, 38, 0.6);
+  padding: 5px;
+  border-radius: 3px;
+  overflow: hidden;
+}
+div.timeline-item span {
+  float: left;
+  width: 65%;
+  overflow: hidden;
+}
+div.timeline-item i.delete {
+  float: right;
+}
+div.timeline-item i.delete:hover {
+  cursor: pointer;
+  background-color: #ff6666;
+  border-radius: 10px 10px 10px 10px;
+}
+div.timeline-item:hover {
   cursor: pointer;
 }

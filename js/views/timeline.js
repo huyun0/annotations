@@ -1,3 +1,19 @@
+/**
+ *  Copyright 2012, Entwine GmbH, Switzerland
+ *  Licensed under the Educational Community License, Version 2.0
+ *  (the "License"); you may not use this file except in compliance
+ *  with the License. You may obtain a copy of the License at
+ *
+ *  http://www.osedu.org/licenses/ECL-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing,
+ *  software distributed under the License is distributed on an "AS IS"
+ *  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ *  or implied. See the License for the specific language governing
+ *  permissions and limitations under the License.
+ *
+ */
+
 define(["jquery",
         "underscore",
         "prototypes/player_adapter",
@@ -112,12 +128,12 @@ define(["jquery",
               groupsChangeable: true
             };
             
+            var self = this;
             this.timeline = new links.Timeline(this.$el.find("#timeline")[0]);
             this.timeline.draw(this.data,this.options);
             
             // Ensure that the timeline is redraw on window resize
             $(window).bind('resize',this.onWindowResize);
-            
             $(window).bind('selectTrack', $.proxy(this.onTrackSelected,self));
             $(window).bind('deleteTrack', $.proxy(this.onDeleteTrack,self));
             $(window).bind('deleteAnnotation',$.proxy(function(event,annotationId,trackId){
@@ -146,7 +162,6 @@ define(["jquery",
             this.timeline.setCustomTime(this.startDate);
             this.onTrackSelected(null,annotationsTool.selectedTrack.id);
             
-            var self = this;
             this.timeline.redraw = function(){
               if(annotationsTool.selectedTrack)
                 self.onTrackSelected(null,annotationsTool.selectedTrack.id);
@@ -189,14 +204,18 @@ define(["jquery",
               annJSON.id = annotation.id;
               annJSON.track = track.id;
               annJSON.top = this.getTopForStacking(annotation)+"px";
+              if(annJSON.label && annJSON.label.category && annJSON.label.category.settings)
+                annJSON.category = annJSON.label.category;
+
               var trackJSON = track.toJSON();
               trackJSON.id = track.id;
+
+              // Calculate start/end time
               var startTime = annotation.get("start");
               var endTime   = startTime + annotation.get("duration");
               var start = this.getFormatedDate(startTime);
               if(startTime == endTime)
                 endTime += this.DEFAULT_DURATION;
-                
               var end = this.getFormatedDate(endTime);
               
               this.timeline.addItem({
@@ -256,7 +275,11 @@ define(["jquery",
             if(this.timeline.findGroup(param.name))
               return;
             
-            var track = this.tracks.create(param);
+
+            if(annotationsTool.localStorage)
+              var track = this.tracks.create(param);
+            else
+              var track = this.tracks.create(param,{wait:true});
             
             track.save();
             annotationsTool.video.save();
@@ -334,10 +357,7 @@ define(["jquery",
             this.$el.find('.annotation-id:contains('+annotation.id+')').parent().css('margin-top',this.getTopForStacking(annotation)+"px");            
           },
           
-          
-          /* --------------------------------------
-            Listeners
-          ----------------------------------------*/
+            
           
           /**
            * Listener for the player timeupdate 
@@ -423,7 +443,10 @@ define(["jquery",
                     values.oldTrack.get('annotations').remove(values.annotation);
                     
                     setTimeout(function(){
-                      values.annotation = values.newTrack.get('annotations').create(annJSON);
+                      if(annotationsTool.localStorage)
+                        values.annotation = values.newTrack.get('annotations').create(annJSON);
+                      else
+                        values.annotation = values.newTrack.get('annotations').create(annJSON,{wait:true});
                       
                       if(!values.annotation.id)
                         values.annotation.bind('ready',function(){finalizeChanges(true);},this);
