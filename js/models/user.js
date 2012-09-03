@@ -81,7 +81,7 @@ define(["order!jquery",
                     }
                 }
                 
-                if(_.isUndefined(attr.user_extid) || (!_.isString(attr.id) && !_.isNumber(attr.user_extid)))
+                if(_.isUndefined(attr.user_extid) || (!_.isString(attr.user_extid) && !_.isNumber(attr.user_extid)))
                     return {attribute: "user_extid", message: "'user_extid' must be a valid string or number."};
                 
                 if(_.isUndefined(attr.nickname) || !_.isString(attr.nickname))
