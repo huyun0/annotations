@@ -58,11 +58,20 @@ define(["order!jquery",
                 this.noPOST = true;
             },
             
-            parse: function(attr) {    
+            parse: function(data) {    
+                var attr = data.attributes ? data.attributes : data;
+
                 attr.created_at = attr.created_at != null ? Date.parse(attr.created_at): null;
                 attr.updated_at = attr.updated_at != null ? Date.parse(attr.updated_at): null;
                 attr.deleted_at = attr.deleted_at != null ? Date.parse(attr.deleted_at): null;
                 return attr;
+
+                if(data.attributes)
+                    data.attributes = attr;
+                else
+                    data = attr;
+
+                return data;
             },
             
             validate: function(attr){
@@ -72,7 +81,7 @@ define(["order!jquery",
                     }
                 }
                 
-                if(_.isUndefined(attr.user_extid) || (!_.isString(attr.nickname) && !_.isNumber(attr.user_extid)))
+                if(_.isUndefined(attr.user_extid) || (!_.isString(attr.id) && !_.isNumber(attr.user_extid)))
                     return {attribute: "user_extid", message: "'user_extid' must be a valid string or number."};
                 
                 if(_.isUndefined(attr.nickname) || !_.isString(attr.nickname))
