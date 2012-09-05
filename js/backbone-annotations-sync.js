@@ -70,11 +70,13 @@ define(["jquery",
                 */
                this.setHeaderParams = function(xhr) {
                     // Use request user id
-                    if(!_.isUndefined(window.annotationsTool) && !_.isUndefined(window.annotationsTool.user))
+                    if(annotationsTool.user)
                          xhr.setRequestHeader(self.config.headerParams.userId, annotationsTool.user.id);
-               
-                    // Only for sprint 2
-                    // xhr.setRequestHeader(self.config.headerParams.token, token); 
+                    
+                    // Set user token in request header if a token is given
+                    var token;
+                    if(annotationsTool.getUserAuthToken && !_.isUndefined(token = annotationsTool.getUserAuthToken()))
+                      xhr.setRequestHeader(self.config.headerParams.token, token); 
                };
                
                this.removeId = function(){
@@ -96,7 +98,6 @@ define(["jquery",
                               data: JSON.parse(JSON.stringify(resource)),
                               beforeSend: self.setHeaderParams,
                               success: function(data, textStatus, XMLHttpRequest){
-                                   //resource.set(resource.parse(data));
                                    resource.toCreate = false;
                                    if(resource.setUrl)
                                         resource.setUrl();
@@ -123,7 +124,6 @@ define(["jquery",
                               data: JSON.parse(JSON.stringify(resource)),
                               beforeSend: self.setHeaderParams,
                               success: function(data, textStatus, XMLHttpRequest){
-                                   //resource.set(resource.parse(data));
                                    resource.toCreate = false;
                                    if(resource.setUrl)
                                         resource.setUrl();
@@ -190,7 +190,6 @@ define(["jquery",
                               data: JSON.parse(JSON.stringify(resource)),
                               beforeSend: self.setHeaderParams,
                               success: function(data, textStatus, XMLHttpRequest){
-                                   // resource.set(resource.parse(data));
                                    resource.toCreate = false;
                                    if(resource.setUrl)
                                         resource.setUrl();

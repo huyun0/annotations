@@ -37,19 +37,33 @@ define(['order!domReady',
             restEndpointsUrl: "../../extended-annotations",
             
             
-            /* Function to get the current video id (video_extid) */
+            /**
+             * Get the current video id (video_extid) 
+             * @return {String} video external id
+             */ 
             getVideoExtId: function(){
                 return $('video')[0].id;
             },
             
-            /* Function to get the user id from the current context (user_extid) */
+            /**
+             * Get the user id from the current context (user_extid)
+             * @return {[type]} [description]
+             */ 
             getUserExtId: function(){
                 return "default";
+            },
+
+            /**
+             * Get the user authentification token if existing
+             * @return {String} Current user token
+             */
+            getUserAuthToken: function(){
+                return undefined;
             },
             
             /* Function to load the video */
             loadVideo: function(){
-                
+                //TODO: move code from annotation-tool.js here and call it in bootstrap script.
             }
         };
             
