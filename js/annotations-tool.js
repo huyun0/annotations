@@ -52,8 +52,18 @@ define(['order!jquery',
                         target.destroy({
                             
                             success: function(){
-                                if(annotationsTool.localStorage)
+                                if(annotationsTool.localStorage){
+
+                                    annotationsTool.video.get("tracks").each(function(value,index){
+                                        if(value.get("annotations").get(target.id)){
+                                            value.get("annotations").remove(target)
+                                            value.save({wait:true})
+                                            return false;
+                                        }
+                                    });
+
                                     annotationsTool.video.save();
+                                }
                                 
                                 if(callback)
                                     callback();
@@ -129,7 +139,7 @@ define(['order!jquery',
                     self.deleteModal = $('#modal-delete').modal({show: true, backdrop: false, keyboard: true });
                     self.deleteModal.modal("toggle");
                     self.deleteModalHeader  = self.deleteModal.find(".modal-header h3");
-                    self.deleteModalContent  = self.deleteModal.find(".modal-body");
+                    self.deleteModalContent = self.deleteModal.find(".modal-body");
             };
             
             /**
@@ -171,10 +181,21 @@ define(['order!jquery',
                                 type.destroy(target,callback);
                                 self.deleteModal.modal("toggle");
                             });
+
+                            var confirmWithEnter = function(e){                                
+                                if(e.keyCode == 13){
+                                    type.destroy(target,callback);
+                                    self.deleteModal.modal("toggle");
+                                }
+                            }
+
+                            // Add possiblity to confirm with return key
+                            $(window).bind('keypress',confirmWithEnter);
                             
                             // Unbind the listeners when the modal is hidden
                             self.deleteModal.one("hide",function(){
                                 $('#confirm-delete').unbind('click');
+                                $(window).unbind('keypress',confirmWithEnter);
                             });
                             
                             // Show the modal
