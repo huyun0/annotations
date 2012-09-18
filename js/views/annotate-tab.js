@@ -170,6 +170,9 @@ define(["jquery",
            */
           generateCategories: function(){
             var categories = annotationsTool.video.get('categories');
+            
+            if(categories.length != 0)
+                categories.remove(categories.models,{silent:true});
 
             _.each(categoriesSet, function(cat,index){
 

@@ -74,11 +74,20 @@ define(["jquery",
                 
             },
             
-            parse: function(attr) {
+            parse: function(data) {
+                var attr = data.attributes ? data.attributes : data;
+
                 attr.created_at = attr.created_at != null ? Date.parse(attr.created_at): null;
                 attr.updated_at = attr.updated_at != null ? Date.parse(attr.updated_at): null;
                 attr.deleted_at = attr.deleted_at != null ? Date.parse(attr.deleted_at): null;
-                return attr;
+                attr.settings = this.parseSettings(attr.settings);
+
+                if(data.attributes)
+                    data.attributes = attr;
+                else
+                    data = attr;
+
+                return data;
             },
             
             validate: function(attr){
@@ -126,7 +135,19 @@ define(["jquery",
             setUrl: function(){
                 this.get("tracks").setUrl(this);
                 this.get("categories").setUrl(this);
-            }
+            },
+
+            /**
+             * Parse the given settings to JSON if given as String
+             * @param  {String} settings the settings as String
+             * @return {JSON} settings as JSON object
+             */
+            parseSettings: function(settings){
+                if(settings && _.isString(settings))
+                    settings = JSON.parse(settings);
+
+                return settings;
+            }    
         });
         
         return Video;

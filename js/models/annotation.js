@@ -43,7 +43,8 @@ define(["order!jquery",
             // Logs
 
             
-            initialize: function(attr){
+            initialize: function(attr){ 
+
                 if(!attr || _.isUndefined(attr.start))
                     throw "'start' attribute is required";
                 
@@ -68,6 +69,14 @@ define(["order!jquery",
                 attr.created_at = attr.created_at != null ? Date.parse(attr.created_at): null;
                 attr.updated_at = attr.updated_at != null ? Date.parse(attr.updated_at): null;
                 attr.deleted_at = attr.deleted_at != null ? Date.parse(attr.deleted_at): null;
+
+                var tempSettings;
+
+                if(attr.label && attr.label.category && (tempSettings = this.parseSettings(attr.label.category.settings)))
+                    attr.label.category.settings = tempSettings;
+
+                if(attr.label && (tempSettings = this.parseSettings(attr.label.settings)))
+                    attr.label.settings = tempSettings;
 
                 if(!annotationsTool.localStorage &&  attr.label_id && (_.isNumber(attr.label_id) || _.isString(attr.label_id))){
                     var categories = annotationsTool.video.get('categories');
@@ -103,6 +112,13 @@ define(["order!jquery",
                         this.trigger('ready',this);
                     }
                 }
+
+                if(!annotationsTool.localStorage && attr.label){
+                    if(attr.label.id)
+                        this.attributes.label_id = attr.label.id;
+                    else if(attr.label.attributes)
+                        this.attributes.label_id = attr.label.get('id');
+                }
                 
                 if(attr.start &&  !_.isNumber(attr.start))
                     return "'start' attribute must be a number!";
@@ -136,6 +152,18 @@ define(["order!jquery",
             },
 
             /**
+             * Parse the given settings to JSON if given as String
+             * @param  {String} settings the settings as String
+             * @return {JSON} settings as JSON object
+             */
+            parseSettings: function(settings){
+                if(settings && _.isString(settings))
+                    settings = JSON.parse(settings);
+
+                return settings;
+            },
+
+            /**
              * @override
              * 
              * Override the default toJSON function to ensure complete JSONing.
@@ -147,17 +175,6 @@ define(["order!jquery",
                 if(json.label && json.label.toJSON)
                     json.label = json.label.toJSON();
                 return json;
-            },
-
-            save: function(){
-                if(!annotationsTool.localStorage && this.attributes.label){
-                    if(this.attributes.label.id)
-                        this.attributes.label_id = this.attributes.label.id;
-                    else if(this.attributes.label.attributes)
-                        this.attributes.label_id = this.attributes.label.get('id');
-                }
-
-                $.proxy(Backbone.Model.prototype.save,this)();
             }
         });
         

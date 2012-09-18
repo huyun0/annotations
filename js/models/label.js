@@ -77,6 +77,9 @@ define(["order!jquery",
                 attr.deleted_at = attr.deleted_at != null ? Date.parse(attr.deleted_at): null;
                 attr.settings = this.parseSettings(attr.settings);
 
+                if(attr.category && attr.category.settings)
+                    attr.category.settings = this.parseSettings(attr.category.settings);
+
                 if(data.attributes)
                     data.attributes = attr;
                 else

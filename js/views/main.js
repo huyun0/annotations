@@ -263,7 +263,11 @@ define(["order!jquery",
         
         // Try to create a new user
         try{
-            user = annotationsTool.users.create({user_extid: userId, nickname: userNickname.val()});
+
+            if(annotationsTool.localStorage)
+              user = annotationsTool.users.create({user_extid: userId, nickname: userNickname.val()});
+            else
+              user = annotationsTool.users.create({user_extid: userId, nickname: userNickname.val()},{wait:true});
             
             // Bind the error user to a function to display the errors
             user.bind('error',$.proxy(function(model,error){
