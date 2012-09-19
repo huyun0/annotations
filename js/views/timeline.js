@@ -597,8 +597,8 @@ define(["jquery",
            */
           onWindowResize: function(){
             this.timeline.redraw();
-              if(annotationsTool.selectedTrack)
-                this.onTrackSelected(null,annotationsTool.selectedTrack.id);
+            if(annotationsTool.selectedTrack)
+              this.onTrackSelected(null,annotationsTool.selectedTrack.id);
           },
           
           /* --------------------------------------

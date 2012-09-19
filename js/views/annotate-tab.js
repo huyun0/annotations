@@ -40,16 +40,10 @@ define(["jquery",
 
           idPrefix: "labelTab-",
 
-          /**
-           * Define if the view is or not in edit modus.
-           * @type {Boolean}
-           */
-          edit: false,
+          /** Define edit mode is on or not */
+          editModus: false,
 
-          /**
-           * List of categories view in this tab
-           * @type {Array}
-           */
+          /** List of categories view in this tab */
           categories: undefined,
 
            /** Tab template */
@@ -63,6 +57,7 @@ define(["jquery",
                                                       </div>\
                                                     </div>'),
 
+          /** Template for pagination link */
           paginationBulletTemplate: Handlebars.compile('<li><a href="#" class="page-link" title="{{frame}}" id="page-{{number}}">{{number}}</a></li>'),
 
           /** Element containing the "carousel" */
@@ -76,6 +71,9 @@ define(["jquery",
 
           /** Current container for categories group in the carousel */
           itemsCurrentContainer: undefined,
+
+          /** Element represeting the tab top link */
+          titleLink: undefined,
 
           /** Events to handle by the annotate view */
           events: {
@@ -101,7 +99,9 @@ define(["jquery",
               'moveCarouselToFrame',
               'moveCarouselPrevious',
               'moveCarouselNext',
-              'onCarouselSlid');
+              'onCarouselSlid',
+              'onSwitchEditModus',
+              'switchEditModus');
 
             this.categories = new Array();
 
@@ -128,6 +128,12 @@ define(["jquery",
 
             this.carouselPagination.find('.page-link:first').parent().addClass('active');
 
+            this.titleLink = attr.button;
+            this.titleLink.find('i.add').bind('click',$.proxy(function(){
+              this.addCategory(new Category({name: "NEW CATEGORY", settings: {color:"grey"}}));
+            },this));
+
+            $(annotationsTool.video).bind('switchEditModus',this.onSwitchEditModus);
 
             return this;
           },
@@ -219,7 +225,23 @@ define(["jquery",
             numberStr = numberStr.replace("item-","");
             this.carouselPagination.find('.page-link').parent().removeClass('active');
             this.carouselPagination.find('#page-'+numberStr).parent().addClass('active');
-          }
+          },
+
+          /**
+           * Listener for edit modus switch.
+           * @param {Event} event Event related to this action
+           */
+          onSwitchEditModus: function(event, status){
+            this.switchEditModus(status);
+          },
+
+          /**
+           *  Switch the edit modus to the given status.
+           * @param  {Boolean} status The current status
+           */
+          switchEditModus: function(status){
+            this.editModus = status;
+          },
 
         });
 

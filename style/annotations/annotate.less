@@ -6,7 +6,7 @@
 
 // Set of color for the whole annotate view
 @colorOne: #E3E3E3;
-@colorTwo: lighten(@colorOne,20%);
+@colorTwo: lighten(@colorOne,20%); 
 
 #annotate-form{
     
@@ -41,6 +41,11 @@
             margin-right: -4px;
         }
         
+    }
+
+    #editSwitch{
+        float: right;
+        margin-right: 20px;
     }
 }
 
@@ -126,6 +131,13 @@
     }
 }
 
+.edit{
+    visibility: hidden;
+}
+
+.edit-on .edit{
+    visibility: visible;
+}
 
 .notrack{
     color: red;

@@ -43,17 +43,21 @@ define(["jquery",
             "click #insert"                     : "insert",
             "keydown #new-annotation"           : "onFocusIn",
             "focusout #new-annotation"          : "onFocusOut",
-            "click #label-tabs-buttons a"       : "showTab"
+            "click #label-tabs-buttons a"       : "showTab",
+            "click #editSwitch"                 : "onSwitchEditModus"
           },
 
           /** Template for tabs button */
-          tabsButtonTemplate: Handlebars.compile('<li><a href="#labelTab-{{id}}">{{name}}</a></li>'),
+          tabsButtonTemplate: Handlebars.compile('<li><a href="#labelTab-{{id}}">{{name}} <i class="icon-plus add edit"></i></a></li>'),
 
           /** Element containing the tabs buttons */
           tabsButtonsElement: $('ul#label-tabs-buttons'),
 
           /** Element containing the tabs contents */
           tabsContainerElement: $('div#label-tabs-contents'),
+
+          /** Define edit mode is on or not */
+          editModus: false,
           
           /**
            * @constructor
@@ -61,7 +65,7 @@ define(["jquery",
           initialize: function(attr){
               
             // Set the current context for all these functions
-            _.bindAll(this,'insert','render','reset', 'onFocusIn','changeTrack','addTab');
+            _.bindAll(this,'insert','render','reset', 'onFocusIn','changeTrack','addTab','onSwitchEditModus', 'switchEditModus');
             
             // Parameter for stop on write
             this.continueVideo = false;
@@ -188,8 +192,30 @@ define(["jquery",
             };
 
             var newButton = this.tabsButtonTemplate(params);
-            this.tabsButtonsElement.append(newButton);
+            newButton = $(newButton).appendTo(this.tabsButtonsElement);
+            params.button = newButton;
             this.tabsContainerElement.append(new AnnotateTab(params).$el);
+          },
+
+          /**
+           * Listener for edit modus switch.
+           * @param {Event} event Event related to this action
+           */
+          onSwitchEditModus: function(event){
+            this.switchEditModus($(event.target).attr('checked') == "checked");
+          },
+
+          /**
+           *  Switch the edit modus to the given status.
+           * @param  {Boolean} status The current status
+           */
+          switchEditModus: function(status){
+            this.editModus = status;
+
+            this.$el.toggleClass('edit-on',status);
+
+            // trigger an event that all element switch in edit modus
+            $(annotationsTool.video).trigger("switchEditModus", status);
           },
           
           /**
