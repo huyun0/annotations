@@ -43,8 +43,11 @@ define(["jquery",
           /** Define edit mode is on or not */
           editModus: false,
 
-          /** List of categories view in this tab */
+          /** List of categories in this tab */
           categories: undefined,
+
+          /** List of category views in this tab */
+          categoryViews: undefined,
 
            /** Tab template */
           template: Handlebars.compile(Template),
@@ -94,6 +97,7 @@ define(["jquery",
             _.bindAll(this,
               'addCategories',
               'addCategory',
+              'onAddCategory',
               'addCarouselItem',
               'generateCategories',
               'moveCarouselToFrame',
@@ -103,7 +107,9 @@ define(["jquery",
               'onSwitchEditModus',
               'switchEditModus');
 
-            this.categories = new Array();
+            this.categories = new Categories();
+            
+            this.categoryViews = new Array();
 
             if(attr.edit)this.edit=true;
             
@@ -129,25 +135,47 @@ define(["jquery",
             this.carouselPagination.find('.page-link:first').parent().addClass('active');
 
             this.titleLink = attr.button;
-            this.titleLink.find('i.add').bind('click',$.proxy(function(){
-              this.addCategory(new Category({name: "NEW CATEGORY", settings: {color:"grey"}}));
-            },this));
+            this.titleLink.find('i.add').bind('click',this.onAddCategory);
+
+            this.categories.bind('add',this.addCategory);
 
             $(annotationsTool.video).bind('switchEditModus',this.onSwitchEditModus);
 
             return this;
           },
 
+          /**
+           * Add a list of category
+           * @param {Categories} categories list of categories
+           */
           addCategories: function(categories){
             categories.each(function(category,index){
                 this.addCategory(category);
             },this);
           },
 
-          addCategory: function(category){
-            var categoryView = new CategoryView({category:category});
+          /**
+           * [addCategory description]
+           * @param {[type]}  category [description]
+           * @param {Boolean} isNew    [description]
+           */
+          addCategory: function(category, isTemplate){
+            var newCategory = category;
 
-            this.categories.push(categoryView);
+            if(isTemplate) // category to add is a template
+              newCategory = this.categories.addCopyFromTemplate(category);
+            else if(!this.categories.get(category.get('id')))// Add this category if new
+              this.categories.add(newCategory,{silent:true});
+            
+            // Save new category
+            if(annotationsTool.localStorage)
+                annotationsTool.video.save();
+            else
+                newCategory.save();
+
+            var categoryView = new CategoryView({category: newCategory});
+
+            this.categoryViews.push(categoryView);
 
             // Create a new carousel if the current one is full
             if((this.categories.length % 3)==1)
@@ -156,6 +184,17 @@ define(["jquery",
             this.itemsCurrentContainer.append(categoryView.$el);
           },
 
+          /**
+           * Listener for category creation request from UI
+           * @param  {Event} event
+           */
+          onAddCategory: function(event){
+            this.addCategory(new Category({name: "NEW CATEGORY", settings: {color:"grey"}}));
+          },
+
+          /**
+           * Add a new carousel item to this tabe
+           */
           addCarouselItem: function(){
 
             var pageNumber = (this.categories.length - (this.categories.length % 3)) / 3;
@@ -204,6 +243,10 @@ define(["jquery",
             return categories;
           },
 
+          /**
+           * Move the carousel to item related to the event target
+           * @param  {Event} event 
+           */
           moveCarouselToFrame: function(event){
             var target = $(event.target);
             this.carouselElement.carousel(parseInt(target.attr('title')));
@@ -212,14 +255,25 @@ define(["jquery",
             target.parent().addClass('active');
           },
 
+          /**
+           * Move carousel to next element
+           */
           moveCarouselNext: function(){
             this.carouselElement.carousel('next');
           },
 
+
+          /**
+           * Move carousel to previous element
+           */
           moveCarouselPrevious: function(){
             this.carouselElement.carousel('prev');
           },
 
+          /**
+           * Listener for carousel slid event.
+           * @param  {Event} event
+           */
           onCarouselSlid: function(event){
             var numberStr = this.carouselElement.find('div.active').attr('id');
             numberStr = numberStr.replace("item-","");
