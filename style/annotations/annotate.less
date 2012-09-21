@@ -49,7 +49,7 @@
     }
 }
 
-#annotate-container{
+#annotate-container{ 
     .navbar{
         margin-bottom: 0px;
     }
@@ -65,10 +65,35 @@
 
         &.carousel{
             
-            .category-item{
+            .category-item{ 
                 height: 100%;
 
                 .catItem-header{
+
+                    input{
+                        width: 80px;
+                        border: none;
+                        margin: 0px;
+                        padding: 1px;
+                        font-size: 14px;
+                        border-radius: 4px;
+                        box-shadow: inset -1px 1px 3px black;
+                        font-weight: bold;
+                        
+                        &[disabled]{
+                            widows: 100px;
+                            box-shadow: none;
+                            text-shadow: 1px 1px 1px black;
+                            background: none;
+                            color: white;
+                            cursor: default;
+                        }
+                    }
+
+                    .colorPicker-picker{
+                        display: inline-block;
+                    }
+
                     padding: 5px;
                     font-size: 14px;
                     background-color: @colorOne;

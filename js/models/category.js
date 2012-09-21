@@ -56,13 +56,13 @@ define(["order!jquery",
                 attr.settings = this.parseSettings(attr.settings);
                 
                 if(attr.labels && _.isArray(attr.labels))
-                    this.set({'labels' : new Labels(attr.labels,this)});
-                else
-                    this.set({'labels' : new Labels([],this)});
+                    attr.labels = new Labels(attr.labels,this);
+                else if(!attr.labels)
+                    attr.labels = new Labels([],this);
                 
                 // If localStorage used, we have to save the video at each change on the children
                 if(window.annotationsTool.localStorage){
-                    this.attributes['labels'].bind('change',function(label){
+                    attr.labels.bind('change',function(label){
                             this.save();
                             this.trigger("change");
                     },this);
@@ -81,6 +81,9 @@ define(["order!jquery",
                 if(attr.category)
                     attr.category = this.parseSettings(attr.category.settings);
 
+                if(annotationsTool.localStorage && _.isArray(attr.labels))
+                    attr.labels = new Labels(attr.labels,this);
+
                 if(data.attributes)
                     data.attributes = attr;
                 else
@@ -97,6 +100,7 @@ define(["order!jquery",
                         this.setUrl();
                     }
                 }
+
                 
                 if(attr.description && !_.isString(attr.description))
                     return "'description' attribute must be a string";
@@ -132,13 +136,32 @@ define(["order!jquery",
                     if(!_.isNumber(attr.deleted_at))
                         return "'deleted_at' attribute must be a number!";
                 }
+
+            },
+
+            /**
+             * Change category color
+             * @param  {String} color the new color
+             */
+            setColor: function(color){
+                var settings = this.attributes.settings;
+                settings.color = color;
+
+                this.set('settings',settings);
+
+                if(this.attributes.labels){
+                    this.get('labels').each(function(value,index){
+                        value.set('category',this.toJSON());
+                    },this);
+                }
             },
             
             /**
              * Modify the current url for the annotations collection
              */
             setUrl: function(){
-                this.get("labels").setUrl(this);
+                if(this.get("labels"))
+                    this.get("labels").setUrl(this);
             },
 
             /**
@@ -150,7 +173,12 @@ define(["order!jquery",
              */
             toJSON: function(){
                 var json = $.proxy(Backbone.Model.prototype.toJSON,this)();
-                delete json.labels;
+                if(!annotationsTool.localStorage)
+                    delete json.labels;
+                else
+                    json.labels = json.labels.toJSON();
+
+
                 return json;
             },
 

@@ -174,13 +174,12 @@ define(["jquery",
             else if(!this.categories.get(category.get('id')))// Add this category if new
               this.categories.add(newCategory,{silent:true});
             
-            // Save new category
+            // Save new category    
+            newCategory.save();
             if(annotationsTool.localStorage)
                 annotationsTool.video.save();
-            else
-                newCategory.save();
 
-            var categoryView = new CategoryView({category: newCategory});
+            var categoryView = new CategoryView({category: newCategory, editModus: this.editModus});
 
             this.categoryViews.push(categoryView);
 
@@ -266,16 +265,16 @@ define(["jquery",
 
               _.each(labels,function(lb,idx){
                 lb.category = newCategory;
-                if(annotationsTool.localStorage){
+                if(annotationsTool.localStorage)
                   newLabels.create(lb);
-                  annotationsTool.video.save();
-                }
-                else{
+                else
                   newLabels.create(lb,{wait:true});
-                }
               },this);
 
               newCategory.set('labels',newLabels); 
+              newCategory.save();
+              if(annotationsTool.localStorage)
+                annotationsTool.video.save();
 
             },this);
 

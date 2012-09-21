@@ -19,6 +19,7 @@ define(["jquery",
          "views/annotate-label",
         "text!templates/annotate-category.tmpl",
         "libs/handlebars",
+        "libs/jquery.colorPicker.min",
         "backbone"],
        
     function($,_not, LabelView, Template){
@@ -40,7 +41,7 @@ define(["jquery",
           deleted: false,
 
           /** Define if the view is or not in edit modus. */
-          edit: false,
+          editModus: false,
 
           /** Array of labels view in this tab */
           labels: undefined,
@@ -53,7 +54,9 @@ define(["jquery",
 
           /** Events to handle by the annotate view */
           events: {
-            "click i.delete"        : "onDeleteCategory"
+            "click i.delete"                  : "onDeleteCategory",
+            "focusout .catItem-header input"  : "onFocusOut",
+            "keydown .catItem-header input"   : "onKeyDown"
           },
           
           /**
@@ -70,14 +73,19 @@ define(["jquery",
               'deleteView',
               'addLabels',
               'addLabel',
-              'render');
+              'render',
+              'switchEditModus',
+              'onSwitchEditModus',
+              'onFocusOut',
+              'onKeyDown',
+              'onColorChange');
 
             // Type use for delete operation
             this.typeForDelete = annotationsTool.deleteOperation.targetTypes.CATEGORY;
 
             this.labels = new Array();
 
-            if(attr.edit)this.edit=true;
+            if(attr.editModus)this.editModus = attr.editModus;
             
             this.el.id = this.idPrefix+attr.category.get('id');
 
@@ -87,9 +95,35 @@ define(["jquery",
 
             this.model.bind('change', this.render);
 
+
+            $(annotationsTool.video).bind('switchEditModus',this.onSwitchEditModus);
+
             this.render();
 
+            this.nameInput = this.$el.find(".catItem-header input");
+
             return this;
+          },
+
+          /**
+           * Listener for edit modus switch.
+           * @param {Event} event Event related to this action
+           */
+          onSwitchEditModus: function(event, status){
+            this.switchEditModus(status);
+          },
+
+          /**
+           *  Switch the edit modus to the given status.
+           * @param  {Boolean} status The current status
+           */
+          switchEditModus: function(status){
+            this.editModus = status;
+
+            if(status)
+              this.$el.find('input[disabled="disabled"]').removeAttr('disabled');
+            else
+              this.$el.find('input').attr('disabled','disabled');
           },
 
           /**
@@ -124,12 +158,48 @@ define(["jquery",
                 this.render();
           },
 
+          onFocusOut: function(){
+            console.log("out");
+            this.model.set('name',this.nameInput.val())
+
+            this.model.save();
+            if(annotationsTool.localStorage)
+              annotationsTool.video.save();
+          },
+
+          onKeyDown: function(e){
+            if(e.keyCode == 13){
+              console.log("enter");
+              this.model.set('name',this.nameInput.val())
+              
+              this.model.save();
+              if(annotationsTool.localStorage)
+                annotationsTool.video.save();
+            }
+          },
+
+          onColorChange: function(id, newValue){
+            this.model.setColor(newValue);
+            this.model.save();
+
+            if(annotationsTool.localStorage)
+              annotationsTool.video.save();
+          },
+
           render: function(){
-            this.$el.html(this.template(this.model.toJSON()));
+            var modelJSON = this.model.toJSON();
+            modelJSON.notEdit = !this.editModus;
+
+            this.$el.html(this.template(modelJSON));
 
             _.each(this.labels,function(view, index){
-                this.$el.append(view.$el);
+                this.$el.append(view.render().$el);
             },this);
+
+            this.nameInput = this.$el.find(".catItem-header input");
+
+            this.$el.find('.colorpicker').colorPicker({pickerDefault: this.model.attributes.settings.color.replace("#",""), onColorChange : this.onColorChange});
+            this.$el.find('.colorPicker-picker').addClass("edit");
             
             this.delegateEvents(this.events);
 

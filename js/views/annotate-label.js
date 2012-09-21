@@ -90,7 +90,7 @@ define(["jquery",
            * @return {LabelView} this label view
            */
           render: function(){
-            this.$el.append(this.template(this.model.toJSON()));
+            this.$el.html(this.template(this.model.toJSON()));
             this.delegateEvents(this.events);
             return this;
           },
