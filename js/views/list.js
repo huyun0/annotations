@@ -163,7 +163,7 @@ define(["jquery",
            * @param {Annotation} Annotation from which the view has to be deleted
            */
           removeOne: function(delAnnotation){
-            _.each(this.annotationViews,function(annotationView,index){
+            _.find(this.annotationViews,function(annotationView,index){
               if(delAnnotation === annotationView.model){
                 this.annotationViews.splice(index,1);
                 this.render();
@@ -200,6 +200,11 @@ define(["jquery",
            */
           reset: function(){
             this.$el.hide();
+
+            _.each(this.annotationViews,function(annView){
+                annView.undelegateEvents();
+            },this);
+
             delete this.annotationViews;
             delete this.tracks;
             this.undelegateEvents();

@@ -24,7 +24,7 @@ define(["jquery",
     function($, _not, Annotation, Template){
 
         /**
-         * @class category view for each item contained in annotate window
+         * @class Label view for each item contained in annotate window
          * 
          * @extends {Backbone.View}
          */

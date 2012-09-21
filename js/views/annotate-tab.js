@@ -98,6 +98,7 @@ define(["jquery",
               'addCategories',
               'addCategory',
               'onAddCategory',
+              'removeOne',
               'addCarouselItem',
               'generateCategories',
               'moveCarouselToFrame',
@@ -105,9 +106,11 @@ define(["jquery",
               'moveCarouselNext',
               'onCarouselSlid',
               'onSwitchEditModus',
-              'switchEditModus');
+              'switchEditModus',
+              'insertCategoryView',
+              'render');
 
-            this.categories = new Categories();
+            this.categories = attr.categories;
             
             this.categoryViews = new Array();
 
@@ -122,6 +125,8 @@ define(["jquery",
             this.carouselPagination = this.$('.pagination ul');
 
             this.categoriesContainer = this.carouselElement.find('.carousel-inner');
+
+            this.addCategories(this.categories);
 
             this.addCategories(this.generateCategories());
 
@@ -138,6 +143,8 @@ define(["jquery",
             this.titleLink.find('i.add').bind('click',this.onAddCategory);
 
             this.categories.bind('add',this.addCategory);
+            this.categories.bind('remove',this.removeOne);
+            this.categories.bind('destroy',this.removeOne);
 
             $(annotationsTool.video).bind('switchEditModus',this.onSwitchEditModus);
 
@@ -177,11 +184,7 @@ define(["jquery",
 
             this.categoryViews.push(categoryView);
 
-            // Create a new carousel if the current one is full
-            if((this.categories.length % 3)==1)
-              this.addCarouselItem();
-
-            this.itemsCurrentContainer.append(categoryView.$el);
+            this.insertCategoryView(categoryView);
           },
 
           /**
@@ -193,17 +196,46 @@ define(["jquery",
           },
 
           /**
+           * Remove the given category from the views list
+           *
+           * @param {Category} Category from which the view has to be deleted
+           */
+          removeOne: function(delCategory){
+            _.find(this.categoryViews,function(catView,index){
+              if(delCategory === catView.model){
+                this.categoryViews.splice(index,1);
+                this.render();
+                return;
+              }
+            },this);
+          },
+
+          /**
+           * Insert the given category in the carousel
+           * @param  {Category View} categoryView the view to insert
+           */
+          insertCategoryView: function(categoryView){
+            // Create a new carousel if the current one is full
+            if((this.categoriesContainer.find('div.category-item').length % 3)==0)
+              this.addCarouselItem();
+
+            this.itemsCurrentContainer.append(categoryView.render().$el);
+          },
+
+          /**
            * Add a new carousel item to this tabe
            */
           addCarouselItem: function(){
 
-            var pageNumber = (this.categories.length - (this.categories.length % 3)) / 3;
+            var length = this.categoriesContainer.find('div.category-item').length;
+
+            var pageNumber = (length - (length % 3)) / 3;
 
             this.categoriesContainer.append(this.itemContainerTemplate({number:(pageNumber+1)}));
 
             this.itemsCurrentContainer = this.categoriesContainer.find('div div div.row-fluid').last();
 
-            if(this.categories.length > 3)
+            if(length >= 3)
               this.carouselPagination.parent().css('display','block');
 
             this.carouselPagination.find('li:last').before(this.paginationBulletTemplate({number: (pageNumber+1), frame: pageNumber}));
@@ -214,10 +246,14 @@ define(["jquery",
            * @return {Categories} Category collection
            */
           generateCategories: function(){
-            var categories = annotationsTool.video.get('categories');
-            
-            if(categories.length != 0)
-                categories.remove(categories.models,{silent:true});
+            var categories = new Categories();
+
+            var findByName = function(cat){
+              return categoriesSet[0].name == cat.get('name');
+            }
+
+            if(this.categories.find(findByName))
+              return categories;
 
             _.each(categoriesSet, function(cat,index){
 
@@ -230,10 +266,13 @@ define(["jquery",
 
               _.each(labels,function(lb,idx){
                 lb.category = newCategory;
-                if(annotationsTool.localStorage)
+                if(annotationsTool.localStorage){
                   newLabels.create(lb);
-                else
+                  annotationsTool.video.save();
+                }
+                else{
                   newLabels.create(lb,{wait:true});
+                }
               },this);
 
               newCategory.set('labels',newLabels); 
@@ -295,6 +334,36 @@ define(["jquery",
            */
           switchEditModus: function(status){
             this.editModus = status;
+          },
+
+          /**
+           * Display the list
+           */
+          render: function(){
+            var currentId = this.categoriesContainer.find('div.item.active').attr('id');
+            var currentIndex = parseInt(currentId.replace("item-",""));
+            this.categoriesContainer.empty();
+            this.carouselPagination.find('li:not(:last,:first)').remove();
+            
+            _.each(this.categoryViews,function(catView){
+                this.insertCategoryView(catView);
+            },this);
+
+            if(this.categoriesContainer.find('#'+currentId).length == 0)
+              currentIndex --;
+
+            this.carouselElement
+                  .carousel({interval: false, pause: "hover out"})
+                  .bind('slid',this.onCarouselSlid)
+                  .carousel('pause');
+
+
+            this.carouselElement.carousel(parseInt(currentIndex));
+
+            this.categoriesContainer.find('#item-'+currentIndex).addClass("active");
+            this.carouselPagination.find('#page-'+currentIndex).parent().addClass("active");
+            
+            return this;
           },
 
         });

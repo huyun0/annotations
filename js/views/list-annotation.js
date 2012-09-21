@@ -141,7 +141,8 @@ define(["jquery",
            * Delete only this annotation view
            */
           deleteView: function(){
-            $(this.el).remove();
+            this.remove();
+            this.undelegateEvents();
             this.deleted = true;
           },
           

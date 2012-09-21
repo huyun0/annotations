@@ -36,16 +36,13 @@ define(["jquery",
 
           idPrefix: "catItem-",
 
-          /**
-           * Define if the view is or not in edit modus.
-           * @type {Boolean}
-           */
+          /** Define if the view has been or not deleted */
+          deleted: false,
+
+          /** Define if the view is or not in edit modus. */
           edit: false,
 
-          /**
-           * List of labels view in this tab
-           * @type {Array}
-           */
+          /** Array of labels view in this tab */
           labels: undefined,
 
            /** Tab template */
@@ -56,7 +53,7 @@ define(["jquery",
 
           /** Events to handle by the annotate view */
           events: {
- 
+            "click i.delete"        : "onDeleteCategory"
           },
           
           /**
@@ -69,9 +66,14 @@ define(["jquery",
               
             // Set the current context for all these functions
             _.bindAll(this,
+              'onDeleteCategory',
+              'deleteView',
               'addLabels',
               'addLabel',
               'render');
+
+            // Type use for delete operation
+            this.typeForDelete = annotationsTool.deleteOperation.targetTypes.CATEGORY;
 
             this.labels = new Array();
 
@@ -90,6 +92,23 @@ define(["jquery",
             return this;
           },
 
+          /**
+           * Listener for category deletion request from UI
+           * @param  {Event} event
+           */
+          onDeleteCategory: function(event){
+            annotationsTool.deleteOperation.start(this.model,this.typeForDelete, this.dele);
+          },   
+          
+          /**
+           * Delete only this category view
+           */
+          deleteView: function(){
+            this.remove();
+            this.undelegateEvents();
+            this.deleted = true;
+          },
+
           addLabels: function(labels){
             labels.each(function(label,index){
                 this.addLabel(label, false);
@@ -106,11 +125,13 @@ define(["jquery",
           },
 
           render: function(){
-            this.$el.append(this.template(this.model.toJSON()));
+            this.$el.html(this.template(this.model.toJSON()));
 
             _.each(this.labels,function(view, index){
                 this.$el.append(view.$el);
             },this);
+            
+            this.delegateEvents(this.events);
 
             return this;
           }

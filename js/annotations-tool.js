@@ -122,6 +122,53 @@ define(['order!jquery',
                                 }
                             })
                     }
+                },
+
+                CATEGORY: {
+                    name: "category",
+                    getContent: function(target){
+                        return target.get("name");
+                    },
+                    destroy: function(category,callback){
+                            var labels = category.get("labels");
+            
+                            /**
+                             * Recursive function to delete synchronously all labels
+                             */
+                            var destroyLabels = function(){
+                              // End state, no more label
+                              if(labels.length == 0)
+                                return;
+                              
+                              var label = labels.at(0);
+                              label.destroy({
+                                error: function(){
+                                  throw "Cannot delete label!";
+                                },
+                                success: function(){
+                                  labels.remove(label);
+                                  destroyLabels();
+                                }
+                              });
+                            };
+                            
+                            // Call the recursive function 
+                            destroyLabels();
+                            
+                            category.destroy({
+                                success: function(){
+                                    if(annotationsTool.localStorage)
+                                        annotationsTool.video.save();
+                                
+                                    if(callback)
+                                        callback();
+                                },
+                            
+                                error: function(error){
+                                    console.warn("Cannot delete category: "+error);
+                                }
+                            })
+                    }
                 }
             };
             

@@ -48,7 +48,7 @@ define(["jquery",
           },
 
           /** Template for tabs button */
-          tabsButtonTemplate: Handlebars.compile('<li><a href="#labelTab-{{id}}">{{name}} <i class="icon-plus add edit"></i></a></li>'),
+          tabsButtonTemplate: Handlebars.compile('<li><a href="#labelTab-{{id}}">{{name}} <i class="icon-plus-sign add edit"></i></a></li>'),
 
           /** Element containing the tabs buttons */
           tabsButtonsElement: $('ul#label-tabs-buttons'),
@@ -188,7 +188,7 @@ define(["jquery",
             var params = {
               id: id,
               name: name,
-              categories: []
+              categories: annotationsTool.video.get("categories")
             };
 
             var newButton = this.tabsButtonTemplate(params);
