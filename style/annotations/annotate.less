@@ -79,8 +79,10 @@
                         border-radius: 4px;
                         box-shadow: inset -1px 1px 3px black;
                         font-weight: bold;
+                        text-overflow: clip;  
                         
                         &[disabled]{
+                            text-overflow: ellipsis;
                             widows: 100px;
                             box-shadow: none;
                             text-shadow: 1px 1px 1px black;
@@ -88,6 +90,7 @@
                             color: white;
                             cursor: default;
                         }
+
                     }
 
                     .colorPicker-picker{
@@ -170,6 +173,11 @@
         background-color: white;
         border: 1px solid white;
         margin-left: 5px;
+
+        &:hover{
+            background-color: #CACACA; 
+            cursor: pointer;
+        }
     }
 }
 
