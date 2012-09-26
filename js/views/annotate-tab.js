@@ -17,6 +17,7 @@
 define(["jquery",
         "underscore",
         "models/category",
+        "models/label",
         "collections/categories",
         "collections/labels",
         "views/annotate-category",
@@ -25,7 +26,7 @@ define(["jquery",
         "libs/handlebars",
         "backbone"],
        
-    function($, _not, Category, Categories, Labels, CategoryView, Template, categoriesSet){
+    function($, _not, Category, Label, Categories, Labels, CategoryView, Template, categoriesSet){
 
         /**
          * @class Tab view containing categories/label
@@ -126,9 +127,14 @@ define(["jquery",
 
             this.categoriesContainer = this.carouselElement.find('.carousel-inner');
 
-            this.addCategories(this.categories);
+            this.addCategories(this.categories.models);
 
-            this.addCategories(this.generateCategories());
+            // Add default set of categories if nothing
+            if(this.categories.length == 0){
+              this.hasGeneratedValues = true;
+              this.addCategories(this.generateCategories());
+              this.hasGeneratedValues = false;
+            }
 
             this.categoriesContainer.find('.item:first-child').addClass("active");
             
@@ -156,7 +162,7 @@ define(["jquery",
            * @param {Categories} categories list of categories
            */
           addCategories: function(categories){
-            categories.each(function(category,index){
+            _.each(categories,function(category,index){
                 this.addCategory(category);
             },this);
           },
@@ -173,9 +179,19 @@ define(["jquery",
               newCategory = this.categories.addCopyFromTemplate(category);
             else if(!this.categories.get(category.get('id')))// Add this category if new
               this.categories.add(newCategory,{silent:true});
-            
+
             // Save new category    
             newCategory.save();
+            
+            // If categories have been generated
+            if(this.hasGeneratedValues){
+              var labels = newCategory.get('labels');
+              labels.setUrl(newCategory);
+              labels.each(function(label){
+                    label.save();
+              });  
+            };
+            
             if(annotationsTool.localStorage)
                 annotationsTool.video.save();
 
@@ -245,7 +261,7 @@ define(["jquery",
            * @return {Categories} Category collection
            */
           generateCategories: function(){
-            var categories = new Categories();
+            var categories = new Array();
 
             var findByName = function(cat){
               return categoriesSet[0].name == cat.get('name');
@@ -260,21 +276,17 @@ define(["jquery",
               
               delete cat.labels;
 
-              var newCategory = categories.create(cat);
-              var newLabels = new Labels([],newCategory);
+              var newCategory = new Category(cat);
+              var newLabels   = new Labels([],newCategory);
 
               _.each(labels,function(lb,idx){
                 lb.category = newCategory;
-                if(annotationsTool.localStorage)
-                  newLabels.create(lb);
-                else
-                  newLabels.create(lb,{wait:true});
+                newLabels.add(new Label(lb));
               },this);
 
-              newCategory.set('labels',newLabels); 
-              newCategory.save();
-              if(annotationsTool.localStorage)
-                annotationsTool.video.save();
+              newCategory.set('labels',newLabels);
+
+              categories.push(newCategory);
 
             },this);
 

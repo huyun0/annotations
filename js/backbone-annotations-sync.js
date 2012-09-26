@@ -97,11 +97,18 @@ define(["jquery",
                               dataType: "json",
                               data: JSON.parse(JSON.stringify(resource)),
                               beforeSend: self.setHeaderParams,
-                              success: function(data, textStatus, XMLHttpRequest){
+                              success: function(data, textStatus, xmlHttpRequest){
+
                                    resource.toCreate = false;
+                                   resource.set(data);
+
                                    if(resource.setUrl)
                                         resource.setUrl();
-                                   options.success(data, textStatus, XMLHttpRequest);
+
+                                   if(resource.collection && options.wait)
+                                      resource.collection.add(resource);
+
+                                   options.success(data, textStatus, xmlHttpRequest);
                               },
                               
                               error: self.setError
@@ -123,18 +130,18 @@ define(["jquery",
                               dataType: "json",
                               data: JSON.parse(JSON.stringify(resource)),
                               beforeSend: self.setHeaderParams,
-                              success: function(data, textStatus, XMLHttpRequest){
+                              success: function(data, textStatus, xmlHttpRequest){
                                    resource.toCreate = false;
                                    if(resource.setUrl)
                                         resource.setUrl();
                                    
                                    resource.unset("copyUrl");
-                                   options.success(data, textStatus, XMLHttpRequest);
+                                   options.success(data, textStatus, xmlHttpRequest);
                               },
                               
                               error: self.setError
                     });
-               }
+               };
                
                /**
                 * Find the given resource 
@@ -148,7 +155,7 @@ define(["jquery",
                               url: self.getURI(resource, true),
                               dataType: "json",
                               beforeSend: self.setHeaderParams,
-                              success: function(data, textStatus, XMLHttpRequest){
+                              success: function(data, textStatus, xmlHttpRequest){
                                    options.success(data);
                               },
                               
@@ -168,8 +175,11 @@ define(["jquery",
                               url: self.getURI(resource, false),
                               dataType: "json",
                               beforeSend: self.setHeaderParams,
-                              success: function(data, textStatus, XMLHttpRequest){
-                                   options.success(data, textStatus, XMLHttpRequest);
+                              success: function(data, textStatus, xmlHttpRequest){
+
+
+
+                                   options.success(data, textStatus, xmlHttpRequest);
                               },
                               
                               error: self.setError
@@ -189,11 +199,11 @@ define(["jquery",
                               url: self.getURI(resource, (!resource.toCreate && !resource.noPOST)),
                               data: JSON.parse(JSON.stringify(resource)),
                               beforeSend: self.setHeaderParams,
-                              success: function(data, textStatus, XMLHttpRequest){
+                              success: function(data, textStatus, xmlHttpRequest){
                                    resource.toCreate = false;
                                    if(resource.setUrl)
                                         resource.setUrl();
-                                   options.success(data, textStatus, XMLHttpRequest);
+                                   options.success(data, textStatus, xmlHttpRequest);
                               },
                               
                               error: self.setError
@@ -213,11 +223,11 @@ define(["jquery",
                               url: self.getURI(resource, true),
                               dataType: "json",
                               beforeSend: self.setHeaderParams,
-                              success: function(data, textStatus, XMLHttpRequest){
-                                   if(XMLHttpRequest.status == 204)
+                              success: function(data, textStatus, xmlHttpRequest){
+                                   if(xmlHttpRequest.status == 204)
                                         options.success(resource); 
                                    else
-                                        options.error("Waiting for status code 204 but got: "+XMLHttpRequest.status);
+                                        options.error("Waiting for status code 204 but got: "+xmlHttpRequest.status);
                               },
                               error: self.setError
                     });

@@ -61,6 +61,9 @@ define(["jquery",
                     this.set({categories: new Categories(attr.categories,this)});
                 else
                     this.set({categories: new Categories([],this)});
+
+                if(attr.id)
+                    this.get("categories").fetch({async:false});
                 
                 // If localStorage used, we have to save the video at each change on the children
                 if(window.annotationsTool.localStorage){
@@ -95,7 +98,10 @@ define(["jquery",
                 if(attr.id){
                     if(this.get('id') != attr.id){
                         this.id = attr.id;
+                        this.attributes['id'] = attr.id;
                         this.setUrl();
+
+                        this.get("categories").fetch({async:false});
                     }
                 }
                 

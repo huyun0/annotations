@@ -56,16 +56,21 @@ define(["order!jquery",
                 attr.settings = this.parseSettings(attr.settings);
                 
                 if(attr.labels && _.isArray(attr.labels))
-                    attr.labels = new Labels(attr.labels,this);
+                    this.set('labels',new Labels(attr.labels,this));
                 else if(!attr.labels)
-                    attr.labels = new Labels([],this);
+                    this.set('labels',new Labels([],this));
+
+                if(attr.id && !annotationsTool.localStorage)
+                    this.get("labels").fetch({async:false});
                 
                 // If localStorage used, we have to save the video at each change on the children
                 if(window.annotationsTool.localStorage){
-                    attr.labels.bind('change',function(label){
+                    var saveChange = function(label){
                             this.save();
                             this.trigger("change");
-                    },this);
+                    }
+                    this.attributes.labels.bind('change',saveChange,this);
+                    this.attributes.labels.bind('remove',saveChange,this);
                 }
                 
                 this.set(attr);
@@ -98,6 +103,9 @@ define(["order!jquery",
                     if(this.get('id') != attr.id){
                         this.id = attr.id;
                         this.setUrl();
+
+                        if(!annotationsTool.localStorage)
+                            this.get("labels").fetch({async:false});
                     }
                 }
 

@@ -188,7 +188,7 @@ define(["jquery",
             /// Function to add one annotation in the timeline
             var addOneAnnotation = function(annotation){
 
-              if(this.ignoreAdd == annotation.get("id"))
+              if(annotation.get("oldId") && this.ignoreAdd == annotation.get("oldId"))
                 return;
               
               // If annotation has not id, we save it to have an id
@@ -423,19 +423,20 @@ define(["jquery",
             if(values.newTrack.id != values.oldTrack.id){
 
               this.ignoreAdd = values.annotation.get("id");
-              this.ignoreDelete = values.annotation.get("id");
+              this.ignoreDelete = this.ignoreAdd;
 
               var annJSON = values.annotation.toJSON();
               delete annJSON.id;
+              annJSON.oldId = this.ignoreAdd;
 
               var options = {}
               if(!annotationsTool.localStorage)
                 options.wait = true;
 
-              values.annotation.destroy(options);
-              values.newTrack.get('annotations').create(annJSON,options);
+              values.annotation.destroy();
+              var newAnnotation = values.newTrack.get('annotations').create(annJSON,options);
 
-              annJSON.id = values.annotation.id;
+              annJSON.id = newAnnotation.get('id');
               annJSON.track = values.newTrack.id;
               annJSON.top = this.getTopForStacking(values.annotation)+"px";
               if(annJSON.label && annJSON.label.category && annJSON.label.category.settings)

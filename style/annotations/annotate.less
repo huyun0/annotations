@@ -8,6 +8,10 @@
 @colorOne: #E3E3E3;
 @colorTwo: lighten(@colorOne,20%); 
 
+.edit{
+    visibility: hidden;
+}
+
 #annotate-form{
     
     padding: 5px;
@@ -83,14 +87,12 @@
                         
                         &[disabled]{
                             text-overflow: ellipsis;
-                            widows: 100px;
                             box-shadow: none;
                             text-shadow: 1px 1px 1px black;
                             background: none;
                             color: white;
                             cursor: default;
                         }
-
                     }
 
                     .colorPicker-picker{
@@ -106,6 +108,7 @@
                     color: white;
                 }
 
+
                 .label-item{
                     @labelPadding: 3px;
                     padding: @labelPadding;
@@ -113,15 +116,46 @@
                     margin-top: 2px;
                     height: 16px;
 
+                    &:nth-child(even){
+                        background-color: @colorTwo;
+                    }
+
+                    &:nth-child(odd){
+                        background-color: darken(@colorTwo,10%);
+                    }
+
                     .item-abbreviation{
                         float:left;
-                        padding: @labelPadding;
                         font-weight: bold;
+                        margin: 0px;
+                        width: 20px;
+                        padding: 1px;
+
+                        &[disabled]{
+                            text-overflow: ellipsis;
+                            box-shadow: none;
+                            background: none;
+                            cursor: default;
+                            border: none;
+                        }
                     }
 
                     .item-value{
                         float:left;
                         padding: @labelPadding;
+                        display: inline-block;
+                        padding: 1px;
+                        width: 80px;
+                        margin: 0px;
+                        margin-left: 4px;
+
+                        &[disabled]{
+                            text-overflow: ellipsis;
+                            box-shadow: none;
+                            background: none;
+                            cursor: default;
+                            border: none;
+                        }
                     }
 
                     .item-icon{
@@ -132,18 +166,23 @@
                         border-radius: 0px 0px 4px 4px;
                     }
 
+
                     &:hover{
                         cursor: pointer;
-                        background-color: darkGray;
                         color: white;
                         .box-shadow(0px,0px,4px,darken(@colorOne,30%));
-                        .inset-box-shadow(0px,0px,4px,darken(@colorOne,50%));
+                        .inset-box-shadow(0px,0px,10px,darken(@colorOne,50%));
                     }
+
+                }
+
+                .catItem-labels{
+                    max-height: 150px;
+                    overflow: auto;
                 }
             }
 
             height: 200px;
-            overflow: scroll;
 
         }
 
@@ -157,29 +196,68 @@
         }
 
     }
-}
 
-.edit{
-    visibility: hidden;
-}
+    &.edit-on{
 
-.edit-on{
-    .edit{
-        visibility: visible;
-    }
+        #label-tabs-contents div.carousel .category-item{ 
 
-    i.edit{ 
-        border-radius: 2px;
-        background-color: white;
-        border: 1px solid white;
-        margin-left: 5px;
+            .catItem-add{
+                margin-top: 2px;
+                padding: 5px;
+                text-align: left;
+                border-radius: 4px 4px;
+                display: block;
+                border-radius: 0px 0px 4px 4px;
 
-        &:hover{
-            background-color: #CACACA; 
-            cursor: pointer;
+                i{
+                    margin-right: 3px;
+                }
+
+                &:hover{
+                    cursor: pointer;
+                    //background-color: @colorTwo;
+                }
+            }
+
+            .label-item{
+                height: 22px;
+
+                &:hover{
+                    cursor: default;
+                    background-color: @colorTwo;
+                }
+
+                &:last-child{
+                    border-radius: 0px;
+                }   
+            }                     
         }
+
+        .edit{
+            visibility: visible;
+        }
+
+        i.edit{ 
+            border-radius: 2px;
+            background-color: white;
+            border: 1px solid white;
+            margin-left: 5px;
+            float: right;
+
+            &:hover{
+                background-color: #CACACA; 
+                cursor: pointer;
+            }
+        }
+
+        .nav i.edit{
+            float: none;
+        }
+
     }
 }
+
+
 
 .notrack{
     color: red;

@@ -54,9 +54,10 @@ define(["jquery",
 
           /** Events to handle by the annotate view */
           events: {
-            "click i.delete"                  : "onDeleteCategory",
-            "focusout .catItem-header input"  : "onFocusOut",
-            "keydown .catItem-header input"   : "onKeyDown"
+            "click .catItem-header i.delete"   : "onDeleteCategory",
+            "focusout .catItem-header input"   : "onFocusOut",
+            "keydown .catItem-header input"    : "onKeyDown",
+            "click   .catItem-add"             : "onCreateLabel",
           },
           
           /**
@@ -78,12 +79,14 @@ define(["jquery",
               'onSwitchEditModus',
               'onFocusOut',
               'onKeyDown',
-              'onColorChange');
+              'onColorChange',
+              'removeOne',
+              'onCreateLabel');
 
             // Type use for delete operation
             this.typeForDelete = annotationsTool.deleteOperation.targetTypes.CATEGORY;
 
-            this.labels = new Array();
+            this.labelViews = new Array();
 
             if(attr.editModus)this.editModus = attr.editModus;
             
@@ -95,6 +98,10 @@ define(["jquery",
 
             this.model.bind('change', this.render);
 
+            var labels = this.model.get("labels")
+            labels.bind('add',this.addCategory);
+            labels.bind('remove',this.removeOne);
+            labels.bind('destroy',this.removeOne);
 
             $(annotationsTool.video).bind('switchEditModus',this.onSwitchEditModus);
 
@@ -131,7 +138,7 @@ define(["jquery",
            * @param  {Event} event
            */
           onDeleteCategory: function(event){
-            annotationsTool.deleteOperation.start(this.model,this.typeForDelete, this.dele);
+            annotationsTool.deleteOperation.start(this.model,this.typeForDelete);
           },   
           
           /**
@@ -150,16 +157,46 @@ define(["jquery",
           },
 
           addLabel: function(label, single){
-            var labelView = new LabelView({label:label});
-            this.labels.push(labelView);
+            var labelView = new LabelView({label:label,editModus:this.editModus});
+            this.labelViews.push(labelView);
 
             // If unique label added, we redraw all the category view
             if(single)
                 this.render();
           },
 
+          onCreateLabel: function(){
+            var label = this.model.get("labels").create({value: "New label", 
+                                                         abbreviation: "LB",
+                                                         category: this.model});
+            this.model.save();
+
+            if(annotationsTool.localStorage)
+              annotationsTool.video.save();
+
+            this.addLabel(label,true);
+          },
+
+          /**
+           * Remove the given category from the views list
+           *
+           * @param {Category} Category from which the view has to be deleted
+           */
+          removeOne: function(delLabel){
+            _.find(this.labelViews,function(catView,index){
+              if(delLabel === catView.model){
+                this.labelViews.splice(index,1);
+                this.render();
+                return;
+              }
+            },this);
+          },
+
+          /**
+           * Listener for focus out event on name field
+           */
           onFocusOut: function(){
-            console.log("out");
+
             this.model.set('name',this.nameInput.val())
 
             this.model.save();
@@ -167,9 +204,12 @@ define(["jquery",
               annotationsTool.video.save();
           },
 
+          /**
+           * Listener for key down event on name field
+           */
           onKeyDown: function(e){
-            if(e.keyCode == 13){
-              console.log("enter");
+            if(e.keyCode == 13){ // If "return" key
+
               this.model.set('name',this.nameInput.val())
               
               this.model.save();
@@ -192,8 +232,8 @@ define(["jquery",
 
             this.$el.html(this.template(modelJSON));
 
-            _.each(this.labels,function(view, index){
-                this.$el.append(view.render().$el);
+            _.each(this.labelViews,function(view, index){
+                this.$el.find('.catItem-labels').append(view.render().$el);
             },this);
 
             this.nameInput = this.$el.find(".catItem-header input");

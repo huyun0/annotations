@@ -1,7 +1,9 @@
 <div class="catItem-header" {{#if settings}}style="background-color:{{settings.color}}"{{/if}}>
-    <input type="text" value="{{name}}" {{#if notEdit}}disabled='disabled'{{/if}}}/> 
+    <input type="text" value="{{name}}" {{#if notEdit}}disabled='disabled'{{/if}}/> 
     <i class="icon-trash delete edit"></i>
     <div class="colorpicker">
         <input id="color-{{name}}" type="text" class="colorpicker edit" value="{{#if settings}}{{settings.color}}{{/if}}" /></div>
     </div>
 </div>
+<div class="catItem-labels"></div>
+<div class="catItem-add edit"><i class="icon-plus-sign"></i>Create a label</div>

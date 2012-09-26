@@ -41,7 +41,7 @@ define(["order!jquery",
             
             parse: function(resp, xhr) {
               if(resp.categories && _.isArray(resp.categories))
-                return resp.annotations;
+                return resp.categories;
               else if(_.isArray(resp))
                 return resp;
               else

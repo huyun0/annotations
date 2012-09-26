@@ -76,6 +76,35 @@ define(['order!jquery',
                             
                     }
                 },
+
+                LABEL: {
+                    name: "label",
+                    getContent: function(target){
+                        return target.get("value");
+                    },
+                    destroy: function(target,callback){
+
+                        target.destroy({
+                            
+                            success: function(){
+                                if(annotationsTool.localStorage){
+                                    if(target.collection)
+                                      target.collection.remove(target);
+
+                                    annotationsTool.video.save();
+                                }
+                                
+                                if(callback)
+                                    callback();
+                            },
+                            
+                            error: function(error){
+                                console.warn("Cannot delete label: "+error);
+                            }
+                        });
+                            
+                    }
+                },
                 
                 TRACK: {
                     name: "track",
