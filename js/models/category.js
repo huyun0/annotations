@@ -104,7 +104,7 @@ define(["order!jquery",
                         this.id = attr.id;
                         this.setUrl();
 
-                        if(!annotationsTool.localStorage)
+                        if((this.get("labels").length) == 0 && !annotationsTool.localStorage)
                             this.get("labels").fetch({async:false});
                     }
                 }
@@ -145,6 +145,12 @@ define(["order!jquery",
                         return "'deleted_at' attribute must be a number!";
                 }
 
+                if(this.attributes.labels){
+                    this.get('labels').each(function(value,index){
+                        value.set(value.parse({category: this.toJSON()}));
+                    },this);
+                }
+
             },
 
             /**
@@ -156,12 +162,6 @@ define(["order!jquery",
                 settings.color = color;
 
                 this.set('settings',settings);
-
-                if(this.attributes.labels){
-                    this.get('labels').each(function(value,index){
-                        value.set('category',this.toJSON());
-                    },this);
-                }
             },
             
             /**
