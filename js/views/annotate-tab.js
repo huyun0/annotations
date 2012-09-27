@@ -182,7 +182,7 @@ define(["jquery",
 
             // Save new category    
             newCategory.save();
-            
+
             // If categories have been generated
             if(this.hasGeneratedValues){
               var labels = newCategory.get('labels');
@@ -230,11 +230,16 @@ define(["jquery",
            * @param  {Category View} categoryView the view to insert
            */
           insertCategoryView: function(categoryView){
+            var itemsLength = this.categoriesContainer.find('div.category-item').length;
+
             // Create a new carousel if the current one is full
-            if((this.categoriesContainer.find('div.category-item').length % 3)==0)
+            if((itemsLength % 3)==0)
               this.addCarouselItem();
 
             this.itemsCurrentContainer.append(categoryView.render().$el);
+
+            // Move the carousel to the container of the new item
+            this.carouselElement.carousel(parseInt(itemsLength/3)).carousel('pause');
           },
 
           /**
