@@ -62,8 +62,10 @@ define(["jquery",
                 else
                     this.set({categories: new Categories([],this)});
 
-                if(attr.id)
+                if(attr.id){
                     this.get("categories").fetch({async:false});
+                    this.get("tracks").fetch({async:false});
+                }
                 
                 // If localStorage used, we have to save the video at each change on the children
                 if(window.annotationsTool.localStorage){
@@ -74,7 +76,6 @@ define(["jquery",
                 
                 // Define that all post operation have to been done through PUT method
                 this.noPOST = true;
-                
             },
             
             parse: function(data) {
@@ -101,8 +102,13 @@ define(["jquery",
                         this.attributes.id = attr.id;
                         this.setUrl();
 
-                        this.get("categories").fetch({async:false});
-                        this.get("tracks").fetch({async:false});
+                        var categories = this.get("categories");
+                        var tracks = this.get("tracks");
+
+                        if((categories.length) == 0)
+                            categories.fetch({async:false});
+                        if((tracks.length) == 0)
+                            tracks.fetch({async:false});
                     }
                 }
                 

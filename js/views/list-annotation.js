@@ -63,7 +63,9 @@ define(["jquery",
         Handlebars.registerHelper('nickname', function(user) {
             if(user instanceof User)
                 return user.get("nickname");
-            else if(!_.isObject(user))
+            else if(!_.isObject(user)){
+              if(user.get)
+            }
                 return window.annotationsTool.users.get(user).get("nickname");
             else
                 return user.nickname;

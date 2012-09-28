@@ -66,6 +66,9 @@ define(["order!jquery",
                 }
                 
                 delete attr.annotations;
+
+                if(attr.id)
+                    this.get("annotations").fetch({async:false});
                 
                 // Add backbone events to the model 
                 _.extend(this, Backbone.Events);
@@ -98,7 +101,11 @@ define(["order!jquery",
                         this.toCreate = false;
                         this.setUrl();
                         this.trigger('ready',this);
-                        this.get("annotations").fetch({async:false});
+
+                        var annotations = this.get("annotations");
+
+                        if((annotations.length) == 0)
+                            annotations.fetch({async:false});
                     }
                 }
                 

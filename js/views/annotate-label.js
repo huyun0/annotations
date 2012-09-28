@@ -154,11 +154,8 @@ define(["jquery",
            */
           onFocusOut: function(e){
             var attributeName = e.target.className.replace("item-","");
-            this.model.set(attributeName,e.target.value);
-
+            this.model.set(attributeName,_.escape(e.target.value));
             this.model.save();
-            if(annotationsTool.localStorage)
-              annotationsTool.video.save();
           },
 
           /**
@@ -167,11 +164,8 @@ define(["jquery",
           onKeyDown: function(e){
             if(e.keyCode == 13){ // If "return" key
               var attributeName = e.target.className.replace("item-","");
-              this.model.set(attributeName,e.target.value);
-              
+              this.model.set(attributeName,_.escape(e.target.value));
               this.model.save();
-              if(annotationsTool.localStorage)
-                annotationsTool.video.save();
             }
           },
 

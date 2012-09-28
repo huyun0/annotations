@@ -99,7 +99,7 @@ define(["jquery",
            * Insert a new annotation
            */
           insert: function(){
-            var value = this.input.val();
+            var value = _.escape(this.input.val());
             this.input.val('');
             var time = this.playerAdapter.getCurrentTime();
             

@@ -196,12 +196,8 @@ define(["jquery",
            * Listener for focus out event on name field
            */
           onFocusOut: function(){
-
-            this.model.set('name',this.nameInput.val())
-
+            this.model.set('name',_.escape(this.nameInput.val()))
             this.model.save();
-            if(annotationsTool.localStorage)
-              annotationsTool.video.save();
           },
 
           /**
@@ -209,21 +205,14 @@ define(["jquery",
            */
           onKeyDown: function(e){
             if(e.keyCode == 13){ // If "return" key
-
-              this.model.set('name',this.nameInput.val())
-              
+              this.model.set('name',_.escape(this.nameInput.val()))
               this.model.save();
-              if(annotationsTool.localStorage)
-                annotationsTool.video.save();
             }
           },
 
           onColorChange: function(id, newValue){
             this.model.setColor(newValue);
             this.model.save();
-
-            if(annotationsTool.localStorage)
-              annotationsTool.video.save();
           },
 
           render: function(){

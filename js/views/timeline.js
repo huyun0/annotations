@@ -278,8 +278,6 @@ define(["jquery",
             else
               var track = this.tracks.create(param,{wait:true});
             
-            track.save();
-            annotationsTool.video.save();
             
             // If no track selected, we use the new one
             if(!annotationsTool.selectedTrack)
@@ -313,8 +311,8 @@ define(["jquery",
                     }
                     
                     self.addTrack({
-                      name: self.groupModal.find('#name')[0].value,
-                      description: self.groupModal.find('#description')[0].value
+                      name: _.escape(self.groupModal.find('#name')[0].value),
+                      description: _.escape(self.groupModal.find('#description')[0].value)
                     },this)
                     
                     self.groupModal.modal("toggle");

@@ -41,7 +41,12 @@ define(["order!jquery",
             },
             
             parse: function(resp, xhr) {
-              return resp.tracks;
+                if(resp.tracks && _.isArray(resp.tracks))
+                    return resp.tracks;
+                else if(_.isArray(resp))
+                    return resp;
+                else
+                    return null;
             },
             
             /**
@@ -57,7 +62,6 @@ define(["order!jquery",
 
                 if(annotationsTool.localStorage)
                     this.localStorage = new Backbone.LocalStorage(this.url);
-
 
                 this.each(function(track){
                     track.setUrl();
