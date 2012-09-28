@@ -55,13 +55,20 @@ define(["order!jquery",
 
                 attr.settings = this.parseSettings(attr.settings);
                 
-                if(attr.labels && _.isArray(attr.labels))
-                    this.set('labels',new Labels(attr.labels,this));
-                else if(!attr.labels)
-                    this.set('labels',new Labels([],this));
+                if(attr.labels && _.isArray(attr.labels)){
+                    this.attributes.labels  = new Labels(attr.labels,this);
+                    delete attr.labels;
+                }
+                else if(!attr.labels){
+                    this.attributes.labels  = new Labels([],this);
+                }
+                else{
+                    this.attributes.labels = attr.labels;
+                    delete attr.labels;
+                }
 
-                if(attr.id && !annotationsTool.localStorage)
-                    this.get("labels").fetch({async:false});
+                if(attr.id)
+                    this.attributes.labels.fetch({async:false});
                 
                 // If localStorage used, we have to save the video at each change on the children
                 if(window.annotationsTool.localStorage){
@@ -72,6 +79,8 @@ define(["order!jquery",
                     this.attributes.labels.bind('change',saveChange,this);
                     this.attributes.labels.bind('remove',saveChange,this);
                 }
+
+
                 
                 this.set(attr);
             },
@@ -104,7 +113,7 @@ define(["order!jquery",
                         this.id = attr.id;
                         this.setUrl();
 
-                        if((this.get("labels").length) == 0 && !annotationsTool.localStorage)
+                        if((this.get("labels").length) == 0)
                             this.get("labels").fetch({async:false});
                     }
                 }
@@ -147,7 +156,12 @@ define(["order!jquery",
 
                 if(this.attributes.labels){
                     this.get('labels').each(function(value,index){
-                        value.set(value.parse({category: this.toJSON()}));
+                        var parseValue = value.parse({category: this.toJSON()});
+                        
+                        if(parseValue.category)
+                            parseValue = parseValue.category;
+
+                        value.attributes.category = parseValue;
                     },this);
                 }
 
@@ -180,12 +194,8 @@ define(["order!jquery",
              * @return {JSON} JSON representation of the instane
              */
             toJSON: function(){
-                var json = $.proxy(Backbone.Model.prototype.toJSON,this)();
-                if(!annotationsTool.localStorage)
-                    delete json.labels;
-                else
-                    json.labels = json.labels.toJSON();
-
+                var json = Backbone.Model.prototype.toJSON.call(this);
+                delete json.labels;
 
                 return json;
             },
@@ -204,7 +214,8 @@ define(["order!jquery",
 
             save: function(){
                 this.attributes.settings = JSON.stringify(this.attributes.settings);
-                $.proxy(Backbone.Model.prototype.save,this)();
+
+                Backbone.Model.prototype.save.call(this);
             }
 
         });

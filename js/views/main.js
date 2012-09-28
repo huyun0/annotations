@@ -384,7 +384,6 @@ define(["order!jquery",
             
           video = videos.at(0);
           annotationsTool.video = video;
-          video.save();
 
           tracks = video.get("tracks");
           

@@ -60,6 +60,9 @@ define(["order!jquery",
                 else if(category.collection){
                     this.url = category.url() + "/labels";  
                 }
+
+                if(annotationsTool.localStorage)
+                      this.localStorage = new Backbone.LocalStorage(this.url);
             }
         });
         

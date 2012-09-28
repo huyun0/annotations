@@ -174,6 +174,9 @@ define(["order!jquery",
                 var json = $.proxy(Backbone.Model.prototype.toJSON,this)();
                 if(json.label && json.label.toJSON)
                     json.label = json.label.toJSON();
+
+                delete json.annotations;
+
                 return json;
             }
         });

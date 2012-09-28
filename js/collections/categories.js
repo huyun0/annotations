@@ -62,6 +62,9 @@ define(["order!jquery",
                     this.url = video.url() + "/categories";
                     this.isTemplate = false;
                 }
+
+                if(annotationsTool.localStorage)
+                      this.localStorage = new Backbone.LocalStorage(this.url);
                 
                 this.each(function(category){
                     category.setUrl();

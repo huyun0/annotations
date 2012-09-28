@@ -98,10 +98,11 @@ define(["jquery",
                 if(attr.id){
                     if(this.get('id') != attr.id){
                         this.id = attr.id;
-                        this.attributes['id'] = attr.id;
+                        this.attributes.id = attr.id;
                         this.setUrl();
 
                         this.get("categories").fetch({async:false});
+                        this.get("tracks").fetch({async:false});
                     }
                 }
                 
@@ -153,7 +154,29 @@ define(["jquery",
                     settings = JSON.parse(settings);
 
                 return settings;
-            }    
+            },
+
+            /**
+             * @override
+             * 
+             * Override the default toJSON function to ensure complete JSONing.
+             *
+             * @return {JSON} JSON representation of the instane
+             */
+            toJSON: function(){
+                var json = $.proxy(Backbone.Model.prototype.toJSON,this)();
+                delete json.tracks;
+                delete json.categories;
+
+                return json;
+            },    
+
+
+            save: function(){
+                this.attributes.settings = JSON.stringify(this.attributes.settings);
+
+                Backbone.Model.prototype.save.call(this);
+            }
         });
         
         return Video;

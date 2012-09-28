@@ -449,12 +449,6 @@ define(["jquery",
                   group: newItem.group
               });
             }
-              
-            if(annotationsTool.localStorage){
-              values.newTrack.save();
-              values.oldTrack.save();
-              annotationsTool.video.save();
-            }
 
             this.timeline.redraw();
             if(this.hasToPlay)

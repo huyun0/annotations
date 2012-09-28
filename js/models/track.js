@@ -98,6 +98,7 @@ define(["order!jquery",
                         this.toCreate = false;
                         this.setUrl();
                         this.trigger('ready',this);
+                        this.get("annotations").fetch({async:false});
                     }
                 }
                 
@@ -133,6 +134,20 @@ define(["order!jquery",
              */
             setUrl: function(){
                 this.get("annotations").setUrl(this);
+            },
+
+            /**
+             * @override
+             * 
+             * Override the default toJSON function to ensure complete JSONing.
+             *
+             * @return {JSON} JSON representation of the instane
+             */
+            toJSON: function(){
+                var json = Backbone.Model.prototype.toJSON.call(this);
+                delete json.annotations;
+
+                return json;
             },
 
             /**

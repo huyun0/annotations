@@ -106,6 +106,7 @@ define(["jquery",
             if(!value || (!_.isNumber(time) || time < 0))
               return;
             
+            var options = {};
             var params = {
               text:value, 
               start:time
@@ -114,14 +115,11 @@ define(["jquery",
             if(annotationsTool.user)
               params.created_by = annotationsTool.user.id;
 
-            if(annotationsTool.localStorage){
-              var annotation = new Annotation(params);
-              annotationsTool.selectedTrack.get("annotations").add(annotation);
-              annotationsTool.video.save({silent:true});              
-            }
-            else{
-              annotationsTool.selectedTrack.get("annotations").create(params,{wait:true});
-            }
+            if(!annotationsTool.localStorage)
+              options.wait = true;
+
+            annotationsTool.selectedTrack.get("annotations").create(params,options);
+
             
             if(this.continueVideo)
               this.playerAdapter.play();

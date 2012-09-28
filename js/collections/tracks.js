@@ -54,7 +54,11 @@ define(["order!jquery",
                      throw "Parent video must be given!";
                 
                 this.url = video.url() + "/tracks";
-                
+
+                if(annotationsTool.localStorage)
+                    this.localStorage = new Backbone.LocalStorage(this.url);
+
+
                 this.each(function(track){
                     track.setUrl();
                 });

@@ -58,6 +58,9 @@ define(["order!jquery",
                      throw "The parent track of the annotations must be given!";
                 else if(track.collection)
                     this.url = track.url() + "/annotations";  
+
+                if(annotationsTool.localStorage)
+                      this.localStorage = new Backbone.LocalStorage(this.url);
             }
         });
         
