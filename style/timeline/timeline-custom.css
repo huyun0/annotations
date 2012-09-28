@@ -43,6 +43,9 @@ div.timeline-groups-text div.timeline-group div.content {
   overflow: hidden;
   text-overflow: ellipsis;
 }
+div.timeline-groups-text:nth-child(odd) {
+  background-color: #ffffff;
+}
 div.timeline-groups-text.selected {
   background-color: #cdcdcd;
 }

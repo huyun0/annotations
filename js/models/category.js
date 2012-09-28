@@ -212,10 +212,10 @@ define(["order!jquery",
                 return settings;
             },
 
-            save: function(){
+            save: function(options){
                 this.attributes.settings = JSON.stringify(this.attributes.settings);
 
-                Backbone.Model.prototype.save.call(this);
+                Backbone.Model.prototype.save.call(this,options);
             }
 
         });

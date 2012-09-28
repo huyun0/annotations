@@ -10,9 +10,9 @@ require.config({
         'interfaces': 'interfaces',
         'order':'libs/require/order',
         'underscore': 'libs/underscore-min',
-	'tests': '../tests/js',
+	    'tests': '../tests/js',
         'order':'libs/require/order',
-	'domReady':'libs/require/domReady'
+	    'domReady':'libs/require/config/domReady'
     },
     waitSeconds: 30
 });

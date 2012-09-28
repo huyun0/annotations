@@ -1,4 +1,6 @@
 @import "timeline/timeline.css";
+
+@import "colorpicker.css";
 /*!
  * Bootstrap v2.0.2
  *
@@ -6205,6 +6207,9 @@ div.timeline-groups-text div.timeline-group div.content {
   overflow: hidden;
   text-overflow: ellipsis;
 }
+div.timeline-groups-text:nth-child(odd) {
+  background-color: #ffffff;
+}
 div.timeline-groups-text.selected {
   background-color: #cdcdcd;
 }
@@ -7575,6 +7580,9 @@ div.timeline-item:hover {
 .standard_border_radius {
   border-radius: 4px 4px 4px 4px;
 }
+.edit {
+  visibility: hidden;
+}
 #annotate-form {
   padding: 5px;
 }
@@ -7602,6 +7610,10 @@ div.timeline-item:hover {
   margin-left: -4px;
   margin-right: -4px;
 }
+#annotate-form #editSwitch {
+  float: right;
+  margin-right: 20px;
+}
 #annotate-container .navbar {
   margin-bottom: 0px;
 }
@@ -7615,7 +7627,6 @@ div.timeline-item:hover {
 }
 #annotate-container #label-tabs-contents div.carousel {
   height: 200px;
-  overflow: scroll;
 }
 #annotate-container #label-tabs-contents div.carousel .category-item {
   height: 100%;
@@ -7629,20 +7640,69 @@ div.timeline-item:hover {
   border-radius: 4px 4px 0px 0px;
   color: white;
 }
+#annotate-container #label-tabs-contents div.carousel .category-item .catItem-header input {
+  width: 80px;
+  border: none;
+  margin: 0px;
+  padding: 1px;
+  font-size: 14px;
+  border-radius: 4px;
+  box-shadow: inset -1px 1px 3px #000000;
+  font-weight: bold;
+  text-overflow: clip;
+}
+#annotate-container #label-tabs-contents div.carousel .category-item .catItem-header input[disabled] {
+  text-overflow: ellipsis;
+  box-shadow: none;
+  text-shadow: 1px 1px 1px black;
+  background: none;
+  color: white;
+  cursor: default;
+}
+#annotate-container #label-tabs-contents div.carousel .category-item .catItem-header .colorPicker-picker {
+  display: inline-block;
+}
 #annotate-container #label-tabs-contents div.carousel .category-item .label-item {
   padding: 3px;
   background-color: #ffffff;
   margin-top: 2px;
   height: 16px;
 }
+#annotate-container #label-tabs-contents div.carousel .category-item .label-item:nth-child(even) {
+  background-color: #ffffff;
+}
+#annotate-container #label-tabs-contents div.carousel .category-item .label-item:nth-child(odd) {
+  background-color: #e6e6e6;
+}
 #annotate-container #label-tabs-contents div.carousel .category-item .label-item .item-abbreviation {
   float: left;
-  padding: 3px;
   font-weight: bold;
+  margin: 0px;
+  width: 20px;
+  padding: 1px;
+}
+#annotate-container #label-tabs-contents div.carousel .category-item .label-item .item-abbreviation[disabled] {
+  text-overflow: ellipsis;
+  box-shadow: none;
+  background: none;
+  cursor: pointer;
+  border: none;
 }
 #annotate-container #label-tabs-contents div.carousel .category-item .label-item .item-value {
   float: left;
   padding: 3px;
+  display: inline-block;
+  padding: 1px;
+  width: 80px;
+  margin: 0px;
+  margin-left: 4px;
+}
+#annotate-container #label-tabs-contents div.carousel .category-item .label-item .item-value[disabled] {
+  text-overflow: ellipsis;
+  box-shadow: none;
+  background: none;
+  cursor: pointer;
+  border: none;
 }
 #annotate-container #label-tabs-contents div.carousel .category-item .label-item .item-icon {
   float: right;
@@ -7652,7 +7712,6 @@ div.timeline-item:hover {
 }
 #annotate-container #label-tabs-contents div.carousel .category-item .label-item:hover {
   cursor: pointer;
-  background-color: darkGray;
   color: white;
   background-size: 100% 100%;
   box-shadow: 0px 0px 4px #969696;
@@ -7667,17 +7726,21 @@ div.timeline-item:hover {
   -moz-box-shadow: 0px 0px 4px #969696;
   -webkit-box-shadow: 0px 0px 4px #969696;
   background-size: 100% 100%;
-  box-shadow: inset 0px 0px 4px #636363;
-  -moz-box-shadow: inset 0px 0px 4px #636363;
-  -webkit-box-shadow: inset 0px 0px 4px #636363;
+  box-shadow: inset 0px 0px 10px #636363;
+  -moz-box-shadow: inset 0px 0px 10px #636363;
+  -webkit-box-shadow: inset 0px 0px 10px #636363;
   background-size: 100% 100%;
-  box-shadow: inset 0px 0px 4px #636363;
-  -moz-box-shadow: inset 0px 0px 4px #636363;
-  -webkit-box-shadow: inset 0px 0px 4px #636363;
+  box-shadow: inset 0px 0px 10px #636363;
+  -moz-box-shadow: inset 0px 0px 10px #636363;
+  -webkit-box-shadow: inset 0px 0px 10px #636363;
   background-size: 100% 100%;
-  box-shadow: inset 0px 0px 4px #636363;
-  -moz-box-shadow: inset 0px 0px 4px #636363;
-  -webkit-box-shadow: inset 0px 0px 4px #636363;
+  box-shadow: inset 0px 0px 10px #636363;
+  -moz-box-shadow: inset 0px 0px 10px #636363;
+  -webkit-box-shadow: inset 0px 0px 10px #636363;
+}
+#annotate-container #label-tabs-contents div.carousel .category-item .catItem-labels {
+  max-height: 150px;
+  overflow: auto;
 }
 #annotate-container #label-tabs-contents div div.pagination {
   margin: 10px;
@@ -7685,6 +7748,47 @@ div.timeline-item:hover {
 }
 #annotate-container #label-tabs-contents div div.pagination a {
   line-height: 24px;
+}
+#annotate-container.edit-on #label-tabs-contents div.carousel .category-item .catItem-add {
+  margin-top: 2px;
+  padding: 5px;
+  text-align: left;
+  border-radius: 4px 4px;
+  display: block;
+  border-radius: 0px 0px 4px 4px;
+}
+#annotate-container.edit-on #label-tabs-contents div.carousel .category-item .catItem-add i {
+  margin-right: 3px;
+}
+#annotate-container.edit-on #label-tabs-contents div.carousel .category-item .catItem-add:hover {
+  cursor: pointer;
+}
+#annotate-container.edit-on #label-tabs-contents div.carousel .category-item .label-item {
+  height: 22px;
+}
+#annotate-container.edit-on #label-tabs-contents div.carousel .category-item .label-item:hover {
+  cursor: default;
+  background-color: #ffffff;
+}
+#annotate-container.edit-on #label-tabs-contents div.carousel .category-item .label-item:last-child {
+  border-radius: 0px;
+}
+#annotate-container.edit-on .edit {
+  visibility: visible;
+}
+#annotate-container.edit-on i.edit {
+  border-radius: 2px;
+  background-color: white;
+  border: 1px solid white;
+  margin-left: 5px;
+  float: right;
+}
+#annotate-container.edit-on i.edit:hover {
+  background-color: #CACACA;
+  cursor: pointer;
+}
+#annotate-container.edit-on .nav i.edit {
+  float: none;
 }
 .notrack {
   color: red;
@@ -7701,7 +7805,6 @@ div.timeline-item:hover {
 }
 /* dark grey */
 #list-container {
-  max-height: 600px;
   overflow: auto;
 }
 #list-container a.proxy-anchor {

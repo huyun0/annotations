@@ -61,11 +61,7 @@ define(["jquery",
          * Get nickname from user to display
          */
         Handlebars.registerHelper('nickname', function(user) {
-            if(user instanceof User)
-                return user.get("nickname");
-            else if(!_.isObject(user)){
-              if(user.get)
-            }
+            if(!_.isObject(user))
                 return window.annotationsTool.users.get(user).get("nickname");
             else
                 return user.nickname;

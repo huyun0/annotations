@@ -166,6 +166,7 @@ require(['domReady',
                                     equal(data.created_by, user.get('id'), "Created_by user id is correct");
                                     ok(data.updated_at, "Updated_at date is set");
                                     equal(data.updated_by, user.get('id'), "Updated_by user id is correct");
+                                    equal(data.created_by_nickname, user.get('nickname'), "Created_by user nickname is correct");
                                     equal(data.deleted_at, null, "Deleted_at date is wrong");
                                     equal(data.deleted_by, null, "Deleted_by user is wrong");
                                     start();
@@ -306,6 +307,7 @@ require(['domReady',
                                     equal(data.start, annotation.get("start"), "Start is correct");
                                     ok(data.created_at, "Created_at date is set");
                                     equal(data.created_by, user.get('id'), "Created_by user id is correct");
+                                    equal(data.created_by_nickname, user.get('nickname'), "Created_by user nickname is correct");
                                     ok(data.updated_at, "Updated_at date is set");
                                     equal(data.updated_by, user.get('id'), "Updated_by user id is correct");
                                     equal(data.deleted_at, null, "Deleted_at date is wrong");

@@ -175,13 +175,6 @@ define(["jquery",
                 delete json.categories;
 
                 return json;
-            },    
-
-
-            save: function(){
-                this.attributes.settings = JSON.stringify(this.attributes.settings);
-
-                Backbone.Model.prototype.save.call(this);
             }
         });
         
