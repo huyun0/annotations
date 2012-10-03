@@ -132,10 +132,14 @@ define(["jquery",
                               beforeSend: self.setHeaderParams,
                               success: function(data, textStatus, xmlHttpRequest){
                                    resource.toCreate = false;
+                                   resource.unset("copyUrl");
+                                   
                                    if(resource.setUrl)
                                         resource.setUrl();
+
+                                    if(resource.collection)
+                                      resource.collection.add(resource);
                                    
-                                   resource.unset("copyUrl");
                                    options.success(data, textStatus, xmlHttpRequest);
                               },
                               

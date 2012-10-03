@@ -44,7 +44,7 @@ require(['domReady',
                 
                 var loadTrack = function(){                    
                         tracks = new Tracks([], video);
-                        tracks.add({name: "Test", description:'test track', settings: "test"});
+                        tracks.add({name: "Test", description:'test track'});
                         track = tracks.at(0);
                         isTrackLoaded = true;
                 };
@@ -56,9 +56,7 @@ require(['domReady',
                         isAnnotationLoaded = true;
                 };
                 
-                
                 /* VIDEO tests */
-                
                 module("Video", { setup : function(){
                         if(!isUserLoaded)loadUser();
                         if(!isVideoLoaded)loadVideo();   
@@ -161,7 +159,7 @@ require(['domReady',
                                     ok(data.id, "Id is "+data.id);
                                     equal(data.name, track.get("name"), "Name is correct");
                                     equal(data.description, track.get("description"), "Description is correct");
-                                    equal(data.settings, track.get("settings"), "Settings are correct");
+                                    //equal(data.settings, track.get("settings"), "Settings are correct");
                                     ok(data.created_at, "Created_at date is set");
                                     equal(data.created_by, user.get('id'), "Created_by user id is correct");
                                     ok(data.updated_at, "Updated_at date is set");
@@ -189,7 +187,7 @@ require(['domReady',
                                     ok(data.id, "Id is "+data.id);
                                     equal(data.name, track.get("name"), "Name is correct");
                                     equal(data.description, track.get("description"), "Description is correct");
-                                    equal(data.settings, track.get("settings"), "Settings are correct");
+                                    //equal(data.settings, track.get("settings"), "Settings are correct");
                                     ok(data.created_at, "Created_at date is set");
                                     equal(data.created_by, user.get('id'), "Created_by user id is correct");
                                     ok(data.updated_at, "Updated_at date is set");
@@ -203,7 +201,7 @@ require(['domReady',
                 
                 test("Update track",function(){
                     stop();
-                    track.set("settings", "updated settings");
+                    track.set("name", "new name");
                     AnnotationsSync('update',track,{
                                 error: function(error){
                                     ok(false, error);
@@ -245,7 +243,7 @@ require(['domReady',
                 test("Save track 2",function(){
                     stop();
                 
-                    tracks.add({name: "Test2", description:'test track2', settings: "test2"});
+                    tracks.add({name: "Test2", description:'test track2'});
                     track2 = tracks.at(1);
                     AnnotationsSync('create',track2,{
                                 error: function(error){
