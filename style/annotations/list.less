@@ -21,11 +21,11 @@
         padding: 5px;
         
         &:hover{
-            cursor: default;    
+            cursor: pointer;   
+            box-shadow: inset 0px 0px 12px black; 
         }
         
-        i{
-            
+        i{    
             &.delete{
                float: right; 
             }
@@ -103,7 +103,7 @@
         }
         
         &.selected{
-           background-color: darken(@color1, 20%); 
+           background-color: darken(@color1, 40%); 
         }
     }
 }

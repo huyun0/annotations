@@ -7675,6 +7675,7 @@ div.timeline-item:hover {
   background-color: #e6e6e6;
 }
 #annotate-container #label-tabs-contents div.carousel .category-item .label-item .item-abbreviation {
+  color: black;
   float: left;
   font-weight: bold;
   margin: 0px;
@@ -7689,6 +7690,7 @@ div.timeline-item:hover {
   border: none;
 }
 #annotate-container #label-tabs-contents div.carousel .category-item .label-item .item-value {
+  color: black;
   float: left;
   padding: 3px;
   display: inline-block;
@@ -7878,7 +7880,8 @@ div.timeline-item:hover {
   padding: 5px;
 }
 #list-container div.annotation:hover {
-  cursor: default;
+  cursor: pointer;
+  box-shadow: inset 0px 0px 12px black;
 }
 #list-container div.annotation i.delete {
   float: right;
@@ -7922,6 +7925,11 @@ div.timeline-item:hover {
   box-shadow: inset 0px 0px 4px #767676;
   -moz-box-shadow: inset 0px 0px 4px #767676;
   -webkit-box-shadow: inset 0px 0px 4px #767676;
+}
+#list-container div.annotation .collapse i {
+  float: left;
+  margin-right: 5px;
+  margin-left: 5px;
 }
 #list-container div.annotation span.text {
   display: block;
@@ -7977,7 +7985,7 @@ div.timeline-item:hover {
   font-weight: bold;
 }
 #list-container div.annotation.selected {
-  background-color: #c2c2c2;
+  background-color: #8f8f8f;
 }
 /* ===== Primary Styles ========================================================
    Author:

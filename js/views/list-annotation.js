@@ -90,6 +90,7 @@ define(["jquery",
           
           /** Events to handle */
           events: {
+            "click"                      : "onSelect",
             "click i.delete"             : "deleteFull",
             "click .select"              : "onSelect",
             "click a.collapse"           : "onCollapse"
@@ -131,7 +132,10 @@ define(["jquery",
           /**
            * Delete completely the annotation
            */
-          deleteFull: function(){
+          deleteFull: function(event){
+            if(event)
+              event.stopImmediatePropagation();
+
             annotationsTool.deleteOperation.start(this.model,this.typeForDelete);
           },
           
@@ -193,7 +197,9 @@ define(["jquery",
           /**
            * Toggle the visibility of the text container
            */
-          onCollapse: function(){
+          onCollapse: function(event){
+            event.stopImmediatePropagation();
+
             this.collapsed = !this.collapsed;
             
             this.$el.find('.collapse > i').toggleClass('icon-chevron-right').toggleClass('icon-chevron-down');
