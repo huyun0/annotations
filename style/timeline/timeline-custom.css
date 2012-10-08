@@ -79,6 +79,12 @@ div.timeline-navigation div.timeline-navigation-move-left,
 div.timeline-navigation div.timeline-navigation-move-right {
   height: 22px;
 }
+div#reset-zoom {
+  float: left;
+}
+div#reset-zoom a.btn {
+  color: grey;
+}
 div.timeline-frame > div:first-child {
   z-index: 2;
   border-left: 2px solid grey;
