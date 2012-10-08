@@ -161,6 +161,8 @@ define(["jquery",
                 this.onTrackSelected(null,annotationsTool.selectedTrack.id);
               
               $('div.timeline-group .content').popover({});
+
+              this.timeline.__proto__.redraw.call(this.timeline);
             },this);
             
             this.timeline.setAutoScale(false);
