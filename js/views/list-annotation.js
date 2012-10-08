@@ -196,7 +196,7 @@ define(["jquery",
           onCollapse: function(){
             this.collapsed = !this.collapsed;
             
-            this.$el.find('.collapse > i').toggleClass('icon-plus').toggleClass('icon-minus');
+            this.$el.find('.collapse > i').toggleClass('icon-chevron-right').toggleClass('icon-chevron-down');
             
             if(this.collapsed)
                 this.$el.find('div.in').collapse('hide');
