@@ -1,3 +1,19 @@
+    /**
+ *  Copyright 2012, Entwine GmbH, Switzerland
+ *  Licensed under the Educational Community License, Version 2.0
+ *  (the "License"); you may not use this file except in compliance
+ *  with the License. You may obtain a copy of the License at
+ *
+ *  http://www.osedu.org/licenses/ECL-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing,
+ *  software distributed under the License is distributed on an "AS IS"
+ *  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ *  or implied. See the License for the specific language governing
+ *  permissions and limitations under the License.
+ *
+ */
+    
 define(["order!jquery",
         "order!collections/labels",
         "order!access",
@@ -36,28 +52,59 @@ define(["order!jquery",
                         
                     this.toCreate = true;
                 }
+
+                attr.settings = this.parseSettings(attr.settings);
                 
-                if(attr.labels && _.isArray(attr.labels))
-                    this.set({'labels' : new Labels(attr.labels,this)});
-                else
-                    this.set({'labels' : new Labels([],this)});
+                if(attr.labels && _.isArray(attr.labels)){
+                    this.attributes.labels  = new Labels(attr.labels,this);
+                    delete attr.labels;
+                }
+                else if(!attr.labels){
+                    this.attributes.labels  = new Labels([],this);
+                }
+                else{
+                    this.attributes.labels = attr.labels;
+                    delete attr.labels;
+                }
+
+                if(attr.id)
+                    this.attributes.labels.fetch({async:false});
                 
                 // If localStorage used, we have to save the video at each change on the children
                 if(window.annotationsTool.localStorage){
-                    this.attributes['labels'].bind('change',function(label){
+                    var saveChange = function(label){
                             this.save();
                             this.trigger("change");
-                    },this);
+                    }
+                    this.attributes.labels.bind('change',saveChange,this);
+                    this.attributes.labels.bind('remove',saveChange,this);
                 }
                 
                 this.set(attr);
             },
             
-            parse: function(attr) {
+            parse: function(data) {
+                var attr = data.attributes ? data.attributes : data;
+
                 attr.created_at = attr.created_at != null ? Date.parse(attr.created_at): null;
                 attr.updated_at = attr.updated_at != null ? Date.parse(attr.updated_at): null;
                 attr.deleted_at = attr.deleted_at != null ? Date.parse(attr.deleted_at): null;
-                return attr;
+                attr.settings = this.parseSettings(attr.settings);
+                if(attr.category)
+                    attr.category = this.parseSettings(attr.category.settings);
+
+                if(annotationsTool.localStorage && _.isArray(attr.labels))
+                    attr.labels = new Labels(attr.labels,this);
+
+                if(!annotationsTool.localStorage &&  attr.scale_id && (_.isNumber(attr.scale_id) || _.isString(attr.scale_id)))
+                    attr.scale = annotationsTool.video.get("scales").get(attr.scale_id);
+
+                if(data.attributes)
+                    data.attributes = attr;
+                else
+                    data = attr;
+
+                return data;
             },
             
             validate: function(attr){
@@ -66,14 +113,18 @@ define(["order!jquery",
                     if(this.get('id') != attr.id){
                         this.id = attr.id;
                         this.setUrl();
+
+                        if((this.get("labels").length) == 0)
+                            this.get("labels").fetch({async:false});
                     }
                 }
+
                 
                 if(attr.description && !_.isString(attr.description))
                     return "'description' attribute must be a string";
                 
-                if(attr.settings && !_.isString(attr.settings))
-                    return "'description' attribute must be a string";
+                if(attr.settings && (!_.isObject(attr.settings) && !_.isString(attr.settings)))
+                    return "'description' attribute must be a string or a JSON object";
                 
                 if(attr.access &&  !_.include(ACCESS,attr.access))
                     return "'access' attribute is not valid.";
@@ -103,14 +154,79 @@ define(["order!jquery",
                     if(!_.isNumber(attr.deleted_at))
                         return "'deleted_at' attribute must be a number!";
                 }
+
+                if(this.attributes.labels){
+                    this.get('labels').each(function(value,index){
+                        var parseValue = value.parse({category: this.toJSON()});
+                        
+                        if(parseValue.category)
+                            parseValue = parseValue.category;
+
+                        value.attributes.category = parseValue;
+                    },this);
+                }
+
+            },
+
+            /**
+             * Change category color
+             * @param  {String} color the new color
+             */
+            setColor: function(color){
+                var settings = this.attributes.settings;
+                settings.color = color;
+
+                this.set('settings',settings);
             },
             
             /**
              * Modify the current url for the annotations collection
              */
             setUrl: function(){
-                this.get("labels").setUrl(this);
+                if(this.get("labels"))
+                    this.get("labels").setUrl(this);
+            },
+
+            /**
+             * @override
+             * 
+             * Override the default toJSON function to ensure complete JSONing.
+             *
+             * @return {JSON} JSON representation of the instane
+             */
+            toJSON: function(){
+                var json = Backbone.Model.prototype.toJSON.call(this);
+                delete json.labels;
+
+                if(this.attributes.scale){
+                    
+                    if(this.attributes.scale.attributes)
+                        json.scale_id = this.attributes.scale.get("id");
+                    else
+                        json.scale_id = this.attributes.scale.id;
+                }
+
+                return json;
+            },
+
+            /**
+             * Parse the given settings to JSON if given as String
+             * @param  {String} settings the settings as String
+             * @return {JSON} settings as JSON object
+             */
+            parseSettings: function(settings){
+                if(settings && _.isString(settings))
+                    settings = JSON.parse(settings);
+
+                return settings;
+            },
+
+            save: function(options){
+                this.attributes.settings = JSON.stringify(this.attributes.settings);
+
+                Backbone.Model.prototype.save.call(this,options);
             }
+
         });
         
         return Category;

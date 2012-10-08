@@ -1,3 +1,19 @@
+/**
+ *  Copyright 2012, Entwine GmbH, Switzerland
+ *  Licensed under the Educational Community License, Version 2.0
+ *  (the "License"); you may not use this file except in compliance
+ *  with the License. You may obtain a copy of the License at
+ *
+ *  http://www.osedu.org/licenses/ECL-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing,
+ *  software distributed under the License is distributed on an "AS IS"
+ *  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ *  or implied. See the License for the specific language governing
+ *  permissions and limitations under the License.
+ *
+ */
+    
 define(["order!jquery",
         "order!access",
         "order!underscore",
@@ -42,11 +58,20 @@ define(["order!jquery",
                 this.noPOST = true;
             },
             
-            parse: function(attr) {    
+            parse: function(data) {    
+                var attr = data.attributes ? data.attributes : data;
+
                 attr.created_at = attr.created_at != null ? Date.parse(attr.created_at): null;
                 attr.updated_at = attr.updated_at != null ? Date.parse(attr.updated_at): null;
                 attr.deleted_at = attr.deleted_at != null ? Date.parse(attr.deleted_at): null;
                 return attr;
+
+                if(data.attributes)
+                    data.attributes = attr;
+                else
+                    data = attr;
+
+                return data;
             },
             
             validate: function(attr){
@@ -56,7 +81,7 @@ define(["order!jquery",
                     }
                 }
                 
-                if(_.isUndefined(attr.user_extid) || (!_.isString(attr.nickname) && !_.isNumber(attr.user_extid)))
+                if(_.isUndefined(attr.user_extid) || (!_.isString(attr.user_extid) && !_.isNumber(attr.user_extid)))
                     return {attribute: "user_extid", message: "'user_extid' must be a valid string or number."};
                 
                 if(_.isUndefined(attr.nickname) || !_.isString(attr.nickname))

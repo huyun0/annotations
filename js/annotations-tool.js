@@ -1,3 +1,19 @@
+/**
+ *  Copyright 2012, Entwine GmbH, Switzerland
+ *  Licensed under the Educational Community License, Version 2.0
+ *  (the "License"); you may not use this file except in compliance
+ *  with the License. You may obtain a copy of the License at
+ *
+ *  http://www.osedu.org/licenses/ECL-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing,
+ *  software distributed under the License is distributed on an "AS IS"
+ *  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ *  or implied. See the License for the specific language governing
+ *  permissions and limitations under the License.
+ *
+ */
+
 define(['order!jquery',
         'order!underscore',
         'order!views/main',
@@ -36,8 +52,18 @@ define(['order!jquery',
                         target.destroy({
                             
                             success: function(){
-                                if(annotationsTool.localStorage)
+                                if(annotationsTool.localStorage){
+
+                                    annotationsTool.video.get("tracks").each(function(value,index){
+                                        if(value.get("annotations").get(target.id)){
+                                            value.get("annotations").remove(target)
+                                            value.save({wait:true})
+                                            return false;
+                                        }
+                                    });
+
                                     annotationsTool.video.save();
+                                }
                                 
                                 if(callback)
                                     callback();
@@ -45,6 +71,35 @@ define(['order!jquery',
                             
                             error: function(error){
                                 console.warn("Cannot delete annotation: "+error);
+                            }
+                        });
+                            
+                    }
+                },
+
+                LABEL: {
+                    name: "label",
+                    getContent: function(target){
+                        return target.get("value");
+                    },
+                    destroy: function(target,callback){
+
+                        target.destroy({
+                            
+                            success: function(){
+                                if(annotationsTool.localStorage){
+                                    if(target.collection)
+                                      target.collection.remove(target);
+
+                                    annotationsTool.video.save();
+                                }
+                                
+                                if(callback)
+                                    callback();
+                            },
+                            
+                            error: function(error){
+                                console.warn("Cannot delete label: "+error);
                             }
                         });
                             
@@ -96,6 +151,53 @@ define(['order!jquery',
                                 }
                             })
                     }
+                },
+
+                CATEGORY: {
+                    name: "category",
+                    getContent: function(target){
+                        return target.get("name");
+                    },
+                    destroy: function(category,callback){
+                            var labels = category.get("labels");
+            
+                            /**
+                             * Recursive function to delete synchronously all labels
+                             */
+                            var destroyLabels = function(){
+                              // End state, no more label
+                              if(labels.length == 0)
+                                return;
+                              
+                              var label = labels.at(0);
+                              label.destroy({
+                                error: function(){
+                                  throw "Cannot delete label!";
+                                },
+                                success: function(){
+                                  labels.remove(label);
+                                  destroyLabels();
+                                }
+                              });
+                            };
+                            
+                            // Call the recursive function 
+                            destroyLabels();
+                            
+                            category.destroy({
+                                success: function(){
+                                    if(annotationsTool.localStorage)
+                                        annotationsTool.video.save();
+                                
+                                    if(callback)
+                                        callback();
+                                },
+                            
+                                error: function(error){
+                                    console.warn("Cannot delete category: "+error);
+                                }
+                            })
+                    }
                 }
             };
             
@@ -113,7 +215,7 @@ define(['order!jquery',
                     self.deleteModal = $('#modal-delete').modal({show: true, backdrop: false, keyboard: true });
                     self.deleteModal.modal("toggle");
                     self.deleteModalHeader  = self.deleteModal.find(".modal-header h3");
-                    self.deleteModalContent  = self.deleteModal.find(".modal-body");
+                    self.deleteModalContent = self.deleteModal.find(".modal-body");
             };
             
             /**
@@ -155,10 +257,21 @@ define(['order!jquery',
                                 type.destroy(target,callback);
                                 self.deleteModal.modal("toggle");
                             });
+
+                            var confirmWithEnter = function(e){                                
+                                if(e.keyCode == 13){
+                                    type.destroy(target,callback);
+                                    self.deleteModal.modal("toggle");
+                                }
+                            }
+
+                            // Add possiblity to confirm with return key
+                            $(window).bind('keypress',confirmWithEnter);
                             
                             // Unbind the listeners when the modal is hidden
                             self.deleteModal.one("hide",function(){
                                 $('#confirm-delete').unbind('click');
+                                $(window).unbind('keypress',confirmWithEnter);
                             });
                             
                             // Show the modal

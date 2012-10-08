@@ -1,3 +1,19 @@
+/**
+ *  Copyright 2012, Entwine GmbH, Switzerland
+ *  Licensed under the Educational Community License, Version 2.0
+ *  (the "License"); you may not use this file except in compliance
+ *  with the License. You may obtain a copy of the License at
+ *
+ *  http://www.osedu.org/licenses/ECL-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing,
+ *  software distributed under the License is distributed on an "AS IS"
+ *  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ *  or implied. See the License for the specific language governing
+ *  permissions and limitations under the License.
+ *
+ */
+
 define(["order!jquery",
         "order!collections/annotations",
         "order!access",
@@ -50,6 +66,9 @@ define(["order!jquery",
                 }
                 
                 delete attr.annotations;
+
+                if(attr.id)
+                    this.get("annotations").fetch({async:false});
                 
                 // Add backbone events to the model 
                 _.extend(this, Backbone.Events);
@@ -57,11 +76,20 @@ define(["order!jquery",
                 this.set(attr);
             },
             
-            parse: function(attr) {
+            parse: function(data) {
+                var attr = data.attributes ? data.attributes : data;
+
                 attr.created_at = attr.created_at != null ? Date.parse(attr.created_at): null;
                 attr.updated_at = attr.updated_at != null ? Date.parse(attr.updated_at): null;
                 attr.deleted_at = attr.deleted_at != null ? Date.parse(attr.deleted_at): null;
-                return attr;
+                attr.settings = this.parseSettings(attr.settings);
+
+                if(data.attributes)
+                    data.attributes = attr;
+                else
+                    data = attr;
+
+                return data;
             },
             
             validate: function(attr){
@@ -73,14 +101,19 @@ define(["order!jquery",
                         this.toCreate = false;
                         this.setUrl();
                         this.trigger('ready',this);
+
+                        var annotations = this.get("annotations");
+
+                        if((annotations.length) == 0)
+                            annotations.fetch({async:false});
                     }
                 }
                 
                 if(attr.description && !_.isString(attr.description))
                     return "'description' attribute must be a string";
                 
-                if(attr.settings && !_.isString(attr.settings))
-                    return "'description' attribute must be a string";
+                /*if(attr.settings && !_.isString(attr.settings))
+                    return "'description' attribute must be a string";*/
                 
                 if(attr.access &&  !_.include(ACCESS,attr.access))
                     return "'access' attribute is not valid.";
@@ -108,7 +141,33 @@ define(["order!jquery",
              */
             setUrl: function(){
                 this.get("annotations").setUrl(this);
-            }
+            },
+
+            /**
+             * @override
+             * 
+             * Override the default toJSON function to ensure complete JSONing.
+             *
+             * @return {JSON} JSON representation of the instane
+             */
+            toJSON: function(){
+                var json = Backbone.Model.prototype.toJSON.call(this);
+                delete json.annotations;
+
+                return json;
+            },
+
+            /**
+             * Parse the given settings to JSON if given as String
+             * @param  {String} settings the settings as String
+             * @return {JSON} settings as JSON object
+             */
+            parseSettings: function(settings){
+                if(settings && _.isString(settings))
+                    settings = JSON.parse(settings);
+
+                return settings;
+            }  
         });
         
         return Track;

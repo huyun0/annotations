@@ -2,18 +2,310 @@
  * Style for annotate view
  */
 
-#new-annotation{
-    margin-bottom: -0.5px;
-    margin-left: -4px;
-    margin-right: -4px;
+@import "variables.less";
+
+// Set of color for the whole annotate view
+@colorOne: #E3E3E3;
+@colorTwo: lighten(@colorOne,20%); 
+
+.edit{
+    visibility: hidden;
 }
 
-#annotate-form div{
+#annotate-form{
+    
     padding: 5px;
-    text-align: center;
+    
+    div{
+        padding: 5px;
+        text-align: center;
+    }
+    
+    .currentTrack{
+        text-align: left; 
+        
+        span.title{
+            font-weight: bold;
+        }
+    }
+    
+    .insert-fields, .stop-fields{
+        display: inline-block;
+    }
+
+    #input-container{
+
+        width: 100%;
+        text-align: left;
+
+        #new-annotation{
+            width: 68%;
+            margin-bottom: -0.5px;
+            margin-left: -4px;
+            margin-right: -4px;
+        }
+        
+    }
+
+    #editSwitch{
+        float: right;
+        margin-right: 20px;
+    }
 }
+
+#annotate-container{ 
+    .navbar{
+        margin-bottom: 0px;
+    }
+
+    h3{
+        line-height: 18px;
+        padding-top: 8px;
+        padding-right: 8px;
+    }
+
+    #label-tabs-contents div{
+        padding: 0px;
+
+        &.carousel{
+            
+            .category-item{ 
+                height: 100%;
+
+                .catItem-header{
+
+                    input{
+                        width: 80px;
+                        border: none;
+                        margin: 0px;
+                        padding: 1px;
+                        font-size: 14px;
+                        border-radius: 4px;
+                        box-shadow: inset -1px 1px 3px black;
+                        font-weight: bold;
+                        text-overflow: clip;  
+                        
+                        &[disabled]{
+                            text-overflow: ellipsis;
+                            box-shadow: none;
+                            text-shadow: 1px 1px 1px black;
+                            background: none;
+                            color: white;
+                            cursor: default;
+                        }
+                    }
+
+                    .colorPicker-picker{
+                        display: inline-block;
+                    }
+
+                    padding: 5px;
+                    font-size: 14px;
+                    background-color: @colorOne;
+                    text-shadow: 1px 1px 1px black;
+                    font-weight: bold;
+                    border-radius: 4px 4px 0px 0px;
+                    color: white;
+                }
+
+
+                .label-item{
+                    @labelPadding: 3px;
+                    padding: @labelPadding;
+                    background-color: @colorTwo;
+                    margin-top: 2px;
+                    min-height: 16px;
+
+                    &:nth-child(even){
+                        background-color: @colorTwo;
+                    }
+
+                    &:nth-child(odd){
+                        background-color: darken(@colorTwo,10%);
+                    }
+
+                    .item-abbreviation{
+                        color: black;
+                        float:left;
+                        font-weight: bold;
+                        margin: 0px;
+                        width: 20px;
+                        padding: 1px;
+
+                        &[disabled]{
+                            text-overflow: ellipsis;
+                            box-shadow: none;
+                            background: none;
+                            cursor: pointer;
+                            border: none;
+                        }
+                    }
+
+                    .item-value{
+                        color: black;
+                        float:left;
+                        padding: @labelPadding;
+                        display: inline-block;
+                        padding: 1px;
+                        width: 80px;
+                        margin: 0px;
+                        margin-left: 4px;
+
+                        &[disabled]{
+                            text-overflow: ellipsis;
+                            box-shadow: none;
+                            background: none;
+                            cursor: pointer;
+                            border: none;
+                        }
+                    }
+
+                    .item-icon{
+                        float: right;
+                    }
+
+                    &:last-child{
+                        border-radius: 0px 0px 4px 4px;
+                    }
+
+
+                    &:hover{
+                        .box-shadow(0px,0px,4px,darken(@colorOne,30%));
+                        .inset-box-shadow(0px,0px,10px,darken(@colorOne,50%));
+
+                        .scaling{
+                            display: block;
+                        }
+                    }
+
+                    .scaling{
+
+                        display: none;
+                        width: 100%;
+                        float: left;
+                        margin: 0px;
+
+                        li {
+                            list-style: none;
+                            display: inline-block;
+                            width: 18px;
+                            margin: 1px;
+                            border-radius: 15px;
+                            background-color: yellow;
+                            box-shadow: inset 0 0 3px;
+                            color: #D57E0F;
+                            text-shadow: 0 0 2px orange;
+                            font-weight: bold padding: 2px;
+                            font-weight: bold;
+                            font-size: 0.90em;
+                            font-weight: bold;
+                            padding: 0px 2px 0px 2px;
+                            border: 2px solid orange;
+                            width: 16px;
+                            display: inline-block;
+                            text-align: center;
+
+                            &:hover{
+                                cursor: pointer;
+                                color: white;
+                                background-color: darken(orange,15%);
+                                .box-shadow(0px,0px,4px,darken(orange,20%));
+                                .inset-box-shadow(0px,0px,10px,darken(orange,30%));
+                            }
+                        }
+
+                    }
+
+                }
+
+                .catItem-labels{
+                    max-height: 150px;
+                    overflow: auto;
+                }
+            }
+
+            height: 200px;
+
+        }
+
+        div.pagination{
+            margin: 10px;
+            height: 0px;
+
+            a{
+                line-height: 24px;
+            }
+        }
+
+    }
+
+    &.edit-on{
+
+        #label-tabs-contents div.carousel .category-item{ 
+
+            .catItem-add{
+                margin-top: 2px;
+                padding: 5px;
+                text-align: left;
+                border-radius: 4px 4px;
+                display: block;
+                border-radius: 0px 0px 4px 4px;
+
+                i{
+                    margin-right: 3px;
+                }
+
+                &:hover{
+                    cursor: pointer;
+                    //background-color: @colorTwo;
+                }
+            }
+
+            .label-item{
+                height: 22px;
+
+                &:hover{
+                    cursor: default;
+                    background-color: @colorTwo;
+
+                    .scaling{
+                        display: none;
+                    }
+                }
+
+                &:last-child{
+                    border-radius: 0px;
+                }   
+            }                     
+        }
+
+        .edit{
+            visibility: visible;
+        }
+
+        i.edit{ 
+            border-radius: 2px;
+            background-color: white;
+            border: 1px solid white;
+            margin-left: 5px;
+            float: right;
+
+            &:hover{
+                background-color: #CACACA; 
+                cursor: pointer;
+            }
+        }
+
+        .nav i.edit{
+            float: none;
+        }
+
+    }
+}
+
+
 
 .notrack{
     color: red;
     font-weight: bold; 
-}
+} 

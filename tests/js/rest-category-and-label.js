@@ -124,6 +124,7 @@ require(['domReady',
                     stop();
                     
                     AnnotationsSync('read',videoCategories.at(0),{
+
                                 error: function(error){
                                     ok(false, error);
                                     start();

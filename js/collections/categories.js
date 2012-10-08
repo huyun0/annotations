@@ -1,3 +1,19 @@
+/**
+ *  Copyright 2012, Entwine GmbH, Switzerland
+ *  Licensed under the Educational Community License, Version 2.0
+ *  (the "License"); you may not use this file except in compliance
+ *  with the License. You may obtain a copy of the License at
+ *
+ *  http://www.osedu.org/licenses/ECL-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing,
+ *  software distributed under the License is distributed on an "AS IS"
+ *  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ *  or implied. See the License for the specific language governing
+ *  permissions and limitations under the License.
+ *
+ */
+    
 define(["order!jquery",
         "order!models/category",
         "order!underscore",
@@ -25,7 +41,7 @@ define(["order!jquery",
             
             parse: function(resp, xhr) {
               if(resp.categories && _.isArray(resp.categories))
-                return resp.annotations;
+                return resp.categories;
               else if(_.isArray(resp))
                 return resp;
               else
@@ -46,6 +62,9 @@ define(["order!jquery",
                     this.url = video.url() + "/categories";
                     this.isTemplate = false;
                 }
+
+                if(annotationsTool.localStorage)
+                      this.localStorage = new Backbone.LocalStorage(this.url);
                 
                 this.each(function(category){
                     category.setUrl();
@@ -76,7 +95,10 @@ define(["order!jquery",
                     // add the copy url parameter for the backend
                     copyJSON['copyUrl'] = "?category_id="+element.id;
                     
-                    return this.create(copyJSON);
+                    if(annotationsTool.localStorage)
+                      return this.create(copyJSON);
+                    else
+                      return this.create(copyJSON,{wait:true});
                     
                     // TODO add localStorage version
                 }

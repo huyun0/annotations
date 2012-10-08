@@ -1,3 +1,19 @@
+/**
+ *  Copyright 2012, Entwine GmbH, Switzerland
+ *  Licensed under the Educational Community License, Version 2.0
+ *  (the "License"); you may not use this file except in compliance
+ *  with the License. You may obtain a copy of the License at
+ *
+ *  http://www.osedu.org/licenses/ECL-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing,
+ *  software distributed under the License is distributed on an "AS IS"
+ *  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ *  or implied. See the License for the specific language governing
+ *  permissions and limitations under the License.
+ *
+ */
+    
 define(["order!jquery",
         "order!models/user",
         "order!access",
@@ -32,7 +48,9 @@ define(["order!jquery",
                 
                 if(!attr || _.isUndefined(attr.category))
                     throw "'category' attribute is required";
-                
+
+                attr.settings = this.parseSettings(attr.settings);
+
                 // Check if the track has been initialized 
                 if(!attr.id){
                     // If local storage, we set the cid as id
@@ -41,6 +59,9 @@ define(["order!jquery",
                         
                     this.toCreate = true;
                 }
+
+                if(attr.category && attr.category.attributes)
+                    attr.category = attr.category.toJSON();
                 
                 this.set('category',attr.category);
                 
@@ -48,11 +69,23 @@ define(["order!jquery",
                 
             },
             
-            parse: function(attr) {    
+            parse: function(data) {                 
+                var attr = data.attributes ? data.attributes : data;
+
                 attr.created_at = attr.created_at != null ? Date.parse(attr.created_at): null;
                 attr.updated_at = attr.updated_at != null ? Date.parse(attr.updated_at): null;
                 attr.deleted_at = attr.deleted_at != null ? Date.parse(attr.deleted_at): null;
-                return attr;
+                attr.settings = this.parseSettings(attr.settings);
+
+                if(attr.category && attr.category.settings)
+                    attr.category.settings = this.parseSettings(attr.category.settings);
+
+                if(data.attributes)
+                    data.attributes = attr;
+                else
+                    data = attr;
+
+                return data;
             },
             
             validate: function(attr){
@@ -107,7 +140,33 @@ define(["order!jquery",
                         return "'deleted_at' attribute must be a number!";
                 }
                 
-            } 
+            },
+
+            /**
+             * @override
+             * 
+             * Override the default toJSON function to ensure complete JSONing.
+             *
+             * @return {JSON} JSON representation of the instane
+             */
+            toJSON: function(){
+                var json = $.proxy(Backbone.Model.prototype.toJSON,this)();
+                if(json.category && json.category.toJSON)
+                    json.category = json.category.toJSON();
+                return json;
+            },
+
+            /**
+             * Parse the given settings to JSON if given as String
+             * @param  {String} settings the settings as String
+             * @return {JSON} settings as JSON object
+             */
+            parseSettings: function(settings){
+                if(settings && _.isString(settings))
+                    settings = JSON.parse(settings);
+
+                return settings;
+            }        
         });
         
         return Label;

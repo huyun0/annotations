@@ -1,3 +1,19 @@
+/**
+ *  Copyright 2012, Entwine GmbH, Switzerland
+ *  Licensed under the Educational Community License, Version 2.0
+ *  (the "License"); you may not use this file except in compliance
+ *  with the License. You may obtain a copy of the License at
+ *
+ *  http://www.osedu.org/licenses/ECL-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing,
+ *  software distributed under the License is distributed on an "AS IS"
+ *  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ *  or implied. See the License for the specific language governing
+ *  permissions and limitations under the License.
+ *
+ */
+    
 define(["jquery",
         "order!access",
         "order!collections/scalevalues",
@@ -31,6 +47,9 @@ define(["jquery",
                 else
                     this.set({scaleValues: new ScaleValues([],this)});
                 
+                if(attr.id)
+                    this.attributes.scaleValues.fetch({async:false});
+
                 // Check if the track has been initialized 
                 if(!attr.id){
                     // If local storage, we set the cid as id
@@ -41,14 +60,6 @@ define(["jquery",
                 }
                 
                 this.set(attr);
-                
-                // If localStorage used, we have to save the video at each change on the children
-                if(window.annotationsTool.localStorage){
-                    this.attributes['scaleValues'].bind('change',function(scalevalue){
-                            this.save();
-                            this.trigger("change");
-                    },this);
-                }
             },
             
             parse: function(attr) {
@@ -64,6 +75,9 @@ define(["jquery",
                     if(this.get('id') != attr.id){
                         this.id = attr.id;
                         this.setUrl();
+
+                        if((this.get("scaleValues").length) == 0)
+                            this.get("scaleValues").fetch({async:false});
                     }
                 }
                 
@@ -97,6 +111,20 @@ define(["jquery",
 
                 if(attr.deleted_at && !_.isNumber(attr.deleted_at))
                     return "'deleted_at' attribute must be a number!";
+            },
+
+            /**
+             * @override
+             * 
+             * Override the default toJSON function to ensure complete JSONing.
+             *
+             * @return {JSON} JSON representation of the instane
+             */
+            toJSON: function(){
+                var json = Backbone.Model.prototype.toJSON.call(this);
+                delete json.scaleValues;
+
+                return json;
             },
             
             /**

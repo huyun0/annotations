@@ -13,18 +13,20 @@
  *  permissions and limitations under the License.
  *
  */
-
-define([],function(){
     
-    /**
-     * Enum for access to ressource
-     *
-     * TODO: need to define possible values
-     */
-    return {
-        PUBLIC: 'public',
-        PRIVATE: 'private',
-        GROUP: 'group'
-    };
-
-})
+/**
+ *  Default categories set
+ */
+define([],function(){
+    return [
+        {name: "default",
+         values: [
+            {name: "--", value: -2, order: 0},
+            {name: "-",  value: -1, order: 1},
+            {name: "0",  value: 0,  order: 2},
+            {name: "+",  value: 1,  order: 3},
+            {name: "++",  value: 2,  order: 4},
+         ]
+        }
+    ];
+});

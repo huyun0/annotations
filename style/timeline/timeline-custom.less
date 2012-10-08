@@ -2,11 +2,11 @@
 
 .item-id, .annotation-id, .group-id, .track-id, .timeline-navigation-new {
    display: none;
-}
+} 
 
-/*div#timeline{
-    overflow-y: scroll;
-}*/
+div#timeline{
+
+}
  
 div.timeline-event {
     background-color: rgba(249, 103, 38, 0.6);
@@ -21,7 +21,7 @@ div.timeline-groups-text{
     font-weight: bold;
     text-transform:capitalize;
     font-size: 1.05em;
-    z-index:1;
+    z-index:1;  
     background-color: white;
     position: absolute;
     width: 2000px;
@@ -49,6 +49,10 @@ div.timeline-groups-text{
             overflow: hidden;
             text-overflow: ellipsis;
         }
+    }
+
+    &:nth-child(odd){
+        background-color: lighten(grey, 60%);   
     }
     
     &.selected {
@@ -91,6 +95,14 @@ div.timeline-navigation{
     }
 }
 
+div#reset-zoom{
+    float: left;
+
+    a.btn{
+        color: grey;
+    }
+}
+
 div.timeline-frame > div:first-child{
     z-index: 2;
     border-left: 2px solid grey;
@@ -123,7 +135,7 @@ div.timeline-event-selected {
     background: none;
     z-index: 10;
     
-    div.item{
+    div.timeline-item{
         background-color: rgba(245, 215, 115, 0.75);
     }
 }
@@ -135,33 +147,6 @@ div.timeline-event {
 div.timeline-event-range {
     margin-top: 28px;
     border: none;
-}
-
-div.item{
-    background-color: rgba(249, 103, 38, 0.6);
-    padding: 5px;
-    border-radius: 3px;
-    overflow: hidden;
-    
-    span{
-        float: left;
-        width: 65%;
-        overflow: hidden;
-    }
-    
-    i.delete{
-            float: right;
-            
-            &:hover{
-                cursor: pointer;
-                background-color: lighten(red,20%);
-                border-radius: 10px 10px 10px 10px;
-            }
-    }
-    
-    &:hover{
-        cursor:pointer;
-    }
 }
 
 div.timeline-navigation-delete{
@@ -180,6 +165,33 @@ div.timeline-bottom-controls{
         cursor:pointer;
     }
 }
+
+    div.timeline-item{
+        background-color: rgba(249, 103, 38, 0.6);
+        padding: 5px;
+        border-radius: 3px;
+        overflow: hidden;
+        
+        span{
+            float: left;
+            width: 65%;
+            overflow: hidden;
+        }
+        
+        i.delete{
+                float: right;
+                
+                &:hover{
+                    cursor: pointer;
+                    background-color: lighten(red,20%);
+                    border-radius: 10px 10px 10px 10px;
+                }
+        }
+        
+        &:hover{
+            cursor:pointer;
+        }
+    }
 
 
 

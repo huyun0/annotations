@@ -1,11 +1,28 @@
+/**
+ *  Copyright 2012, Entwine GmbH, Switzerland
+ *  Licensed under the Educational Community License, Version 2.0
+ *  (the "License"); you may not use this file except in compliance
+ *  with the License. You may obtain a copy of the License at
+ *
+ *  http://www.osedu.org/licenses/ECL-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing,
+ *  software distributed under the License is distributed on an "AS IS"
+ *  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ *  or implied. See the License for the specific language governing
+ *  permissions and limitations under the License.
+ *
+ */
+    
 define(["jquery",
         "collections/tracks",
         "collections/categories",
+        "collections/scales",
         "order!access",
         "order!underscore",
         "order!backbone"],
        
-    function($, Tracks, Categories, ACCESS){
+    function($, Tracks, Categories, Scales, ACCESS){
     
         /**
          * video model
@@ -45,25 +62,37 @@ define(["jquery",
                     this.set({categories: new Categories(attr.categories,this)});
                 else
                     this.set({categories: new Categories([],this)});
-                
-                // If localStorage used, we have to save the video at each change on the children
-                if(window.annotationsTool.localStorage){
-                    this.attributes['tracks'].bind('change',function(){
-                            this.save();
-                    },this);
+
+                // Check if the possible video scales are given
+                if(attr.scales && _.isArray(attr.scales))
+                    this.set({scales: new Scales(attr.scales,this)});
+                else
+                    this.set({scales: new Scales([],this)});
+
+                if(attr.id){
+                    this.get("categories").fetch({async:false});
+                    this.get("tracks").fetch({async:false});
+                    this.get("scales").fetch({async:false});
                 }
                 
                 // Define that all post operation have to been done through PUT method
-                // see in wiki
                 this.noPOST = true;
-                
             },
             
-            parse: function(attr) {
+            parse: function(data) {
+                var attr = data.attributes ? data.attributes : data;
+
                 attr.created_at = attr.created_at != null ? Date.parse(attr.created_at): null;
                 attr.updated_at = attr.updated_at != null ? Date.parse(attr.updated_at): null;
                 attr.deleted_at = attr.deleted_at != null ? Date.parse(attr.deleted_at): null;
-                return attr;
+                attr.settings = this.parseSettings(attr.settings);
+
+                if(data.attributes)
+                    data.attributes = attr;
+                else
+                    data = attr;
+
+                return data;
             },
             
             validate: function(attr){
@@ -71,7 +100,19 @@ define(["jquery",
                 if(attr.id){
                     if(this.get('id') != attr.id){
                         this.id = attr.id;
+                        this.attributes.id = attr.id;
                         this.setUrl();
+
+                        var categories = this.get("categories");
+                        var tracks     = this.get("tracks");
+                        var scales     = this.get("scales");
+
+                        if((categories.length) == 0)
+                            categories.fetch({async:false});
+                        if((tracks.length) == 0)
+                            tracks.fetch({async:false}); 
+                        if((scales.length) == 0)
+                            scales.fetch({async:false});
                     }
                 }
                 
@@ -111,6 +152,35 @@ define(["jquery",
             setUrl: function(){
                 this.get("tracks").setUrl(this);
                 this.get("categories").setUrl(this);
+                this.get("scales").setUrl(this);
+            },
+
+            /**
+             * Parse the given settings to JSON if given as String
+             * @param  {String} settings the settings as String
+             * @return {JSON} settings as JSON object
+             */
+            parseSettings: function(settings){
+                if(settings && _.isString(settings))
+                    settings = JSON.parse(settings);
+
+                return settings;
+            },
+
+            /**
+             * @override
+             * 
+             * Override the default toJSON function to ensure complete JSONing.
+             *
+             * @return {JSON} JSON representation of the instane
+             */
+            toJSON: function(){
+                var json = $.proxy(Backbone.Model.prototype.toJSON,this)();
+                delete json.tracks;
+                delete json.categories;
+                delete json.scales;
+
+                return json;
             }
         });
         

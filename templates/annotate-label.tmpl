@@ -1,0 +1,10 @@
+<input class="item-abbreviation" type="text" value="{{abbreviation}}" {{#if notEdit}}disabled='disabled'{{/if}}/> 
+<input class="item-value" type="text" value="{{value}}" {{#if notEdit}}disabled='disabled'{{/if}}/> 
+<span class="item-icon">{{icon}}</span>
+<i class="icon-trash delete edit"></i>
+<ul class="scaling">
+  {{#each scaleValues}}
+  <li value="{{this.id}}">{{this.name}}</li>
+  {{/each}}
+</ul>
+
