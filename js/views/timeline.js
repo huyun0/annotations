@@ -408,9 +408,6 @@ define(["jquery",
             
             if(!values)
               return;
-            
-            values.annotation.set({start: this.getTimeInSeconds(values.item.start),
-                                   duration: this.getTimeInSeconds(values.item.end)-this.getTimeInSeconds(values.item.start)});
 
             var htmlElement = this.$el.find('.annotation-id:contains('+values.annotation.id+')').parent().parent()[0];
             var index = this.timeline.getItemIndex(htmlElement);
@@ -449,6 +446,8 @@ define(["jquery",
                   group: newItem.group
               });
             }
+
+            values.annotation.save();
 
             this.timeline.redraw();
             if(this.hasToPlay)
