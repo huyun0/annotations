@@ -44,7 +44,7 @@ define(["order!jquery",
             
             parse: function(resp, xhr) {
                 if(resp.scales && _.isArray(resp.scales))
-                    return resp.annotations;
+                    return resp.scales;
                 else if(_.isArray(resp))
                     return resp;
                 else
@@ -64,6 +64,9 @@ define(["order!jquery",
                 else{  // If not a template, we add video url      
                     this.url = video.url() + "/scales";
                     this.isTemplate = false;
+
+                    if(annotationsTool.localStorage)
+                        this.localStorage = new Backbone.LocalStorage(this.url);
                 }
                 
                 this.each(function(scale){

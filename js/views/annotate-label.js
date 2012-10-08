@@ -54,11 +54,13 @@ define(["jquery",
           /** Events to handle by the annotate view */
           events: {
             "click"                         : "annotate",
+            "click input.item-value, input.item-abbreviation"        : "annotate",
             "click i.delete"                : "onDeleteLabel",
             "focusout .item-value"          : "onFocusOut",
             "keydown .item-value"           : "onKeyDown",
             "focusout .item-abbreviation"   : "onFocusOut",
-            "keydown .item-abbreviation"    : "onKeyDown"
+            "keydown .item-abbreviation"    : "onKeyDown",
+            "click .scaling li"             : "annnotateWithScaling"
           },
           
           /**
@@ -76,7 +78,8 @@ define(["jquery",
                             'onSwitchEditModus',
                             'onFocusOut',
                             'onKeyDown',
-                            'onDeleteLabel');
+                            'onDeleteLabel',
+                            'annnotateWithScaling');
 
             // Type use for delete operation
             this.typeForDelete = annotationsTool.deleteOperation.targetTypes.LABEL;
@@ -93,9 +96,53 @@ define(["jquery",
 
             this.model.bind('change', this.render);
 
+            var scaleId = this.model.get("category").scale_id;
+
+            if(!scaleId && this.model.get("category").scale)
+              scaleId = this.model.get("category").scale.id;
+
+            this.scaleValues = annotationsTool.video.get("scales").get(scaleId);
+            
+            if(this.scaleValues)
+             this.scaleValues = this.scaleValues.get("scaleValues");
+
             $(annotationsTool.video).bind('switchEditModus',this.onSwitchEditModus);
 
             return this.render();
+          },
+
+          annnotateWithScaling: function(event){
+            event.stopImmediatePropagation();
+
+            var id = event.target.getAttribute("value");
+
+            var scaleValue = this.scaleValues.get(id);
+
+            if(this.editModus)
+              return;
+
+            var time = annotationsTool.playerAdapter.getCurrentTime();
+            
+            if(!_.isNumber(time) || time < 0)
+              return;
+
+            var options = {};
+            var params = {
+                text: this.model.get('value'),
+                start:time,
+                label: this.model,
+                scaleValue: scaleValue.toJSON()
+            };
+            
+            if(annotationsTool.user)
+                params.created_by = annotationsTool.user.id;
+
+
+            if(!annotationsTool.localStorage)
+              options.wait = true;
+
+
+            annotationsTool.selectedTrack.get("annotations").create(params,options);
           },
 
           /**
@@ -193,6 +240,8 @@ define(["jquery",
           render: function(){
             var modelJSON = this.model.toJSON();
             modelJSON.notEdit = !this.editModus;
+            if(this.scaleValues)
+              modelJSON.scaleValues = this.scaleValues.toJSON();
             this.$el.html(this.template(modelJSON));
             this.delegateEvents(this.events);
             return this;

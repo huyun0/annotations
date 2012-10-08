@@ -18,15 +18,19 @@ define(["jquery",
         "underscore",
         "models/category",
         "models/label",
+        "models/scale",
+        "models/scalevalue",
         "collections/categories",
         "collections/labels",
+        "collections/scalevalues",
         "views/annotate-category",
         "text!templates/annotate-tab.tmpl",
         "default_categories_set",
+        "default_scale_set",
         "libs/handlebars",
         "backbone"],
        
-    function($, _not, Category, Label, Categories, Labels, CategoryView, Template, categoriesSet){
+    function($, _not, Category, Label, Scale, ScaleValue, Categories, Labels, ScaleValues, CategoryView, Template, categoriesSet, scalesSet){
 
         /**
          * @class Tab view containing categories/label
@@ -139,7 +143,7 @@ define(["jquery",
             this.categoriesContainer.find('.item:first-child').addClass("active");
             
             this.carouselElement
-                  .carousel({interval: false, pause: "hover out"})
+                  .carousel({interval: 99999999999999, pause: "hover out"})
                   .bind('slid',this.onCarouselSlid)
                   .carousel('pause');
 
@@ -207,7 +211,7 @@ define(["jquery",
            * @param  {Event} event
            */
           onAddCategory: function(event){
-            this.addCategory(new Category({name: "NEW CATEGORY", settings: {color:"grey"}}));
+            this.addCategory(new Category({name: "NEW CATEGORY", settings: {color:"grey"}, scale: annotationsTool.video.get("scales").at(0)}));
           },
 
           /**
@@ -266,18 +270,32 @@ define(["jquery",
            * @return {Categories} Category collection
            */
           generateCategories: function(){
-            var categories = new Array();
+            var categories = new Array(),
+                scale, scalevalues;
 
-            var findByName = function(cat){
-              return categoriesSet[0].name == cat.get('name');
+            var findByNameCat = function(cat){
+                  return categoriesSet[0].name == cat.get('name');
+                },
+                findByNameScale = function(scale){
+                  return scalesSet[0].name == scale.get('name');
+                };
+
+            if(!annotationsTool.video.get("scales").find(findByNameScale)){
+              scale = annotationsTool.video.get("scales").create({name: scalesSet[0].name});
+              scalevalues = scale.get("scaleValues");
+ 
+              _.each(scalesSet[0].values,function(scalevalue){
+                scalevalues.create({name: scalevalue.name, value: scalevalue.value, order: scalevalue.order, scale: scale});
+              });
             }
 
-            if(this.categories.find(findByName))
+            if(this.categories.find(findByNameCat))
               return categories;
 
             _.each(categoriesSet, function(cat,index){
 
               var labels = cat.labels;
+              cat.scale = scale;
               
               delete cat.labels;
 
@@ -314,7 +332,7 @@ define(["jquery",
            * Move carousel to next element
            */
           moveCarouselNext: function(){
-            this.carouselElement.carousel('next');
+            this.carouselElement.carousel('next').carousel('pause');
           },
 
 
@@ -322,7 +340,7 @@ define(["jquery",
            * Move carousel to previous element
            */
           moveCarouselPrevious: function(){
-            this.carouselElement.carousel('prev');
+            this.carouselElement.carousel('prev').carousel('pause');
           },
 
           /**
@@ -342,6 +360,7 @@ define(["jquery",
            */
           onSwitchEditModus: function(event, status){
             this.switchEditModus(status);
+            this.carouselElement.carousel('pause');
           },
 
           /**
@@ -368,16 +387,14 @@ define(["jquery",
             if(this.categoriesContainer.find('#'+currentId).length == 0)
               currentIndex --;
 
-            this.carouselElement
-                  .carousel({interval: false, pause: "hover out"})
-                  .bind('slid',this.onCarouselSlid)
-                  .carousel('pause');
-
-
-            this.carouselElement.carousel(parseInt(currentIndex));
 
             this.categoriesContainer.find('#item-'+currentIndex).addClass("active");
             this.carouselPagination.find('#page-'+currentIndex).parent().addClass("active");
+
+            this.carouselElement
+                  .carousel({interval: 9999999999999999999, pause: "hover out"})
+                  .bind('slid',this.onCarouselSlid)
+                  .carousel('pause');
             
             return this;
           },

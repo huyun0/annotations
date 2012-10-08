@@ -47,6 +47,9 @@ define(["jquery",
                 else
                     this.set({scaleValues: new ScaleValues([],this)});
                 
+                if(attr.id)
+                    this.attributes.scaleValues.fetch({async:false});
+
                 // Check if the track has been initialized 
                 if(!attr.id){
                     // If local storage, we set the cid as id
@@ -57,14 +60,6 @@ define(["jquery",
                 }
                 
                 this.set(attr);
-                
-                // If localStorage used, we have to save the video at each change on the children
-                if(window.annotationsTool.localStorage){
-                    this.attributes['scaleValues'].bind('change',function(scalevalue){
-                            this.save();
-                            this.trigger("change");
-                    },this);
-                }
             },
             
             parse: function(attr) {
@@ -80,6 +75,9 @@ define(["jquery",
                     if(this.get('id') != attr.id){
                         this.id = attr.id;
                         this.setUrl();
+
+                        if((this.get("scaleValues").length) == 0)
+                            this.get("scaleValues").fetch({async:false});
                     }
                 }
                 
@@ -113,6 +111,20 @@ define(["jquery",
 
                 if(attr.deleted_at && !_.isNumber(attr.deleted_at))
                     return "'deleted_at' attribute must be a number!";
+            },
+
+            /**
+             * @override
+             * 
+             * Override the default toJSON function to ensure complete JSONing.
+             *
+             * @return {JSON} JSON representation of the instane
+             */
+            toJSON: function(){
+                var json = Backbone.Model.prototype.toJSON.call(this);
+                delete json.scaleValues;
+
+                return json;
             },
             
             /**

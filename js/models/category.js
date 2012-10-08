@@ -1,4 +1,4 @@
-/**
+    /**
  *  Copyright 2012, Entwine GmbH, Switzerland
  *  Licensed under the Educational Community License, Version 2.0
  *  (the "License"); you may not use this file except in compliance
@@ -79,8 +79,6 @@ define(["order!jquery",
                     this.attributes.labels.bind('change',saveChange,this);
                     this.attributes.labels.bind('remove',saveChange,this);
                 }
-
-
                 
                 this.set(attr);
             },
@@ -97,6 +95,9 @@ define(["order!jquery",
 
                 if(annotationsTool.localStorage && _.isArray(attr.labels))
                     attr.labels = new Labels(attr.labels,this);
+
+                if(!annotationsTool.localStorage &&  attr.scale_id && (_.isNumber(attr.scale_id) || _.isString(attr.scale_id)))
+                    attr.scale = annotationsTool.video.get("scales").get(attr.scale_id);
 
                 if(data.attributes)
                     data.attributes = attr;
@@ -196,6 +197,14 @@ define(["order!jquery",
             toJSON: function(){
                 var json = Backbone.Model.prototype.toJSON.call(this);
                 delete json.labels;
+
+                if(this.attributes.scale){
+                    
+                    if(this.attributes.scale.attributes)
+                        json.scale_id = this.attributes.scale.get("id");
+                    else
+                        json.scale_id = this.attributes.scale.id;
+                }
 
                 return json;
             },

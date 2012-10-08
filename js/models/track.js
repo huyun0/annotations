@@ -112,8 +112,8 @@ define(["order!jquery",
                 if(attr.description && !_.isString(attr.description))
                     return "'description' attribute must be a string";
                 
-                if(attr.settings && !_.isString(attr.settings))
-                    return "'description' attribute must be a string";
+                /*if(attr.settings && !_.isString(attr.settings))
+                    return "'description' attribute must be a string";*/
                 
                 if(attr.access &&  !_.include(ACCESS,attr.access))
                     return "'access' attribute is not valid.";

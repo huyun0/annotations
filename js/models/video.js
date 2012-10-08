@@ -17,11 +17,12 @@
 define(["jquery",
         "collections/tracks",
         "collections/categories",
+        "collections/scales",
         "order!access",
         "order!underscore",
         "order!backbone"],
        
-    function($, Tracks, Categories, ACCESS){
+    function($, Tracks, Categories, Scales, ACCESS){
     
         /**
          * video model
@@ -62,16 +63,16 @@ define(["jquery",
                 else
                     this.set({categories: new Categories([],this)});
 
+                // Check if the possible video scales are given
+                if(attr.scales && _.isArray(attr.scales))
+                    this.set({scales: new Scales(attr.scales,this)});
+                else
+                    this.set({scales: new Scales([],this)});
+
                 if(attr.id){
                     this.get("categories").fetch({async:false});
                     this.get("tracks").fetch({async:false});
-                }
-                
-                // If localStorage used, we have to save the video at each change on the children
-                if(window.annotationsTool.localStorage){
-                    this.attributes['tracks'].bind('change',function(){
-                            this.save();
-                    },this);
+                    this.get("scales").fetch({async:false});
                 }
                 
                 // Define that all post operation have to been done through PUT method
@@ -103,12 +104,15 @@ define(["jquery",
                         this.setUrl();
 
                         var categories = this.get("categories");
-                        var tracks = this.get("tracks");
+                        var tracks     = this.get("tracks");
+                        var scales     = this.get("scales");
 
                         if((categories.length) == 0)
                             categories.fetch({async:false});
                         if((tracks.length) == 0)
-                            tracks.fetch({async:false});
+                            tracks.fetch({async:false}); 
+                        if((scales.length) == 0)
+                            scales.fetch({async:false});
                     }
                 }
                 
@@ -148,6 +152,7 @@ define(["jquery",
             setUrl: function(){
                 this.get("tracks").setUrl(this);
                 this.get("categories").setUrl(this);
+                this.get("scales").setUrl(this);
             },
 
             /**
@@ -173,6 +178,7 @@ define(["jquery",
                 var json = $.proxy(Backbone.Model.prototype.toJSON,this)();
                 delete json.tracks;
                 delete json.categories;
+                delete json.scales;
 
                 return json;
             }

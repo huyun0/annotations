@@ -37,7 +37,12 @@ define(["order!jquery",
             },
             
             parse: function(resp, xhr) {
-              return resp.scaleValues;
+              if(resp.scaleValues && _.isArray(resp.scaleValues))
+                    return resp.scaleValues;
+                else if(_.isArray(resp))
+                    return resp;
+                else
+                    return null;
             },
             
             /**
@@ -48,8 +53,12 @@ define(["order!jquery",
             setUrl: function(scale){
                 if(!scale)
                     throw "The parent scale of the scale value must be given!";
-                else if(scale.collection)
+                else if(scale.collection){
                     this.url = scale.url() + "/scalevalues";
+
+                    if(annotationsTool.localStorage)
+                        this.localStorage = new Backbone.LocalStorage(this.url);
+                }
             }
         });
         
