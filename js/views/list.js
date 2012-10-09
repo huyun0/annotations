@@ -132,7 +132,7 @@ define(["jquery",
                   view.selectVisually();
                   
                   if(firstSelection){
-                    this.doClick(view.$el.find('a.proxy-anchor')[0]);
+                    //this.doClick(view.$el.find('a.proxy-anchor')[0]);
                     firstSelection = false;
                   }
                 }
@@ -141,7 +141,7 @@ define(["jquery",
                   view.selectVisually();
 
                   if(firstSelection){
-                    this.doClick(view.$el.find('a.proxy-anchor')[0]);
+                    //this.doClick(view.$el.find('a.proxy-anchor')[0]);
                     firstSelection = false;
                   }
                 
