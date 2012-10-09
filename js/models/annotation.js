@@ -80,19 +80,22 @@ define(["order!jquery",
 
                 if(!annotationsTool.localStorage &&  attr.label_id && (_.isNumber(attr.label_id) || _.isString(attr.label_id))){
                     var categories = annotationsTool.video.get('categories');
-                    var tempLabel;
+                    var tempLabel, label;
 
                     categories.each(function(cat, index){
-                        if(label)
-                            return;
 
-                        if((tempLabel = cat.attributes.labels.get(attr.label_id)))
+                        if((tempLabel = cat.attributes.labels.get(attr.label_id))){
                             label = tempLabel;
+                            return true;
+                        }
 
                     },this);
 
                     attr.label = label;
                 }
+
+                if(!annotationsTool.localStorage &&  attr.scale_value)
+                    attr.scaleValue = attr.scale_value;
 
                 if(data.attributes)
                     data.attributes = attr;
@@ -174,6 +177,13 @@ define(["order!jquery",
                 var json = $.proxy(Backbone.Model.prototype.toJSON,this)();
                 if(json.label && json.label.toJSON)
                     json.label = json.label.toJSON();
+
+                if(json.scaleValue){
+                    if(json.scaleValue.attributes)
+                        json.scale_value_id = json.scaleValue.attributes.id
+                    else if(json.scaleValue.id)
+                        json.scale_value_id = json.scaleValue.id;
+                }
 
                 delete json.annotations;
 

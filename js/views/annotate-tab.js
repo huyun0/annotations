@@ -280,13 +280,21 @@ define(["jquery",
                   return scalesSet[0].name == scale.get('name');
                 };
 
+            var options = {};
+
+            if(!annotationsTool.localStorage)
+              options.wait = true;
+
             if(!annotationsTool.video.get("scales").find(findByNameScale)){
-              scale = annotationsTool.video.get("scales").create({name: scalesSet[0].name});
+              scale = annotationsTool.video.get("scales").create({name: scalesSet[0].name},options);
               scalevalues = scale.get("scaleValues");
  
               _.each(scalesSet[0].values,function(scalevalue){
-                scalevalues.create({name: scalevalue.name, value: scalevalue.value, order: scalevalue.order, scale: scale});
+                scalevalues.create({name: scalevalue.name, value: scalevalue.value, order: scalevalue.order, scale: scale},options);
               });
+            }
+            else{
+              scale = annotationsTool.video.get("scales").at(0);
             }
 
             if(this.categories.find(findByNameCat))
