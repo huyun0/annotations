@@ -373,8 +373,6 @@ define(["jquery",
             _.each(data,function(item,index){
               if((item.start <= newDate) && (item.end >= newDate)){
                 this.timeline.selectItem(index);
-                
-                // TODO, GET AND SELECT ANNOTATION
               }
             },this);
             
