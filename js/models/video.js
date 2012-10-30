@@ -106,13 +106,35 @@ define(["jquery",
                         var categories = this.get("categories");
                         var tracks     = this.get("tracks");
                         var scales     = this.get("scales");
+                        var self       = this;
 
                         if((categories.length) == 0)
-                            categories.fetch({async:false});
+                            categories.fetch({
+                                async:false,
+                                success: function(){
+                                    self.categoriesReady = true;
+                                    if(self.tracksReady && self.categoriesReady && self.scalesReady)
+                                        self.trigger("ready");
+                                }
+                            });
                         if((tracks.length) == 0)
-                            tracks.fetch({async:false}); 
+                            tracks.fetch({
+                                async:false,
+                                success: function(){
+                                    self.tracksReady = true;
+                                    if(self.tracksReady && self.categoriesReady && self.scalesReady)
+                                        self.trigger("ready");
+                                }
+                            }); 
                         if((scales.length) == 0)
-                            scales.fetch({async:false});
+                            scales.fetch({
+                                async:false,
+                                success: function(){
+                                    self.scalesReady = true;
+                                    if(self.tracksReady && self.categoriesReady && self.scalesReady)
+                                        self.trigger("ready");
+                                }
+                            });
                     }
                 }
                 

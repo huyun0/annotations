@@ -322,9 +322,6 @@ define(["order!jquery",
          * @function to conclude the retrive of annotations
          */
         var endGetAnnotations = $.proxy(function(){
-          
-            // Set the video for the annotations tool, could be used everywhere then
-            annotationsTool.video = video;
             
             var selectedTrack = tracks.at(0);
             
@@ -342,35 +339,16 @@ define(["order!jquery",
             var remindingFetchingTrack = tracks.length;
           
             // Function to add the different listener to the annotations
-            var addAnnotationsListeners = $.proxy(function(track){
-              var annotations = track.get("annotations");
-              
-              annotations.bind('jumpto',function(start){
-                 this.playerAdapter.setCurrentTime(start);
-              },this);
-              
-              annotations.bind('destroy',function(annotation){
-                 annotations.remove(annotation);
-              },this);
-        
-              if(--remindingFetchingTrack == 0)
-                callback();
-            },this);
+            tracks.each($.proxy(function(track,index){
+                var annotations = track.get("annotations");
+                
+                annotations.bind('jumpto',function(start){
+                   this.playerAdapter.setCurrentTime(start);
+                },this);
           
-            // Get all annotations
-            tracks.each(function(track,index){
-              var annotations = track.get("annotations");
-              
-              if(window.annotationsTool.localStorage){
-                addAnnotationsListeners(track);
-              }
-              else{
-                // Create an annotations collection an get all the annotations
-                annotations.fetch({success: $.proxy(function(){
-                        addAnnotationsListeners(track);
-                }, this)});
-              }
-            }, this);
+                if(--remindingFetchingTrack == 0)
+                  callback();
+              }),this);
             
         },this);
         
@@ -398,32 +376,28 @@ define(["order!jquery",
         }
         // With Rest storage
         else{
+
           videos.add({video_extid:annotationsTool.getVideoExtId()});
-          video = videos.at(0);
-          annotationsTool.video = video;
-          
-          // Wait that the video is well saved (to have a good id)
-          video.save(video,{
-              success: function(data){
-                tracks = video.get("tracks");
-                tracks.fetch({
-                  
-                  success: function(){
-                    if(tracks.length == 0){
-                      tracks.add({name:"default"});
-                      track = tracks.at(0);
-                      track.save(track,{success: endGetAnnotations});
-                    }
-                    else{
-                      endGetAnnotations();
-                    }
-                  },
-                  error: function(){
-                    throw "Not able to get tracks from video "+video.get("id");
-                  }
-                });
-            }
+          annotationsTool.video = videos.at(0);
+
+          annotationsTool.video.on('ready',function(){
+                tracks = annotationsTool.video.get("tracks");
+
+                if(tracks.length == 0){
+                  tracks.create({name:"default"},{
+                    wait: true, 
+                    success: endGetAnnotations
+                  });
+                }
+                else{
+                  console.warn("Could get tracks");
+                  endGetAnnotations();
+                }
+
           });
+
+          annotationsTool.video.save();
+          
         }
 
       },
