@@ -143,7 +143,7 @@ define(["jquery",
             this.categoriesContainer.find('.item:first-child').addClass("active");
             
             this.carouselElement
-                  .carousel({interval: 99999999999999, pause: "hover out"})
+                  .carousel({interval: false, pause: ""})
                   .bind('slid',this.onCarouselSlid)
                   .carousel('pause');
 
@@ -157,6 +157,10 @@ define(["jquery",
             this.categories.bind('destroy',this.removeOne);
 
             $(annotationsTool.video).bind('switchEditModus',this.onSwitchEditModus);
+
+            $(document).on('mouseleave', '.carousel', function() {
+                  $(this).carousel('pause');
+            });
 
             return this;
           },
@@ -360,6 +364,10 @@ define(["jquery",
             numberStr = numberStr.replace("item-","");
             this.carouselPagination.find('.page-link').parent().removeClass('active');
             this.carouselPagination.find('#page-'+numberStr).parent().addClass('active');
+            this.carouselElement
+                  .carousel({interval: false, pause: ""})
+                  .bind('slid',this.onCarouselSlid)
+                  .carousel('pause');
           },
 
           /**
@@ -400,7 +408,7 @@ define(["jquery",
             this.carouselPagination.find('#page-'+currentIndex).parent().addClass("active");
 
             this.carouselElement
-                  .carousel({interval: 9999999999999999999, pause: "hover out"})
+                  .carousel({interval: false, pause: ""})
                   .bind('slid',this.onCarouselSlid)
                   .carousel('pause');
             
