@@ -57,6 +57,7 @@ div.timeline-groups-text i.delete {
   float: left;
   margin-top: 5px;
   margin-right: 4px;
+  display: none;
 }
 div.timeline-groups-text i.delete:hover {
   cursor: pointer;

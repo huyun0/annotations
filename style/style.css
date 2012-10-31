@@ -6221,6 +6221,7 @@ div.timeline-groups-text i.delete {
   float: left;
   margin-top: 5px;
   margin-right: 4px;
+  display: none;
 }
 div.timeline-groups-text i.delete:hover {
   cursor: pointer;
@@ -7576,6 +7577,14 @@ div.timeline-item:hover {
 }
 .navbar a#logout {
   display: none;
+}
+#video-container {
+  height: 50%;
+  max-width: 100%;
+}
+#video-container video {
+  width: 100%;
+  height: 100%;
 }
 /**
  * Style for annotate view

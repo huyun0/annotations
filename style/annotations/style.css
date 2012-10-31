@@ -62,6 +62,14 @@
 .navbar a#logout {
   display: none;
 }
+#video-container {
+  height: 50%;
+  max-width: 100%;
+}
+#video-container video {
+  width: 100%;
+  height: 100%;
+}
 /**
  * Style for annotate view
  */
