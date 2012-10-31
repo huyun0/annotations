@@ -390,7 +390,6 @@ define(["order!jquery",
                   });
                 }
                 else{
-                  console.warn("Could get tracks");
                   endGetAnnotations();
                 }
 

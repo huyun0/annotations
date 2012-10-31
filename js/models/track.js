@@ -105,7 +105,7 @@ define(["order!jquery",
                         var annotations = this.get("annotations");
 
                         if((annotations.length) == 0)
-                            annotations.fetch({async:false});
+                            annotations.fetch({async:false, add: true});
                     }
                 }
                 

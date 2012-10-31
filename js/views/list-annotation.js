@@ -162,9 +162,11 @@ define(["jquery",
             if(this.deleted){
                 return "";
             }
+
             this.model.set({collapsed: this.collapsed}, {silent:true});
             var modelJSON = this.model.toJSON();
             modelJSON.track = this.track.get("name");
+            modelJSON.text = modelJSON.text.replace(/\n/g,"<br/>");
             this.$el.html(this.template(modelJSON));
             this.delegateEvents(this.events);
             return this;

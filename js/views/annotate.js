@@ -39,7 +39,7 @@ define(["jquery",
           
           /** Events to handle by the annotate view */
           events: {
-            "keypress #new-annotation"          : "keydownOnAnnotate",
+            "keyup #new-annotation"          : "keydownOnAnnotate",
            // "keyup #new-annotation"             : "keyupOnAnnotate",
             "click #insert"                     : "insert",
             "keydown #new-annotation"           : "onFocusIn",
@@ -73,6 +73,7 @@ define(["jquery",
                           'render',
                           'reset', 
                           'onFocusIn',
+                          'onFocusOut',
                           'changeTrack',
                           'addTab',
                           'onSwitchEditModus', 
@@ -119,14 +120,13 @@ define(["jquery",
            * Insert a new annotation
            */
           insert: function(){
+
             var value = _.escape(this.input.val());
-            this.input.val('');
+            
             var time = this.playerAdapter.getCurrentTime();
             
             if(!value || (!_.isNumber(time) || time < 0))
               return;
-
-            value = value.replace("\n","<br/>");
             
             var options = {};
             var params = {
@@ -145,6 +145,8 @@ define(["jquery",
             
             if(this.continueVideo)
               this.playerAdapter.play();
+
+            this.input.val("");
           },
           
           /**
@@ -168,6 +170,7 @@ define(["jquery",
            * manage if the video has to be or not paused.
            */
           onFocusIn: function(){
+
             if(!this.$el.find('#pause-video').attr('checked') || (this.playerAdapter.getStatus() == PlayerAdapter.STATUS.PAUSED))
               return;
               
@@ -184,6 +187,7 @@ define(["jquery",
            * Listener for when we leave the annotation input
            */
           onFocusOut: function(){
+
             if(this.continueVideo){
               this.continueVideo = false;
               this.playerAdapter.play();
