@@ -37,7 +37,7 @@ define(["order!jquery",
                 deleted_at: null,
                 deleted_by: null,
                 start: 0,
-                duration: 0
+                duration: 5
             },
             
             // Logs

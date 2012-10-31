@@ -39,7 +39,8 @@ define(["jquery",
           
           /** Events to handle by the annotate view */
           events: {
-            "keypress #new-annotation"          : "insertOnEnter",
+            "keypress #new-annotation"          : "keydownOnAnnotate",
+           // "keyup #new-annotation"             : "keyupOnAnnotate",
             "click #insert"                     : "insert",
             "keydown #new-annotation"           : "onFocusIn",
             "focusout #new-annotation"          : "onFocusOut",
@@ -58,6 +59,9 @@ define(["jquery",
 
           /** Define edit mode is on or not */
           editModus: false,
+
+          /** Arrays of key currently prressed */
+          pressedKeys: {},
           
           /**
            * @constructor
@@ -65,7 +69,16 @@ define(["jquery",
           initialize: function(attr){
               
             // Set the current context for all these functions
-            _.bindAll(this,'insert','render','reset', 'onFocusIn','changeTrack','addTab','onSwitchEditModus', 'switchEditModus');
+            _.bindAll(this,'insert',
+                          'render',
+                          'reset', 
+                          'onFocusIn',
+                          'changeTrack',
+                          'addTab',
+                          'onSwitchEditModus', 
+                          'switchEditModus',
+                          'keyupOnAnnotate',
+                          'keydownOnAnnotate');
             
             // Parameter for stop on write
             this.continueVideo = false;
@@ -90,9 +103,16 @@ define(["jquery",
           /**
            * Proxy function for insert through 'enter' keypress
            */
-          insertOnEnter: function(e){
-            if(e.keyCode == 13)
+          keydownOnAnnotate: function(e){
+            // this.pressedKeys[e.keyCode] = true;
+
+            // If enter is pressed and shit not, we inset a new annotation
+            if(e.keyCode == 13 && !e.shiftKey)
               this.insert();
+          },
+
+          keyupOnAnnotate: function(e){
+            this.pressedKeys[e.keyCode] = false;
           },
           
           /**
@@ -105,6 +125,8 @@ define(["jquery",
             
             if(!value || (!_.isNumber(time) || time < 0))
               return;
+
+            value = value.replace("\n","<br/>");
             
             var options = {};
             var params = {

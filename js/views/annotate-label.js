@@ -54,7 +54,7 @@ define(["jquery",
           /** Events to handle by the annotate view */
           events: {
             "click"                         : "annotate",
-            "click input.item-value, input.item-abbreviation"        : "annotate",
+            "click .item-value, .item-abbreviation"        : "annotate",
             "click i.delete"                : "onDeleteLabel",
             "focusout .item-value"          : "onFocusOut",
             "keydown .item-value"           : "onKeyDown",

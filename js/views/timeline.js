@@ -565,7 +565,9 @@ define(["jquery",
 
 
            onDeletePressed: function(event){
-            if(event.keyCode != 8)
+            if(event.keyCode != 8 || 
+              document.activeElement.tagName.toUpperCase() == "TEXTAREA" ||
+              document.activeElement.tagName.toUpperCase() == "INPUT")
               return;
 
             event.preventDefault();
@@ -661,10 +663,6 @@ define(["jquery",
           },
           
           
-          /**
-           * TODO: check it
-           *
-           */
           getTimelineItemFromAnnotationId: function(annotationId){
             var baseHtmlElement = this.$el.find('.annotation-id:contains('+annotationId+')');
             

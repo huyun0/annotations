@@ -104,10 +104,7 @@
   text-align: left;
 }
 #annotate-form #input-container #new-annotation {
-  width: 68%;
-  margin-bottom: -0.5px;
-  margin-left: -4px;
-  margin-right: -4px;
+  width: 97%;
 }
 #annotate-form #editSwitch {
   float: right;
@@ -131,6 +128,7 @@
   height: 100%;
 }
 #annotate-container #label-tabs-contents div.carousel .category-item .catItem-header {
+  text-align: left;
   padding: 5px;
   font-size: 14px;
   background-color: #e3e3e3;
