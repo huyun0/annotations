@@ -11,7 +11,6 @@
  *  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  *  or implied. See the License for the specific language governing
  *  permissions and limitations under the License.
- *
  */
 
 define(["jquery",
@@ -51,7 +50,7 @@ define(["jquery",
           /** Events to handle by the timeline view */
           events: {
             "click #add-track"            : "loadAddTrackModal",
-            "click #reset-zoom"            : "onTimelineResetZoom"
+            "click #reset-zoom"           : "onTimelineResetZoom"
           },
           
           /** Constant for void item content */
@@ -80,6 +79,7 @@ define(["jquery",
                            'onTimelineItemSelected',
                            'onTimelineItemAdded',
                            'onAnnotationDestroyed',
+                           'onDeletePressed',
                            'getVoidItem',
                            'changeItem',
                            'getFormatedDate',
@@ -107,7 +107,7 @@ define(["jquery",
               height: "auto",
               style: "box",
               scale: links.Timeline.StepDate.SCALE.MILLISECOND,
-              step: 1,
+              step: 5,
               showButtonAdd: false,
               editable: true,
               start: this.startDate,
@@ -139,6 +139,7 @@ define(["jquery",
             $(window).bind('selectTrack', $.proxy(this.onTrackSelected,this));
             $(window).bind('deleteTrack', $.proxy(this.onDeleteTrack,this));
             $(window).bind('deleteAnnotation',$.proxy(this.onDeleteAnnotation,this));
+            $(window).bind('keydown',$.proxy(this.onDeletePressed,this));
             
             $(this.playerAdapter).bind('pa_timeupdate',this.onPlayerTimeUpdate);
             links.events.addListener(this.timeline,'timechanged',this.onTimelineMoved);
@@ -213,8 +214,6 @@ define(["jquery",
               var startTime = annotation.get("start");
               var endTime   = startTime + annotation.get("duration");
               var start = this.getFormatedDate(startTime);
-              if(startTime == endTime)
-                endTime += this.DEFAULT_DURATION;
               var end = this.getFormatedDate(endTime);
               
               this.timeline.addItem({
@@ -562,6 +561,18 @@ define(["jquery",
               
               if(annotation)
                 annotationsTool.deleteOperation.start(annotation,this.typeForDeleteAnnotation);
+           },
+
+
+           onDeletePressed: function(event){
+            if(event.keyCode != 8)
+              return;
+
+            event.preventDefault();
+
+            var annotationObject = this.getSelectedItemAndAnnotation();
+            if(annotationObject && annotationObject.annotation)
+              annotationsTool.deleteOperation.start(annotationObject.annotation,this.typeForDeleteAnnotation);
            },
           
           /**

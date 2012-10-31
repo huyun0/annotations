@@ -343,12 +343,12 @@ define(["order!jquery",
                 var annotations = track.get("annotations");
                 
                 annotations.bind('jumpto',function(start){
-                   this.playerAdapter.setCurrentTime(start);
+                   annotationsTool.playerAdapter.setCurrentTime(start);
                 },this);
           
                 if(--remindingFetchingTrack == 0)
                   callback();
-              }),this);
+            }),this);
             
         },this);
         
