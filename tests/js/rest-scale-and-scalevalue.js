@@ -166,7 +166,7 @@ require(['domReady',
                                 },
                                 
                                 success: function(data){
-                                    ok(true, "Video updated");
+                                    ok(true, "Scale updated");
                                     equal("quantity", data.name, "Name is correct");
                                     ok(data.created_at, "Created_at date is set");
                                     equal(data.created_by, user.get('id'), "Created_by user id is correct");
@@ -177,7 +177,7 @@ require(['domReady',
                     });
                 })
                 
-                test("Get all scales from video", function(){
+                test("Get all scales", function(){
                     stop();
                     AnnotationsSync('read',scales,{
                                 error: function(error){
@@ -186,7 +186,7 @@ require(['domReady',
                                 },
                                 
                                 success: function(data){
-                                    ok(true, "Get all scales successfully");
+                                    ok(true, "Got all scales!");
                                     ok(_.isArray(data.scales), "Got all scales");
                                     equal(data.scales.length, 2, "Two scales are successfully returned");
                                     start();
