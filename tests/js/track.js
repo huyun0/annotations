@@ -44,17 +44,19 @@ require(['domReady',
                 
                 test("Settings", function() {
                     stop();
+                    var newSettings = '{"color":"blue"}';
                     track.bind('error',function(model,error){
                             ok(true,"Can not be modified, error: " + error);
                             track.unbind('error');
-                            start();
+
+                            track.bind('change',function(model,error){
+                                equal(track.get('settings'), newSettings, "Track  should have "+newSettings+" as settings attribute.");
+                                track.unbind('change');
+                                start();
+                            });
+                            track.set({settings:newSettings});
                     });
                     track.set({settings:12});
-                    
-                    var newSettings = "color=blue";
-                    track.set({settings:newSettings});
-                    equal(track.get('settings'), newSettings, "Track  should have "+newSettings+" as settings attribute.");
-
                 });
                 
                 test("Access", function() {
@@ -68,6 +70,29 @@ require(['domReady',
 
                     track.set({access:ACCESS.PRIVATE});
                     equal(track.get('access'), ACCESS.PRIVATE, "track  should have "+ACCESS.PRIVATE+" as access attribute.");
+                });
+
+                test("Tags", function() {
+                    stop();
+
+                    var stringsTags = '{"tag1":1}',
+                        jsonTags    = {tag1:1},
+                        unvalidTags = "unvalid";
+                    
+                    
+                    track.bind('error',function(model,error){
+                            ok(true,"Can not be modified, error: " + error);
+
+
+                            track.bind('change',function(model,error){
+                                equal(track.get('tags'), stringsTags, "Track should have "+stringsTags+" as description attribute.");
+                                track.unbind('change');
+                                start();
+                            });
+                            track.set({tags:stringsTags});
+                            
+                    });
+                    track.set({tags:unvalidTags});                    
                 });   
             });
             

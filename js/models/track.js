@@ -21,6 +21,8 @@ define(["order!jquery",
         "order!backbone"],
     
     function($,Annotations,ACCESS){
+
+        "use strict";
         
         /**
          * Track model
@@ -79,15 +81,21 @@ define(["order!jquery",
             parse: function(data) {
                 var attr = data.attributes ? data.attributes : data;
 
-                attr.created_at = attr.created_at != null ? Date.parse(attr.created_at): null;
-                attr.updated_at = attr.updated_at != null ? Date.parse(attr.updated_at): null;
-                attr.deleted_at = attr.deleted_at != null ? Date.parse(attr.deleted_at): null;
-                attr.settings = this.parseSettings(attr.settings);
+                attr.created_at = attr.created_at !== null ? Date.parse(attr.created_at): null;
+                attr.updated_at = attr.updated_at !== null ? Date.parse(attr.updated_at): null;
+                attr.deleted_at = attr.deleted_at !== null ? Date.parse(attr.deleted_at): null;
+                attr.settings = this.parseJSONString(attr.settings);
 
-                if(data.attributes)
+                // Parse tags if present
+                if (attr.tags) {
+                    attr.tags = this.parseJSONString(attr.tags);
+                }
+
+                if(data.attributes) {
                     data.attributes = attr;
-                else
+                } else {
                     data = attr;
+                }
 
                 return data;
             },
@@ -109,29 +117,35 @@ define(["order!jquery",
                     }
                 }
                 
-                if(attr.description && !_.isString(attr.description))
+                if (attr.description && !_.isString(attr.description)) {
                     return "'description' attribute must be a string";
+                }
                 
-                /*if(attr.settings && !_.isString(attr.settings))
-                    return "'description' attribute must be a string";*/
+                if (attr.settings && _.isUndefined(this.parseJSONString(attr.settings))) {
+                    return "'settings' attribute must be a string or a JSON object";
+                }
+
+                if (attr.tags && _.isUndefined(this.parseJSONString(attr.tags))) {
+                    return "'tags' attribute must be a string or a JSON object";
+                }
                 
-                if(attr.access &&  !_.include(ACCESS,attr.access))
+                if (attr.access &&  !_.include(ACCESS,attr.access)) {
                     return "'access' attribute is not valid.";
+                }
                 
-                if(attr.created_at){
-                    if((tmpCreated=this.get('created_at')) && tmpCreated!==attr.created_at)
+                if (attr.created_at){
+                    if ((tmpCreated=this.get('created_at')) && tmpCreated!==attr.created_at) {
                         return "'created_at' attribute can not be modified after initialization!";
-                    if(!_.isNumber(attr.created_at))
+                    } else if (!_.isNumber(attr.created_at)) {
                         return "'created_at' attribute must be a number!";
+                    }
                 }
         
-                if(attr.updated_at){
-                    if(!_.isNumber(attr.updated_at))
+                if (attr.updated_at && !_.isNumber(attr.updated_at)) {
                         return "'updated_at' attribute must be a number!";
                 }
 
-                if(attr.deleted_at){
-                    if(!_.isNumber(attr.deleted_at))
+                if (attr.deleted_at && !_.isNumber(attr.deleted_at)) {
                         return "'deleted_at' attribute must be a number!";
                 }
             },
@@ -139,7 +153,7 @@ define(["order!jquery",
             /**
              * Modify the current url for the annotations collection
              */
-            setUrl: function(){
+            setUrl: function() {
                 this.get("annotations").setUrl(this);
             },
 
@@ -150,7 +164,7 @@ define(["order!jquery",
              *
              * @return {JSON} JSON representation of the instane
              */
-            toJSON: function(){
+            toJSON: function() {
                 var json = Backbone.Model.prototype.toJSON.call(this);
                 delete json.annotations;
 
@@ -158,16 +172,25 @@ define(["order!jquery",
             },
 
             /**
-             * Parse the given settings to JSON if given as String
-             * @param  {String} settings the settings as String
-             * @return {JSON} settings as JSON object
+             * Parse the given parameter to JSON if given as String
+             * @param  {String} parameter the parameter as String
+             * @return {JSON} parameter as JSON object
              */
-            parseSettings: function(settings){
-                if(settings && _.isString(settings))
-                    settings = JSON.parse(settings);
+            parseJSONString: function(parameter) {
+                if (parameter && _.isString(parameter)) {
+                    try {
+                        parameter = JSON.parse(parameter);
+                        
+                    } catch (e) {
+                        console.warn("Can not parse parameter '"+parameter+"': "+e);
+                        return undefined; 
+                    }
+                } else if (!_.isObject(parameter) || _.isFunction(parameter)) {
+                    return undefined;
+                }
 
-                return settings;
-            }  
+                return parameter;
+            }
         });
         
         return Track;

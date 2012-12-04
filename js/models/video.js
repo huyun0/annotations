@@ -24,11 +24,14 @@ define(["jquery",
        
     function($, Tracks, Categories, Scales, ACCESS){
     
+        "use strict";
+
         /**
          * video model
          * @class
          */
         var Video = Backbone.Model.extend({
+
             
             defaults: {
                 access: ACCESS.PUBLIC,
@@ -43,37 +46,44 @@ define(["jquery",
             initialize: function(attr){
                 
                 // Check if the video has been initialized 
-                if(!attr.id){
+                if (!attr.id) {
                     // If local storage, we set the cid as id
-                    if(window.annotationsTool.localStorage)
-                        attr['id'] = this.cid;
+                    if (window.annotationsTool.localStorage) {
+                        attr.id = this.cid;
+                    }
                         
                     this.toCreate = true;
                 }
                 
                 // Check if tracks are given 
-                if(attr.tracks && _.isArray(attr.tracks))
+                if (attr.tracks && _.isArray(attr.tracks)) {
                     this.set({tracks: new Tracks(attr.tracks,this)});
-                else
+                }  else {
                     this.set({tracks: new Tracks([],this)});
+                }
                 
                 // Check if supported categories are given
-                if(attr.categories && _.isArray(attr.categories))
+                if (attr.categories && _.isArray(attr.categories)) {
                     this.set({categories: new Categories(attr.categories,this)});
-                else
+                } else {
                     this.set({categories: new Categories([],this)});
+                }
 
                 // Check if the possible video scales are given
-                if(attr.scales && _.isArray(attr.scales))
+                if (attr.scales && _.isArray(attr.scales)) {
                     this.set({scales: new Scales(attr.scales,this)});
-                else
+                } else {
                     this.set({scales: new Scales([],this)});
+                }
 
-                if(attr.id){
+                if (attr.id) {
                     this.get("categories").fetch({async:false});
                     this.get("tracks").fetch({async:false});
                     this.get("scales").fetch({async:false});
                 }
+
+                // Add backbone events to the model 
+                _.extend(this, Backbone.Events);
                 
                 // Define that all post operation have to been done through PUT method
                 this.noPOST = true;
@@ -82,23 +92,29 @@ define(["jquery",
             parse: function(data) {
                 var attr = data.attributes ? data.attributes : data;
 
-                attr.created_at = attr.created_at != null ? Date.parse(attr.created_at): null;
-                attr.updated_at = attr.updated_at != null ? Date.parse(attr.updated_at): null;
-                attr.deleted_at = attr.deleted_at != null ? Date.parse(attr.deleted_at): null;
-                attr.settings = this.parseSettings(attr.settings);
+                attr.created_at = attr.created_at !== null ? Date.parse(attr.created_at): null;
+                attr.updated_at = attr.updated_at !== null ? Date.parse(attr.updated_at): null;
+                attr.deleted_at = attr.deleted_at !== null ? Date.parse(attr.deleted_at): null;
+                attr.settings   = this.parseJSONString(attr.settings);
 
-                if(data.attributes)
-                    data.attributes = attr;
-                else
+                // Parse tags if present
+                if (attr.tags) {
+                    attr.tags = this.parseJSONString(attr.tags);
+                }
+
+                if (data.attributes) {
+                    data.attributes = attr;  
+                } else {
                     data = attr;
+                }
 
                 return data;
             },
             
-            validate: function(attr){
+            validate: function(attr) {
                 
                 if(attr.id){
-                    if(this.get('id') != attr.id){
+                    if(this.get('id') !== attr.id){
                         this.id = attr.id;
                         this.attributes.id = attr.id;
                         this.setUrl();
@@ -108,63 +124,82 @@ define(["jquery",
                         var scales     = this.get("scales");
                         var self       = this;
 
-                        if((categories.length) == 0)
+                        if ((categories.length) === 0) {
                             categories.fetch({
                                 async:false,
                                 success: function(){
                                     self.categoriesReady = true;
-                                    if(self.tracksReady && self.categoriesReady && self.scalesReady)
+                                    if (self.tracksReady && self.categoriesReady && self.scalesReady) {
                                         self.trigger("ready");
+                                    }
                                 }
                             });
-                        if((tracks.length) == 0)
+                        }
+
+                        if ((tracks.length) === 0) {
                             tracks.fetch({
                                 async:false,
                                 success: function(){
                                     self.tracksReady = true;
-                                    if(self.tracksReady && self.categoriesReady && self.scalesReady)
+                                    if (self.tracksReady && self.categoriesReady && self.scalesReady) {
                                         self.trigger("ready");
+                                    }
                                 }
                             }); 
-                        if((scales.length) == 0)
+                        }
+
+                        if ((scales.length) === 0) {
                             scales.fetch({
                                 async:false,
                                 success: function(){
                                     self.scalesReady = true;
-                                    if(self.tracksReady && self.categoriesReady && self.scalesReady)
+                                    if (self.tracksReady && self.categoriesReady && self.scalesReady) {
                                         self.trigger("ready");
+                                    }
                                 }
                             });
+                        }
                     }
                 }
                 
-                if(attr.tracks && !(attr.tracks instanceof Tracks))
+                if (attr.tracks && !(attr.tracks instanceof Tracks)) {
                     return "'tracks' attribute must be an instance of 'Tracks'";
-                
-                if(attr.created_by && !(_.isNumber(attr.created_by) || attr.created_by instanceof User))
-                    return "'created_by' attribute must be a number or an instance of 'User'";
-                
-                if(attr.updated_by && !(_.isNumber(attr.updated_by) || attr.updated_by instanceof User))
-                    return "'updated_by' attribute must be a number or an instance of 'User'";
-                
-                if(attr.deleted_by && !(_.isNumber(attr.deleted_by) || attr.deleted_by instanceof User))
-                    return "'deleted_by' attribute must be a number or an instance of 'User'";
-                
-                if(attr.created_at){
-                    if((tmpCreated=this.get('created_at')) && tmpCreated!==attr.created_at)
-                        return "'created_at' attribute can not be modified after initialization!";
-                    if(!_.isNumber(attr.created_at))
-                        return "'created_at' attribute must be a number!";
-                }
-        
-                if(attr.updated_at){
-                    if(!_.isNumber(attr.updated_at))
-                        return "'updated_at' attribute must be a number!";
                 }
 
-                if(attr.deleted_at){
-                    if(!_.isNumber(attr.deleted_at))
+                if (attr.tags && _.isUndefined(this.parseJSONString(attr.tags))) {
+                    return "'tags' attribute must be a string or a JSON object";
+                }
+                
+                if (attr.created_by && !(_.isNumber(attr.created_by) || attr.created_by instanceof User)) {
+                    return "'created_by' attribute must be a number or an instance of 'User'";
+                }
+                
+                if (attr.updated_by && !(_.isNumber(attr.updated_by) || attr.updated_by instanceof User)) {
+                    return "'updated_by' attribute must be a number or an instance of 'User'";
+                }
+                
+                if (attr.deleted_by && !(_.isNumber(attr.deleted_by) || attr.deleted_by instanceof User)) {
+                    return "'deleted_by' attribute must be a number or an instance of 'User'";
+                }
+                
+                if (attr.created_at) {
+                    if ((tmpCreated=this.get('created_at')) && tmpCreated!==attr.created_at) {
+                        return "'created_at' attribute can not be modified after initialization!";
+                    } else if (!_.isNumber(attr.created_at)) {
+                        return "'created_at' attribute must be a number!";
+                    }
+                }
+        
+                if (attr.updated_at){
+                    if(!_.isNumber(attr.updated_at)) {
+                        return "'updated_at' attribute must be a number!";
+                    }
+                }
+
+                if (attr.deleted_at) {
+                    if (!_.isNumber(attr.deleted_at)) {
                         return "'deleted_at' attribute must be a number!";
+                    }
                 }
             },
             
@@ -178,15 +213,24 @@ define(["jquery",
             },
 
             /**
-             * Parse the given settings to JSON if given as String
-             * @param  {String} settings the settings as String
-             * @return {JSON} settings as JSON object
+             * Parse the given parameter to JSON if given as String
+             * @param  {String} parameter the parameter as String
+             * @return {JSON} parameter as JSON object
              */
-            parseSettings: function(settings){
-                if(settings && _.isString(settings))
-                    settings = JSON.parse(settings);
+            parseJSONString: function(parameter) {
+                if (parameter && _.isString(parameter)) {
+                    try {
+                        parameter = JSON.parse(parameter);
+                        
+                    } catch (e) {
+                        console.warn("Can not parse parameter '"+parameter+"': "+e);
+                        return undefined; 
+                    }
+                } else if (!_.isObject(parameter) || _.isFunction(parameter)) {
+                    return undefined;
+                }
 
-                return settings;
+                return parameter;
             },
 
             /**

@@ -21,6 +21,8 @@ define(["order!jquery",
         "order!backbone"],
        
     function($,User, ACCESS){
+
+        "use strict";
     
         /**
          * Annotation model
@@ -45,14 +47,16 @@ define(["order!jquery",
             
             initialize: function(attr){ 
 
-                if(!attr || _.isUndefined(attr.start))
+                if (!attr || _.isUndefined(attr.start)) {
                     throw "'start' attribute is required";
+                }
                 
                 // Check if the category has been initialized 
-                if(!attr.id){
+                if (!attr.id) {
                     // If local storage, we set the cid as id
-                    if(window.annotationsTool.localStorage)
-                        attr['id'] = this.cid;
+                    if (window.annotationsTool.localStorage) {
+                        attr.id = this.cid;
+                    }
                         
                     this.toCreate = true;
                 }
@@ -66,19 +70,28 @@ define(["order!jquery",
             parse: function(data) {    
                 var attr = data.attributes ? data.attributes : data;
 
-                attr.created_at = attr.created_at != null ? Date.parse(attr.created_at): null;
-                attr.updated_at = attr.updated_at != null ? Date.parse(attr.updated_at): null;
-                attr.deleted_at = attr.deleted_at != null ? Date.parse(attr.deleted_at): null;
+                attr.created_at = attr.created_at !== null ? Date.parse(attr.created_at): null;
+                attr.updated_at = attr.updated_at !== null ? Date.parse(attr.updated_at): null;
+                attr.deleted_at = attr.deleted_at !== null ? Date.parse(attr.deleted_at): null;
 
                 var tempSettings;
 
-                if(attr.label && attr.label.category && (tempSettings = this.parseSettings(attr.label.category.settings)))
-                    attr.label.category.settings = tempSettings;
+                // Parse tags if present
+                if (attr.tags) {
+                    attr.tags = this.parseJSONString(attr.tags);
+                }
 
-                if(attr.label && (tempSettings = this.parseSettings(attr.label.settings)))
-                    attr.label.settings = tempSettings;
+                if (attr.label) {
+                    if (attr.label.category && (tempSettings = this.parseJSONString(attr.label.category.settings))) {
+                        attr.label.category.settings = tempSettings;
+                    } 
 
-                if(!annotationsTool.localStorage &&  attr.label_id && (_.isNumber(attr.label_id) || _.isString(attr.label_id))){
+                    if (tempSettings = this.parseJSONString(attr.label.settings)) {
+                        attr.label.settings = tempSettings;
+                    }
+                }
+
+                if (!annotationsTool.localStorage &&  attr.label_id && (_.isNumber(attr.label_id) || _.isString(attr.label_id))) {
                     var categories = annotationsTool.video.get('categories');
                     var tempLabel, label;
 
@@ -106,9 +119,10 @@ define(["order!jquery",
             },
             
             validate: function(attr){
+                var tmpCreated;
                 
-                if(attr.id){
-                    if(this.get('id') != attr.id){
+                if (attr.id) {
+                    if (this.get('id') !== attr.id) {
                         this.id = attr.id;
                         this.attributes['id'] = attr.id;
                         this.toCreate = false;
@@ -116,54 +130,71 @@ define(["order!jquery",
                     }
                 }
 
-                if(!annotationsTool.localStorage && attr.label){
-                    if(attr.label.id)
+                if (!annotationsTool.localStorage && attr.label) {
+                    if (attr.label.id) {
                         this.attributes.label_id = attr.label.id;
-                    else if(attr.label.attributes)
+                    } else if (attr.label.attributes) {
                         this.attributes.label_id = attr.label.get('id');
+                    }
                 }
                 
-                if(attr.start &&  !_.isNumber(attr.start))
+                if (attr.start &&  !_.isNumber(attr.start)) {
                     return "'start' attribute must be a number!";
-                
-                if(attr.text &&  !_.isString(attr.text))
-                    return "'text' attribute must be a string!";
-                
-                if(attr.duration &&  (!_.isNumber(attr.duration) || (_.isNumber(attr.duration) && attr.duration < 0)))
-                    return "'duration' attribute must be a positive number";
-                
-                if(attr.access && !_.include(ACCESS,attr.access))
-                    return "'access' attribute is not valid.";
-            
-                if(!_.isNull(attr.created_at)){
-                    if((tmpCreated=this.get('created_at')) && tmpCreated!==attr.created_at)
-                        return "'created_at' attribute can not be modified after initialization!";
-                    if(!_.isNumber(attr.created_at))
-                        return "'created_at' attribute must be a number!";
-                }
-        
-                if(!_.isNull(attr.updated_at)){
-                    if(!_.isNumber(attr.updated_at))
-                        return "'updated_at' attribute must be a number!";
                 }
 
-                if(!_.isNull(attr.deleted_at)){
-                    if(!_.isNumber(attr.deleted_at))
-                        return "'deleted_at' attribute must be a number!";
+                if (attr.tags && _.isUndefined(this.parseJSONString(attr.tags))) {
+                    return "'tags' attribute must be a string or a JSON object";
+                }
+                
+                if (attr.text &&  !_.isString(attr.text)) {
+                    return "'text' attribute must be a string!";
+                }
+                
+                if (attr.duration &&  (!_.isNumber(attr.duration) || (_.isNumber(attr.duration) && attr.duration < 0))) {
+                    return "'duration' attribute must be a positive number";
+                }
+                
+                if (attr.access && !_.include(ACCESS,attr.access)) {
+                    return "'access' attribute is not valid.";
+                }
+            
+                if (!_.isNull(attr.created_at)) {
+                    if ((tmpCreated=this.get('created_at')) && tmpCreated!==attr.created_at) {
+                        return "'created_at' attribute can not be modified after initialization!";
+                    } else if (!_.isNumber(attr.created_at)) {
+                        return "'created_at' attribute must be a number!";
+                    }
+                }
+        
+                if (!_.isNull(attr.updated_at) && !_.isNumber(attr.updated_at)) {
+                    return "'updated_at' attribute must be a number!";
+                }
+
+                if (!_.isNull(attr.deleted_at) && !_.isNumber(attr.deleted_at)) {
+                    return "'deleted_at' attribute must be a number!";
                 }
                 
             },
 
             /**
-             * Parse the given settings to JSON if given as String
-             * @param  {String} settings the settings as String
-             * @return {JSON} settings as JSON object
+             * Parse the given parameter to JSON if given as String
+             * @param  {String} parameter the parameter as String
+             * @return {JSON} parameter as JSON object
              */
-            parseSettings: function(settings){
-                if(settings && _.isString(settings))
-                    settings = JSON.parse(settings);
+            parseJSONString: function(parameter) {
+                if (parameter && _.isString(parameter)) {
+                    try {
+                        parameter = JSON.parse(parameter);
+                        
+                    } catch (e) {
+                        console.warn("Can not parse parameter '"+parameter+"': "+e);
+                        return undefined; 
+                    }
+                } else if (!_.isObject(parameter) || _.isFunction(parameter)) {
+                    return undefined;
+                }
 
-                return settings;
+                return parameter;
             },
 
             /**

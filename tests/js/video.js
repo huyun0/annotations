@@ -1,9 +1,10 @@
 require(['domReady',
          'order!jquery',
+         'order!underscore',
          'order!models/video',
          'order!collections/videos'],
                     
-        function(domReady, $, Video, Videos){
+        function(domReady, $, _, Video, Videos){
         
             domReady(function(){
                 
@@ -25,7 +26,28 @@ require(['domReady',
 
                 });
 
-                
+                test("Tags", function() {
+                    stop();
+
+                    var stringsTags = '{"tag1":1}',
+                        jsonTags    = {tag1:1},
+                        unvalidTags = "unvalid";
+                    
+                    
+                    video.bind('error',function(model,error){
+                            ok(true,"Can not be modified, error: " + error);
+
+
+                            video.bind('change',function(model,error){
+                                equal(video.get('tags'), stringsTags, "Video should have "+stringsTags+" as description attribute.");
+                                video.unbind('change');
+                                start();
+                            });
+                            video.set({tags:stringsTags});
+                            
+                    });
+                    video.set({tags:unvalidTags});                    
+                });
             });
             
 });

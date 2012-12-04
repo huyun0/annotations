@@ -19,7 +19,9 @@ define(["order!jquery",
         "order!underscore",
         "order!backbone"],
        
-    function($, ACCESS){
+    function($, ACCESS) {
+
+        "use strict";
     
         /**
          * User model
@@ -37,16 +39,18 @@ define(["order!jquery",
                 deleted_by: null
             },
             
-            initialize: function(attr){
-                if(_.isUndefined(attr.user_extid) || attr.user_extid == "" ||
-                   _.isUndefined(attr.nickname) || attr.nickname == "")
+            initialize: function(attr) {
+                if (_.isUndefined(attr.user_extid) || attr.user_extid === "" ||
+                   _.isUndefined(attr.nickname) || attr.nickname === "") {
                     throw "'user_extid' and 'nickanme' attributes are required";
+                }
                 
                 // Check if the category has been initialized 
-                if(!attr.id){
+                if (!attr.id) {
                     // If local storage, we set the cid as id
-                    if(window.annotationsTool.localStorage)
-                        attr['id'] = this.cid;
+                    if (window.annotationsTool.localStorage) {
+                        attr.id = this.cid;
+                    }
                         
                     this.toCreate = true;
                 }
@@ -61,59 +65,70 @@ define(["order!jquery",
             parse: function(data) {    
                 var attr = data.attributes ? data.attributes : data;
 
-                attr.created_at = attr.created_at != null ? Date.parse(attr.created_at): null;
-                attr.updated_at = attr.updated_at != null ? Date.parse(attr.updated_at): null;
-                attr.deleted_at = attr.deleted_at != null ? Date.parse(attr.deleted_at): null;
-                return attr;
+                attr.created_at = attr.created_at !== null ? Date.parse(attr.created_at): null;
+                attr.updated_at = attr.updated_at !== null ? Date.parse(attr.updated_at): null;
+                attr.deleted_at = attr.deleted_at !== null ? Date.parse(attr.deleted_at): null;
 
-                if(data.attributes)
+                if (data.attributes) {
                     data.attributes = attr;
-                else
+                } else {
                     data = attr;
+                }
 
                 return data;
             },
             
-            validate: function(attr){
-                if(attr.id){
-                    if(this.get('id') != attr.id){
+            validate: function(attr) {
+                if (attr.id) {
+                    if (this.get('id') !== attr.id) {
                         this.id = attr.id;
                     }
                 }
                 
-                if(_.isUndefined(attr.user_extid) || (!_.isString(attr.user_extid) && !_.isNumber(attr.user_extid)))
+                if (_.isUndefined(attr.user_extid) || (!_.isString(attr.user_extid) && !_.isNumber(attr.user_extid))) {
                     return {attribute: "user_extid", message: "'user_extid' must be a valid string or number."};
+                }
                 
-                if(_.isUndefined(attr.nickname) || !_.isString(attr.nickname))
+                if (_.isUndefined(attr.nickname) || !_.isString(attr.nickname)) {
                     return {attribute: "nickname", message: "'nickanme' must be a valid string!"};
+                }
     
-                if(attr.email && !User.validateEmail(attr.email))
+                if (attr.email && !User.validateEmail(attr.email)) {
                     return {attribute: "email", message: "Given email is not valid!"};
+                }
                 
-                if(attr.created_by && !(_.isNumber(attr.created_by) || attr.created_by instanceof User))
+                if (attr.created_by && !(_.isNumber(attr.created_by) || attr.created_by instanceof User)) {
                     return "'created_by' attribute must be a number or an instance of 'User'";
+                }
                 
-                if(attr.updated_by && !(_.isNumber(attr.updated_by) || attr.updated_by instanceof User))
+                if (attr.updated_by && !(_.isNumber(attr.updated_by) || attr.updated_by instanceof User)) {
                     return "'updated_by' attribute must be a number or an instance of 'User'";
+                }
                 
-                if(attr.deleted_by && !(_.isNumber(attr.deleted_by) || attr.deleted_by instanceof User))
+                if (attr.deleted_by && !(_.isNumber(attr.deleted_by) || attr.deleted_by instanceof User)) {
                     return "'deleted_by' attribute must be a number or an instance of 'User'";
+                }
                 
-                if(attr.created_at){
-                    if((tmpCreated=this.get('created_at')) && tmpCreated!==attr.created_at)
+                if (attr.created_at) {
+                    var tmpCreated;
+
+                    if ((tmpCreated=this.get('created_at')) && tmpCreated!==attr.created_at){
                         return "'created_at' attribute can not be modified after initialization!";
-                    if(!_.isNumber(attr.created_at))
+                    } else if (!_.isNumber(attr.created_at)) {
                         return "'created_at' attribute must be a number!";
+                    }
                 }
         
-                if(attr.updated_at){
-                    if(!_.isNumber(attr.updated_at))
+                if (attr.updated_at) {
+                    if (!_.isNumber(attr.updated_at)) {
                         return "'updated_at' attribute must be a number!";
+                    }
                 }
 
-                if(attr.deleted_at){
-                    if(!_.isNumber(attr.deleted_at))
+                if (attr.deleted_at) {
+                    if (!_.isNumber(attr.deleted_at)) {
                         return "'deleted_at' attribute must be a number!";
+                    }
                 }
             }
             

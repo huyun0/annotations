@@ -80,9 +80,9 @@ require(['domReady',
                                     equal(data.name, scale.get("name"), "Name is correct");
                                     equal(data.description, scale.get("description"), "Description is correct");
                                     ok(data.created_at, "Created_at date is set");
-                                    equal(data.created_by, user.get('id'), "Created_by user id is correct");
+                                    equal(data.created_nickname, user.get('nickname'), "Created_nickname is correct");
                                     ok(data.updated_at, "Updated_at date is set");
-                                    equal(data.updated_by, user.get('id'), "Updated_by user id is correct");
+                                    equal(data.updated_nickname, user.get('nickname'), "Updated_nickname is correct");
                                     scale.set(scale.parse(data));
                                     start();
                                 }
@@ -107,9 +107,9 @@ require(['domReady',
                                     equal(data.name, scale2.get("name"), "Name is correct");
                                     equal(data.description, scale2.get("description"), "Description is correct");
                                     ok(data.created_at, "Created_at date is set");
-                                    equal(data.created_by, user.get('id'), "Created_by user id is correct");
+                                    equal(data.created_nickname, user.get('nickname'), "Created_nickname is correct");
                                     ok(data.updated_at, "Updated_at date is set");
-                                    equal(data.updated_by, user.get('id'), "Updated_by user id is correct");
+                                    equal(data.updated_nickname, user.get('nickname'), "Updated_nickname is correct");
                                     scale2.set(scale2.parse(data));
                                     start();
                                 }
@@ -127,9 +127,9 @@ require(['domReady',
                     ok(data.id, "Id is "+data.id);
                     notEqual(data.id,scale.id, "Id is different as template scale");
                     ok(data.created_at, "Created_at date is set");
-                    equal(data.created_by, user.get('id'), "Created_by category id is correct");
+                    equal(data.created_nickname, user.get('nickname'), "Created_nickname category id is correct");
                     ok(data.updated_at, "Updated_at date is set");
-                    equal(data.updated_by, user.get('id'), "Updated_by category is correct");
+                    equal(data.updated_nickname, user.get('nickname'), "Updated_nickname category is correct");
                     start();
 
                 });
@@ -148,9 +148,9 @@ require(['domReady',
                                     equal(data.name, scale.get("name"), "Name is correct");
                                     equal(data.description, scale.get("description"), "Description is correct");
                                     ok(data.created_at, "Created_at date is set");
-                                    equal(data.created_by, user.get('id'), "Created_by user id is correct");
+                                    equal(data.created_nickname, user.get('nickname'), "Created_nickname is correct");
                                     ok(data.updated_at, "Updated_at date is set");
-                                    equal(data.updated_by, user.get('id'), "Updated_by user id is correct");
+                                    equal(data.updated_nickname, user.get('nickname'), "Updated_nickname is correct");
                                     start();
                                 }
                     });
@@ -169,9 +169,9 @@ require(['domReady',
                                     ok(true, "Scale updated");
                                     equal("quantity", data.name, "Name is correct");
                                     ok(data.created_at, "Created_at date is set");
-                                    equal(data.created_by, user.get('id'), "Created_by user id is correct");
+                                    equal(data.created_nickname, user.get('nickname'), "Created_nickname is correct");
                                     ok(data.updated_at, "Updated_at date is set");
-                                    equal(data.updated_by, user.get('id'), "Updated_by user id is correct");
+                                    equal(data.updated_nickname, user.get('nickname'), "Updated_nickname is correct");
                                     start();
                                 }
                     });
@@ -221,9 +221,9 @@ require(['domReady',
                                     equal(data.value, scaleValue.get("value"), "Value is correct");
                                     equal(data.order, scaleValue.get("order"), "Order is correct");
                                     ok(data.created_at, "Created_at date is set");
-                                    equal(data.created_by, user.get('id'), "Created_by user id is correct");
+                                    equal(data.created_nickname, user.get('nickname'), "Created_nickname is correct");
                                     ok(data.updated_at, "Updated_at date is set");
-                                    equal(data.updated_by, user.get('id'), "Updated_by user id is correct");
+                                    equal(data.updated_nickname, user.get('nickname'), "Updated_nickname is correct");
                                     scaleValue.set(scaleValue.parse(data));
                                     start();
                                 }
@@ -249,9 +249,9 @@ require(['domReady',
                                     equal(data.value, scaleValue2.get("value"), "Value is correct");
                                     equal(data.order, scaleValue2.get("order"), "Order is correct");
                                     ok(data.created_at, "Created_at date is set");
-                                    equal(data.created_by, user.get('id'), "Created_by user id is correct");
+                                    equal(data.created_nickname, user.get('nickname'), "Created_nickname is correct");
                                     ok(data.updated_at, "Updated_at date is set");
-                                    equal(data.updated_by, user.get('id'), "Updated_by user id is correct");
+                                    equal(data.updated_nickname, user.get('nickname'), "Updated_nickname is correct");
                                     scaleValue2.set(scaleValue2.parse(data));
                                     start();
                                 }
@@ -273,9 +273,9 @@ require(['domReady',
                                     equal(data.value, scaleValue.get("value"), "Value is correct");
                                     equal(data.order, scaleValue.get("order"), "Order is correct");
                                     ok(data.created_at, "Created_at date is set");
-                                    equal(data.created_by, user.get('id'), "Created_by user id is correct");
+                                    equal(data.created_nickname, user.get('nickname'), "Created_nickname is correct");
                                     ok(data.updated_at, "Updated_at date is set");
-                                    equal(data.updated_by, user.get('id'), "Updated_by user id is correct");
+                                    equal(data.updated_nickname, user.get('nickname'), "Updated_nickname is correct");
                                     start();
                                 }
                     });
@@ -316,9 +316,9 @@ require(['domReady',
                                     ok(true, "Video updated");
                                     equal("schwach", data.name, "Name is correct");
                                     ok(data.created_at, "Created_at date is set");
-                                    equal(data.created_by, user.get('id'), "Created_by user id is correct");
+                                    equal(data.created_nickname, user.get('nickname'), "Created_nickname is correct");
                                     ok(data.updated_at, "Updated_at date is set");
-                                    equal(data.updated_by, user.get('id'), "Updated_by user id is correct");
+                                    equal(data.updated_nickname, user.get('nickname'), "Updated_nickname is correct");
                                     start();
                                 }
                     });

@@ -1,7 +1,7 @@
 require(['domReady',
          'jquery',
          'require',
-	 'models/user',
+	     'models/user',
          'collections/users',
          'tests/backbone-annotations-sync-test',
          'order!underscore',

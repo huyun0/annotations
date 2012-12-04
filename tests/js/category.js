@@ -80,6 +80,29 @@ require(['domReady',
                     category.set({access:ACCESS.PRIVATE});
                     equal(category.get('access'), ACCESS.PRIVATE, "Category  should have "+ACCESS.PRIVATE+" as access attribute.");
                 });
+
+                test("Tags", function() {
+                    stop();
+
+                    var stringsTags = '{"tag1":1}',
+                        jsonTags    = {tag1:1},
+                        unvalidTags = "unvalid";
+                    
+                    
+                    category.bind('error',function(model,error){
+                            ok(true,"Can not be modified, error: " + error);
+
+
+                            category.bind('change',function(model,error){
+                                equal(category.get('tags'), stringsTags, "Category should have "+stringsTags+" as description attribute.");
+                                category.unbind('change');
+                                start();
+                            });
+                            category.set({tags:stringsTags});
+                            
+                    });
+                    category.set({tags:unvalidTags});                    
+                });
                 
                 
             });
