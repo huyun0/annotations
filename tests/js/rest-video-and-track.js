@@ -33,7 +33,7 @@ require(['domReady',
                     tags1 = '{"tag":1}',
                     tags2 = '{"tag":2}',
                     isAnnotationLoaded = false,
-                    isUserLoaded = false,
+                    isUserLoaded = false;
 
                 
                 Backbone.sync = AnnotationsSync;
