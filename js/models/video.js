@@ -112,6 +112,8 @@ define(["jquery",
             },
             
             validate: function(attr) {
+
+                var tmpCreated;
                 
                 if(attr.id){
                     if(this.get('id') !== attr.id){
