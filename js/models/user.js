@@ -79,6 +79,8 @@ define(["order!jquery",
             },
             
             validate: function(attr) {
+                var tmpCreated;
+
                 if (attr.id) {
                     if (this.get('id') !== attr.id) {
                         this.id = attr.id;
@@ -110,8 +112,6 @@ define(["order!jquery",
                 }
                 
                 if (attr.created_at) {
-                    var tmpCreated;
-
                     if ((tmpCreated=this.get('created_at')) && tmpCreated!==attr.created_at){
                         return "'created_at' attribute can not be modified after initialization!";
                     } else if (!_.isNumber(attr.created_at)) {

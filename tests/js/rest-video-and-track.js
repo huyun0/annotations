@@ -92,11 +92,11 @@ require(['domReady',
                                     equal(data.video_extid, video.get("video_extid"), "Extid is correct");
                                     equal(data.tags, video.get("tags"), "Tags are correct");
                                     ok(data.created_at, "Created_at date is set");
-                                    equal(data.created_nickname, user.get('nickname'), "Created_nickname is correct");
+                                    equal(data.created_by_nickname, user.get('nickname'), "Created_by_nickname is correct");
                                     ok(data.updated_at, "Updated_at date is set");
-                                    equal(data.updated_nickname, user.get('nickname'), "Updated_nickname is correct");     
+                                    equal(data.updated_by_nickname, user.get('nickname'), "Updated_by_nickname is correct");     
                                     equal(data.deleted_at, null, "Deleted_at date is correct");
-                                    equal(data.deleted_nickname, null, "Deleted_nickname user is correct");
+                                    equal(data.deleted_by_nickname, null, "Deleted_by_nickname user is correct");
                                     start();
                                 }
                     });
@@ -118,11 +118,11 @@ require(['domReady',
                                     equal(data.video_extid, video.get("video_extid"), "Extid is correct");
                                     equal(data.tags, video.get("tags"), "Tags are correct");
                                     ok(data.created_at, "Created_at date is set");
-                                    equal(data.created_nickname, user.get('nickname'), "Created_nickname is correct");
+                                    equal(data.created_by_nickname, user.get('nickname'), "Created_by_nickname is correct");
                                     ok(data.updated_at, "Updated_at date is set");
-                                    equal(data.updated_nickname, user.get('nickname'), "Updated_nickname is correct");
+                                    equal(data.updated_by_nickname, user.get('nickname'), "Updated_by_nickname is correct");
                                     equal(data.deleted_at, null, "Deleted_at date is correct");
-                                    equal(data.deleted_nickname, null, "Deleted_nickname user is correct");
+                                    equal(data.deleted_by_nickname, null, "Deleted_by_nickname user is correct");
                                     start();
                                 }
                     });
@@ -140,10 +140,10 @@ require(['domReady',
                                 success: function(data){
                                     ok(true, "Video updated");
                                     ok(data.created_at, "Created_at date is set");
-                                    equal(data.created_nickname, user.get('nickname'), "created_nickname is correct");
+                                    equal(data.created_by_nickname, user.get('nickname'), "Created_by_nickname is correct");
                                     equal(data.tags, video.get("tags"), "Tags are correct");
                                     ok(data.updated_at, "Updated_at date is correct");
-                                    equal(data.updated_nickname, user.get('nickname'), "Updated_nickname is correct");
+                                    equal(data.updated_by_nickname, user.get('nickname'), "Updated_by_nickname is correct");
                                     start();
                                 }
                     });
@@ -176,11 +176,11 @@ require(['domReady',
                                     equal(data.settings, track.get("settings"), "Settings are correct");
                                     equal(data.tags, track.get("tags"), "Tags are correct");
                                     ok(data.created_at, "Created_at date is set");
-                                    equal(data.created_nickname, user.get('nickname'), "Created_nickname is correct");
+                                    equal(data.created_by_nickname, user.get('nickname'), "Created_by_nickname is correct");
                                     ok(data.updated_at, "Updated_at date is set");
-                                    equal(data.updated_nickname, user.get('nickname'), "Updated_nickname is correct");
+                                    equal(data.updated_by_nickname, user.get('nickname'), "Updated_by_nickname is correct");
                                     equal(data.deleted_at, null, "Deleted_at date is correct");
-                                    equal(data.deleted_nickname, null, "Deleted_nickname is correct");
+                                    equal(data.deleted_by_nickname, null, "Deleted_by_nickname is correct");
                                     start();
                                 }
                     });
@@ -204,11 +204,11 @@ require(['domReady',
                                     equal(data.settings, track.get("settings"), "Settings are correct");
                                     equal(data.tags, track.get("tags"), "Tags are correct");
                                     ok(data.created_at, "Created_at date is set");
-                                    equal(data.created_nickname, user.get('nickname'), "Created_nickname is correct");
+                                    equal(data.created_by_nickname, user.get('nickname'), "Created_by_nickname is correct");
                                     ok(data.updated_at, "Updated_at date is set");
-                                    equal(data.updated_nickname, user.get('nickname'), "Updated_nickname is correct");
+                                    equal(data.updated_by_nickname, user.get('nickname'), "Updated_by_nickname is correct");
                                     equal(data.deleted_at, null, "Deleted_at date is correct");
-                                    equal(data.deleted_nickname, null, "Deleted_nickname is correct");
+                                    equal(data.deleted_by_nickname, null, "Deleted_by_nickname is correct");
                                     start();
                                 }
                     });
@@ -227,12 +227,12 @@ require(['domReady',
                                 success: function(data){
                                     ok(true, "Track updated");
                                     ok(data.created_at, "Created_at date is set");
-                                    equal(data.created_nickname, user.get('nickname'), "Created_nickname is correct");
+                                    equal(data.created_by_nickname, user.get('nickname'), "Created_by_nickname is correct");
                                     equal(data.tags, track.get("tags"), "Tags are correct");
                                     ok(data.updated_at, "Updated_at date is correct");
-                                    equal(data.updated_nickname, user.get('nickname'), "updated_nickname is correct");
+                                    equal(data.updated_by_nickname, user.get('nickname'), "updated_by_nickname is correct");
                                     equal(data.deleted_at, null, "Deleted_at date is correct");
-                                    equal(data.deleted_nickname, null, "Deleted_nickname is correct");
+                                    equal(data.deleted_by_nickname, null, "Deleted_by_nickname is correct");
                                     start();
                                 }
                     });
@@ -322,12 +322,11 @@ require(['domReady',
                                     equal(data.start, annotation.get("start"), "Start is correct");
                                     equal(data.tags, annotation.get("tags"), "Tags are correct");
                                     ok(data.created_at, "Created_at date is set");
-                                    equal(data.created_nickname, user.get('nickname'), "Created_nickname is correct");
-                                    equal(data.created_nickname_nickname, user.get('nickname'), "Created_nickname is correct");
+                                    equal(data.created_by_nickname, user.get('nickname'), "Created_by_nickname is correct");
                                     ok(data.updated_at, "Updated_at date is set");
-                                    equal(data.updated_nickname, user.get('nickname'), "Updated_nickname is correct");
+                                    equal(data.updated_by_nickname, user.get('nickname'), "Updated_by_nickname is correct");
                                     equal(data.deleted_at, null, "Deleted_at date is correct");
-                                    equal(data.deleted_nickname, null, "Deleted_nickname is correct");
+                                    equal(data.deleted_by_nickname, null, "Deleted_by_nickname is correct");
                                     start();
                                 }
                     });
@@ -349,11 +348,11 @@ require(['domReady',
                                     equal(data.start, annotation.get("start"), "Start is correct");
                                     equal(data.tags, annotation.get("tags"), "Tags are correct");
                                     ok(data.created_at, "Created_at date is set");
-                                    equal(data.created_nickname, user.get('nickname'), "Created_nickname is correct");
+                                    equal(data.created_by_nickname, user.get('nickname'), "Created_by_nickname is correct");
                                     ok(data.updated_at, "Updated_at date is set");
-                                    equal(data.updated_nickname, user.get('nickname'), "Updated_nickname is correct");
+                                    equal(data.updated_by_nickname, user.get('nickname'), "Updated_by_nickname is correct");
                                     equal(data.deleted_at, null, "Deleted_at date is correct");
-                                    equal(data.deleted_nickname, null, "Deleted_nickname is correct");
+                                    equal(data.deleted_by_nickname, null, "Deleted_by_nickname is correct");
                                     start();
                                 }
                     });
@@ -373,11 +372,11 @@ require(['domReady',
                                     ok(true, "Updated annotation");
                                     equal(data.tags, annotation.get("tags"), "Tags are correct");
                                     ok(data.created_at, "Created_at date is set");
-                                    equal(data.created_nickname, user.get('nickname'), "Created_nickname is correct");
+                                    equal(data.created_by_nickname, user.get('nickname'), "Created_by_nickname is correct");
                                     ok(data.updated_at, "Updated_at date is correct");
-                                    equal(data.updated_nickname, user.get('nickname'), "Updated_nickname is correct");
+                                    equal(data.updated_by_nickname, user.get('nickname'), "Updated_by_nickname is correct");
                                     equal(data.deleted_at, null, "Deleted_at date is correct");
-                                    equal(data.deleted_nickname, null, "Deleted_nickname is correct");
+                                    equal(data.deleted_by_nickname, null, "Deleted_by_nickname is correct");
                                     start();
                                 }
                     });

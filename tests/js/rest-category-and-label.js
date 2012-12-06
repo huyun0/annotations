@@ -101,9 +101,9 @@ require(['domReady',
                                     equal(data.tags, category.get("tags"), "Tags are correct");
                                     equal(data.has_duration, category.get("has_duration"), "Duration is correct");
                                     ok(data.created_at, "Created_at date is set");
-                                    equal(data.created_nickname, user.get('nickname'), "Created_nickname is correct");
+                                    equal(data.created_by_nickname, user.get('nickname'), "Created_by_nickname is correct");
                                     ok(data.updated_at, "Updated_at date is set");
-                                    equal(data.updated_nickname, user.get('nickname'), "Updated_nickname is correct");
+                                    equal(data.updated_by_nickanme, user.get('nickname'), "Updated_by_nickanme is correct");
                                     start();
                                 }
                     });
@@ -124,9 +124,9 @@ require(['domReady',
                     equal(data.tags, category.get("tags"), "Tags are correct");
                     equal(data.has_duration, category.get("has_duration"), "Duration is correct");
                     ok(data.created_at, "Created_at date is set");
-                    equal(data.created_nickname, user.get('nickname'), "Created_nickname is correct");
+                    equal(data.created_by_nickname, user.get('nickname'), "Created_by_nickname is correct");
                     ok(data.updated_at, "Updated_at date is set");
-                    equal(data.updated_nickname, user.get('nickname'), "Updated_nickname is correct");
+                    equal(data.updated_by_nickanme, user.get('nickname'), "Updated_by_nickanme is correct");
                     start();
 
                 });
@@ -150,9 +150,9 @@ require(['domReady',
                                     equal(data.tags, category.get("tags"), "Tags are correct");
                                     equal(data.has_duration, category.get("has_duration"), "Duration is correct");
                                     ok(data.created_at, "Created_at date is set");
-                                    equal(data.created_nickname, user.get('nickname'), "Created_nickname is correct");
+                                    equal(data.created_by_nickname, user.get('nickname'), "Created_by_nickname is correct");
                                     ok(data.updated_at, "Updated_at date is set");
-                                    equal(data.updated_nickname, user.get('nickname'), "Updated_nickname is correct");
+                                    equal(data.updated_by_nickanme, user.get('nickname'), "Updated_by_nickanme is correct");
                                     start();
                                 }
                     });
@@ -178,8 +178,8 @@ require(['domReady',
                                     equal(data.tags, category.get("tags"), "Tags are correct");
                                     equal(data.has_duration, category.get("has_duration"), "Duration is correct");
                                     ok(data.created_at, "Created_at date is set");
-                                    equal(data.created_nickname, user.get('nickname'), "Created_nickname is correct");
-                                    equal(data.updated_nickname, user.get('nickname'), "Updated_nickname is correct");
+                                    equal(data.created_by_nickname, user.get('nickname'), "Created_by_nickname is correct");
+                                    equal(data.updated_by_nickanme, user.get('nickname'), "Updated_by_nickanme is correct");
                                     start();
                                 }
                     });
@@ -206,8 +206,8 @@ require(['domReady',
                                     equal(data.tags, category.get("tags"), "Tags are correct");
                                     equal(data.has_duration, category.get("has_duration"), "Duration is correct");
                                     ok(data.created_at, "Created_at date is set");
-                                    equal(data.created_nickname, user.get('nickname'), "Created_nickname is correct");
-                                    equal(data.updated_nickname, user.get('nickname'), "Updated_nickname is correct");
+                                    equal(data.created_by_nickname, user.get('nickname'), "Created_by_nickname is correct");
+                                    equal(data.updated_by_nickanme, user.get('nickname'), "Updated_by_nickanme is correct");
                                     start();
                                 }
                     });
@@ -264,9 +264,9 @@ require(['domReady',
                     
                     ok(label.id!== undefined,"Id has been set");
                     ok(label.get("created_at"), "Created_at date is set");
-                    equal(label.get("created_nickname"), user.get('nickname'), "created_nickname date id is correct");
+                    equal(label.get("created_by_nickname"), user.get('nickname'), "Created_by_nickname date id is correct");
                     ok(label.get("updated_at"), "Updated_at date is set");
-                    equal(label.get("updated_nickname"), user.get('nickname'), "updated_nickname date is correct");
+                    equal(label.get("updated_by_nickanme"), user.get('nickname'), "Updated_by_nickanme date is correct");
                 });
                 
                 test("Get a 'template' label",function(){
@@ -288,9 +288,9 @@ require(['domReady',
                             equal(data.abbreviation, label.get("abbreviation"), "Abreviation is correct");
                             equal(data.category.id, label.get("category").id, "Category is correct");
                             ok(data.created_at, "Created_at date is set");
-                            equal(data.created_nickname, user.get('nickname'), "created_nickname is correct");
+                            equal(data.created_by_nickname, user.get('nickname'), "Created_by_nickname is correct");
                             ok(data.updated_at, "Updated_at date is set");
-                            equal(data.updated_nickname, user.get('nickname'), "updated_nickname category is correct");
+                            equal(data.updated_by_nickanme, user.get('nickname'), "Updated_by_nickanme category is correct");
                             start();
                         }
                     });
@@ -337,8 +337,8 @@ require(['domReady',
                                     notEqual(data.id,category.id, "Id is different as template category");
                                     equal(data.value, newValue,"Value setted correctly");
                                     ok(data.created_at, "Created_at date is set");
-                                    equal(data.created_nickname, user.get('nickname'), "Created_nickname is correct");
-                                    equal(data.updated_nickname, user.get('nickname'), "Updated_nickname is correct");
+                                    equal(data.created_by_nickname, user.get('nickname'), "Created_by_nickname is correct");
+                                    equal(data.updated_by_nickanme, user.get('nickname'), "Updated_by_nickanme is correct");
                                     start();
                                 }
                     });
