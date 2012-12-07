@@ -22,9 +22,9 @@ define([],function(){
      * TODO: need to define possible values
      */
     return {
-        PUBLIC: 'public',
-        PRIVATE: 'private',
-        GROUP: 'group'
+        PRIVATE: 0,
+        PUBLIC: 1,
+        GROUP: 2
     };
 
 })

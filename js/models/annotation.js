@@ -107,8 +107,8 @@ define(["order!jquery",
                     attr.label = label;
                 }
 
-                if(!annotationsTool.localStorage &&  attr.scale_value)
-                    attr.scaleValue = attr.scale_value;
+                if(!annotationsTool.localStorage &&  attr.scalevalue)
+                    attr.scaleValue = attr.scalevalue;
 
                 if(data.attributes)
                     data.attributes = attr;
@@ -210,10 +210,15 @@ define(["order!jquery",
                     json.label = json.label.toJSON();
 
                 if(json.scaleValue){
+
+                    // TODO replace scale_value_id on matterhorn by scalevalue
                     if(json.scaleValue.attributes)
                         json.scale_value_id = json.scaleValue.attributes.id
                     else if(json.scaleValue.id)
                         json.scale_value_id = json.scaleValue.id;
+
+                    json.scalevalue = json.scale_value;
+                    delete json.scaleValue;
                 }
 
                 delete json.annotations;
