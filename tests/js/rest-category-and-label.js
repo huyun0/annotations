@@ -98,7 +98,7 @@ require(['domReady',
                                     ok(data.id, "Id is "+data.id);
                                     equal(data.name, category.get("name"), "Name is correct");
                                     equal(data.description, category.get("description"), "Description is correct");
-                                    equal(data.tags, category.get("tags"), "Tags are correct");
+                                    equal(data.tags, JSON.stringify(category.get("tags")), "Tags are correct");
                                     equal(data.has_duration, category.get("has_duration"), "Duration is correct");
                                     ok(data.created_at, "Created_at date is set");
                                     equal(data.created_by_nickname, user.get('nickname'), "Created_by_nickname is correct");
@@ -121,7 +121,7 @@ require(['domReady',
                     notEqual(data.id,category.id, "Id is different as template category");
                     equal(data.name, category.get("name"), "Name is correct");
                     equal(data.description, category.get("description"), "Description is correct");
-                    equal(data.tags, category.get("tags"), "Tags are correct");
+                    equal(data.tags, JSON.stringify(category.get("tags")), "Tags are correct");
                     equal(data.has_duration, category.get("has_duration"), "Duration is correct");
                     ok(data.created_at, "Created_at date is set");
                     equal(data.created_by_nickname, user.get('nickname'), "Created_by_nickname is correct");
@@ -147,7 +147,7 @@ require(['domReady',
                                     notEqual(data.id,category.id, "Id is different as template category");
                                     equal(data.name, category.get("name"), "Name is correct");
                                     equal(data.description, category.get("description"), "Description is correct");
-                                    equal(data.tags, category.get("tags"), "Tags are correct");
+                                    equal(data.tags, JSON.stringify(category.get("tags")), "Tags are correct");
                                     equal(data.has_duration, category.get("has_duration"), "Duration is correct");
                                     ok(data.created_at, "Created_at date is set");
                                     equal(data.created_by_nickname, user.get('nickname'), "Created_by_nickname is correct");
@@ -175,7 +175,7 @@ require(['domReady',
                                     equal(data.id,category.id, "Id is correct");
                                     equal(data.name, newName, "Name is correct");
                                     equal(data.description, category.get("description"), "Description is correct");
-                                    equal(data.tags, category.get("tags"), "Tags are correct");
+                                    equal(data.tags, JSON.stringify(category.get("tags")), "Tags are correct");
                                     equal(data.has_duration, category.get("has_duration"), "Duration is correct");
                                     ok(data.created_at, "Created_at date is set");
                                     equal(data.created_by_nickname, user.get('nickname'), "Created_by_nickname is correct");
@@ -203,7 +203,7 @@ require(['domReady',
                                     notEqual(data.id,category.id, "Id is different as template category");
                                     equal(data.name, newName, "Name is correct");
                                     equal(data.description, category.get("description"), "Description is correct");
-                                    equal(data.tags, category.get("tags"), "Tags are correct");
+                                    equal(data.tags, JSON.stringify(category.get("tags")), "Tags are correct");
                                     equal(data.has_duration, category.get("has_duration"), "Duration is correct");
                                     ok(data.created_at, "Created_at date is set");
                                     equal(data.created_by_nickname, user.get('nickname'), "Created_by_nickname is correct");
