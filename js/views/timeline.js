@@ -222,9 +222,6 @@ define(["jquery",
 
                 trackJSON = track.toJSON();
                 trackJSON.id = track.id;
-                if (trackJSON.access === ACCESS.PUBLIC) {
-                  trackJSON.isPublic = true;
-                }
 
                 // Calculate start/end time
                 startTime = annotation.get("start");
@@ -269,9 +266,6 @@ define(["jquery",
           getVoidItem: function(track){
               var trackJSON = track.toJSON();
               trackJSON.id = track.id;
-              if (trackJSON.access === ACCESS.PUBLIC) {
-                trackJSON.isPublic = true;
-              }
             
               return {
                 start: this.startDate-5000,
@@ -296,7 +290,7 @@ define(["jquery",
               return;
             }
 
-            if (annotationsTool.localStorage) {
+            if (!annotationsTool.localStorage) {
               options.wait = true;
             } 
               
@@ -601,17 +595,12 @@ define(["jquery",
                 newTrackJSON,
                 trackCurrentVisibility,
                 newTrackVisibility,
-                trackJSON,
 
                 updateListener = function(model) {
                   var item,
                       newGroup;
 
-                  newTrackJSON = track.toJSON();
-                  if (newTrackJSON.access === ACCESS.PUBLIC) {
-                    newTrackJSON.isPublic = true;
-                  }
-                  newGroup = this.groupTemplate(newTrackJSON);
+                  newGroup = this.groupTemplate(model.toJSON());
 
                   _.each(this.data, function(item,index){
                     if (item.group === currentGroup) {
@@ -629,11 +618,7 @@ define(["jquery",
               return;
             }
 
-            trackJSON = track.toJSON();
-            if (trackJSON.access === ACCESS.PUBLIC) {
-              trackJSON.isPublic = true;
-            }
-            currentGroup = this.groupTemplate(trackJSON);
+            currentGroup = this.groupTemplate(track.toJSON());
 
             trackCurrentVisibility = track.get('access');
 
@@ -686,7 +671,13 @@ define(["jquery",
            * @param {Integer} trackId Id of the selected track
            */
           onTrackSelected: function(event,trackId){
-            var track = this.getTrack(trackId);
+            var track;
+
+            if (_.isString(trackId)) {
+              track = this.getTrack(parseInt(trackId));
+            } else {
+              track = this.getTrack(trackId);
+            }
             
             // If the track does not exist, and it has been thrown by an event
             if ((!track && event) || (!track && trackId)) {

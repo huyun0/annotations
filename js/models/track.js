@@ -42,35 +42,39 @@ define(["order!jquery",
             
             initialize: function(attr){
                 
-                if(!attr || _.isUndefined(attr.name))
+                if (!attr || _.isUndefined(attr.name)) {
                     throw "'name' attribute is required";
+                }
 
                 // Check if the track has been initialized 
-                if(!attr.id){
+                if (!attr.id) {
                     // If local storage, we set the cid as id
-                    if(window.annotationsTool.localStorage)
+                    if (window.annotationsTool.localStorage) {
                         attr['id'] = this.cid;
+                    }
                         
                     this.toCreate = true;
                 }
                 
-                if(attr.annotations && _.isArray(attr.annotations))
+                if (attr.annotations && _.isArray(attr.annotations)) {
                     this.set({annotations: new Annotations(attr.annotations,this)});
-                else
+                } else {
                     this.set({annotations: new Annotations([],this)});
+                }
                 
                 // If localStorage used, we have to save the video at each change on the children
-                if(window.annotationsTool.localStorage){
-                    this.attributes['annotations'].bind('change',function(annotation){
-                            this.save();
-                            this.trigger("change");
-                    },this);
+                if (window.annotationsTool.localStorage){
+                    if (!attr.created_by) {
+                        attr.created_by = annotationsTool.user.get("id");
+                        attr.created_by_nickname = annotationsTool.user.get("nickname");
+                    }
                 }
                 
                 delete attr.annotations;
 
-                if(attr.id)
+                if (attr.id) {
                     this.get("annotations").fetch({async:false});
+                }
                 
                 // Add backbone events to the model 
                 _.extend(this, Backbone.Events);
@@ -86,12 +90,19 @@ define(["order!jquery",
                 attr.deleted_at = attr.deleted_at !== null ? Date.parse(attr.deleted_at): null;
                 attr.settings = this.parseJSONString(attr.settings);
 
+
+                if (attr.access === ACCESS.PUBLIC) {
+                    attr.isPublic = true;
+                } else {
+                    attr.isPublic = false;
+                }
+
                 // Parse tags if present
                 if (attr.tags) {
                     attr.tags = this.parseJSONString(attr.tags);
                 }
 
-                if(data.attributes) {
+                if (data.attributes) {
                     data.attributes = attr;
                 } else {
                     data = attr;
