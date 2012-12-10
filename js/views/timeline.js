@@ -540,6 +540,8 @@ define(["jquery",
            */
           onDeleteTrack: function(event,trackId){
 
+            event.stopImmediatePropagation();
+
             var track = this.tracks.get(trackId),
                 self = this,
                 items,
@@ -590,6 +592,8 @@ define(["jquery",
            * @param {Integer} trackId Id of the track to delete
            */
           onUpdateTrack: function(event,trackId){
+
+            event.stopImmediatePropagation();
 
             var track = this.tracks.get(trackId),
                 currentTrackJSON,
