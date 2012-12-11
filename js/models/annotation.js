@@ -43,8 +43,10 @@ define(["order!jquery",
             },
             
             // Logs
-
-            
+            /**
+             * @constructs
+             * @param {Object} attr Object literal containing the model initialion attribute. Should contains
+             */
             initialize: function(attr){ 
 
                 if (!attr || _.isUndefined(attr.start)) {
@@ -79,6 +81,11 @@ define(["order!jquery",
                 // Parse tags if present
                 if (attr.tags) {
                     attr.tags = this.parseJSONString(attr.tags);
+                }
+
+                if (attr.scaleValue) {
+                    attr.scalevalue = attr.scaleValue;
+                    delete attr.scaleValue;
                 }
 
                 if (attr.label) {
@@ -206,19 +213,17 @@ define(["order!jquery",
              */
             toJSON: function(){
                 var json = $.proxy(Backbone.Model.prototype.toJSON,this)();
-                if(json.label && json.label.toJSON)
+                if (json.label && json.label.toJSON) {
                     json.label = json.label.toJSON();
+                }
 
-                if(json.scaleValue){
+                if (json.scalevalue){
 
-                    // TODO replace scale_value_id on matterhorn by scalevalue
-                    if(json.scaleValue.attributes)
-                        json.scale_value_id = json.scaleValue.attributes.id
-                    else if(json.scaleValue.id)
-                        json.scale_value_id = json.scaleValue.id;
-
-                    json.scalevalue = json.scale_value;
-                    delete json.scaleValue;
+                    if (json.scalevalue.attributes) {
+                        json.scale_value_id = json.scalevalue.attributes.id
+                    } else if (json.scalevalue.id) {
+                        json.scale_value_id = json.scalevalue.id;
+                    }
                 }
 
                 delete json.annotations;

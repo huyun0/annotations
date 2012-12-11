@@ -116,7 +116,7 @@ define(["jquery",
 
             var id = event.target.getAttribute("value");
 
-            var scaleValue = this.scaleValues.get(id);
+            var scalevalue = this.scaleValues.get(id);
 
             if(this.editModus)
               return;
@@ -131,7 +131,7 @@ define(["jquery",
                 text: this.model.get('value'),
                 start:time,
                 label: this.model,
-                scaleValue: scaleValue.toJSON()
+                scalevalue: scalevalue.toJSON()
             };
             
             if(annotationsTool.user)
