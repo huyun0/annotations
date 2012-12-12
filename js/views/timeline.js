@@ -282,19 +282,14 @@ define(["jquery",
            */
           addTrack: function(param) {
 
-            var options = {},
-                track;
+            var track;
 
             if (this.timeline.findGroup(param.name)) {
               // If group already exist, we do nothing
               return;
             }
 
-            if (!annotationsTool.localStorage) {
-              options.wait = true;
-            } 
-              
-            track = this.tracks.create(param,options);
+            track = this.tracks.create(param,{wait:true});
             
             // If no track selected, we use the new one
             if (!annotationsTool.selectedTrack) {
@@ -610,7 +605,7 @@ define(["jquery",
                   },this);
                   
                   this.timeline.redraw();
-                  model.unbind("sync",updateListener);
+                  model.off("sync",updateListener);
                 };
 
             if (!track) {
@@ -628,7 +623,7 @@ define(["jquery",
               newTrackVisibility = ACCESS.PRIVATE;
             }
 
-            track.bind("sync", updateListener,this);
+            track.on("sync", updateListener,this);
             track.save({access:newTrackVisibility});
           },
           
@@ -673,7 +668,7 @@ define(["jquery",
           onTrackSelected: function(event,trackId){
             var track;
 
-            if (_.isString(trackId)) {
+            if (_.isString(trackId) && !annotationsTool.localStorage) {
               track = this.getTrack(parseInt(trackId));
             } else {
               track = this.getTrack(trackId);
@@ -952,6 +947,7 @@ define(["jquery",
             links.events.removeListener(this.timeline,'delete',this.onTimelineItemDeleted);
             links.events.removeListener(this.timeline,'select',this.onTimelineItemSelected);
             $(window).unbind('selectTrack');
+            $(window).unbind('updateTrack');
             $(window).unbind('deleteTrack');
             $(window).unbind('deleteAnnotation');
             $(window).unbind('resize',this.onWindowResize);
