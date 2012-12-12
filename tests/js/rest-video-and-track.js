@@ -30,8 +30,8 @@ require(['domReady',
                     user,
                     isVideoLoaded = false,
                     isTrackLoaded = false,
-                    tags1 = '{"tag":1}',
-                    tags2 = '{"tag":2}',
+                    tags1 = '{"tag":"test tag 1"}',
+                    tags2 = '{"tag":"test tag 2"}',
                     isAnnotationLoaded = false,
                     isUserLoaded = false;
 
@@ -90,7 +90,7 @@ require(['domReady',
                                     ok(_.isObject(data), "Got video in json");
                                     ok(data.id, "Id is "+data.id);
                                     equal(data.video_extid, video.get("video_extid"), "Extid is correct");
-                                    equal(data.tags, JSON.stringify(video.get("tags")), "Tags are correct");
+                                    ok(_.isEqual(data.tags, video.get("tags")), "Tags are correct");
                                     ok(data.created_at, "Created_at date is set");
                                     equal(data.created_by_nickname, user.get('nickname'), "Created_by_nickname is correct");
                                     ok(data.updated_at, "Updated_at date is set");
@@ -116,7 +116,7 @@ require(['domReady',
                                     ok(_.isObject(data), "Got video in json");
                                     ok(data.id, "Id is "+data.id);
                                     equal(data.video_extid, video.get("video_extid"), "Extid is correct");
-                                    equal(data.tags, JSON.stringify(video.get("tags")), "Tags are correct");
+                                    ok(_.isEqual(data.tags, video.get("tags")), "Tags are correct");
                                     ok(data.created_at, "Created_at date is set");
                                     equal(data.created_by_nickname, user.get('nickname'), "Created_by_nickname is correct");
                                     ok(data.updated_at, "Updated_at date is set");
@@ -141,7 +141,7 @@ require(['domReady',
                                     ok(true, "Video updated");
                                     ok(data.created_at, "Created_at date is set");
                                     equal(data.created_by_nickname, user.get('nickname'), "Created_by_nickname is correct");
-                                    equal(data.tags, JSON.stringify(video.get("tags")), "Tags are correct");
+                                    ok(_.isEqual(data.tags, video.get("tags")), "Tags are correct");
                                     ok(data.updated_at, "Updated_at date is correct");
                                     equal(data.updated_by_nickname, user.get('nickname'), "Updated_by_nickname is correct");
                                     start();
@@ -174,7 +174,7 @@ require(['domReady',
                                     equal(data.name, track.get("name"), "Name is correct");
                                     equal(data.description, track.get("description"), "Description is correct");
                                     equal(data.settings, track.get("settings"), "Settings are correct");
-                                    equal(data.tags, JSON.stringify(track.get("tags")), "Tags are correct");
+                                    ok(_.isEqual(data.tags, track.get("tags")), "Tags are correct");
                                     ok(data.created_at, "Created_at date is set");
                                     equal(data.created_by_nickname, user.get('nickname'), "Created_by_nickname is correct");
                                     ok(data.updated_at, "Updated_at date is set");
@@ -202,7 +202,7 @@ require(['domReady',
                                     equal(data.name, track.get("name"), "Name is correct");
                                     equal(data.description, track.get("description"), "Description is correct");
                                     equal(data.settings, track.get("settings"), "Settings are correct");
-                                    equal(data.tags, JSON.stringify(track.get("tags")), "Tags are correct");
+                                    ok(_.isEqual(data.tags, track.get("tags")), "Tags are correct");
                                     ok(data.created_at, "Created_at date is set");
                                     equal(data.created_by_nickname, user.get('nickname'), "Created_by_nickname is correct");
                                     ok(data.updated_at, "Updated_at date is set");
@@ -228,7 +228,7 @@ require(['domReady',
                                     ok(true, "Track updated");
                                     ok(data.created_at, "Created_at date is set");
                                     equal(data.created_by_nickname, user.get('nickname'), "Created_by_nickname is correct");
-                                    equal(data.tags, JSON.stringify(track.get("tags")), "Tags are correct");
+                                    ok(_.isEqual(data.tags, track.get("tags")), "Tags are correct");
                                     ok(data.updated_at, "Updated_at date is correct");
                                     equal(data.updated_by_nickname, user.get('nickname'), "updated_by_nickname is correct");
                                     equal(data.deleted_at, null, "Deleted_at date is correct");
@@ -320,7 +320,7 @@ require(['domReady',
                                     ok(data.id, "Id is "+data.id);
                                     equal(data.text, annotation.get("text"), "Text is correct");
                                     equal(data.start, annotation.get("start"), "Start is correct");
-                                    equal(data.tags, JSON.stringify(annotation.get("tags")), "Tags are correct");
+                                    ok(_.isEqual(data.tags, annotation.get("t)ags"), "Tags are correct");
                                     ok(data.created_at, "Created_at date is set");
                                     equal(data.created_by_nickname, user.get('nickname'), "Created_by_nickname is correct");
                                     ok(data.updated_at, "Updated_at date is set");
@@ -346,7 +346,7 @@ require(['domReady',
                                     ok(data.id, "Id is "+data.id);
                                     equal(data.text, annotation.get("text"), "Text is correct");
                                     equal(data.start, annotation.get("start"), "Start is correct");
-                                    equal(data.tags, JSON.stringify(annotation.get("tags")), "Tags are correct");
+                                    ok(_.isEqual(data.tags, annotation.get("t)ags"), "Tags are correct");
                                     ok(data.created_at, "Created_at date is set");
                                     equal(data.created_by_nickname, user.get('nickname'), "Created_by_nickname is correct");
                                     ok(data.updated_at, "Updated_at date is set");
@@ -370,7 +370,7 @@ require(['domReady',
                                 
                                 success: function(data){
                                     ok(true, "Updated annotation");
-                                    equal(data.tags, JSON.stringify(annotation.get("tags")), "Tags are correct");
+                                    ok(_.isEqual(data.tags, annotation.get("t)ags"), "Tags are correct");
                                     ok(data.created_at, "Created_at date is set");
                                     equal(data.created_by_nickname, user.get('nickname'), "Created_by_nickname is correct");
                                     ok(data.updated_at, "Updated_at date is correct");
