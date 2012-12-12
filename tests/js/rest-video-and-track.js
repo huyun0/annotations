@@ -320,7 +320,7 @@ require(['domReady',
                                     ok(data.id, "Id is "+data.id);
                                     equal(data.text, annotation.get("text"), "Text is correct");
                                     equal(data.start, annotation.get("start"), "Start is correct");
-                                    ok(_.isEqual(data.tags, annotation.get("t)ags"), "Tags are correct");
+                                    ok(_.isEqual(data.tags, annotation.get("tags")), "Tags are correct");
                                     ok(data.created_at, "Created_at date is set");
                                     equal(data.created_by_nickname, user.get('nickname'), "Created_by_nickname is correct");
                                     ok(data.updated_at, "Updated_at date is set");
@@ -346,7 +346,7 @@ require(['domReady',
                                     ok(data.id, "Id is "+data.id);
                                     equal(data.text, annotation.get("text"), "Text is correct");
                                     equal(data.start, annotation.get("start"), "Start is correct");
-                                    ok(_.isEqual(data.tags, annotation.get("t)ags"), "Tags are correct");
+                                    ok(_.isEqual(data.tags, annotation.get("tags")), "Tags are correct");
                                     ok(data.created_at, "Created_at date is set");
                                     equal(data.created_by_nickname, user.get('nickname'), "Created_by_nickname is correct");
                                     ok(data.updated_at, "Updated_at date is set");
@@ -370,7 +370,7 @@ require(['domReady',
                                 
                                 success: function(data){
                                     ok(true, "Updated annotation");
-                                    ok(_.isEqual(data.tags, annotation.get("t)ags"), "Tags are correct");
+                                    ok(_.isEqual(data.tags, annotation.get("tags")), "Tags are correct");
                                     ok(data.created_at, "Created_at date is set");
                                     equal(data.created_by_nickname, user.get('nickname'), "Created_by_nickname is correct");
                                     ok(data.updated_at, "Updated_at date is correct");
