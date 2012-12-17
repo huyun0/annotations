@@ -4645,6 +4645,12 @@ body {
 .timeline-navigation-new {
   display: none;
 }
+i.check {
+  visibility: hidden;
+}
+.checked i.check {
+  visibility: visible;
+}
 div.timeline-event {
   background-color: rgba(249, 103, 38, 0.6);
   z-index: 3;
@@ -4690,27 +4696,30 @@ div.timeline-groups-text.selected {
 div.timeline-groups-text.selected div.timeline-group:hover {
   background-color: inherit;
 }
-div.timeline-groups-text i.delete {
-  z-index: 4;
-  float: left;
-  margin-top: 5px;
-  margin-right: 4px;
-}
-div.timeline-groups-text i.delete:hover {
-  cursor: pointer;
-  background-color: #F66;
-  border-radius: 10px 10px 10px 10px;
-}
+div.timeline-groups-text i.delete,
 div.timeline-groups-text i.visibility {
   z-index: 4;
   float: left;
   margin-top: 5px;
   margin-right: 4px;
 }
+div.timeline-groups-text i.delete:hover,
 div.timeline-groups-text i.visibility:hover {
   cursor: pointer;
   background-color: #F66;
   border-radius: 10px 10px 10px 10px;
+}
+div.timeline-groups-text i.private {
+  z-index: 4;
+  float: left;
+  margin-top: 5px;
+  margin-right: 4px;
+  top: 19px;
+  position: relative;
+  margin-left: -37px;
+  background-color: yellow;
+  border: 2px solid yellow;
+  border-radius: 20px;
 }
 div.timeline-customtime {
   z-index: 3;
@@ -6250,9 +6259,19 @@ div.timeline-item:hover {
 /* dark grey */
 #list-container {
   overflow: auto;
+  min-height: 80px;
+}
+#list-container #content-list {
+  overflow: auto;
 }
 #list-container a.proxy-anchor {
   display: none;
+}
+#list-container i.check {
+  visibility: hidden;
+}
+#list-container .checked i.check {
+  visibility: visible;
 }
 #list-container div.annotation {
   border-radius: 4px 4px 4px 4px;

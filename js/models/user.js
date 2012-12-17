@@ -15,11 +15,11 @@
  */
     
 define(["order!jquery",
-        "order!access",
+        "order!roles",
         "order!underscore",
         "order!backbone"],
        
-    function($, ACCESS) {
+    function($, ROLES) {
 
         "use strict";
     
@@ -30,13 +30,7 @@ define(["order!jquery",
         var User = Backbone.Model.extend({
             
             defaults: {
-                access: ACCESS.PRIVATE,
-                created_at: null,
-                created_by: null,
-                updated_at: null,
-                updated_by: null,
-                deleted_at: null,
-                deleted_by: null
+                role: ROLES.USER
             },
             
             initialize: function(attr) {
@@ -55,6 +49,14 @@ define(["order!jquery",
                     this.toCreate = true;
                 }
                 
+                if (annotationsTool.getUserRole) {
+                    attr.role = annotationsTool.getUserRole();
+
+                    if (!attr.role) {
+                        delete attr.role;
+                    }
+                }
+
                 this.set(attr);
                 
                 // Define that all post operation have to been done through PUT method

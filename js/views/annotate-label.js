@@ -26,7 +26,6 @@ define(["jquery",
         /**
          * @class Label view for each item contained in annotate window
          * 
-         * @extends {Backbone.View}
          */
         var LabelView = Backbone.View.extend({
 

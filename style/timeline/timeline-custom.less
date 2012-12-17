@@ -4,9 +4,15 @@
    display: none;
 } 
 
-div#timeline{
 
+i.check{
+    visibility: hidden;
 }
+
+.checked i.check{
+    visibility: visible;
+}
+
  
 div.timeline-event {
     background-color: rgba(249, 103, 38, 0.6);
@@ -63,7 +69,7 @@ div.timeline-groups-text{
         }
     }
     
-    i.delete{
+    i.delete, i.visibility {
         
         z-index: 4;
         float: left;
@@ -77,17 +83,18 @@ div.timeline-groups-text{
         }
     }
 
-    i.visibility{
+    i.private {
         z-index: 4;
         float: left;
         margin-top: 5px;
         margin-right: 4px;
-            
-        &:hover{
-            cursor: pointer;
-            background-color: #F66;
-            border-radius: 10px 10px 10px 10px;
-        }
+        position: relative;
+        top: 19px;
+        position: relative;
+        margin-left: -37px;
+        background-color: yellow;
+        border: 2px solid yellow;
+        border-radius: 20px;
     }
    
 }

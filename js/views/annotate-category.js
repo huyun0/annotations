@@ -26,8 +26,6 @@ define(["jquery",
 
         /**
          * @class label view for each item contained in annotate window
-         * 
-         * @extends {Backbone.View}
          */
         var CategoryView = Backbone.View.extend({
 

@@ -14,6 +14,15 @@
  *
  */
     
+/**
+ * A module representing the annotation model
+ * @module models-Annotation
+ * @requires jQuery
+ * @requires underscore
+ * @requires models-user
+ * @requires ACCESS
+ * @requires backbone
+ */
 define(["order!jquery",
         "order!models/user",
         "order!access",
@@ -25,27 +34,27 @@ define(["order!jquery",
         "use strict";
     
         /**
-         * Annotation model
-         * @class
+         * @constructor
+         * @see {@link http://www.backbonejs.org/#Model}
+         * @memberOf module:models-annotation
+         * @alias Annotation
          */
         var Annotation = Backbone.Model.extend({
             
+            /** 
+             * Default models value 
+             * @alias module:models-track.Track#defaults
+             */
             defaults: {
                 access: ACCESS.PRIVATE,
-                created_at: null,
-                created_by: null,
-                updated_at: null,
-                updated_by: null,
-                deleted_at: null,
-                deleted_by: null,
                 start: 0,
                 duration: 5
             },
             
-            // Logs
             /**
-             * @constructs
-             * @param {Object} attr Object literal containing the model initialion attribute. Should contains
+             * Constructor
+             * @alias module:models-track.Track#initialize
+             * @param {Object} attr Object literal containing the model initialion attribute. 
              */
             initialize: function(attr){ 
 
@@ -62,6 +71,14 @@ define(["order!jquery",
                         
                     this.toCreate = true;
                 }
+
+                // If localStorage used, we have to save the video at each change on the children
+                if (window.annotationsTool.localStorage){
+                    if (!attr.created_by) {
+                        attr.created_by = annotationsTool.user.get("id");
+                        attr.created_by_nickname = annotationsTool.user.get("nickname");
+                    }
+                }
                 
                 // Add backbone events to the model 
                 _.extend(this, Backbone.Events);
@@ -69,14 +86,22 @@ define(["order!jquery",
                 this.set(attr);
             },
             
+            /**
+             * Parse the attribute list passed to the model
+             * @alias module:models-track.Track#parse
+             * @param  {Object} data Object literal containing the model attribute to parse.
+             * @return {Object}  The object literal with the list of parsed model attribute.
+             */
             parse: function(data) {    
-                var attr = data.attributes ? data.attributes : data;
+                var attr = data.attributes ? data.attributes : data,
+                    tempSettings,
+                    categories,
+                    tempLabel,
+                    label;
 
                 attr.created_at = attr.created_at !== null ? Date.parse(attr.created_at): null;
                 attr.updated_at = attr.updated_at !== null ? Date.parse(attr.updated_at): null;
                 attr.deleted_at = attr.deleted_at !== null ? Date.parse(attr.deleted_at): null;
-
-                var tempSettings;
 
                 // Parse tags if present
                 if (attr.tags) {
@@ -88,19 +113,24 @@ define(["order!jquery",
                     delete attr.scaleValue;
                 }
 
+                if (annotationsTool.user.get("id") === attr.created_by) {
+                    attr.isMine = true;
+                } else {
+                    attr.isMine = false;
+                }
+
                 if (attr.label) {
                     if (attr.label.category && (tempSettings = this.parseJSONString(attr.label.category.settings))) {
                         attr.label.category.settings = tempSettings;
                     } 
 
-                    if (tempSettings = this.parseJSONString(attr.label.settings)) {
+                    if ((tempSettings = this.parseJSONString(attr.label.settings))) {
                         attr.label.settings = tempSettings;
                     }
                 }
 
                 if (!annotationsTool.localStorage &&  attr.label_id && (_.isNumber(attr.label_id) || _.isString(attr.label_id))) {
-                    var categories = annotationsTool.video.get('categories');
-                    var tempLabel, label;
+                    categories = annotationsTool.video.get('categories');
 
                     categories.each(function(cat, index){
 
@@ -114,24 +144,32 @@ define(["order!jquery",
                     attr.label = label;
                 }
 
-                if(!annotationsTool.localStorage &&  attr.scalevalue)
+                if (!annotationsTool.localStorage &&  attr.scalevalue) {
                     attr.scaleValue = attr.scalevalue;
+                }
 
-                if(data.attributes)
+                if (data.attributes) {
                     data.attributes = attr;
-                else
+                } else {
                     data = attr;
+                }
 
                 return data;
             },
             
+            /**
+             * Validate the attribute list passed to the model
+             * @alias module:models-track.Track#validate
+             * @param  {Object} data Object literal containing the model attribute to validate.
+             * @return {String}  If the validation failed, an error message will be returned.
+             */
             validate: function(attr){
                 var tmpCreated;
                 
                 if (attr.id) {
                     if (this.get('id') !== attr.id) {
                         this.id = attr.id;
-                        this.attributes['id'] = attr.id;
+                        this.attributes.id = attr.id;
                         this.toCreate = false;
                         this.trigger('ready',this);
                     }
@@ -165,19 +203,19 @@ define(["order!jquery",
                     return "'access' attribute is not valid.";
                 }
             
-                if (!_.isNull(attr.created_at)) {
-                    if ((tmpCreated=this.get('created_at')) && tmpCreated!==attr.created_at) {
+                if (attr.created_at) {
+                    if ((tmpCreated=this.get('created_at')) && tmpCreated !== attr.created_at) {
                         return "'created_at' attribute can not be modified after initialization!";
                     } else if (!_.isNumber(attr.created_at)) {
                         return "'created_at' attribute must be a number!";
                     }
                 }
         
-                if (!_.isNull(attr.updated_at) && !_.isNumber(attr.updated_at)) {
+                if (attr.updated_at && !_.isNumber(attr.updated_at)) {
                     return "'updated_at' attribute must be a number!";
                 }
 
-                if (!_.isNull(attr.deleted_at) && !_.isNumber(attr.deleted_at)) {
+                if (attr.deleted_at && !_.isNumber(attr.deleted_at)) {
                     return "'deleted_at' attribute must be a number!";
                 }
                 
@@ -185,6 +223,7 @@ define(["order!jquery",
 
             /**
              * Parse the given parameter to JSON if given as String
+             * @alias module:models-track.Track#parseJSONString
              * @param  {String} parameter the parameter as String
              * @return {JSON} parameter as JSON object
              */
@@ -205,10 +244,8 @@ define(["order!jquery",
             },
 
             /**
-             * @override
-             * 
              * Override the default toJSON function to ensure complete JSONing.
-             *
+             * @alias module:models-track.Track#toJSON
              * @return {JSON} JSON representation of the instane
              */
             toJSON: function(){
@@ -220,7 +257,7 @@ define(["order!jquery",
                 if (json.scalevalue){
 
                     if (json.scalevalue.attributes) {
-                        json.scale_value_id = json.scalevalue.attributes.id
+                        json.scale_value_id = json.scalevalue.attributes.id;
                     } else if (json.scalevalue.id) {
                         json.scale_value_id = json.scalevalue.id;
                     }

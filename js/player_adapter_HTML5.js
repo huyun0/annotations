@@ -13,13 +13,17 @@
  *  permissions and limitations under the License.
  *
  */
-    
+
+/**
+ * A module representing the player adapter implementation for the HTML5 native player
+ * @module PlayerAdapterHTML5
+ */
 define(['domReady!','jquery','prototypes/player_adapter'],function(domReady,$,PlayerAdapter){
     
 
     /**
      * Implementation of the player adapter for the HTML5 native player
-     *
+     * @constructor
      * @param {HTMLElement} Player
      */
     PlayerAdapterHTML5 = function(targetElement){
@@ -48,7 +52,6 @@ define(['domReady!','jquery','prototypes/player_adapter'],function(domReady,$,Pl
         
         this.initialized = false;
         
-        /** @constructor */
         this.init = function(){
         
             // Create the HTML representation of the adapter

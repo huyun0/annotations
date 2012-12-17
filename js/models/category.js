@@ -13,7 +13,11 @@
  *  permissions and limitations under the License.
  *
  */
-    
+
+/**
+ * A module representing the category model
+ * @module Category
+ */
 define(["order!jquery",
         "order!collections/labels",
         "order!access",
@@ -25,8 +29,8 @@ define(["order!jquery",
         "use strict";
         
         /**
-         * Category model
-         * @class
+         * @constructor
+         * @alias module:Category
          */
         var Category = Backbone.Model.extend({
             
@@ -41,6 +45,10 @@ define(["order!jquery",
                 has_duration: true
             },
             
+            /**
+             * Constructor
+             * @param {Object} attr Object literal containing the model initialion attribute. Should contain a name attribute. 
+             */
             initialize: function(attr) {
                 var saveChange;
                 
@@ -87,6 +95,11 @@ define(["order!jquery",
                 this.set(attr);
             },
             
+            /**
+             * Parse the attribute list passed to the model
+             * @param  {Object} data Object literal containing the model attribute to parse.
+             * @return {Object}  The object literal with the list of parsed model attribute.
+             */
             parse: function(data) {
                 var attr = data.attributes ? data.attributes : data;
 
@@ -124,6 +137,11 @@ define(["order!jquery",
                 return data;
             },
             
+            /**
+             * Validate the attribute list passed to the model
+             * @param  {Object} data Object literal containing the model attribute to validate.
+             * @return {String}  If the validation failed, an error message will be returned.
+             */
             validate: function(attr){
                 var tmpCreated;
                 
@@ -197,6 +215,7 @@ define(["order!jquery",
 
             /**
              * Change category color
+             * @method 
              * @param  {String} color the new color
              */
             setColor: function(color){
@@ -215,8 +234,6 @@ define(["order!jquery",
             },
 
             /**
-             * @override
-             * 
              * Override the default toJSON function to ensure complete JSONing.
              *
              * @return {JSON} JSON representation of the instane

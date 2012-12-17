@@ -14,6 +14,16 @@
  *
  */
 
+/**
+ * A module representing the track model
+ * @module models-track
+ * @requires jQuery
+ * @requires collections/annotations
+ * @requires collections/scales
+ * @requires ACCESS
+ * @requires underscore
+ * @requires backbone
+ */ 
 define(["order!jquery",
         "order!collections/annotations",
         "order!access",
@@ -25,21 +35,26 @@ define(["order!jquery",
         "use strict";
         
         /**
-         * Track model
-         * @class
+         * @constructor
+         * @see {@link http://www.backbonejs.org/#Model}
+         * @memberOf module:models-track
+         * @alias Track
          */
         var Track = Backbone.Model.extend({
             
+            /** 
+             * Default models value 
+             * @alias module:models-video.Video#defaults
+             */
             defaults: {
-                access: ACCESS.PRIVATE,
-                created_at: null,
-                created_by: null,
-                updated_at: null,
-                updated_by: null,
-                deleted_at: null,
-                deleted_by: null
+                access: ACCESS.PUBLIC
             },
             
+            /**
+             * Constructor
+             * @alias module:models-track.Track#initialize
+             * @param {Object} attr Object literal containing the model initialion attribute. 
+             */
             initialize: function(attr){
                 
                 if (!attr || _.isUndefined(attr.name)) {
@@ -82,6 +97,12 @@ define(["order!jquery",
                 this.set(attr);
             },
             
+            /**
+             * Parse the attribute list passed to the model
+             * @alias module:models-track.Track#parse
+             * @param  {Object} data Object literal containing the model attribute to parse.
+             * @return {Object}  The object literal with the list of parsed model attribute.
+             */
             parse: function(data) {
                 var attr = data.attributes ? data.attributes : data;
 
@@ -90,6 +111,11 @@ define(["order!jquery",
                 attr.deleted_at = attr.deleted_at !== null ? Date.parse(attr.deleted_at): null;
                 attr.settings = this.parseJSONString(attr.settings);
 
+                if (annotationsTool.user.get("id") === attr.created_by) {
+                    attr.isMine = true;
+                } else {
+                    attr.isMine = false;
+                }
 
                 if (attr.access === ACCESS.PUBLIC) {
                     attr.isPublic = true;
@@ -111,6 +137,12 @@ define(["order!jquery",
                 return data;
             },
             
+            /**
+             * Validate the attribute list passed to the model
+             * @alias module:models-track.Track#validate
+             * @param  {Object} data Object literal containing the model attribute to validate.
+             * @return {String}  If the validation failed, an error message will be returned.
+             */
             validate: function(attr){
 
                 var tmpCreated;
@@ -164,17 +196,16 @@ define(["order!jquery",
             },
             
             /**
-             * Modify the current url for the annotations collection
+             * Modify the current url for the tracks collection
+             * @alias module:models-track.Track#setUrl
              */
             setUrl: function() {
                 this.get("annotations").setUrl(this);
             },
 
             /**
-             * @override
-             * 
              * Override the default toJSON function to ensure complete JSONing.
-             *
+             * @alias module:models-track.Track#toJSON
              * @return {JSON} JSON representation of the instane
              */
             toJSON: function() {
@@ -186,6 +217,7 @@ define(["order!jquery",
 
             /**
              * Parse the given parameter to JSON if given as String
+             * @alias module:models-track.Track#parseJSONString
              * @param  {String} parameter the parameter as String
              * @return {JSON} parameter as JSON object
              */

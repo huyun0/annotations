@@ -13,7 +13,17 @@
  *  permissions and limitations under the License.
  *
  */
-    
+
+/**
+ * A module representing the video model
+ * @module models-video
+ * @requires collections-tracks
+ * @requires collections-categories
+ * @requires collections-scales
+ * @requires ACCESS
+ * @requires underscore.js
+ * @requires backbone.js
+ */ 
 define(["jquery",
         "collections/tracks",
         "collections/categories",
@@ -21,28 +31,33 @@ define(["jquery",
         "order!access",
         "order!underscore",
         "order!backbone"],
-       
+    
+
     function($, Tracks, Categories, Scales, ACCESS){
     
         "use strict";
 
         /**
-         * video model
-         * @class
+         * @constructor
+         * @see {@link http://www.backbonejs.org/#Model}
+         * @memberOf module:models-video
+         * @alias Video
          */
         var Video = Backbone.Model.extend({
 
-            
+            /** 
+             * Default models value 
+             * @alias module:models-video.Video#defaults
+             */
             defaults: {
                 access: ACCESS.PUBLIC,
-                created_at: null,
-                created_by: null,
-                updated_at: null,
-                updated_by: null,
-                deleted_at: null,
-                deleted_by: null
             },
             
+            /**
+             * Constructor
+             * @alias module:models-video.Video#initialize
+             * @param {Object} attr Object literal containing the model initialion attribute. 
+             */
             initialize: function(attr){
                 
                 // Check if the video has been initialized 
@@ -89,6 +104,12 @@ define(["jquery",
                 this.noPOST = true;
             },
             
+            /**
+             * Parse the attribute list passed to the model
+             * @alias module:models-video.Video#parse
+             * @param  {Object} data Object literal containing the model attribute to parse.
+             * @return {Object}  The object literal with the list of parsed model attribute.
+             */
             parse: function(data) {
                 var attr = data.attributes ? data.attributes : data;
 
@@ -111,6 +132,12 @@ define(["jquery",
                 return data;
             },
             
+            /**
+             * Validate the attribute list passed to the model
+             * @alias module:models-video.Video#validate
+             * @param  {Object} data Object literal containing the model attribute to validate.
+             * @return {String}  If the validation failed, an error message will be returned.
+             */
             validate: function(attr) {
 
                 var tmpCreated;
@@ -207,6 +234,7 @@ define(["jquery",
             
             /**
              * Modify the current url for the tracks collection
+             * @alias module:models-video.Video#setUrl
              */
             setUrl: function(){
                 this.get("tracks").setUrl(this);
@@ -216,6 +244,7 @@ define(["jquery",
 
             /**
              * Parse the given parameter to JSON if given as String
+             * @alias module:models-video.Video#parseJSONString
              * @param  {String} parameter the parameter as String
              * @return {JSON} parameter as JSON object
              */
@@ -236,10 +265,8 @@ define(["jquery",
             },
 
             /**
-             * @override
-             * 
              * Override the default toJSON function to ensure complete JSONing.
-             *
+             * @alias module:models-video.Video#toJSON
              * @return {JSON} JSON representation of the instane
              */
             toJSON: function(){
