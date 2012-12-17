@@ -9,11 +9,6 @@ require(['domReady',
             domReady(function(){
                 
                 var categories,category = null;
-                
-                window.annotationsTool = {
-                    localStorage: true
-                }
-                
 
                 module("Categories",  {
                         setup: function() {

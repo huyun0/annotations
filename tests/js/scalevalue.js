@@ -9,10 +9,6 @@ require(['domReady',
                 
                 var scaleValue;
                 
-                window.annotationsTool = {
-                    localStorage: true
-                }
-                
                 module("Scale value",  {
                         setup: function() {
                             scaleValue = new ScaleValue({

@@ -9,10 +9,6 @@ require(['domReady',
             domReady(function(){
                 
                 var annotations,annotation = null;
-                
-                window.annotationsTool = {
-                    localStorage: true
-                }
 
                 module("Annotations",  {
                         setup: function() {

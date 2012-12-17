@@ -11,10 +11,6 @@ require(['domReady',
                 
                 var labels,label,category;
                 
-                window.annotationsTool = {
-                    localStorage: true
-                }
-                
                 module("Labels",  {
                         setup: function() {
                             category = new Category({name: "Test category"});

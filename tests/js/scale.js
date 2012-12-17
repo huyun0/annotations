@@ -8,11 +8,7 @@ require(['domReady',
             domReady(function(){
                 
                 var scale;
-                
-                window.annotationsTool = {
-                    localStorage: true
-                }
-                
+
                 module("scale",  {
                         setup: function() {
                             scale = new Scale({name: "Test scale"});
