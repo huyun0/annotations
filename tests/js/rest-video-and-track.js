@@ -18,11 +18,23 @@ require(['domReady',
                 QUnit.config.autostart = false;
                 Backbone.sync = AnnotationsSync;
                 
-                var videos, videos, track, track2, tracks, annotation, annotation2, annotations, users, user;
-                var isVideoLoaded = false;
-                var isTrackLoaded = false;
-                var isAnnotationLoaded = false;
-                var isUserLoaded = false;
+                var videos, 
+                    videos, 
+                    track, 
+                    track2, 
+                    tracks, 
+                    annotation, 
+                    annotation2, 
+                    annotations, 
+                    users, 
+                    user,
+                    isVideoLoaded = false,
+                    isTrackLoaded = false,
+                    tags1 = '{"tag":"test tag 1"}',
+                    tags2 = '{"tag":"test tag 2"}',
+                    isAnnotationLoaded = false,
+                    isUserLoaded = false;
+
                 
                 Backbone.sync = AnnotationsSync;
                 
@@ -37,21 +49,21 @@ require(['domReady',
                 
                 var loadVideo = function(){
                         videos = new Videos();
-                        videos.add({video_extid:'matterhorn123'});
+                        videos.add({video_extid:'matterhorn123', tags: tags1});
                         video = videos.at(0);
                         isVideoLoaded = true;
                 };
                 
                 var loadTrack = function(){                    
                         tracks = new Tracks([], video);
-                        tracks.add({name: "Test", description:'test track'});
+                        tracks.add({name: "Test", description:'test track', tags: tags1});
                         track = tracks.at(0);
                         isTrackLoaded = true;
                 };
                 
                 var loadAnnotation = function(){                    
                         annotations = track.get("annotations");
-                        annotations.add({text: "Test", start: 12.0});
+                        annotations.add({text: "Test", start: 12.0, tags: tags1});
                         annotation = annotations.at(0);
                         isAnnotationLoaded = true;
                 };
@@ -78,12 +90,13 @@ require(['domReady',
                                     ok(_.isObject(data), "Got video in json");
                                     ok(data.id, "Id is "+data.id);
                                     equal(data.video_extid, video.get("video_extid"), "Extid is correct");
+                                    ok(_.isEqual(data.tags, video.get("tags")), "Tags are correct");
                                     ok(data.created_at, "Created_at date is set");
-                                    equal(data.created_by, user.get('id'), "Created_by user id is correct");
+                                    equal(data.created_by_nickname, user.get('nickname'), "Created_by_nickname is correct");
                                     ok(data.updated_at, "Updated_at date is set");
-                                    equal(data.updated_by, user.get('id'), "Updated_by user id is correct");     
-                                    equal(data.deleted_at, null, "Deleted_at date is wrong");
-                                    equal(data.deleted_by, null, "Deleted_by user is wrong");
+                                    equal(data.updated_by_nickname, user.get('nickname'), "Updated_by_nickname is correct");     
+                                    equal(data.deleted_at, null, "Deleted_at date is correct");
+                                    equal(data.deleted_by_nickname, null, "Deleted_by_nickname user is correct");
                                     start();
                                 }
                     });
@@ -103,12 +116,13 @@ require(['domReady',
                                     ok(_.isObject(data), "Got video in json");
                                     ok(data.id, "Id is "+data.id);
                                     equal(data.video_extid, video.get("video_extid"), "Extid is correct");
+                                    ok(_.isEqual(data.tags, video.get("tags")), "Tags are correct");
                                     ok(data.created_at, "Created_at date is set");
-                                    equal(data.created_by, user.get('id'), "Created_by user id is correct");
+                                    equal(data.created_by_nickname, user.get('nickname'), "Created_by_nickname is correct");
                                     ok(data.updated_at, "Updated_at date is set");
-                                    equal(data.updated_by, user.get('id'), "Updated_by user id is correct");
-                                    equal(data.deleted_at, null, "Deleted_at date is wrong");
-                                    equal(data.deleted_by, null, "Deleted_by user is wrong");
+                                    equal(data.updated_by_nickname, user.get('nickname'), "Updated_by_nickname is correct");
+                                    equal(data.deleted_at, null, "Deleted_at date is correct");
+                                    equal(data.deleted_by_nickname, null, "Deleted_by_nickname user is correct");
                                     start();
                                 }
                     });
@@ -116,7 +130,7 @@ require(['domReady',
                 
                 test("Update video",function(){
                     stop();
-                    //video.set("video_extid", "matterhorn1234");
+                    video.set("tags", tags2);
                     AnnotationsSync('update',video,{
                                 error: function(error){
                                     ok(false, error);
@@ -126,10 +140,10 @@ require(['domReady',
                                 success: function(data){
                                     ok(true, "Video updated");
                                     ok(data.created_at, "Created_at date is set");
-                                    equal(data.created_by, user.get('id'), "Created_by user id is correct");
-                                    // No field to update at the moment
-                                    //ok(data.updated_at, "Updated_at date is correct");
-                                    //equal(data.updated_by, user.get('id'), "Updated_by user id is correct");
+                                    equal(data.created_by_nickname, user.get('nickname'), "Created_by_nickname is correct");
+                                    ok(_.isEqual(data.tags, video.get("tags")), "Tags are correct");
+                                    ok(data.updated_at, "Updated_at date is correct");
+                                    equal(data.updated_by_nickname, user.get('nickname'), "Updated_by_nickname is correct");
                                     start();
                                 }
                     });
@@ -159,14 +173,14 @@ require(['domReady',
                                     ok(data.id, "Id is "+data.id);
                                     equal(data.name, track.get("name"), "Name is correct");
                                     equal(data.description, track.get("description"), "Description is correct");
-                                    //equal(data.settings, track.get("settings"), "Settings are correct");
+                                    equal(data.settings, track.get("settings"), "Settings are correct");
+                                    ok(_.isEqual(data.tags, track.get("tags")), "Tags are correct");
                                     ok(data.created_at, "Created_at date is set");
-                                    equal(data.created_by, user.get('id'), "Created_by user id is correct");
+                                    equal(data.created_by_nickname, user.get('nickname'), "Created_by_nickname is correct");
                                     ok(data.updated_at, "Updated_at date is set");
-                                    equal(data.updated_by, user.get('id'), "Updated_by user id is correct");
-                                    equal(data.created_by_nickname, user.get('nickname'), "Created_by user nickname is correct");
-                                    equal(data.deleted_at, null, "Deleted_at date is wrong");
-                                    equal(data.deleted_by, null, "Deleted_by user is wrong");
+                                    equal(data.updated_by_nickname, user.get('nickname'), "Updated_by_nickname is correct");
+                                    equal(data.deleted_at, null, "Deleted_at date is correct");
+                                    equal(data.deleted_by_nickname, null, "Deleted_by_nickname is correct");
                                     start();
                                 }
                     });
@@ -187,13 +201,14 @@ require(['domReady',
                                     ok(data.id, "Id is "+data.id);
                                     equal(data.name, track.get("name"), "Name is correct");
                                     equal(data.description, track.get("description"), "Description is correct");
-                                    //equal(data.settings, track.get("settings"), "Settings are correct");
+                                    equal(data.settings, track.get("settings"), "Settings are correct");
+                                    ok(_.isEqual(data.tags, track.get("tags")), "Tags are correct");
                                     ok(data.created_at, "Created_at date is set");
-                                    equal(data.created_by, user.get('id'), "Created_by user id is correct");
+                                    equal(data.created_by_nickname, user.get('nickname'), "Created_by_nickname is correct");
                                     ok(data.updated_at, "Updated_at date is set");
-                                    equal(data.updated_by, user.get('id'), "Updated_by user id is correct");
-                                    equal(data.deleted_at, null, "Deleted_at date is wrong");
-                                    equal(data.deleted_by, null, "Deleted_by user is wrong");
+                                    equal(data.updated_by_nickname, user.get('nickname'), "Updated_by_nickname is correct");
+                                    equal(data.deleted_at, null, "Deleted_at date is correct");
+                                    equal(data.deleted_by_nickname, null, "Deleted_by_nickname is correct");
                                     start();
                                 }
                     });
@@ -202,6 +217,7 @@ require(['domReady',
                 test("Update track",function(){
                     stop();
                     track.set("name", "new name");
+                    track.set("tags", tags2);
                     AnnotationsSync('update',track,{
                                 error: function(error){
                                     ok(false, error);
@@ -211,11 +227,12 @@ require(['domReady',
                                 success: function(data){
                                     ok(true, "Track updated");
                                     ok(data.created_at, "Created_at date is set");
-                                    equal(data.created_by, user.get('id'), "Created_by user id is correct");
+                                    equal(data.created_by_nickname, user.get('nickname'), "Created_by_nickname is correct");
+                                    ok(_.isEqual(data.tags, track.get("tags")), "Tags are correct");
                                     ok(data.updated_at, "Updated_at date is correct");
-                                    equal(data.updated_by, user.get('id'), "Updated_by user id is correct");
-                                    equal(data.deleted_at, null, "Deleted_at date is wrong");
-                                    equal(data.deleted_by, null, "Deleted_by user is wrong");
+                                    equal(data.updated_by_nickname, user.get('nickname'), "updated_by_nickname is correct");
+                                    equal(data.deleted_at, null, "Deleted_at date is correct");
+                                    equal(data.deleted_by_nickname, null, "Deleted_by_nickname is correct");
                                     start();
                                 }
                     });
@@ -303,13 +320,13 @@ require(['domReady',
                                     ok(data.id, "Id is "+data.id);
                                     equal(data.text, annotation.get("text"), "Text is correct");
                                     equal(data.start, annotation.get("start"), "Start is correct");
+                                    ok(_.isEqual(data.tags, annotation.get("tags")), "Tags are correct");
                                     ok(data.created_at, "Created_at date is set");
-                                    equal(data.created_by, user.get('id'), "Created_by user id is correct");
-                                    equal(data.created_by_nickname, user.get('nickname'), "Created_by user nickname is correct");
+                                    equal(data.created_by_nickname, user.get('nickname'), "Created_by_nickname is correct");
                                     ok(data.updated_at, "Updated_at date is set");
-                                    equal(data.updated_by, user.get('id'), "Updated_by user id is correct");
-                                    equal(data.deleted_at, null, "Deleted_at date is wrong");
-                                    equal(data.deleted_by, null, "Deleted_by user is wrong");
+                                    equal(data.updated_by_nickname, user.get('nickname'), "Updated_by_nickname is correct");
+                                    equal(data.deleted_at, null, "Deleted_at date is correct");
+                                    equal(data.deleted_by_nickname, null, "Deleted_by_nickname is correct");
                                     start();
                                 }
                     });
@@ -329,12 +346,13 @@ require(['domReady',
                                     ok(data.id, "Id is "+data.id);
                                     equal(data.text, annotation.get("text"), "Text is correct");
                                     equal(data.start, annotation.get("start"), "Start is correct");
+                                    ok(_.isEqual(data.tags, annotation.get("tags")), "Tags are correct");
                                     ok(data.created_at, "Created_at date is set");
-                                    equal(data.created_by, user.get('id'), "Created_by user id is correct");
+                                    equal(data.created_by_nickname, user.get('nickname'), "Created_by_nickname is correct");
                                     ok(data.updated_at, "Updated_at date is set");
-                                    equal(data.updated_by, user.get('id'), "Updated_by user id is correct");
-                                    equal(data.deleted_at, null, "Deleted_at date is wrong");
-                                    equal(data.deleted_by, null, "Deleted_by user is wrong");
+                                    equal(data.updated_by_nickname, user.get('nickname'), "Updated_by_nickname is correct");
+                                    equal(data.deleted_at, null, "Deleted_at date is correct");
+                                    equal(data.deleted_by_nickname, null, "Deleted_by_nickname is correct");
                                     start();
                                 }
                     });
@@ -343,6 +361,7 @@ require(['domReady',
                 test("Update annotation",function(){
                     stop();
                     annotation.set("text", "Test2");
+                    annotation.set("tags",tags2);
                     AnnotationsSync('update',annotation,{
                                 error: function(error){
                                     ok(false, error);
@@ -351,12 +370,13 @@ require(['domReady',
                                 
                                 success: function(data){
                                     ok(true, "Updated annotation");
+                                    ok(_.isEqual(data.tags, annotation.get("tags")), "Tags are correct");
                                     ok(data.created_at, "Created_at date is set");
-                                    equal(data.created_by, user.get('id'), "Created_by user id is correct");
+                                    equal(data.created_by_nickname, user.get('nickname'), "Created_by_nickname is correct");
                                     ok(data.updated_at, "Updated_at date is correct");
-                                    equal(data.updated_by, user.get('id'), "Updated_by user id is correct");
-                                    equal(data.deleted_at, null, "Deleted_at date is wrong");
-                                    equal(data.deleted_by, null, "Deleted_by user is wrong");
+                                    equal(data.updated_by_nickname, user.get('nickname'), "Updated_by_nickname is correct");
+                                    equal(data.deleted_at, null, "Deleted_at date is correct");
+                                    equal(data.deleted_by_nickname, null, "Deleted_by_nickname is correct");
                                     start();
                                 }
                     });
@@ -553,20 +573,5 @@ require(['domReady',
                     });
                 })
                 
-                /* Sprint X
-                test("Delete user",1,function(){
-                    stop();
-                    AnnotationsSync('delete',user,{
-                                error: function(error){
-                                    ok(false, error);
-                                    start();
-                                },
-                                
-                                success: function(data){
-                                    ok(true, "User deleted.");
-                                    start();
-                                }
-                    });
-                }) */
         })
 });

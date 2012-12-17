@@ -34,6 +34,12 @@ define(['order!domReady',
             /* Function to load the video */
             loadVideo: function(){
                 
+            },
+
+            user: {
+                get: function(id) {
+                    return 8;
+                }
             }
         };
             

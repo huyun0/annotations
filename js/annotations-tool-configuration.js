@@ -14,32 +14,49 @@
  *
  */
 
+
 define(['order!domReady',
         'order!jquery',
         'order!underscore',
+        'order!roles',
         'order!player_adapter_HTML5'
         // Add here the files (PlayerAdapter, ...) required for your configuration
         ],
        
-    function(domReady, $, _undefined_, HTML5PlayerAdapter){
+    function(domReady, $, _undefined_, ROLES, HTML5PlayerAdapter){
 
        
             
         /**
          * Annotations tool configuration
+         * @namespace  
          */
         window.annotationsTool =  {
             
-            /** Define if the localStorage should be used or not */
+            /** 
+             * Define if the localStorage should be used or not 
+             * @type {boolean}
+             * @readOnly 
+             */
             localStorage: true,
             
-            /** Url from the annotations Rest Endpoints */
+            /**
+             * Url from the annotations Rest Endpoints 
+             * @type {string}
+             * @readOnly
+             */
             restEndpointsUrl: "../../extended-annotations",
+
+            /**
+             * Player adapter implementation to use for the annotations tool
+             * @type {PlayerAdapter}
+             */
+            playerAdapter: undefined,
             
             
             /**
              * Get the current video id (video_extid) 
-             * @return {String} video external id
+             * @return {string} video external id
              */ 
             getVideoExtId: function(){
                 return $('video')[0].id;
@@ -47,15 +64,19 @@ define(['order!domReady',
             
             /**
              * Get the user id from the current context (user_extid)
-             * @return {[type]} [description]
+             * @return {string} user_extid
              */ 
             getUserExtId: function(){
                 return "default";
             },
 
+            getUserRole: function(){
+                return undefined;
+            },
+
             /**
              * Get the user authentification token if existing
-             * @return {String} Current user token
+             * @return {string} Current user token
              */
             getUserAuthToken: function(){
                 return undefined;
@@ -68,10 +89,9 @@ define(['order!domReady',
         };
             
         domReady(function(){
-            /* Player adapter implementation to use for the annotations tool */
             window.annotationsTool.playerAdapter = new HTML5PlayerAdapter($('video')[0]);
             
         })
         
-        return window.annotations;
+        return window.annotationsTool;
 });

@@ -13,21 +13,32 @@
 				<div class="control-group">
 					<label class="control-label" for="name"><b>*</b> Name: </label>
 					<div class="controls">
-						<input type="text" class="input-xlarge" placeholder="Insert the new track name" id="name">
+						<input type="text" placeholder="Insert the new track name" id="name">
 					</div>
 				</div>
 				<div class="control-group">
 					<label class="control-label" for="description">Description: </label>
 					<div class="controls">
-						<input type="text" class="input-xlarge" placeholder="Insert a description for the new track" id="description">
+						<input type="text" placeholder="Insert a description for the new track" id="description">
 					</div>
 				</div>
+
+				{{#if isSupervisor}}
+				<div class="control-group">
+					<label class="control-label" for="public">Public: </label>
+					<div class="controls">
+						<input type="checkbox" id="public" checked>
+					</div>
+				</div>
+				{{/if}}
+
+
 				<div style="float:right"><b>* required fields</b></div>
 			</fieldset>
 		</form>
 	  </div>
 	  <div class="modal-footer">
             <a href="#" class="btn" data-dismiss="modal">Cancel</a>
-	    <a href="#" id="add-group" class="btn btn-primary">Add</a>
+	    	<a href="#" id="add-group" class="btn btn-primary">Add</a>
 	  </div>
 </div>

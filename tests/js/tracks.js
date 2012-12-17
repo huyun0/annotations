@@ -10,11 +10,6 @@ require(['domReady',
                 
                 var tracks,track = null;
                 
-                window.annotationsTool = {
-                    localStorage: true
-                }
-                
-
                 module("Tracks",  {
                         setup: function() {
                             tracks = new Tracks([],{id:123,collection:{},url:function(){return 'test';}});

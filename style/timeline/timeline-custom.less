@@ -4,9 +4,15 @@
    display: none;
 } 
 
-div#timeline{
 
+i.check{
+    visibility: hidden;
 }
+
+.checked i.check{
+    visibility: visible;
+}
+
  
 div.timeline-event {
     background-color: rgba(249, 103, 38, 0.6);
@@ -43,7 +49,7 @@ div.timeline-groups-text{
         }
         
         div.content{
-            width: 122px;
+            width: 105px;
             overflow: hidden;
             white-space: nowrap;
             overflow: hidden;
@@ -63,7 +69,7 @@ div.timeline-groups-text{
         }
     }
     
-    i.delete{
+    i.delete, i.visibility {
         
         z-index: 4;
         float: left;
@@ -76,10 +82,22 @@ div.timeline-groups-text{
             border-radius: 10px 10px 10px 10px;
         }
     }
+
+    i.private {
+        z-index: 4;
+        float: left;
+        margin-top: 5px;
+        margin-right: 4px;
+        position: relative;
+        top: 19px;
+        position: relative;
+        margin-left: -37px;
+        background-color: yellow;
+        border: 2px solid yellow;
+        border-radius: 20px;
+    }
    
 }
-
-
 
 div.timeline-customtime {
     z-index: 3;
@@ -166,33 +184,33 @@ div.timeline-bottom-controls{
     }
 }
 
-    div.timeline-item{
-        background-color: rgba(249, 103, 38, 0.6);
-        padding: 5px;
-        border-radius: 3px;
+div.timeline-item{
+    background-color: rgba(249, 103, 38, 0.6);
+    padding: 5px;
+    border-radius: 3px;
+    overflow: hidden;
+    
+    span{
+        float: left;
+        width: 65%;
         overflow: hidden;
-        
-        span{
-            float: left;
-            width: 65%;
-            overflow: hidden;
-        }
-        
-        i.delete{
-                float: right;
-                display: none;
-                
-                &:hover{
-                    cursor: pointer;
-                    background-color: lighten(red,20%);
-                    border-radius: 10px 10px 10px 10px;
-                }
-        }
-        
-        &:hover{
-            cursor:pointer;
-        }
     }
+    
+    i.delete{
+            float: right;
+            display: none;
+            
+            &:hover{
+                cursor: pointer;
+                background-color: lighten(red,20%);
+                border-radius: 10px 10px 10px 10px;
+            }
+    }
+    
+    &:hover{
+        cursor:pointer;
+    }
+}
 
 
 

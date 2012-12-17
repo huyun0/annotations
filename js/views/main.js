@@ -27,13 +27,14 @@ define(["order!jquery",
         "order!collections/videos",
         "order!backbone-annotations-sync",
         "order!text!templates/user-login.tmpl",
+        "order!roles",
         "order!backbone",
         "order!localstorage",
         "order!underscore",
         "order!libs/bootstrap/bootstrap.min",
         "order!libs/bootstrap/tab"],
        
-       function($,PlayerAdapter,Annotations,AnnotateView,ListView,TimelineView,Users,User,Track,Video,Videos,AnnotationSync,LoginTmpl){
+       function($,PlayerAdapter,Annotations,AnnotateView,ListView,TimelineView,Users,User,Track,Video,Videos,AnnotationSync,LoginTmpl,ROLES){
 
     /**
      * Main view of the application
@@ -250,24 +251,29 @@ define(["order!jquery",
         this.setLoadingProgress(30,"User login.");
         
         // Fields from the login form
-        var userId          = annotationsTool.getUserExtId();
-        var userNickname    = this.userModal.find('#nickname');
-        var userEmail       = this.userModal.find('#email');
-        var userRemember    = this.userModal.find('#remember');
-        var userError       = this.userModal.find('.alert');
+        var userId          = annotationsTool.getUserExtId(),
+            userNickname    = this.userModal.find('#nickname'),
+            userEmail       = this.userModal.find('#email'),
+            userRemember    = this.userModal.find('#remember'),
+            userError       = this.userModal.find('.alert'),
            
-        var valid  = true; // Variable to keep the form status in memory   
-        var user; // the new user
+            valid  = true, // Variable to keep the form status in memory   
+            user; // the new user
         
         userError.find('#content').empty();
         
         // Try to create a new user
         try{
 
-            if(annotationsTool.localStorage)
-              user = annotationsTool.users.create({user_extid: userId, nickname: userNickname.val()});
-            else
+            if (annotationsTool.localStorage) {
+              user = annotationsTool.users.create({user_extid: userId, 
+                                                  nickname: userNickname.val(),
+                                                  role: this.userModal.find('#supervisor')[0].checked ? ROLES.SUPERVISOR : ROLES.USER},
+                                                  {wait:true});
+            }
+            else {
               user = annotationsTool.users.create({user_extid: userId, nickname: userNickname.val()},{wait:true});
+            }
             
             // Bind the error user to a function to display the errors
             user.bind('error',$.proxy(function(model,error){
@@ -281,11 +287,12 @@ define(["order!jquery",
         }
         
         // If email is given, we set it to the user
-        if(user && userEmail.val())
+        if (user && userEmail.val()) {
             user.set({email:userEmail.val()});
+        }
         
         // If user not valid 
-        if(!valid){
+        if (!valid) {
             this.userModal.find('.alert').show();
             return undefined;
         }
@@ -405,13 +412,18 @@ define(["order!jquery",
        * Listener for window resizing
        */
       onWindowResize: function(){
+        var listContent,
+            windowHeight;
+
         // If views are not set
         if(!this.annotateView || !this.listView || !this.timelineView)
           return;
 
-        var windowHeight = $(window).height();
+        windowHeight = $(window).height();
 
-        this.listView.$el.height(windowHeight-this.annotateView.$el.height()-100);
+
+        listContent = this.listView.$el.find('#content-list');
+        listContent.height(windowHeight-this.annotateView.$el.height()-200);
       },
 
       ////////////

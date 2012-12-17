@@ -35,7 +35,6 @@ define(["jquery",
         /**
          * @class Tab view containing categories/label
          * 
-         * @extends {Backbone.View}
          */
         var AnnotateTab = Backbone.View.extend({
 
@@ -284,10 +283,10 @@ define(["jquery",
                   return scalesSet[0].name == scale.get('name');
                 };
 
-            var options = {};
+            var options = {wait:true};
 
-            if(!annotationsTool.localStorage)
-              options.wait = true;
+            //if(!annotationsTool.localStorage)
+            //  options.wait = true;
 
             if(!annotationsTool.video.get("scales").find(findByNameScale)){
               scale = annotationsTool.video.get("scales").create({name: scalesSet[0].name},options);

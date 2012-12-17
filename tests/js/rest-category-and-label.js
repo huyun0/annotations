@@ -1,7 +1,7 @@
 require(['domReady',
          'jquery',
          'require',
-	 'models/category',
+	   'models/category',
          'models/video',
          'models/user',
          'collections/categories',
@@ -17,10 +17,22 @@ require(['domReady',
                 QUnit.config.autostart = false;
                 Backbone.sync = AnnotationsSync;
                 
-                var category, categories, videos, video, users, user, videoCategories, label, labels, videoLabels;
-                var setupLoaded = false;
+                var category, 
+                    categories, 
+                    videos, 
+                    video, 
+                    users, 
+                    user, 
+                    videoCategories, 
+                    label, labels, 
+                    videoLabels,
+                    setupLoaded = false,
+                    loadUser,
+                    setup,
+                    tags = '{"tag":"test tag"}',
+                    userExtId;
                 
-                var loadUser = function(){
+                loadUser = function(){
                     users = new Users();
                     var userExtId = window.annotationsTool.getUserExtId();
                     users.create({user_extid:userExtId,nickname:'pinguin', email: "test@dot.com"});
@@ -29,30 +41,27 @@ require(['domReady',
                     isUserLoaded = true;
                 }
                 
-                var setup = function(){
-                    
+                setup = function(){
                     if(!setupLoaded){
                         loadUser();
                         
                         categories = new Categories([]);
                         categories.create({
                                 name: "Test category",
-                                description: "Category created for the tests"
+                                description: "Category created for the tests",
+                                tags: tags
                         });
-                        category = categories.at(0);
-                        labels = category.get("labels");
-                        
-                        videos = new Videos();                        
-                        video = videos.create({video_extid:'category'});
+                        category        = categories.at(0);
+                        labels          = category.get("labels");
 
-                        isVideoLoaded = true;
-                        
+                        videos          = new Videos();                        
+                        video           = videos.create({video_extid:'category'});
+
+                        isVideoLoaded   = true;
                         videoCategories = video.get("categories");
-                        
-                        setupLoaded = true;
+                        setupLoaded     = true;
                     }
                 }
-                
                 
                 module("Category",{ setup : setup });
 
@@ -89,11 +98,12 @@ require(['domReady',
                                     ok(data.id, "Id is "+data.id);
                                     equal(data.name, category.get("name"), "Name is correct");
                                     equal(data.description, category.get("description"), "Description is correct");
+                                    ok(_.isEqual(data.tags, category.get("tags")), "Tags are correct");
                                     equal(data.has_duration, category.get("has_duration"), "Duration is correct");
                                     ok(data.created_at, "Created_at date is set");
-                                    equal(data.created_by, user.get('id'), "Created_by category id is correct");
+                                    equal(data.created_by_nickname, user.get('nickname'), "Created_by_nickname is correct");
                                     ok(data.updated_at, "Updated_at date is set");
-                                    equal(data.updated_by, user.get('id'), "Updated_by category is correct");
+                                    equal(data.updated_by_nickname, user.get('nickname'), "Updated_by_nickname is correct");
                                     start();
                                 }
                     });
@@ -111,11 +121,12 @@ require(['domReady',
                     notEqual(data.id,category.id, "Id is different as template category");
                     equal(data.name, category.get("name"), "Name is correct");
                     equal(data.description, category.get("description"), "Description is correct");
+                    ok(_.isEqual(data.tags, category.get("tags")), "Tags are correct");
                     equal(data.has_duration, category.get("has_duration"), "Duration is correct");
                     ok(data.created_at, "Created_at date is set");
-                    equal(data.created_by, user.get('id'), "Created_by category id is correct");
+                    equal(data.created_by_nickname, user.get('nickname'), "Created_by_nickname is correct");
                     ok(data.updated_at, "Updated_at date is set");
-                    equal(data.updated_by, user.get('id'), "Updated_by category is correct");
+                    equal(data.updated_by_nickname, user.get('nickname'), "Updated_by_nickname is correct");
                     start();
 
                 });
@@ -136,11 +147,12 @@ require(['domReady',
                                     notEqual(data.id,category.id, "Id is different as template category");
                                     equal(data.name, category.get("name"), "Name is correct");
                                     equal(data.description, category.get("description"), "Description is correct");
+                                    ok(_.isEqual(data.tags, category.get("tags")), "Tags are correct");
                                     equal(data.has_duration, category.get("has_duration"), "Duration is correct");
                                     ok(data.created_at, "Created_at date is set");
-                                    equal(data.created_by, user.get('id'), "Created_by category id is correct");
+                                    equal(data.created_by_nickname, user.get('nickname'), "Created_by_nickname is correct");
                                     ok(data.updated_at, "Updated_at date is set");
-                                    equal(data.updated_by, user.get('id'), "Updated_by category is correct");
+                                    equal(data.updated_by_nickname, user.get('nickname'), "Updated_by_nickname is correct");
                                     start();
                                 }
                     });
@@ -163,10 +175,11 @@ require(['domReady',
                                     equal(data.id,category.id, "Id is correct");
                                     equal(data.name, newName, "Name is correct");
                                     equal(data.description, category.get("description"), "Description is correct");
+                                    ok(_.isEqual(data.tags, category.get("tags")), "Tags are correct");
                                     equal(data.has_duration, category.get("has_duration"), "Duration is correct");
                                     ok(data.created_at, "Created_at date is set");
-                                    equal(data.created_by, user.get('id'), "Created_by category id is correct");
-                                    equal(data.updated_by, user.get('id'), "Updated_by category is correct");
+                                    equal(data.created_by_nickname, user.get('nickname'), "Created_by_nickname is correct");
+                                    equal(data.updated_by_nickname, user.get('nickname'), "Updated_by_nickname is correct");
                                     start();
                                 }
                     });
@@ -190,10 +203,11 @@ require(['domReady',
                                     notEqual(data.id,category.id, "Id is different as template category");
                                     equal(data.name, newName, "Name is correct");
                                     equal(data.description, category.get("description"), "Description is correct");
+                                    ok(_.isEqual(data.tags, category.get("tags")), "Tags are correct");
                                     equal(data.has_duration, category.get("has_duration"), "Duration is correct");
                                     ok(data.created_at, "Created_at date is set");
-                                    equal(data.created_by, user.get('id'), "Created_by category id is correct");
-                                    equal(data.updated_by, user.get('id'), "Updated_by category is correct");
+                                    equal(data.created_by_nickname, user.get('nickname'), "Created_by_nickname is correct");
+                                    equal(data.updated_by_nickname, user.get('nickname'), "Updated_by_nickname is correct");
                                     start();
                                 }
                     });
@@ -250,9 +264,9 @@ require(['domReady',
                     
                     ok(label.id!== undefined,"Id has been set");
                     ok(label.get("created_at"), "Created_at date is set");
-                    equal(label.get("created_by"), user.get('id'), "Created_by date id is correct");
+                    equal(label.get("created_by_nickname"), user.get('nickname'), "Created_by_nickname date id is correct");
                     ok(label.get("updated_at"), "Updated_at date is set");
-                    equal(label.get("updated_by"), user.get('id'), "Updated_by date is correct");
+                    equal(label.get("updated_by_nickname"), user.get('nickname'), "Updated_by_nickname date is correct");
                 });
                 
                 test("Get a 'template' label",function(){
@@ -274,9 +288,9 @@ require(['domReady',
                             equal(data.abbreviation, label.get("abbreviation"), "Abreviation is correct");
                             equal(data.category.id, label.get("category").id, "Category is correct");
                             ok(data.created_at, "Created_at date is set");
-                            equal(data.created_by, user.get('id'), "Created_by category id is correct");
+                            equal(data.created_by_nickname, user.get('nickname'), "Created_by_nickname is correct");
                             ok(data.updated_at, "Updated_at date is set");
-                            equal(data.updated_by, user.get('id'), "Updated_by category is correct");
+                            equal(data.updated_by_nickname, user.get('nickname'), "Updated_by_nickname category is correct");
                             start();
                         }
                     });
@@ -323,8 +337,8 @@ require(['domReady',
                                     notEqual(data.id,category.id, "Id is different as template category");
                                     equal(data.value, newValue,"Value setted correctly");
                                     ok(data.created_at, "Created_at date is set");
-                                    equal(data.created_by, user.get('id'), "Created_by category id is correct");
-                                    equal(data.updated_by, user.get('id'), "Updated_by category is correct");
+                                    equal(data.created_by_nickname, user.get('nickname'), "Created_by_nickname is correct");
+                                    equal(data.updated_by_nickname, user.get('nickname'), "Updated_by_nickname is correct");
                                     start();
                                 }
                     });

@@ -13,7 +13,11 @@
  *  permissions and limitations under the License.
  *
  */
-    
+
+/**
+ * A module representing the label model
+ * @module Label
+ */
 define(["order!jquery",
         "order!models/user",
         "order!access",
@@ -23,11 +27,15 @@ define(["order!jquery",
     function($,User, ACCESS){
     
         /**
-         * Label model
-         * @class
+         * @constructor
+         * @alias module:Label
          */
         var Label = Backbone.Model.extend({
             
+            /** 
+             * Default models value 
+             * @alias module:models-track.Track#defaults
+             */
             defaults: {
                 access: ACCESS.PUBLIC,
                 created_at: null,
@@ -38,6 +46,11 @@ define(["order!jquery",
                 deleted_by: null
             },
             
+             /**
+             * Constructor
+             * @param {Object} attr Object literal containing the model initialion attribute. 
+             *                      Must contain at least the following attribute: value, abbreviation and category.
+             */
             initialize: function(attr){
                 
                 if(!attr || _.isUndefined(attr.value))
@@ -89,6 +102,7 @@ define(["order!jquery",
             },
             
             validate: function(attr){
+                var tmpCreated;
                 
                 if(attr.id){
                     if(this.get('id') != attr.id){

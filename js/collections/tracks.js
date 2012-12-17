@@ -48,6 +48,10 @@ define(["order!jquery",
                 else
                     return null;
             },
+
+            getPrivateTracks: function(){
+                return this.where({isPrivate: true});
+            },      
             
             /**
              * Define the url from the collection with the given video

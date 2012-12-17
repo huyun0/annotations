@@ -33,19 +33,20 @@ define(["order!jquery",
             /**
              * @constructor
              */
-            initialize: function(models,track){
+            initialize: function(models,track) {
                 _.bindAll(this,"setUrl");
                 
                 this.setUrl(track);
             },
             
             parse: function(resp, xhr) {
-              if(resp.annotations && _.isArray(resp.annotations))
+              if(resp.annotations && _.isArray(resp.annotations)) {
                 return resp.annotations;
-              else if(_.isArray(resp))
+              } else if(_.isArray(resp)) {
                 return resp;
-              else
+              } else {
                 return null;
+              }
             },
             
             /**
@@ -53,14 +54,16 @@ define(["order!jquery",
              *
              * @param {Track} track containing the annotations
              */
-            setUrl: function(track){
-                if(!track)
-                     throw "The parent track of the annotations must be given!";
-                else if(track.collection)
+            setUrl: function(track) {
+                if (!track) {
+                    throw "The parent track of the annotations must be given!";
+                } else if(track.collection) {
                     this.url = track.url() + "/annotations";  
+                }
 
-                if(annotationsTool.localStorage)
-                      this.localStorage = new Backbone.LocalStorage(this.url);
+                if (annotationsTool.localStorage) {
+                    this.localStorage = new Backbone.LocalStorage(this.url);
+                }
             }
         });
         

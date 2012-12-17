@@ -85,6 +85,29 @@ require(['domReady',
                     equal(annotation.get('access'), ACCESS.PRIVATE, "annotation  should have "+ACCESS.PRIVATE+" as access attribute.");
                 });
 
+                test("Tags", function() {
+                    stop();
+
+                    var stringsTags = '{"tag1":1}',
+                        jsonTags    = {tag1:1},
+                        unvalidTags = "unvalid";
+                    
+                    
+                    annotation.bind('error',function(model,error){
+                            ok(true,"Can not be modified, error: " + error);
+
+
+                            annotation.bind('change',function(model,error){
+                                equal(annotation.get('tags'), stringsTags, "Annotation should have "+stringsTags+" as description attribute.");
+                                annotation.unbind('change');
+                                start();
+                            });
+                            annotation.set({tags:stringsTags});
+                            
+                    });
+                    annotation.set({tags:unvalidTags});                    
+                });
+
                 
             });
             

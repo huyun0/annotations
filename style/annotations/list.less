@@ -9,9 +9,22 @@
 #list-container{
 
     overflow: auto;
+    min-height: 80px;
+
+    #content-list{
+        overflow: auto;
+    }
     
     a.proxy-anchor{
         display: none;
+    }
+
+    i.check{
+        visibility: hidden;
+    }
+
+    .checked i.check{
+        visibility: visible;
     }
     
     div.annotation{

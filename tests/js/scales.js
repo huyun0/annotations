@@ -10,10 +10,6 @@ require(['domReady',
                 
                 var scale,scales;
                 
-                window.annotationsTool = {
-                    localStorage: true
-                }
-
                 module("Scales",  {
                         setup: function() {
                             scales = new Scales([],{id: 123, collection:{}, url:function(){return 'test';}});

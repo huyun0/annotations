@@ -62,6 +62,8 @@ define(["jquery",
 
           /** Arrays of key currently prressed */
           pressedKeys: {},
+
+          categoriesTabs: {},
           
           /**
            * @constructor
@@ -128,19 +130,12 @@ define(["jquery",
             if(!value || (!_.isNumber(time) || time < 0))
               return;
             
-            var options = {};
             var params = {
               text:value, 
               start:time
             };
-            
-            if(annotationsTool.user)
-              params.created_by = annotationsTool.user.id;
 
-            if(!annotationsTool.localStorage)
-              options.wait = true;
-
-            annotationsTool.selectedTrack.get("annotations").create(params,options);
+            annotationsTool.selectedTrack.get("annotations").create(params,{wait:true});
 
             
             if(this.continueVideo)
@@ -210,15 +205,20 @@ define(["jquery",
            */
           addTab: function(id,name){
             var params = {
-              id: id,
-              name: name,
-              categories: annotationsTool.video.get("categories")
-            };
+                  id: id,
+                  name: name,
+                  categories: annotationsTool.video.get("categories")
+                },
+                newButton = this.tabsButtonTemplate(params),
+                annotateTab;
 
-            var newButton = this.tabsButtonTemplate(params);
             newButton = $(newButton).appendTo(this.tabsButtonsElement);
             params.button = newButton;
-            this.tabsContainerElement.append(new AnnotateTab(params).$el);
+
+            annotateTab = new AnnotateTab(params);
+
+            this.categoriesTabs[id] = annotateTab; 
+            this.tabsContainerElement.append(annotateTab.$el);
           },
 
           /**
@@ -249,6 +249,8 @@ define(["jquery",
             this.$el.hide();
             delete this.tracks;
             this.undelegateEvents();
+            this.tabsContainerElement.empty();
+            this.tabsButtonsElement.empty();
           }
           
         });

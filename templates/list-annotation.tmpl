@@ -3,9 +3,10 @@
  {{#if duration}}
         - <span class="duration">{{end start duration}}</span>
 {{/if}}
+{{#if isMine}}<i class="private icon-user" title="You own this annotation"></i>{{/if}}
 <span class="category" {{#if label.category}}style="background-color:{{label.category.settings.color}}"{{/if}}>{{#if label}}{{label.category.name}}{{else}}Free text category{{/if}}</span>
 
-<i class="delete icon-trash" title="Delete  annotation"></i>
+{{#if isMine}}<i class="delete icon-trash" title="Delete  annotation"></i>{{/if}}
 
 <a class="collapse" title="collapse">
  <i class="{{#if collapsed}}icon-chevron-right{{else}}icon-chevron-down{{/if}}"></i>
@@ -13,7 +14,7 @@
 
 <div id="text-container{{id}}" class="{{#if collapsed}}out{{else}}in{{/if}}">
         <span class="text">
-                {{#if scaleValue}}<span class="scaling">{{scaleValue.name}}</span>{{/if}} {{#if label}}<b>{{label.abbreviation}}</b>{{/if}} {{{text}}}
+                {{#if scalevalue}}<span class="scaling">{{scalevalue.name}}</span>{{/if}} {{#if label}}<b>{{label.abbreviation}}</b>{{/if}} {{{text}}}
                 {{#if created_by}}
                 <p align="right">added by <span class="user">{{#if created_by_nickname}}{{created_by_nickname}}{{else}}{{nickname created_by}}{{/if}}</span> on <span class="track">{{track}}</span></p>
                 {{/if}}

@@ -15,24 +15,22 @@
  */
 
 /**
- * A module containing the ACCESS values enum.
- * @module ACCESS
+ * A module containing the ROLES values enum.
+ * @module ROLES
  */
 define([],function(){
     
     /**
-     * Enum for access to ressource
+     * Enum for the possible tool roles
      * 
      * @readonly
-     * @enum {number}
+     * @enum {String}
      */
     return {
-        /** Private = 0*/
-        PRIVATE: 0,
-        /** Public = 1*/
-        PUBLIC: 1,
-        /** Group = 2*/
-        GROUP: 2
+        /** SUPERVISOR = "supervisor"*/
+        SUPERVISOR: "supervisor",
+        /** STUDENT = "user"*/
+        USER: "user"
     };
 
 })
