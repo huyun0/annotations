@@ -16,11 +16,10 @@
 
 define(["order!jquery",
         "order!models/label",
-        "order!underscore",
-        "order!backbone",
-        "order!localstorage"],
+        "order!use!backbone",
+        "order!use!localstorage"],
     
-    function($,Label){
+    function($,Label,Backbone){
     
         /**
          * Labels collection
@@ -61,7 +60,7 @@ define(["order!jquery",
                     this.url = category.url() + "/labels";  
                 }
 
-                if(annotationsTool.localStorage)
+                if(window.annotationsTool && annotationsTool.localStorage)
                       this.localStorage = new Backbone.LocalStorage(this.url);
             }
         });

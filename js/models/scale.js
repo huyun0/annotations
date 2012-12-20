@@ -17,10 +17,9 @@
 define(["jquery",
         "order!access",
         "order!collections/scalevalues",
-        "order!underscore",
-        "order!backbone"],
+        "order!use!backbone"],
        
-    function($, ACCESS, ScaleValues){
+    function($, ACCESS, ScaleValues, Backbone){
     
         /**
          * scale model
@@ -70,15 +69,19 @@ define(["jquery",
             },
             
             validate: function(attr){
-                var tmpCreated;
+                var tmpCreated,
+                    scalevalues;
                 
                 if(attr.id){
                     if(this.get('id') != attr.id){
                         this.id = attr.id;
                         this.setUrl();
 
-                        if((this.get("scaleValues").length) == 0)
-                            this.get("scaleValues").fetch({async:false});
+                        scalevalues = this.attributes.scalevalues;
+
+                        if (scalevalues && (scalevalues.length) == 0) {
+                            scalevalues.fetch({async:false});
+                        }
                     }
                 }
                 
@@ -132,7 +135,11 @@ define(["jquery",
              * Modify the current url for the annotations collection
              */
             setUrl: function(){
-                this.get("scaleValues").setUrl(this);
+
+                if (this.attributes.scaleValues) {
+                    this.attributes.scaleValues.setUrl(this);
+                }
+
             }
         });
         

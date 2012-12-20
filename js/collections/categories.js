@@ -16,11 +16,10 @@
     
 define(["order!jquery",
         "order!models/category",
-        "order!underscore",
-        "order!backbone",
-        "order!localstorage"],
+        "order!use!backbone",
+        "order!use!localstorage"],
     
-    function($,Category){
+    function($, Category, Backbone){
     
         /**
          * Category collection
@@ -63,7 +62,7 @@ define(["order!jquery",
                     this.isTemplate = false;
                 }
 
-                if(annotationsTool.localStorage)
+                if(annotationsTool && annotationsTool.localStorage)
                       this.localStorage = new Backbone.LocalStorage(this.url);
                 
                 this.each(function(category){

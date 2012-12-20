@@ -16,11 +16,10 @@
     
 define(["order!jquery",
         "order!models/scale",
-        "order!underscore",
-        "order!backbone",
-        "order!localstorage"],
+        "order!use!backbone",
+        "order!use!localstorage"],
        
-    function($,Scale){
+    function($,Scale, Backbone){
     
         /**
          * Scales collection

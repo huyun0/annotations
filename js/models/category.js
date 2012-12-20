@@ -21,10 +21,10 @@
 define(["order!jquery",
         "order!collections/labels",
         "order!access",
-        "order!underscore",
-        "order!backbone"],
+        "order!use!backbone",
+        "order!use!localstorage"],
     
-    function($, Labels, ACCESS){
+    function($, Labels, ACCESS, Backbone){
 
         "use strict";
         
@@ -42,7 +42,8 @@ define(["order!jquery",
                 updated_by: null,
                 deleted_at: null,
                 deleted_by: null,
-                has_duration: true
+                has_duration: true,
+                labels: new Labels([],this)
             },
             
             /**
@@ -143,15 +144,18 @@ define(["order!jquery",
              * @return {String}  If the validation failed, an error message will be returned.
              */
             validate: function(attr){
-                var tmpCreated;
+                var tmpCreated,
+                    labels;
                 
                 if (attr.id) { 
                     if (this.get('id') != attr.id) {
                         this.id = attr.id;
                         this.setUrl();
 
-                        if ((this.get("labels").length) == 0) {
-                            this.get("labels").fetch({async:false});
+                        labels = this.attributes.labels;
+
+                        if (labels && (labels.length) == 0) {
+                            labels.fetch({async:false});
                         }
                     }
                 }

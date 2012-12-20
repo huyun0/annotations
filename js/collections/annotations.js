@@ -16,11 +16,10 @@
     
 define(["order!jquery",
         "order!models/annotation",
-        "order!underscore",
-        "order!backbone",
-        "order!localstorage"],
+        "order!use!backbone",
+        "order!use!localstorage"],
     
-    function($,Annotation){
+    function($, Annotation, Backbone){
     
         /**
          * Annotation collection
@@ -61,7 +60,7 @@ define(["order!jquery",
                     this.url = track.url() + "/annotations";  
                 }
 
-                if (annotationsTool.localStorage) {
+                if (window.annotationsTool && annotationsTool.localStorage) {
                     this.localStorage = new Backbone.LocalStorage(this.url);
                 }
             }

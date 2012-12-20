@@ -16,10 +16,9 @@
     
 define(["order!jquery",
         "order!roles",
-        "order!underscore",
-        "order!backbone"],
+        "order!use!backbone"],
        
-    function($, ROLES) {
+    function($, ROLES, Backbone) {
 
         "use strict";
     

@@ -27,10 +27,9 @@
 define(["order!jquery",
         "order!collections/annotations",
         "order!access",
-        "order!underscore",
-        "order!backbone"],
+        "order!use!backbone"],
     
-    function($,Annotations,ACCESS){
+    function($,Annotations,ACCESS, Backbone){
 
         "use strict";
         
@@ -41,13 +40,14 @@ define(["order!jquery",
          * @alias Track
          */
         var Track = Backbone.Model.extend({
-            
+
             /** 
              * Default models value 
              * @alias module:models-video.Video#defaults
              */
             defaults: {
-                access: ACCESS.PUBLIC
+                access: ACCESS.PUBLIC,
+                annotations: new Annotations([],this)
             },
             
             /**
@@ -157,7 +157,7 @@ define(["order!jquery",
 
                         var annotations = this.get("annotations");
 
-                        if((annotations.length) == 0)
+                        if(annotations && (annotations.length) == 0)
                             annotations.fetch({async:false, add: true});
                     }
                 }
@@ -200,7 +200,9 @@ define(["order!jquery",
              * @alias module:models-track.Track#setUrl
              */
             setUrl: function() {
-                this.get("annotations").setUrl(this);
+                if (this.attributes.annotations) {
+                    this.attributes.annotations.setUrl(this);
+                }
             },
 
             /**

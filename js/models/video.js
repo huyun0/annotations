@@ -29,11 +29,10 @@ define(["jquery",
         "collections/categories",
         "collections/scales",
         "order!access",
-        "order!underscore",
-        "order!backbone"],
+        "order!use!backbone"],
     
 
-    function($, Tracks, Categories, Scales, ACCESS){
+    function($, Tracks, Categories, Scales, ACCESS, Backbone){
     
         "use strict";
 
@@ -140,7 +139,11 @@ define(["jquery",
              */
             validate: function(attr) {
 
-                var tmpCreated;
+                var tmpCreated,
+                    categories,
+                    tracks,
+                    scales,
+                    self = this;
                 
                 if(attr.id){
                     if(this.get('id') !== attr.id){
@@ -148,24 +151,13 @@ define(["jquery",
                         this.attributes.id = attr.id;
                         this.setUrl();
 
-                        var categories = this.get("categories");
-                        var tracks     = this.get("tracks");
-                        var scales     = this.get("scales");
-                        var self       = this;
+                        categories = this.attributes.categories;
+                        tracks     = this.attributes.tracks;
+                        scales     = this.attributes.scales;
+   
 
-                        if ((categories.length) === 0) {
-                            categories.fetch({
-                                async:false,
-                                success: function(){
-                                    self.categoriesReady = true;
-                                    if (self.tracksReady && self.categoriesReady && self.scalesReady) {
-                                        self.trigger("ready");
-                                    }
-                                }
-                            });
-                        }
 
-                        if ((tracks.length) === 0) {
+                        if (tracks && (tracks.length) === 0) {
                             tracks.fetch({
                                 async:false,
                                 success: function(){
@@ -177,12 +169,23 @@ define(["jquery",
                             }); 
                         }
 
-                        if ((scales.length) === 0) {
+                        if (scales && (scales.length) === 0) {
                             scales.fetch({
                                 async:false,
                                 success: function(){
                                     self.scalesReady = true;
-                                    if (self.tracksReady && self.categoriesReady && self.scalesReady) {
+                                    
+                                    if (categories && (categories.length) === 0) {
+                                        categories.fetch({
+                                            async:false,
+                                            success: function(){
+                                                self.categoriesReady = true;
+                                                if (self.tracksReady && self.categoriesReady && self.scalesReady) {
+                                                    self.trigger("ready");
+                                                }
+                                            }
+                                        });
+                                    } else if (self.tracksReady && self.categoriesReady && self.scalesReady) {
                                         self.trigger("ready");
                                     }
                                 }
@@ -236,10 +239,18 @@ define(["jquery",
              * Modify the current url for the tracks collection
              * @alias module:models-video.Video#setUrl
              */
-            setUrl: function(){
-                this.get("tracks").setUrl(this);
-                this.get("categories").setUrl(this);
-                this.get("scales").setUrl(this);
+            setUrl: function () {
+                if (this.attributes.tracks) {
+                    this.attributes.tracks.setUrl(this);    
+                }
+
+                if (this.attributes.categories) {
+                    this.attributes.categories.setUrl(this);    
+                }
+
+                if (this.attributes.scales) {
+                    this.attributes.scales.setUrl(this);    
+                }
             },
 
             /**

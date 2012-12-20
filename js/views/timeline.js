@@ -225,9 +225,9 @@ define(["jquery",
             
             this.timeline.redraw = $.proxy(function() {
               
-              $('div.timeline-group .content').popover({});
-
               this.timeline.draw(this.filteredItems,this.option);
+              
+              $('div.timeline-group .content').popover({});
 
               if(annotationsTool.selectedTrack) {
                 this.onTrackSelected(null,annotationsTool.selectedTrack.id);
@@ -275,6 +275,7 @@ define(["jquery",
 
             trackJSON = track.toJSON();
             trackJSON.id = track.id;
+            trackJSON.isSupervisor = (annotationsTool.user.get("role") === ROLES.SUPERVISOR);
 
             // Calculate start/end time
             startTime = annotation.get("start");
@@ -351,6 +352,7 @@ define(["jquery",
           getVoidItem: function(track){
               var trackJSON = track.toJSON();
               trackJSON.id = track.id;
+              trackJSON.isSupervisor = (annotationsTool.user.get("role") === ROLES.SUPERVISOR);
             
               return {
                 trackId: track.id,
@@ -755,9 +757,12 @@ define(["jquery",
 
                 updateListener = function(model) {
                   var item,
-                      newGroup;
+                      newGroup,
+                      trackJSON = model.toJSON();
 
-                  newGroup = this.groupTemplate(model.toJSON());
+                  trackJSON.isSupervisor = (annotationsTool.user.get("role") === ROLES.SUPERVISOR);
+
+                  newGroup = this.groupTemplate(trackJSON);
 
                   _.each(this.allItems, function(item,index){
                     if (item.trackId === model.id) {

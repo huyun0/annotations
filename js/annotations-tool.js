@@ -15,13 +15,13 @@
  */
 
 define(['order!jquery',
-        'order!underscore',
+        'order!use!backbone',
         'order!views/main',
         'order!text!templates/delete-modal.tmpl',
         'order!text!templates/delete-warning-content.tmpl',
         'order!libs/handlebars'],
        
-        function($, _undefined_, MainView, DeleteModalTmpl,DeleteContentTmpl) {
+        function($, Backbone, MainView, DeleteModalTmpl,DeleteContentTmpl) {
             
             var self = this;
             
