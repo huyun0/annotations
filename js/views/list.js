@@ -1,3 +1,4 @@
+ 
 /**
  *  Copyright 2012, Entwine GmbH, Switzerland
  *  Licensed under the Educational Community License, Version 2.0
@@ -23,7 +24,7 @@
  * @requires models-annotation
  * @requires views-list-annotation
  * @requires backbone
- */ 
+ */
 define(["jquery",
         "underscore",
         "prototypes/player_adapter",
@@ -33,7 +34,7 @@ define(["jquery",
         "scrollspy",
         "backbone"],
        
-    function($,_not,PlayerAdapter,Annotation,Annotations,AnnotationView){
+    function ($, _not, PlayerAdapter, Annotation, Annotations, AnnotationView) {
 
         "use strict";
 
@@ -45,295 +46,307 @@ define(["jquery",
          */
         var List = Backbone.View.extend({
           
-          /**
-           * Annotations list container of the appplication
-           * @alias module:views-list.List#el
-           * @type {DOM element}
-           */
-          el: $('div#list-container'),
+            /**
+             * Annotations list container of the appplication
+             * @alias module:views-list.List#el
+             * @type {DOM element}
+             */
+            el: $("div#list-container"),
           
-          /**
-           * Annotation views list
-           * @alias module:views-list.List#annotationViews
-           * @type {Array}
-           */
-          annotationViews: [],
+            /**
+             * Annotation views list
+             * @alias module:views-list.List#annotationViews
+             * @type {Array}
+             */
+            annotationViews: [],
 
 
-          /**
-           * List of filter used for the list elements
-           * @alias module:views-list.List#filters
-           * @type {Object}
-           */
-          filters: {
-              // Define if only the annotation created by the current user should be visible in the list
-              mine: {
-                active: false, 
-                filter: function(list){
-                  return _.filter(list, function(annotationView){ 
-                    return annotationView.model.get('isMine');
-                  },this); 
+            /**
+             * List of filter used for the list elements
+             * @alias module:views-list.List#filters
+             * @type {Object}
+             */
+            filters: {
+                // Define if only the annotation created by the current user should be visible in the list
+                mine: {
+                    active: false,
+                    filter: function (list) {
+                        return _.filter(list, function (annotationView) {
+                            return annotationView.model.get("isMine");
+                        }, this);
+                    }
                 }
-              }
-          },
-          
-          /** 
-           * Events to handle
-           * @alias module:views-list.List#events
-           * @type {object}
-           */
-          events: {
-            'click #filter-none' : "disableFilter",
-            'click .filter' : "switchFilter"
-          },
-          
-          /**
-           * Constructor
-           * @alias module:views-list.List#initialize
-           * @param {Object} attr Object literal containing the model initialion attribute. 
-           */
-          initialize: function(attr){  
-            // Bind functions to the good context 
-            _.bindAll(this,'render',
-                           'addTrack',
-                           'addAnnotation',
-                           'addList',
-                           'sortViewsbyTime',
-                           'reset',
-                           'updateSelection',
-                           'unselect',
-                           'switchFilter',
-                           'disableFilter',
-                           'doClick');
-            
-            this.tracks = annotationsTool.video.get("tracks");
-            this.tracks.bind('add',this.addTrack);
-            this.tracks.each(this.addTrack, this);
-            
-            this.playerAdapter = annotationsTool.playerAdapter;
-            $(this.playerAdapter).bind(PlayerAdapter.EVENTS.TIMEUPDATE,this.updateSelection);
+            },
 
-            return this.render();
-          },
+            /**
+             * Events to handle
+             * @alias module:views-list.List#events
+             * @type {object}
+             */
+            events: {
+                "click #filter-none" : "disableFilter",
+                "click .filter" : "switchFilter"
+            },
           
-          /**
-           * Add one track
-           * @alias module:views-list.List#initialize
-           * @param {Track} track to add
-           */
-          addTrack: function(track){
-              var ann = track.get("annotations");
-              ann.bind('add', $.proxy(function(newAnnotation) {
-                this.addAnnotation(newAnnotation,track);
-              },this));
-              ann.bind('remove',this.removeOne);
-              ann.bind('destroy',this.removeOne);
-              ann.bind('change',this.sortViewsbyTime);
-              this.addList(ann.toArray());
-          },
-
-          /**
-           * Add an annotation as view to the list
-           * @alias module:views-list.List#addAnnotation
-           * @param {Annotation} the annotation to add as view
-           * @param {Track} track Annotation target
-           * @param {Boolean} isPartofList Define if the annotation is added with a whole list
-           */
-          addAnnotation: function(addAnnotation,track,isPartofList){
-            
-            // If annotation has not id, we save it to have an id
-            if (!addAnnotation.id) {
-                addAnnotation.bind('ready',this.addAnnotation, this);
-                return;
-            }
-            
-            var view = new AnnotationView({annotation:addAnnotation,track:track});
-            this.annotationViews.push(view);
-
-            if (!isPartofList) {
-              this.sortViewsbyTime();
-            }
-          },
-          
-          
-          /**
-           * Add a list of annotation, creating a view for each of them
-           * @alias module:views-list.List#addList
-           * @param {Array} annotationsList List of annotations
-           */
-          addList: function(annotationsList){
-            _.each(annotationsList,function(annotation){
-              this.addAnnotation(annotation);
-            },this);
-            
-            if (annotationsList.length > 0) {
-              this.sortViewsbyTime();
-            }
-          },
-          
-          /**
-           * Update the annotations selection
-           * @alias module:views-list.List#updateSelection
-           */
-          updateSelection: function(){
-            //if(this.playerAdapter.getStatus() != PlayerAdapter.STATUS.PLAYING)
-            //  return;
-            
-            this.unselect();
-            
-            var currentTime = this.playerAdapter.getCurrentTime(),
-                firstSelection = true, // Tag for element selection
-                start,
-                end;
-            
-            _.each(this.annotationViews,function(view,index){
-              
-              start = view.model.get('start');
-              
-              if(_.isNumber(view.model.get('duration'))){
-                end = start + view.model.get('duration');
-              
-                if(start <= currentTime && end >= currentTime){
-                  view.selectVisually();
-                  
-                  if(firstSelection){
-                    //this.doClick(view.$el.find('a.proxy-anchor')[0]);
-                    firstSelection = false;
-                  }
-                }
-              }
-              else if(start <= currentTime && start+5 >= currentTime){
-                  view.selectVisually();
-
-                  if(firstSelection){
-                    //this.doClick(view.$el.find('a.proxy-anchor')[0]);
-                    firstSelection = false;
-                  }
+            /**
+             * Constructor
+             * @alias module:views-list.List#initialize
+             * @param {Object} attr Object literal containing the model initialion attribute.
+             */
+            initialize: function () {
+                // Bind functions to the good context
+                _.bindAll(this, "render",
+                               "addTrack",
+                               "addAnnotation",
+                               "addList",
+                               "sortViewsbyTime",
+                               "reset",
+                               "updateSelection",
+                               "unselect",
+                               "switchFilter",
+                               "disableFilter",
+                               "doClick");
                 
-              }
+                this.annotationViews = [];
 
-            },this);
-          },
-          
-          /**
-           * Unselect all annotation views
-           * @alias module:views-list.List#unselect
-           */
-          unselect: function(){
-            this.$el.find('.selected').removeClass('selected');
-          },
-          
-          /**
-           * Remove the given annotation from the views list
-           * @alias module:views-list.List#removeOne
-           * @param {Annotation} Annotation from which the view has to be deleted
-           */
-          removeOne: function(delAnnotation){
-            _.find(this.annotationViews,function(annotationView,index){
-              if(delAnnotation === annotationView.model){
-                this.annotationViews.splice(index,1);
+                this.tracks = annotationsTool.video.get("tracks");
+                this.listenTo(this.tracks, "add", this.addTrack);
+                this.tracks.each(this.addTrack, this);
+                
+                this.playerAdapter = annotationsTool.playerAdapter;
+                $(this.playerAdapter).bind(PlayerAdapter.EVENTS.TIMEUPDATE, this.updateSelection);
+
+                return this.render();
+            },
+            
+            /**
+             * Add one track
+             * @alias module:views-list.List#initialize
+             * @param {Track} track to add
+             */
+            addTrack: function (track) {
+                var ann = track.get("annotations"),
+                    annotationTrack = track;
+
+                this.listenTo(ann, "add", $.proxy(function (newAnnotation) {
+                    this.addAnnotation(newAnnotation, annotationTrack);
+                }, this));
+
+                this.listenTo(ann, "destroy, destroy", this.removeOne);
+                this.listenTo(ann, "change", this.sortViewsbyTime);
+
+                this.addList(ann.toArray(), annotationTrack);
+            },
+
+            /**
+             * Add an annotation as view to the list
+             * @alias module:views-list.List#addAnnotation
+             * @param {Annotation} the annotation to add as view
+             * @param {Track} track Annotation target
+             * @param {Boolean} isPartofList Define if the annotation is added with a whole list
+             */
+            addAnnotation: function (addAnnotation, track, isPartofList) {
+                var view;
+              
+                // If annotation has not id, we save it to have an id
+                if (!addAnnotation.id) {
+                    this.listenTo(addAnnotation, "ready", this.addAnnotation);
+                    return;
+                }
+                
+                view = new AnnotationView({annotation: addAnnotation, track: track});
+                this.annotationViews.push(view);
+
+                if (!isPartofList) {
+                    this.sortViewsbyTime();
+                }
+            },
+            
+            
+            /**
+             * Add a list of annotation, creating a view for each of them
+             * @alias module:views-list.List#addList
+             * @param {Array} annotationsList List of annotations
+             */
+            addList: function (annotationsList, track) {
+                _.each(annotationsList, function (annotation) {
+                    this.addAnnotation(annotation, track);
+                }, this);
+                
+                if (annotationsList.length > 0) {
+                    this.sortViewsbyTime();
+                }
+            },
+            
+            /**
+             * Update the annotations selection
+             * @alias module:views-list.List#updateSelection
+             */
+            updateSelection: function () {
+                //if(this.playerAdapter.getStatus() != PlayerAdapter.STATUS.PLAYING)
+                //  return;
+                
+                this.unselect();
+                
+                var currentTime = this.playerAdapter.getCurrentTime(),
+                    firstSelection = true, // Tag for element selection
+                    start,
+                    end;
+                
+                _.each(this.annotationViews, function (view) {
+                  
+                    start = view.model.get("start");
+                    
+                    if (_.isNumber(view.model.get("duration"))) {
+                        end = start + view.model.get("duration");
+                      
+                        if (start <= currentTime && end >= currentTime) {
+                            view.selectVisually();
+                            
+                            if (firstSelection) {
+                                //this.doClick(view.$el.find("a.proxy-anchor")[0]);
+                                firstSelection = false;
+                            }
+                        }
+                    } else if (start <= currentTime && (start + 5) >= currentTime) {
+
+                        view.selectVisually();
+
+                        if (firstSelection) {
+                            //this.doClick(view.$el.find("a.proxy-anchor")[0]);
+                            firstSelection = false;
+                        }
+                      
+                    }
+
+                }, this);
+            },
+            
+            /**
+             * Unselect all annotation views
+             * @alias module:views-list.List#unselect
+             */
+            unselect: function ()  {
+                this.$el.find(".selected").removeClass("selected");
+            },
+            
+            /**
+             * Remove the given annotation from the views list
+             * @alias module:views-list.List#removeOne
+             * @param {Annotation} Annotation from which the view has to be deleted
+             */
+            removeOne: function (delAnnotation) {
+                _.find(this.annotationViews, function (annotationView, index) {
+                    if (delAnnotation === annotationView.model) {
+                        this.annotationViews.splice(index, 1);
+                        this.render();
+                        return;
+                    }
+                }, this);
+            },
+            
+            /**
+             * Sort all the annotations in the list by start time
+             * @alias module:views-list.List#sortViewsByTime
+             */
+            sortViewsbyTime: function () {
+                this.annotationViews = _.sortBy(this.annotationViews, function (annotationView) {
+                    return annotationView.model.get("start");
+                });
                 this.render();
-                return;
-              }
-            },this);
-          },
-          
-          /**
-           * Sort all the annotations in the list by start time 
-           * @alias module:views-list.List#sortViewsByTime
-           */
-          sortViewsbyTime: function(){
-            this.annotationViews = _.sortBy(this.annotationViews, function(annotationView){
-                return annotationView.model.get('start');
-            });
-            this.render();
-          },
+            },
 
-          /**
-           * Switch on/off the filter related to the given event
-           * @alias module:views-list.List#switchFilter
-           * @param  {Event} event 
-           */
-          switchFilter: function(event) {
-            var value = !$(event.target).hasClass('checked'),
-                filterName = event.target.id.replace("filter-","");
+            /**
+             * Switch on/off the filter related to the given event
+             * @alias module:views-list.List#switchFilter
+             * @param  {Event} event
+             */
+            switchFilter: function (event) {
+                var value = !$(event.target).hasClass("checked"),
+                    filterName = event.target.id.replace("filter-", "");
 
-            this.filters[filterName].active = value;
+                this.filters[filterName].active = value;
 
-            $(event.target).toggleClass('checked');
+                $(event.target).toggleClass("checked");
 
-            this.render();
-          },
+                this.render();
+            },
 
-          /**
-           * Disable all the list filter
-           * @alias module:views-list.List#disableFilter
-           */
-          disableFilter: function(){
-            this.$el.find('.filter').removeClass('checked');
+            /**
+             * Disable all the list filter
+             * @alias module:views-list.List#disableFilter
+             */
+            disableFilter: function () {
+                this.$el.find(".filter").removeClass("checked");
 
-            _.each(this.filters,function(filter) {
-              filter.active = false;
-            });
-            this.render();
-          },
-          
-          /**
-           * Display the list
-           * @alias module:views-list.List#render
-           */
-          render: function(){
-            var list = this.annotationViews;
-
-            this.$el.find('#content-list').empty();
-
-            _.each(this.filters,function(filter) {
-              if (filter.active) {
-                list = filter.filter(list);
-              }
-            });
+                _.each(this.filters, function (filter) {
+                    filter.active = false;
+                });
+                this.render();
+            },
             
-            _.each(list,function(annView){
-                this.$el.find('#content-list').append(annView.render().$el);
-            },this);
+            /**
+             * Display the list
+             * @alias module:views-list.List#render
+             */
+            render: function () {
+                var list = this.annotationViews;
+
+                this.$el.find("#content-list").empty();
+
+                _.each(this.filters, function (filter) {
+                    if (filter.active) {
+                        list = filter.filter(list);
+                    }
+                });
+                
+                _.each(list, function (annView) {
+                    this.$el.find("#content-list").append(annView.render().$el);
+                }, this);
+                
+                return this;
+            },
+
             
-            return this;
-          },
+            /**
+             * Reset the view
+             * @alias module:views-list.List#reset
+             */
+            reset: function () {
+                this.$el.hide();
 
-          
-          /**
-           * Reset the view
-           * @alias module:views-list.List#reset
-           */
-          reset: function(){
-            this.$el.hide();
+                _.each(this.annotationViews, function (annView) {
+                    annView.undelegateEvents();
+                    annView.stopListening();
+                }, this);
+                
+                this.stopListening();
 
-            _.each(this.annotationViews,function(annView){
-                annView.undelegateEvents();
-            },this);
+                this.annotationViews = [];
+                this.$el.find("#content-list").empty();
 
-            delete this.annotationViews;
-            delete this.tracks;
-            this.undelegateEvents();
-          },
-          
-          /**
-           * Simple function to simulate a click on the given element
-           * @alias module:views-list.List#doClick
-           * @param {DOM element} el click event target
-           */
-          doClick: function eventFire(el){
-            if (el.fireEvent) {
-              (el.fireEvent('onclick'));
-            } else {
-              var evObj = document.createEvent('Events');
-              evObj.initEvent("click", true, false);
-              el.dispatchEvent(evObj);
+                delete this.annotationViews;
+                delete this.tracks;
+                this.undelegateEvents();
+            },
+            
+            /**
+             * Simple function to simulate a click on the given element
+             * @alias module:views-list.List#doClick
+             * @param {DOM element} el click event target
+             */
+            doClick: function eventFire(el) {
+                if (el.fireEvent) {
+                    (el.fireEvent("onclick"));
+                } else {
+                    var evObj = document.createEvent("Events");
+                    evObj.initEvent("click", true, false);
+                    el.dispatchEvent(evObj);
+                }
             }
-          }
-          
-        });
             
+        });
+                
         return List;
     
-});
+    });

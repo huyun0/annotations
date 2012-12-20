@@ -22,7 +22,7 @@ define(["jquery",
         "libs/jquery.colorPicker.min",
         "backbone"],
        
-    function($,_not, LabelView, Template){
+    function($, _not, LabelView, Template){
 
         /**
          * @class label view for each item contained in annotate window

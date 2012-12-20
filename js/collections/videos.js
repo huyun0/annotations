@@ -16,11 +16,10 @@
 
 define(["order!jquery",
         "order!models/video",
-        "order!underscore",
-        "order!backbone",
-        "order!localstorage"],
+        "order!use!backbone",
+        "order!use!localstorage"],
        
-    function($,Video){
+    function($, Video, Backbone){
     
         /**
          * Videos collection

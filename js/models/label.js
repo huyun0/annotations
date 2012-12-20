@@ -21,10 +21,9 @@
 define(["order!jquery",
         "order!models/user",
         "order!access",
-        "order!underscore",
-        "order!backbone"],
+        "order!use!backbone"],
        
-    function($,User, ACCESS){
+    function($,User, ACCESS, Backbone){
     
         /**
          * @constructor

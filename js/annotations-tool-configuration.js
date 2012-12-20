@@ -17,7 +17,7 @@
 
 define(['order!domReady',
         'order!jquery',
-        'order!underscore',
+        'order!use!underscore',
         'order!roles',
         'order!player_adapter_HTML5'
         // Add here the files (PlayerAdapter, ...) required for your configuration

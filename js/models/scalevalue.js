@@ -16,10 +16,9 @@
     
 define(["jquery",
         "order!access",
-        "order!underscore",
-        "order!backbone"],
+        "order!use!backbone"],
        
-    function($, ACCESS){
+    function($, ACCESS, Backbone){
     
         /**
          * scale value model

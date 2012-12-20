@@ -16,11 +16,10 @@
 
 define(["order!jquery",
         "order!models/track",
-        "order!underscore",
-        "order!backbone",
-        "order!localstorage"],
+        "order!use!backbone",
+        "order!use!localstorage"],
        
-    function($,Track){
+    function($, Track, Backbone){
     
         /**
          * Tracks collection

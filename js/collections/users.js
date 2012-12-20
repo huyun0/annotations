@@ -14,13 +14,12 @@
  *
  */
     
-define(["jquery",
-        "models/user",
-        "order!underscore",
-        "order!backbone",
-        "order!localstorage"],
+define(["order!jquery",
+        "order!models/user",
+        "order!use!backbone",
+        "order!use!localstorage"],
        
-       function($,User){
+       function($, User, Backbone){
     
         /**
          * Users collection

@@ -225,9 +225,9 @@ define(["jquery",
             
             this.timeline.redraw = $.proxy(function() {
               
-              $('div.timeline-group .content').popover({});
-
               this.timeline.draw(this.filteredItems,this.option);
+
+              $('div.timeline-group .content').popover({});
 
               if(annotationsTool.selectedTrack) {
                 this.onTrackSelected(null,annotationsTool.selectedTrack.id);
@@ -275,6 +275,7 @@ define(["jquery",
 
             trackJSON = track.toJSON();
             trackJSON.id = track.id;
+            trackJSON.isSupervisor = (annotationsTool.user.get("role") === ROLES.SUPERVISOR);
 
             // Calculate start/end time
             startTime = annotation.get("start");
@@ -756,9 +757,12 @@ define(["jquery",
 
                 updateListener = function(model) {
                   var item,
-                      newGroup;
+                      newGroup,
+                      trackJSON = model.toJSON();
 
-                  newGroup = this.groupTemplate(model.toJSON());
+                  trackJSON.isSupervisor = (annotationsTool.user.get("role") === ROLES.SUPERVISOR);
+
+                  newGroup = this.groupTemplate(trackJSON);
 
                   _.each(this.allItems, function(item,index){
                     if (item.trackId === model.id) {
@@ -769,8 +773,6 @@ define(["jquery",
 
                   this.filterItems();
                   this.timeline.redraw();
-
-                  model.off("sync",updateListener);
                 };
 
             if (!track) {
@@ -786,8 +788,9 @@ define(["jquery",
               newTrackVisibility = ACCESS.PRIVATE;
             }
 
-            track.on("sync", updateListener,this);
-            track.save({access:newTrackVisibility});
+            track.once("change", updateListener,this);
+            track.set({access:newTrackVisibility});
+            track.save();
           },
           
           /**

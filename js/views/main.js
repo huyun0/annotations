@@ -28,13 +28,12 @@ define(["order!jquery",
         "order!backbone-annotations-sync",
         "order!text!templates/user-login.tmpl",
         "order!roles",
-        "order!backbone",
-        "order!localstorage",
-        "order!underscore",
+        "order!use!backbone",
+        "order!use!localstorage",
         "order!libs/bootstrap/bootstrap.min",
         "order!libs/bootstrap/tab"],
        
-       function($,PlayerAdapter,Annotations,AnnotateView,ListView,TimelineView,Users,User,Track,Video,Videos,AnnotationSync,LoginTmpl,ROLES){
+       function($,PlayerAdapter,Annotations,AnnotateView,ListView,TimelineView,Users,User,Track,Video,Videos,AnnotationSync,LoginTmpl,ROLES, Backbone){
 
     /**
      * Main view of the application
@@ -42,7 +41,7 @@ define(["order!jquery",
     var MainView = Backbone.View.extend({
       
       /** Main container of the appplication */
-      el: $('body'),
+      el: $("body"),
       
       /** The player adapter passed during initialization part */
       playerAdapter: null,
@@ -51,7 +50,7 @@ define(["order!jquery",
       userModal: null,
       
       /** jQuery element for the loading box */
-      loadingBox: $('div#loading'),
+      loadingBox: $("div#loading"),
       
       /** Events to handle by the main view */
       events: {
@@ -106,6 +105,9 @@ define(["order!jquery",
 
         $(window).resize(this.onWindowResize);   
 
+
+        annotationsTool.dispatcher = _.clone(Backbone.Events);
+
         this.onWindowResize();  
       },
         
@@ -115,7 +117,7 @@ define(["order!jquery",
       createViews: function(){
         this.setLoadingProgress(40,"Start creating views.");
         
-        $('#video-container').show();
+        $("#video-container").show();
         
         this.setLoadingProgress(45,"Start loading video.");
         
@@ -132,7 +134,7 @@ define(["order!jquery",
               this.timelineView = new TimelineView({playerAdapter: this.playerAdapter});
               
               // Create views to annotate and see annotations list
-              this.setLoadingProgress(80,"Creating annotatie view.");
+              this.setLoadingProgress(80,"Creating annotate view.");
               this.annotateView = new AnnotateView({playerAdapter: this.playerAdapter});
               this.annotateView.$el.show();
               
@@ -145,19 +147,19 @@ define(["order!jquery",
               this.loadingBox.hide();
               
               // Show logout button
-              $('a#logout').css('display','block');
+              $("a#logout").css("display","block");
           },this);
           
           this.playerAdapter.load();
           
           // Initialize the player
-          this.loadingBox.find('.info').text('Initializing the player.');
+          this.loadingBox.find(".info").text("Initializing the player.");
           
           if(this.playerAdapter.getStatus() ===  PlayerAdapter.STATUS.PAUSED){
              loadVideoDependantView();
           }
           else{
-            $(this.playerAdapter).one(PlayerAdapter.EVENTS.READY+' '+PlayerAdapter.EVENTS.PAUSE,loadVideoDependantView);
+            $(this.playerAdapter).one(PlayerAdapter.EVENTS.READY+" "+PlayerAdapter.EVENTS.PAUSE,loadVideoDependantView);
           }
           
         },this));        
@@ -186,18 +188,18 @@ define(["order!jquery",
         if(!this.userModal){
             // Otherwise we load the login modal
             this.$el.append(LoginTmpl);
-            this.userModal = $('#user-login');
+            this.userModal = $("#user-login");
             this.userModal.modal({show: true, backdrop: true, keyboard: false });
             this.userModal.on("hide",function(){
                 // If user not set, display the login window again
                 if(_.isUndefined(annotationsTool.user))
-                    setTimeout(function(){$('#user-login').modal('show')},5);
+                    setTimeout(function(){$("#user-login").modal("show")},5);
             });
         }
         else{
-          this.userModal.find('#nickname')[0].value = '';
-          this.userModal.find('#email')[0].value = '';
-          this.userModal.find('#remember')[0].value = '';
+          this.userModal.find("#nickname")[0].value = "";
+          this.userModal.find("#email")[0].value = "";
+          this.userModal.find("#remember")[0].value = "";
           this.userModal.modal("toggle");
         }
         
@@ -211,12 +213,12 @@ define(["order!jquery",
         this.playerAdapter.pause();
         
          // Hide logout button
-        $('a#logout').hide();
+        $("a#logout").hide();
         
         // Hide/remove the views
         annotationsTool.playerAdapter.pause();
         annotationsTool.playerAdapter.setCurrentTime(0);
-        $('#video-container').hide();
+        $("#video-container").hide();
         
         
         this.timelineView.reset();
@@ -228,9 +230,22 @@ define(["order!jquery",
         delete annotationsTool.video;
         delete annotationsTool.user;
         
-        this.loadingBox.find('.bar').width('0%');
+        this.loadingBox.find(".bar").width("0%");
         this.loadingBox.show();
         this.loadLoginModal();
+
+        annotationsTool.users.each(function (user) {
+
+            Backbone.localSync("delete",user,{
+                success: function (data) {
+                    console.log("current session destroyed.");
+                },
+                error: function (error) {
+                  console.warn(error);
+                }
+            });
+
+        });
       },
       
       
@@ -252,15 +267,15 @@ define(["order!jquery",
         
         // Fields from the login form
         var userId          = annotationsTool.getUserExtId(),
-            userNickname    = this.userModal.find('#nickname'),
-            userEmail       = this.userModal.find('#email'),
-            userRemember    = this.userModal.find('#remember'),
-            userError       = this.userModal.find('.alert'),
+            userNickname    = this.userModal.find("#nickname"),
+            userEmail       = this.userModal.find("#email"),
+            userRemember    = this.userModal.find("#remember"),
+            userError       = this.userModal.find(".alert"),
            
             valid  = true, // Variable to keep the form status in memory   
             user; // the new user
         
-        userError.find('#content').empty();
+        userError.find("#content").empty();
         
         // Try to create a new user
         try{
@@ -268,7 +283,7 @@ define(["order!jquery",
             if (annotationsTool.localStorage) {
               user = annotationsTool.users.create({user_extid: userId, 
                                                   nickname: userNickname.val(),
-                                                  role: this.userModal.find('#supervisor')[0].checked ? ROLES.SUPERVISOR : ROLES.USER},
+                                                  role: this.userModal.find("#supervisor")[0].checked ? ROLES.SUPERVISOR : ROLES.USER},
                                                   {wait:true});
             }
             else {
@@ -276,14 +291,15 @@ define(["order!jquery",
             }
             
             // Bind the error user to a function to display the errors
-            user.bind('error',$.proxy(function(model,error){
-                this.userModal.find('#'+error.attribute).parentsUntil('form').addClass('error');
-                userError.find('#content').append(error.message+"<br/>");
+            user.bind("error",$.proxy(function(model,error){
+                this.userModal.find("#"+error.attribute).parentsUntil("form").addClass("error");
+                userError.find("#content").append(error.message+"<br/>");
                 valid=false;
             },this));
+
         }catch(error){
             valid = false;
-            userError.find('#content').append(error+"<br/>");
+            userError.find("#content").append(error+"<br/>");
         }
         
         // If email is given, we set it to the user
@@ -293,12 +309,12 @@ define(["order!jquery",
         
         // If user not valid 
         if (!valid) {
-            this.userModal.find('.alert').show();
+            this.userModal.find(".alert").show();
             return undefined;
         }
         
         // If we have to remember the user
-        if(userRemember.is(':checked')){
+        if(userRemember.is(":checked")){
             annotationsTool.users.add(user);
             Backbone.localSync("create",user,{
               success: function(data){
@@ -307,7 +323,7 @@ define(["order!jquery",
               error: function(error){
                 console.warn(error);
               }
-            })
+            });
         }
         user.save();
 
@@ -332,8 +348,8 @@ define(["order!jquery",
             
             var selectedTrack = tracks.at(0);
             
-            if(!selectedTrack.get('id')){
-              selectedTrack.bind('ready',function(){
+            if(!selectedTrack.get("id")){
+              selectedTrack.bind("ready",function(){
                 endGetAnnotations();
                 return;
               },this);
@@ -349,7 +365,7 @@ define(["order!jquery",
             tracks.each($.proxy(function(track,index){
                 var annotations = track.get("annotations");
                 
-                annotations.bind('jumpto',function(start){
+                annotations.bind("jumpto",function(start){
                    annotationsTool.playerAdapter.setCurrentTime(start);
                 },this);
           
@@ -375,7 +391,7 @@ define(["order!jquery",
           if(tracks.length == 0){
             tracks.add({name:"default"});
             var track = tracks.at(0);
-            track.save(track,{success: endGetAnnotations});
+            track.save(track.attributes, {success: endGetAnnotations});
           }
           else{
             endGetAnnotations();
@@ -387,7 +403,7 @@ define(["order!jquery",
           videos.add({video_extid:annotationsTool.getVideoExtId()});
           annotationsTool.video = videos.at(0);
 
-          annotationsTool.video.on('ready',function(){
+          annotationsTool.video.on("ready",function(){
                 tracks = annotationsTool.video.get("tracks");
 
                 if(tracks.length == 0){
@@ -422,7 +438,7 @@ define(["order!jquery",
         windowHeight = $(window).height();
 
 
-        listContent = this.listView.$el.find('#content-list');
+        listContent = this.listView.$el.find("#content-list");
         listContent.height(windowHeight-this.annotateView.$el.height()-200);
       },
 
@@ -437,8 +453,8 @@ define(["order!jquery",
        * @param {String} current loading operation message
        */
       setLoadingProgress: function(percent, message){
-        this.loadingBox.find('.bar').width(percent+'%');
-        this.loadingBox.find('.info').text(message);
+        this.loadingBox.find(".bar").width(percent+"%");
+        this.loadingBox.find(".info").text(message);
       }
     });
         

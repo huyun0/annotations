@@ -32,7 +32,7 @@ define(["jquery",
          */
         var getWellFormatedTime = function(time){
             var twoDigit = function(number){
-                return (number < 10 ? '0' : '') + number;
+                return (number < 10 ? "0" : "") + number;
             }
             
             var base = time.toFixed();
@@ -45,12 +45,12 @@ define(["jquery",
         /**
          * Function to display time for handlebars
          */
-        Handlebars.registerHelper('time', getWellFormatedTime);
+        Handlebars.registerHelper("time", getWellFormatedTime);
         
         /**
          * Function to display the duration
         */
-        Handlebars.registerHelper('end', function(start,duration) {
+        Handlebars.registerHelper("end", function(start,duration) {
             if(duration && _.isNumber(duration) && duration > 0)
                 return getWellFormatedTime(start+duration);
             else
@@ -60,7 +60,7 @@ define(["jquery",
         /**
          * Get nickname from user to display
          */
-        Handlebars.registerHelper('nickname', function(user) {
+        Handlebars.registerHelper("nickname", function(user) {
             if(!_.isObject(user))
                 return window.annotationsTool.users.get(user).get("nickname");
             else
@@ -76,7 +76,7 @@ define(["jquery",
           
           tagName: "div",
           
-          className: 'annotation',
+          className: "annotation",
           
           /** View template */
           template: Handlebars.compile(Template),
@@ -104,7 +104,7 @@ define(["jquery",
                 throw "The annotations have to be given to the annotate view.";
               
             // Bind function to the good context 
-            _.bindAll(this,'render','deleteFull','deleteView','onSelect','onSelected','selectVisually','onCollapse');
+            _.bindAll(this,"render","deleteFull","deleteView","onSelect","onSelected","selectVisually","onCollapse");
             
             this.model = attr.annotation;
             
@@ -113,10 +113,10 @@ define(["jquery",
             // Add backbone events to the model 
             _.extend(this.model, Backbone.Events);
             
-            this.model.bind('change', this.render);
-            this.model.bind('destroy', this.deleteView);
-            this.model.bind('remove', this.deleteView);
-            this.model.bind('selected selected_timeline', this.onSelected);
+            this.listenTo(this.model, "change", this.render);
+            this.listenTo(this.model, "destroy", this.deleteView);
+            this.listenTo(this.model, "remove", this.deleteView);
+            this.listenTo(this.model, "selected selected_timeline", this.onSelected);
             
             // Type use for delete operation
             this.typeForDelete = annotationsTool.deleteOperation.targetTypes.ANNOTATION;
@@ -152,7 +152,7 @@ define(["jquery",
            * Move the video current time to this annotation
            */
           jumpTo: function(){
-            this.model.trigger("jumpto",this.model.get('start'));
+            this.model.trigger("jumpto",this.model.get("start"));
           },
           
           /**
@@ -183,7 +183,7 @@ define(["jquery",
            * Listener for selection done on this annotation
            */
           onSelected: function(){
-            this.$el.parent().find('.selected').removeClass('selected');
+            this.$el.parent().find(".selected").removeClass("selected");
             this.selectVisually();
             this.jumpTo();
           },
@@ -193,7 +193,7 @@ define(["jquery",
            * Show the selection on the annotation presentation
            */
           selectVisually: function(){
-            this.$el.addClass('selected');
+            this.$el.addClass("selected");
           },
           
           /**
@@ -204,12 +204,12 @@ define(["jquery",
 
             this.collapsed = !this.collapsed;
             
-            this.$el.find('.collapse > i').toggleClass('icon-chevron-right').toggleClass('icon-chevron-down');
+            this.$el.find(".collapse > i").toggleClass("icon-chevron-right").toggleClass("icon-chevron-down");
             
             if(this.collapsed)
-                this.$el.find('div.in').collapse('hide');
+                this.$el.find("div.in").collapse("hide");
             else
-                this.$el.find('div.collapse').collapse('show');
+                this.$el.find("div.collapse").collapse("show");
           }
           
         });
