@@ -591,12 +591,8 @@ define(["jquery",
             htmlElement = this.$el.find('.annotation-id:contains('+values.annotation.id+')').parent().parent()[0];
             index = this.timeline.getItemIndex(htmlElement);
             newItem = this.timeline.getItem(index);
-              
 
-            // If the annotations has been moved on another track
-            if (values.newTrack.id !== values.oldTrack.id) {
-
-              if (!values.newTrack.get("isMine")) {
+            if (!values.newTrack.get("isMine")) { 
 
                 this.timeline.cancelChange();
                 
@@ -619,7 +615,12 @@ define(["jquery",
                 this.timeline.redraw();
 
                 return;
-              }
+            }
+
+              
+
+            // If the annotations has been moved on another track
+            if (values.newTrack.id !== values.oldTrack.id) {
 
               this.ignoreAdd = values.annotation.get("id");
               this.ignoreDelete = this.ignoreAdd;

@@ -389,7 +389,7 @@ define(["order!jquery",
                   }
 
                   if (tracks.getMyTracks().length === 0) {
-                      tracks.create({name:"Default "+annotationsTool.user.get("nickname")},{
+                      tracks.create({name:"Default "+annotationsTool.user.get("nickname"), description: "Default track for user "+annotationsTool.user.get("name")},{
                           wait: true, 
                           success: concludeInitialization
                       });
