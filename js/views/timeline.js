@@ -30,7 +30,6 @@
  * @requires backbone
  */ 
 define(["jquery",
-        "underscore",
         "prototypes/player_adapter",
         "models/annotation",
         "collections/annotations",
@@ -39,13 +38,14 @@ define(["jquery",
         "text!templates/timeline-modal-group.tmpl",
         "order!access",
         "order!roles",
+        "order!FiltersManager",
+        "order!use!backbone",
         "libs/handlebars",
         "libs/timeline",
         "libs/bootstrap/tooltip",
-        "libs/bootstrap/popover",
-        "backbone"],
+        "libs/bootstrap/popover"],
        
-    function($,_not,PlayerAdapter,Annotation,Annotations,GroupTmpl,ItemTmpl,ModalGroupTmpl,ACCESS, ROLES){
+    function($,PlayerAdapter,Annotation,Annotations,GroupTmpl,ItemTmpl,ModalGroupTmpl,ACCESS, ROLES, FiltersManager, Backbone){
 
         "use strict";
 
@@ -154,11 +154,15 @@ define(["jquery",
                            'initTrackCreation',
                            'filterItems',
                            'switchFilter',
+                           'updateFiltersRender',
                            'disableFilter',
                            'reset');
             
 
             this.playerAdapter = attr.playerAdapter;
+
+            this.filtersManager = new FiltersManager(annotationsTool.filtersManager);
+            this.listenTo(this.filtersManager, "switch", this.updateFiltersRender);
             
             // Type use for delete operation
             this.typeForDeleteAnnotation = annotationsTool.deleteOperation.targetTypes.ANNOTATION;
@@ -173,14 +177,14 @@ define(["jquery",
               height: "auto",
               style: "box",
               scale: links.Timeline.StepDate.SCALE.MILLISECOND,
-              step: 5,
+              step: 1,
               showButtonAdd: false,
               editable: true,
               start: this.startDate,
               end: this.endDate,
               min: this.startDate,
               max: this.endDate,
-              intervalMin: 5000,
+              intervalMin: 100,
               showCustomTime: true,
               showNavigation: true,
               showMajorLabels: false,
@@ -191,7 +195,7 @@ define(["jquery",
               animateZoom: true,
               eventMarginAxis: 0,
               eventMargin: 0,
-              dragAreaWidth: 5,
+              dragAreaWidth: 1,
               groupsChangeable: true
             };
             
@@ -284,6 +288,7 @@ define(["jquery",
             end = this.getFormatedDate(endTime);
 
             this.allItems[annotation.id] = {
+                model: track,
                 id: annotation.id,
                 trackId: track.id,
                 isPublic: track.get("isPublic"),
@@ -355,6 +360,7 @@ define(["jquery",
               trackJSON.isSupervisor = (annotationsTool.user.get("role") === ROLES.SUPERVISOR);
             
               return {
+                model: track,
                 trackId: track.id,
                 isMine: track.get("isMine"),
                 isPublic: track.get("isPublic"),
@@ -459,7 +465,7 @@ define(["jquery",
           filterItems: function() {
             var tempList = _.values(this.allItems);
 
-            _.each(this.filters,function(filter) {
+            _.each(this.filtersManager.getFilters(),function(filter) {
               if (filter.active) {
                 tempList = filter.filter(tempList);
               }
@@ -474,12 +480,18 @@ define(["jquery",
            * @param  {Event} event 
            */
           switchFilter: function(event) {
-            var value = !$(event.target).hasClass('checked'),
-                filterName = event.target.id.replace("filter-","");
+            var active = !$(event.target).hasClass('checked'),
+                id = event.target.id.replace("filter-","");
 
-            this.filters[filterName].active = value;
+            this.filtersManager.switchFilter(id, active);
+          },
 
-            $(event.target).toggleClass('checked');
+          updateFiltersRender: function(attr) {
+            if (attr.active) {
+                this.$el.find("#filter-"+attr.id).addClass("checked");
+            } else {
+                this.$el.find("#filter-"+attr.id).removeClass("checked");
+            }
 
             this.filterItems();
             this.timeline.redraw();
@@ -492,9 +504,8 @@ define(["jquery",
           disableFilter: function(){
             this.$el.find('.filter').removeClass('checked');
 
-            _.each(this.filters,function(filter) {
-              filter.active = false;
-            });
+            this.filtersManager.disableFilters();
+
             this.filterItems();
             this.timeline.redraw();
           },
@@ -618,7 +629,8 @@ define(["jquery",
                 id: annJSON.id,
                 trackId: values.newTrack.id,
                 isPublic: values.newTrack.get("isPublic"),
-                isMine: values.newTrack.get("isMine")
+                isMine: values.newTrack.get("isMine"),
+                model: values.newTrack
               };
 
             } else {
@@ -696,6 +708,7 @@ define(["jquery",
                 self = this,
                 items,
                 values,
+                newTrackId,
                 callback;
             
             // If track already deleted
@@ -719,9 +732,12 @@ define(["jquery",
                 // If the track was selected
                 if (!annotationsTool.selectedTrack || annotationsTool.selectedTrack.id === track.id) {
                   if (self.tracks.length > 0) {  // If there is still other tracks
-                    self.onTrackSelected(null,self.tracks.at(0).id);
-                  } else {// if no more tracks
-                    self.onTrackSelected(null,undefined);
+                    self.tracks.each(function (t) {
+                      if (t.get("isMine")) {
+                        newTrackId = t.id;
+                      }
+                    });
+                    self.onTrackSelected(null,newTrackId);
                   }
                 } else {
                   self.onTrackSelected(null,annotationsTool.selectedTrack.id);
@@ -758,7 +774,7 @@ define(["jquery",
                 updateListener = function(model) {
                   var item,
                       newGroup,
-                      trackJSON = model.toJSON();
+                      trackJSON = track.toJSON();
 
                   trackJSON.isSupervisor = (annotationsTool.user.get("role") === ROLES.SUPERVISOR);
 

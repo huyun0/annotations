@@ -4677,7 +4677,7 @@ div.timeline-groups-text div.timeline-group {
   height: 55px;
   z-index: 3;
 }
-div.timeline-groups-text div.timeline-group:hover {
+div.timeline-groups-text div.timeline-group.mine:hover {
   cursor: pointer;
   background-color: #e6e6e6;
 }

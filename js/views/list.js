@@ -26,15 +26,15 @@
  * @requires backbone
  */
 define(["jquery",
-        "underscore",
         "prototypes/player_adapter",
         "models/annotation",
         "collections/annotations",
         "views/list-annotation",
-        "scrollspy",
-        "backbone"],
+        "use!backbone",
+        "FiltersManager",
+        "scrollspy"],
        
-    function ($, _not, PlayerAdapter, Annotation, Annotations, AnnotationView) {
+    function ($, PlayerAdapter, Annotation, Annotations, AnnotationView, Backbone, FiltersManager) {
 
         "use strict";
 
@@ -104,10 +104,14 @@ define(["jquery",
                                "updateSelection",
                                "unselect",
                                "switchFilter",
+                               "updateFiltersRender",
                                "disableFilter",
                                "doClick");
                 
                 this.annotationViews = [];
+
+                this.filtersManager = new FiltersManager(annotationsTool.filtersManager);
+                this.listenTo(this.filtersManager, "switch", this.updateFiltersRender);
 
                 this.tracks = annotationsTool.video.get("tracks");
                 this.listenTo(this.tracks, "add", this.addTrack);
@@ -262,13 +266,18 @@ define(["jquery",
              * @param  {Event} event
              */
             switchFilter: function (event) {
-                var value = !$(event.target).hasClass("checked"),
-                    filterName = event.target.id.replace("filter-", "");
+                var active = !$(event.target).hasClass("checked"),
+                    id = event.target.id.replace("filter-", "");
 
-                this.filters[filterName].active = value;
+                this.filtersManager.switchFilter(id, active);                
+            },
 
-                $(event.target).toggleClass("checked");
-
+            updateFiltersRender: function(attr){
+                if (attr.active) {
+                    this.$el.find("#filter-"+attr.id).addClass("checked");
+                } else {
+                    this.$el.find("#filter-"+attr.id).removeClass("checked");
+                }
                 this.render();
             },
 
@@ -277,11 +286,10 @@ define(["jquery",
              * @alias module:views-list.List#disableFilter
              */
             disableFilter: function () {
-                this.$el.find(".filter").removeClass("checked");
+                this.$el.find("#filter").removeClass("checked");
 
-                _.each(this.filters, function (filter) {
-                    filter.active = false;
-                });
+                this.filtersManager.disableFilters();
+
                 this.render();
             },
             
@@ -294,7 +302,7 @@ define(["jquery",
 
                 this.$el.find("#content-list").empty();
 
-                _.each(this.filters, function (filter) {
+                _.each(this.filtersManager.getFilters(), function (filter) {
                     if (filter.active) {
                         list = filter.filter(list);
                     }

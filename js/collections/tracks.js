@@ -48,8 +48,8 @@ define(["order!jquery",
                     return null;
             },
 
-            getPrivateTracks: function(){
-                return this.where({isPrivate: true});
+            getMyTracks: function(){
+                return this.where({isMine: true});
             },      
             
             /**
