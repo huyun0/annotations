@@ -28,12 +28,13 @@ define(["order!jquery",
         "order!backbone-annotations-sync",
         "order!text!templates/user-login.tmpl",
         "order!roles",
+        "order!FiltersManager",
         "order!use!backbone",
         "order!use!localstorage",
         "order!libs/bootstrap/bootstrap.min",
         "order!libs/bootstrap/tab"],
        
-       function($,PlayerAdapter,Annotations,AnnotateView,ListView,TimelineView,Users,User,Track,Video,Videos,AnnotationSync,LoginTmpl,ROLES, Backbone){
+       function($, PlayerAdapter, Annotations, AnnotateView, ListView, TimelineView, Users,User, Track, Video, Videos, AnnotationSync, LoginTmpl, ROLES, FiltersManager, Backbone){
 
     /**
      * Main view of the application
@@ -107,6 +108,8 @@ define(["order!jquery",
 
 
         annotationsTool.dispatcher = _.clone(Backbone.Events);
+
+        annotationsTool.filtersManager = new FiltersManager();
 
         this.onWindowResize();  
       },
