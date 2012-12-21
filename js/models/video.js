@@ -162,6 +162,7 @@ define(["jquery",
                                 async:false,
                                 success: function(){
                                     self.tracksReady = true;
+
                                     if (self.tracksReady && self.categoriesReady && self.scalesReady) {
                                         self.trigger("ready");
                                     }

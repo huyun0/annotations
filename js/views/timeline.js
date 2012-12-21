@@ -591,6 +591,32 @@ define(["jquery",
             htmlElement = this.$el.find('.annotation-id:contains('+values.annotation.id+')').parent().parent()[0];
             index = this.timeline.getItemIndex(htmlElement);
             newItem = this.timeline.getItem(index);
+
+            if (!values.newTrack.get("isMine")) { 
+
+                this.timeline.cancelChange();
+                
+                this.allItems[values.annotation.id] = {
+                  start: values.item.start,
+                  end: values.item.end,
+                  content: values.item.content,
+                  group: this.groupTemplate(values.oldTrack.toJSON()),
+                  id: values.annotation.id,
+                  trackId: values.oldTrack.id,
+                  model: values.oldTrack
+                };
+
+
+                if (this.hasToPlay) {
+                  this.playerAdapter.play();
+                }
+
+                this.filterItems();
+                this.timeline.redraw();
+
+                return;
+            }
+
               
 
             // If the annotations has been moved on another track

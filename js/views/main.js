@@ -381,10 +381,15 @@ define(["order!jquery",
                * Create a default track for the current user if no private track is present
                */
               createDefaultTrack = function () {
+
                   tracks = annotationsTool.video.get("tracks");
 
+                  if (annotationsTool.localStorage) {
+                    tracks = tracks.getVisibleTracks();
+                  }
+
                   if (tracks.getMyTracks().length === 0) {
-                      tracks.create({name:"Default "+annotationsTool.user.get("nickname")},{
+                      tracks.create({name:"Default "+annotationsTool.user.get("nickname"), description: "Default track for user "+annotationsTool.user.get("name")},{
                           wait: true, 
                           success: concludeInitialization
                       });
