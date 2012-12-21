@@ -50,7 +50,13 @@ define(["order!jquery",
 
             getMyTracks: function(){
                 return this.where({isMine: true});
-            },      
+            }, 
+
+
+            // Simulate access to limited track for localStorage prototype.
+            getVisibleTracks: function () {
+                return this.remove(this.where({isMine: false, access: 0}));
+            },   
             
             /**
              * Define the url from the collection with the given video
