@@ -67,7 +67,7 @@ define(["order!jquery",
                        "logout",
                        "loginOnInsert",
                        "checkUserAndLogin",
-                       "getAnnotations",
+                       "initModels",
                        "createViews",
                        "loadLoginModal",
                        "setLoadingProgress",
@@ -105,6 +105,9 @@ define(["order!jquery",
 
         $(window).resize(this.onWindowResize);   
 
+
+        annotationsTool.dispatcher = _.clone(Backbone.Events);
+
         this.onWindowResize();  
       },
         
@@ -118,7 +121,7 @@ define(["order!jquery",
         
         this.setLoadingProgress(45,"Start loading video.");
         
-        this.getAnnotations($.proxy(function(){  
+        this.initModels($.proxy(function(){  
          
           /**
            * Loading the video dependant views
@@ -333,91 +336,78 @@ define(["order!jquery",
       },
        
       // Get all the annotations for the current user       
-      getAnnotations: function(callback){
+      initModels: function(callback){
         
-        var videos,video,tracks;
-        videos = new Videos;
-        
-        /**
-         * @function to conclude the retrive of annotations
-         */
-        var endGetAnnotations = $.proxy(function(){
-            
-            var selectedTrack = tracks.at(0);
-            
-            if(!selectedTrack.get("id")){
-              selectedTrack.bind("ready",function(){
-                endGetAnnotations();
-                return;
-              },this);
-            }
-            else{
-              annotationsTool.selectedTrack = selectedTrack;
-            }
-            
-            // Use to know if all the tracks have been fetched
-            var remindingFetchingTrack = tracks.length;
-          
-            // Function to add the different listener to the annotations
-            tracks.each($.proxy(function(track,index){
-                var annotations = track.get("annotations");
+          var videos,
+              video,
+              tracks,
+              annotations,
+              selectedTrack,
+              remindingFetchingTrack,
+              videos = new Videos,
+              /**
+               * @function to conclude the retrive of annotations
+               */
+              concludeInitialization = $.proxy(function(){
+              
+                  // At least one private track should exist, we select the first one
+                  selectedTrack = tracks.getMyTracks()[0];
+                  
+                  if (!selectedTrack.get("id")) {
+                      selectedTrack.bind("ready",function(){
+                        concludeInitialization();
+                        return;
+                      },this);
+                  } else {
+                      annotationsTool.selectedTrack = selectedTrack;
+                  }
+                  
+                  // Use to know if all the tracks have been fetched
+                  remindingFetchingTrack = tracks.length;
                 
-                annotations.bind("jumpto",function(start){
-                   annotationsTool.playerAdapter.setCurrentTime(start);
-                },this);
-          
-                if(--remindingFetchingTrack == 0)
-                  callback();
-            }),this);
-            
-        },this);
-        
+                  // Function to add the different listener to the annotations
+                  tracks.each($.proxy(function (track,index) {
+                      annotations = track.get("annotations");
+                      if (--remindingFetchingTrack === 0) {
+                          callback();
+                      }
+                  }), this);
+              
+              },this),
+              /**
+               * Create a default track for the current user if no private track is present
+               */
+              createDefaultTrack = function () {
+                  tracks = annotationsTool.video.get("tracks");
 
-        // If we are using the localstorage
-        if(window.annotationsTool.localStorage){
-          videos.fetch();
+                  if (tracks.getMyTracks().length === 0) {
+                      tracks.create({name:"Default "+annotationsTool.user.get("nickname")},{
+                          wait: true, 
+                          success: concludeInitialization
+                      });
+                  } else{
+                      concludeInitialization();
+                  }
+              };
           
-          if(videos.length == 0)
-            videos.add({video_extid:annotationsTool.getVideoExtId()});
-            
-          video = videos.at(0);
-          annotationsTool.video = video;
 
-          tracks = video.get("tracks");
-          
-          if(tracks.length == 0){
-            tracks.add({name:"default"});
-            var track = tracks.at(0);
-            track.save({success: endGetAnnotations});
+          // If we are using the localstorage
+          if (window.annotationsTool.localStorage) {
+              videos.fetch();
+              
+              if(videos.length == 0) {
+                  video = videos.create({video_extid:annotationsTool.getVideoExtId()},{wait:true});
+              } else {
+                  video = videos.at(0);
+              }
+              annotationsTool.video = video;
+              createDefaultTrack();
+          } else { // With Rest storage
+              videos.add({video_extid:annotationsTool.getVideoExtId()});
+              video = videos.at(0);
+              annotationsTool.video = video;
+              video.once("ready",createDefaultTrack);
           }
-          else{
-            endGetAnnotations();
-          }
-        }
-        // With Rest storage
-        else{
-
-          videos.add({video_extid:annotationsTool.getVideoExtId()});
-          annotationsTool.video = videos.at(0);
-
-          annotationsTool.video.on("ready",function(){
-                tracks = annotationsTool.video.get("tracks");
-
-                if(tracks.length == 0){
-                  tracks.create({name:"default"},{
-                    wait: true, 
-                    success: endGetAnnotations
-                  });
-                }
-                else{
-                  endGetAnnotations();
-                }
-
-          });
-
-          annotationsTool.video.save();
-          
-        }
 
       },
 

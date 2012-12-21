@@ -174,8 +174,16 @@ define(["order!jquery",
                     return "'tags' attribute must be a string or a JSON object";
                 }
                 
-                if (attr.access &&  !_.include(ACCESS,attr.access)) {
-                    return "'access' attribute is not valid.";
+                if (!_.isUndefined(attr.access)) {
+                    if (!_.include(ACCESS,attr.access)) {
+                        return "'access' attribute is not valid.";
+                    } else if(this.attributes.access !== attr.access){
+                        if (attr.access === ACCESS.PUBLIC) {
+                            this.attributes.isPublic = true;
+                        } else {
+                            this.attributes.isPublic = false;
+                        }
+                    }
                 }
                 
                 if (attr.created_at){

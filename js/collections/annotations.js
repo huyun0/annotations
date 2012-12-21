@@ -36,6 +36,10 @@ define(["order!jquery",
                 _.bindAll(this,"setUrl");
                 
                 this.setUrl(track);
+
+                this.bind("jumpto", function (start) {
+                       annotationsTool.playerAdapter.setCurrentTime(start);
+                }, this);
             },
             
             parse: function(resp, xhr) {

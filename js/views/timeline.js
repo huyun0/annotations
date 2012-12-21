@@ -226,7 +226,7 @@ define(["jquery",
             this.timeline.redraw = $.proxy(function() {
               
               this.timeline.draw(this.filteredItems,this.option);
-              
+
               $('div.timeline-group .content').popover({});
 
               if(annotationsTool.selectedTrack) {
@@ -696,6 +696,7 @@ define(["jquery",
                 self = this,
                 items,
                 values,
+                newTrackId,
                 callback;
             
             // If track already deleted
@@ -719,9 +720,12 @@ define(["jquery",
                 // If the track was selected
                 if (!annotationsTool.selectedTrack || annotationsTool.selectedTrack.id === track.id) {
                   if (self.tracks.length > 0) {  // If there is still other tracks
-                    self.onTrackSelected(null,self.tracks.at(0).id);
-                  } else {// if no more tracks
-                    self.onTrackSelected(null,undefined);
+                    self.tracks.each(function (t) {
+                      if (t.get("isMine")) {
+                        newTrackId = t.id;
+                      }
+                    });
+                    self.onTrackSelected(null,newTrackId);
                   }
                 } else {
                   self.onTrackSelected(null,annotationsTool.selectedTrack.id);
@@ -758,7 +762,7 @@ define(["jquery",
                 updateListener = function(model) {
                   var item,
                       newGroup,
-                      trackJSON = model.toJSON();
+                      trackJSON = track.toJSON();
 
                   trackJSON.isSupervisor = (annotationsTool.user.get("role") === ROLES.SUPERVISOR);
 
@@ -773,8 +777,6 @@ define(["jquery",
 
                   this.filterItems();
                   this.timeline.redraw();
-
-                  model.off("sync",updateListener);
                 };
 
             if (!track) {
@@ -790,8 +792,9 @@ define(["jquery",
               newTrackVisibility = ACCESS.PRIVATE;
             }
 
-            track.on("sync", updateListener,this);
-            track.save({access:newTrackVisibility});
+            track.once("change", updateListener,this);
+            track.set({access:newTrackVisibility});
+            track.save();
           },
           
           /**
