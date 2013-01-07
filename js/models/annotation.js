@@ -23,11 +23,11 @@
  * @requires ACCESS
  * @requires backbone
  */
-define(["order!jquery",
-        "order!models/user",
-        "order!access",
-        "order!use!backbone",
-        "order!use!localstorage"],
+define(["jquery",
+        "models/user",
+        "access",
+        "backbone",
+        "localstorage"],
        
     function($,User, ACCESS, Backbone){
 

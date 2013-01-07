@@ -15,8 +15,8 @@
  */
     
 define(["jquery",
-        "order!access",
-        "order!use!backbone"],
+        "access",
+        "backbone"],
        
     function($, ACCESS, Backbone){
     

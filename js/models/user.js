@@ -14,9 +14,9 @@
  *
  */
     
-define(["order!jquery",
-        "order!roles",
-        "order!use!backbone"],
+define(["jquery",
+        "roles",
+        "backbone"],
        
     function($, ROLES, Backbone) {
 

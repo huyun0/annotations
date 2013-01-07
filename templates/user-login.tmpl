@@ -1,4 +1,4 @@
-<div class="modal" id="user-login">
+
 	  <div class="modal-header">
 	    <h3>User login</h3>
 	  </div>
@@ -28,12 +28,14 @@
 					</div>
 				</div>
 
+				{{#if localStorage}}
 				<div class="control-group">
 					<label class="control-label" for="supervisor">Log as supervisor: </label>
 					<div class="controls">
 						<input type="checkbox" id="supervisor">
 					</div>
 				</div>
+				{{/if}}
 
 				<div class="control-group">
 					<label class="control-label">Remember me: </label>
@@ -50,4 +52,3 @@
 	  <div class="modal-footer">
 	    <a id="save-user" href="#" class="btn btn-primary">Login</a>
 	  </div>
-</div>

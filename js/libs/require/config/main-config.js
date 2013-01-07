@@ -13,35 +13,32 @@ require.config({
         'order':'libs/require/config/order',
         'domReady':'libs/require/config/domReady',
         'text':'libs/require/config/text',
-        "use": "libs/require/config/use.min"
+        'annotations-tool':'annotations-tool',
+        'annotations-tool-configuration':'annotations-tool-configuration'
     },
     waitSeconds: 10,
     
-    use: {
+    shim: {
        "underscore": {
-         attach: "_"
+         exports: "_"
        },
 
        "backbone": {
-         deps: ["use!underscore", "jquery"],
-         attach: function(_, $) {
-           return Backbone;
-         }
+         deps: ["underscore", "jquery"],
+         exports: "Backbone"
        },
 
        "localstorage": {
-        deps: ["use!backbone"],
-        attach: function(Backbone) {
-            return Backbone;
-        }
+        deps: ["backbone"],
+        exports: "Backbone"
        }
     }
 });
 
 // Bootstrap function for main app
-require(['order!domReady',
-         'order!annotations-tool-configuration',
-         'order!annotations-tool'],
+require(['domReady',
+         'annotations-tool-configuration',
+         'annotations-tool'],
               
         function (domReady,config,app) {
             domReady(function(){
@@ -49,4 +46,6 @@ require(['order!domReady',
             });
         }
 );
+
+
     

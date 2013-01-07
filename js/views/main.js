@@ -14,27 +14,29 @@
  *
  */
 
-define(["order!jquery",
-        "order!prototypes/player_adapter",
-        "order!collections/annotations",
-        "order!views/annotate",
-        "order!views/list",
-        "order!views/timeline",
-        "order!collections/users",
-        "order!models/user",
-        "order!models/track",
-        "order!models/video",
-        "order!collections/videos",
-        "order!backbone-annotations-sync",
-        "order!text!templates/user-login.tmpl",
-        "order!roles",
-        "order!FiltersManager",
-        "order!use!backbone",
-        "order!use!localstorage",
-        "order!libs/bootstrap/bootstrap.min",
-        "order!libs/bootstrap/tab"],
+define(["jquery",
+        "prototypes/player_adapter",
+        "collections/annotations",
+        "views/annotate",
+        "views/list",
+        "views/timeline",
+        "views/login",
+        "collections/users",
+        "models/user",
+        "models/track",
+        "models/video",
+        "collections/videos",
+        "backbone-annotations-sync",
+        "roles",
+        "FiltersManager",
+        "backbone",
+        "localstorage",
+        "libs/bootstrap/bootstrap.min",
+        "libs/bootstrap/tab"],
        
-       function($, PlayerAdapter, Annotations, AnnotateView, ListView, TimelineView, Users,User, Track, Video, Videos, AnnotationSync, LoginTmpl, ROLES, FiltersManager, Backbone){
+       function($, PlayerAdapter, Annotations,
+                AnnotateView, ListView, TimelineView, LoginView,
+                Users, User, Track, Video, Videos, AnnotationSync, ROLES, FiltersManager, Backbone){
 
     /**
      * Main view of the application
@@ -55,24 +57,19 @@ define(["order!jquery",
       
       /** Events to handle by the main view */
       events: {
-        "click #save-user": "login",
-        "click #logout" : "logout",
-        "keydown #user-login": "loginOnInsert"
+        "click #logout" : "logout"
       },
       
       initialize: function(playerAdapter){
         if(!PlayerAdapter.prototype.isPrototypeOf(playerAdapter.__proto__))
             throw "The player adapter is not valid! It must has PlayerAdapter as prototype.";
         
-        _.bindAll(this,"login",
-                       "logout",
-                       "loginOnInsert",
-                       "checkUserAndLogin",
-                       "initModels",
-                       "createViews",
-                       "loadLoginModal",
-                       "setLoadingProgress",
-                       "onWindowResize");
+        _.bindAll(this, "logout",
+                        "checkUserAndLogin",
+                        "initModels",
+                        "createViews",
+                        "setLoadingProgress",
+                        "onWindowResize");
         
         this.setLoadingProgress(10,"Starting tool.");
         
@@ -88,7 +85,6 @@ define(["order!jquery",
         
         this.playerAdapter = playerAdapter;
         
-        
         this.setLoadingProgress(20,"Get users saved locally.");
         
         // Create a new users collection and get exciting local user
@@ -102,10 +98,11 @@ define(["order!jquery",
           }
         });
         
+        this.loginView = new LoginView();
+        this.listenTo(annotationsTool.users, "login", this.createViews);
         this.checkUserAndLogin(); 
 
         $(window).resize(this.onWindowResize);   
-
 
         annotationsTool.dispatcher = _.clone(Backbone.Events);
 
@@ -160,9 +157,8 @@ define(["order!jquery",
           
           if(this.playerAdapter.getStatus() ===  PlayerAdapter.STATUS.PAUSED){
              loadVideoDependantView();
-          }
-          else{
-            $(this.playerAdapter).one(PlayerAdapter.EVENTS.READY+" "+PlayerAdapter.EVENTS.PAUSE,loadVideoDependantView);
+          } else{
+            $(this.playerAdapter).one(PlayerAdapter.EVENTS.READY + " " + PlayerAdapter.EVENTS.PAUSE,loadVideoDependantView);
           }
           
         },this));        
@@ -183,7 +179,7 @@ define(["order!jquery",
             this.createViews();
         }
         else{
-          this.loadLoginModal();
+          this.loginView.show();
         }
       },
       
@@ -227,6 +223,7 @@ define(["order!jquery",
         this.timelineView.reset();
         this.annotateView.reset();
         this.listView.reset();
+        this.loginView.reset();
         
         // Delete the different objects
         delete annotationsTool.tracks;
@@ -235,7 +232,7 @@ define(["order!jquery",
         
         this.loadingBox.find(".bar").width("0%");
         this.loadingBox.show();
-        this.loadLoginModal();
+        this.loginView.show();
 
         annotationsTool.users.each(function (user) {
 
@@ -249,93 +246,6 @@ define(["order!jquery",
             });
 
         });
-      },
-      
-      
-      /**
-       * Login by pressing "Enter" key
-       */
-      loginOnInsert: function(e){
-        if(e.keyCode == 13)
-              this.login();
-      },
-      
-      /**
-       * Log the current user of the tool
-       *
-       * @return {User} the current user
-       */
-      login: function(){
-        this.setLoadingProgress(30,"User login.");
-        
-        // Fields from the login form
-        var userId          = annotationsTool.getUserExtId(),
-            userNickname    = this.userModal.find("#nickname"),
-            userEmail       = this.userModal.find("#email"),
-            userRemember    = this.userModal.find("#remember"),
-            userError       = this.userModal.find(".alert"),
-           
-            valid  = true, // Variable to keep the form status in memory   
-            user; // the new user
-        
-        userError.find("#content").empty();
-        
-        // Try to create a new user
-        try{
-
-            if (annotationsTool.localStorage) {
-              user = annotationsTool.users.create({user_extid: userId, 
-                                                  nickname: userNickname.val(),
-                                                  role: this.userModal.find("#supervisor")[0].checked ? ROLES.SUPERVISOR : ROLES.USER},
-                                                  {wait:true});
-            }
-            else {
-              user = annotationsTool.users.create({user_extid: userId, nickname: userNickname.val()},{wait:true});
-            }
-            
-            // Bind the error user to a function to display the errors
-            user.bind("error",$.proxy(function(model,error){
-                this.userModal.find("#"+error.attribute).parentsUntil("form").addClass("error");
-                userError.find("#content").append(error.message+"<br/>");
-                valid=false;
-            },this));
-
-        }catch(error){
-            valid = false;
-            userError.find("#content").append(error+"<br/>");
-        }
-        
-        // If email is given, we set it to the user
-        if (user && userEmail.val()) {
-            user.set({email:userEmail.val()});
-        }
-        
-        // If user not valid 
-        if (!valid) {
-            this.userModal.find(".alert").show();
-            return undefined;
-        }
-        
-        // If we have to remember the user
-        if(userRemember.is(":checked")){
-            annotationsTool.users.add(user);
-            Backbone.localSync("create",user,{
-              success: function(data){
-                  console.log("current user saved locally");
-              },
-              error: function(error){
-                console.warn(error);
-              }
-            });
-        }
-        user.save();
-
-        annotationsTool.user = user;
-        this.userModal.modal("toggle");
-        
-        this.createViews();    
-            
-        return user;
       },
        
       // Get all the annotations for the current user       
@@ -414,7 +324,12 @@ define(["order!jquery",
               videos.add({video_extid:annotationsTool.getVideoExtId()});
               video = videos.at(0);
               annotationsTool.video = video;
-              video.once("ready",createDefaultTrack);
+              video.save();
+              if (video.get("ready")) {
+                createDefaultTrack();
+              } else {
+                video.once("ready",createDefaultTrack);
+              }
           }
 
       },

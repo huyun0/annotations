@@ -14,12 +14,12 @@
  *
  */
 
-define(['order!jquery',
-        'order!use!backbone',
-        'order!views/main',
-        'order!text!templates/delete-modal.tmpl',
-        'order!text!templates/delete-warning-content.tmpl',
-        'order!libs/handlebars'],
+define(['jquery',
+        'backbone',
+        'views/main',
+        'text!templates/delete-modal.tmpl',
+        'text!templates/delete-warning-content.tmpl',
+        'libs/handlebars'],
        
         function($, Backbone, MainView, DeleteModalTmpl,DeleteContentTmpl) {
             

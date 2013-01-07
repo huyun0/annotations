@@ -15,9 +15,9 @@
  */
     
 define(["jquery",
-        "order!access",
-        "order!collections/scalevalues",
-        "order!use!backbone"],
+        "access",
+        "collections/scalevalues",
+        "backbone"],
        
     function($, ACCESS, ScaleValues, Backbone){
     

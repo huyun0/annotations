@@ -14,10 +14,10 @@
  *
  */
 
-define(["order!jquery",
-        "order!models/track",
-        "order!use!backbone",
-        "order!use!localstorage"],
+define(["jquery",
+        "models/track",
+        "backbone",
+        "localstorage"],
        
     function($, Track, Backbone){
     

@@ -12,9 +12,9 @@
         
         <script>
             require(['domReady',
-                     'order!jquery',
-                     'order!player_adapter_HTML5',
-                     'order!prototypes/player_adapter'],
+                     'jquery',
+                     'player_adapter_HTML5',
+                     'prototypes/player_adapter'],
                     
                 function(domReady,$, PlayerAdapterImpl,PlayerAdapter){
                 
@@ -99,22 +99,6 @@
                                 ok(Math.abs(playerAdapter.getDuration()-expectedDuration)<0.05,"Duration should be "+expectedDuration);
                         });
                         
-                        
-                        /*test("Seeking", 2, function() {
-                                stop();
-                                
-                                $(playerAdapter).one(allEvents.SEEKING,function(){
-                                    playerAdapter.pause();
-                                    ok(true,"EVENT: Received SEEKING event.");
-                                    var status = playerAdapter.getStatus();
-                                    equal(status,allStatus.SEEKING,"STATUS: Player status should be SEEKING.");
-                                    start();
-                                    stop();
-                                });
-                                
-                                playerAdapter.setCurrentTime(expectedDuration-2.3);
-                                
-                        });*/
                         
                         test("Ended", 2, function() {
                                 stop();

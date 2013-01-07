@@ -1,8 +1,8 @@
 require(['domReady',
-         'order!jquery',
-         'order!underscore',
-         'order!models/video',
-         'order!collections/videos'],
+         'jquery',
+         'underscore',
+         'models/video',
+         'collections/videos'],
                     
         function(domReady, $, _, Video, Videos){
         

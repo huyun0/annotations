@@ -14,10 +14,10 @@
  *
  */
     
-define(["order!jquery",
-        "order!models/scalevalue",
-        "order!use!backbone",
-        "order!use!localstorage"],
+define(["jquery",
+        "models/scalevalue",
+        "backbone",
+        "localstorage"],
     
 
     function($,ScaleValue, Backbone){

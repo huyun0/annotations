@@ -30,7 +30,7 @@ define(["jquery",
         "models/annotation",
         "collections/annotations",
         "views/list-annotation",
-        "use!backbone",
+        "backbone",
         "FiltersManager",
         "scrollspy"],
        

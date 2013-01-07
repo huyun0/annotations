@@ -14,10 +14,10 @@
  *
  */
 
-define(["order!jquery",
-        "order!models/label",
-        "order!use!backbone",
-        "order!use!localstorage"],
+define(["jquery",
+        "models/label",
+        "backbone",
+        "localstorage"],
     
     function($,Label,Backbone){
     

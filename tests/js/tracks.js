@@ -1,8 +1,8 @@
 require(['domReady',
-         'order!jquery',
-         'order!models/track',
-         'order!collections/tracks',
-         'order!access'],
+         'jquery',
+         'models/track',
+         'collections/tracks',
+         'access'],
                     
         function(domReady,$,Track,Tracks,ACCESS){
         

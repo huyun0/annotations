@@ -1,8 +1,8 @@
 require(['domReady',
-         'order!jquery',
-         'order!models/annotation',
-         'order!collections/annotations',
-         'order!access'],
+         'jquery',
+         'models/annotation',
+         'collections/annotations',
+         'access'],
                     
         function(domReady,$,Annotation,Annotations,ACCESS){
         

@@ -24,10 +24,10 @@
  * @requires underscore
  * @requires backbone
  */ 
-define(["order!jquery",
-        "order!collections/annotations",
-        "order!access",
-        "order!use!backbone"],
+define(["jquery",
+        "collections/annotations",
+        "access",
+        "backbone"],
     
     function($,Annotations,ACCESS, Backbone){
 
@@ -153,6 +153,7 @@ define(["order!jquery",
                         this.attributes['id'] = attr.id;
                         this.toCreate = false;
                         this.setUrl();
+                        this.attributes.ready = true;
                         this.trigger('ready',this);
 
                         var annotations = this.get("annotations");

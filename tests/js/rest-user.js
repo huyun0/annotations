@@ -4,8 +4,8 @@ require(['domReady',
 	     'models/user',
          'collections/users',
          'tests/backbone-annotations-sync-test',
-         'order!underscore',
-         'order!backbone'],
+         'underscore',
+         'backbone'],
                     
         function(domReady, $, require, User, Users, AnnotationsSync){
             domReady(function(){
