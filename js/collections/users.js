@@ -14,10 +14,10 @@
  *
  */
     
-define(["order!jquery",
-        "order!models/user",
-        "order!use!backbone",
-        "order!use!localstorage"],
+define(["jquery",
+        "models/user",
+        "backbone",
+        "localstorage"],
        
        function($, User, Backbone){
     

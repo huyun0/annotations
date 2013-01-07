@@ -9,8 +9,8 @@ require(['domReady',
          'models/scalevalue',
          'collections/scalevalues',
          'backbone-annotations-sync',
-         'order!underscore',
-         'order!backbone'],
+         'underscore',
+         'backbone'],
                     
         function(domReady, $, User, Users, Video, Videos, Scale, Scales, ScaleValue, ScaleValues, AnnotationsSync){
         

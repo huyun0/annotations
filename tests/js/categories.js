@@ -1,8 +1,8 @@
 require(['domReady',
-         'order!jquery',
-         'order!models/category',
-         'order!collections/categories',
-         'order!access'],
+         'jquery',
+         'models/category',
+         'collections/categories',
+         'access'],
                     
         function(domReady,$,Category,Categories,ACCESS){
         

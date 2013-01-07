@@ -14,10 +14,10 @@
  *
  */
 
-define(["order!jquery",
-        "order!models/video",
-        "order!use!backbone",
-        "order!use!localstorage"],
+define(["jquery",
+        "models/video",
+        "backbone",
+        "localstorage"],
        
     function($, Video, Backbone){
     

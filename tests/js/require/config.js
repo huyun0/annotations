@@ -1,6 +1,6 @@
 // RequireJS configuration for main app
 require.config({
-    baseUrl: "js",
+    baseUrl: "./../js",
     paths: {
         'timeline': 'libs/timeline-min.js',
         'scrollspy': 'libs/bootstrap/scrollspy',
@@ -14,7 +14,8 @@ require.config({
         'domReady':'libs/require/config/domReady',
         'text':'libs/require/config/text',
         'annotations-tool':'annotations-tool',
-        'annotations-tool-configuration':'annotations-tool-configuration'
+        'annotations-tool-configuration':'annotations-tool-configuration',
+        'tests':'../../../tests/js'
     },
     waitSeconds: 10,
     
@@ -34,18 +35,3 @@ require.config({
        }
     }
 });
-
-// Bootstrap function for main app
-require(['domReady',
-         'annotations-tool-configuration',
-         'annotations-tool'],
-              
-        function (domReady,config,app) {
-            domReady(function(){
-                app.start();
-            });
-        }
-);
-
-
-    

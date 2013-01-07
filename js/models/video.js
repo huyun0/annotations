@@ -28,8 +28,8 @@ define(["jquery",
         "collections/tracks",
         "collections/categories",
         "collections/scales",
-        "order!access",
-        "order!use!backbone"],
+        "access",
+        "backbone"],
     
 
     function($, Tracks, Categories, Scales, ACCESS, Backbone){
@@ -165,6 +165,7 @@ define(["jquery",
 
                                     if (self.tracksReady && self.categoriesReady && self.scalesReady) {
                                         self.trigger("ready");
+                                        self.attributes.ready = true;
                                     }
                                 }
                             }); 
@@ -183,11 +184,13 @@ define(["jquery",
                                                 self.categoriesReady = true;
                                                 if (self.tracksReady && self.categoriesReady && self.scalesReady) {
                                                     self.trigger("ready");
+                                                    self.attributes.ready = true;
                                                 }
                                             }
                                         });
                                     } else if (self.tracksReady && self.categoriesReady && self.scalesReady) {
                                         self.trigger("ready");
+                                        self.attributes.ready = true;
                                     }
                                 }
                             });

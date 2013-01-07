@@ -9,8 +9,8 @@ require(['domReady',
          'models/annotation',
          'collections/annotations',
          'tests/backbone-annotations-sync-test',
-         'order!underscore',
-         'order!backbone'],
+         'underscore',
+         'backbone'],
                     
         function(domReady, $, User, Users, Video, Videos, Track, Tracks, Annotatoin, Annotations, AnnotationsSync){
         

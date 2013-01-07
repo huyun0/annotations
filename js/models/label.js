@@ -18,10 +18,10 @@
  * A module representing the label model
  * @module Label
  */
-define(["order!jquery",
-        "order!models/user",
-        "order!access",
-        "order!use!backbone"],
+define(["jquery",
+        "models/user",
+        "access",
+        "backbone"],
        
     function($,User, ACCESS, Backbone){
     

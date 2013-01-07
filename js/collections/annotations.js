@@ -14,10 +14,10 @@
  *
  */
     
-define(["order!jquery",
-        "order!models/annotation",
-        "order!use!backbone",
-        "order!use!localstorage"],
+define(["jquery",
+        "models/annotation",
+        "backbone",
+        "localstorage"],
     
     function($, Annotation, Backbone){
     

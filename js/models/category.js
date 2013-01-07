@@ -18,11 +18,11 @@
  * A module representing the category model
  * @module Category
  */
-define(["order!jquery",
-        "order!collections/labels",
-        "order!access",
-        "order!use!backbone",
-        "order!use!localstorage"],
+define(["jquery",
+        "collections/labels",
+        "access",
+        "backbone",
+        "localstorage"],
     
     function($, Labels, ACCESS, Backbone){
 
@@ -50,7 +50,7 @@ define(["order!jquery",
              * Constructor
              * @param {Object} attr Object literal containing the model initialion attribute. Should contain a name attribute. 
              */
-            initialize: function(attr) {
+            initialize: function (attr) {
                 var saveChange;
                 
                 if (!attr || _.isUndefined(attr.name)) {
@@ -69,11 +69,13 @@ define(["order!jquery",
 
                 attr.settings = this.parseJSONString(attr.settings);
                 
-                if (attr.labels && _.isArray(attr.labels)){
-                    this.attributes.labels  = new Labels(attr.labels,this);
+                if (attr.labels && _.isArray(attr.labels)) {
+                    this.attributes.labels  = new Labels(attr.labels, this);
                     delete attr.labels;
-                } else if (!attr.labels){
-                    this.attributes.labels  = new Labels([],this);
+                } else if (!attr.labels) {
+                    this.attributes.labels  = new Labels([], this);
+                } else if (_.isObject(attr.labels) && !attr.labels.url && attr.labels.models) {
+                    attr.labels = new Labels(attr.labels.models, this);
                 } else {
                     this.attributes.labels = attr.labels;
                     delete attr.labels;
@@ -85,12 +87,12 @@ define(["order!jquery",
                 
                 // If localStorage used, we have to save the video at each change on the children
                 if (window.annotationsTool.localStorage) {
-                    saveChange = function(label) {
+                    saveChange = function (label) {
                             this.save();
                             this.trigger("change");
                     }
-                    this.attributes.labels.bind('change',saveChange,this);
-                    this.attributes.labels.bind('remove',saveChange,this);
+                    this.attributes.labels.bind('change', saveChange, this);
+                    this.attributes.labels.bind('remove', saveChange, this);
                 }
                 
                 this.set(attr);
@@ -145,19 +147,24 @@ define(["order!jquery",
              */
             validate: function(attr){
                 var tmpCreated,
-                    labels;
+                    labels,
+                    self = this;
                 
                 if (attr.id) { 
-                    if (this.get('id') != attr.id) {
+                    if (this.get('id') !== attr.id) {
                         this.id = attr.id;
                         this.setUrl();
-
-                        labels = this.attributes.labels;
-
-                        if (labels && (labels.length) == 0) {
-                            labels.fetch({async:false});
-                        }
                     }
+                }
+
+                if (!this.ready && attr.labels && attr.labels.url && (attr.labels.length) === 0) {
+                    attr.labels.fetch({
+                        async:false,
+                        success: function () {
+                            self.ready = true;
+                        }
+                    });
+                
                 }
                 
                 if (attr.description && !_.isString(attr.description)) {
@@ -204,15 +211,15 @@ define(["order!jquery",
                     return "'deleted_at' attribute must be a number!";
                 }
 
-                if (this.attributes.labels) {
-                    this.get('labels').each(function(value,index){
+                if (attr.labels) {
+                    attr.labels.each(function(value,index){
                         var parseValue = value.parse({category: this.toJSON()});
                         
                         if(parseValue.category) {
                             parseValue = parseValue.category;
                         }
 
-                        value.attributes.category = parseValue;
+                        value.category = parseValue;
                     },this);
                 }
             },

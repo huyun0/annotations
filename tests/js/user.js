@@ -1,6 +1,6 @@
 require(['domReady',
-         'order!jquery',
-	 'order!models/user'
+         'jquery',
+	 'models/user'
          ],
                     
         function(domReady,$,User){

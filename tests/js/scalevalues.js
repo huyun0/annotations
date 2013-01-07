@@ -1,8 +1,8 @@
 require(['domReady',
-         'order!jquery',
-         'order!models/scalevalue',
-         'order!collections/scalevalues',
-         'order!access'],
+         'jquery',
+         'models/scalevalue',
+         'collections/scalevalues',
+         'access'],
                     
         function(domReady,$,ScaleValue,ScaleValues,ACCESS){
         

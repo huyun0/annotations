@@ -1,9 +1,9 @@
 require(['domReady',
-         'order!jquery',
-         'order!models/label',
-         'order!models/category',
-         'order!collections/labels',
-         'order!access'],
+         'jquery',
+         'models/label',
+         'models/category',
+         'collections/labels',
+         'access'],
                     
         function(domReady,$,Label,Category,Labels,ACCESS){
         

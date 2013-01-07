@@ -8,8 +8,8 @@ require(['domReady',
          'collections/videos',
          'collections/users',
          'backbone-annotations-sync',
-         'order!underscore',
-         'order!backbone'],
+         'underscore',
+         'backbone'],
                     
         function(domReady, $, require, Category, Video, User, Categories, Videos, Users, AnnotationsSync){
             

@@ -15,11 +15,11 @@
  */
 
 
-define(['order!domReady',
-        'order!jquery',
-        'order!use!underscore',
-        'order!roles',
-        'order!player_adapter_HTML5'
+define(['domReady',
+        'jquery',
+        'underscore',
+        'roles',
+        'player_adapter_HTML5'
         // Add here the files (PlayerAdapter, ...) required for your configuration
         ],
        

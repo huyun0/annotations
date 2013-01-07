@@ -1,7 +1,7 @@
-define(['order!domReady',
-        'order!jquery',
-        'order!underscore'
-        // 'order!player_adapter_HTML5'
+define(['domReady',
+        'jquery',
+        'underscore'
+        // 'player_adapter_HTML5'
         // Add here the files (PlayerAdapter, ...) required for your configuration
         ],
        
