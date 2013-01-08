@@ -243,7 +243,7 @@ define(["jquery",
               concludeInitialization = $.proxy(function(){
               
                   // At least one private track should exist, we select the first one
-                  selectedTrack = tracks.getMine()[0];
+                  selectedTrack = tracks.getMyTracks()[0];
                   
                   if (!selectedTrack.get("id")) {
                       selectedTrack.bind("ready",function(){
