@@ -13,11 +13,13 @@ require.config({
         'text':'libs/require/config/text',
         'annotations-tool':'annotations-tool',
         'annotations-tool-configuration':'annotations-tool-configuration',
-        'tests':'../../../tests/js'
+        'tests':'../tests/js',
+        'qunit':'libs/tests/qunit'
     },
     waitSeconds: 10,
     
     shim: {
+      
        "underscore": {
          exports: "_"
        },

@@ -1,8 +1,7 @@
 /* Bootstrap script for require.js */
 
-require(['config'], function () {});
-
-require(['../playerAdapterHTML5'],
-
-        function () {}
-);
+require(['config'], function () {
+    require(['tests/playerAdapterHTML5'],
+            function () {}
+    );    
+});
