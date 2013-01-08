@@ -10,7 +10,6 @@ require.config({
         'jquery': 'libs/jquery-1.7.2.min',
         'underscore': 'libs/underscore-min-1.4.3',
         'templates': '../templates',
-        'order':'libs/require/config/order',
         'domReady':'libs/require/config/domReady',
         'text':'libs/require/config/text',
         'annotations-tool':'annotations-tool',
