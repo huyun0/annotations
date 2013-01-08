@@ -1,7 +1,6 @@
 require(['domReady',
          'jquery',
-	 'models/user'
-         ],
+	     'models/user'],
                     
         function(domReady,$,User){
         

@@ -1,7 +1,7 @@
 require(['domReady',
          'jquery',
          'require',
-	   'models/category',
+	     'models/category',
          'models/video',
          'models/user',
          'collections/categories',

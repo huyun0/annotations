@@ -5,7 +5,6 @@ require.config({
         'timeline': 'libs/timeline-min.js',
         'scrollspy': 'libs/bootstrap/scrollspy',
         'backbone':'libs/backbone/backbone-0.9.9',
-        'loader': 'libs/backbone/loader',
         'localstorage': 'libs/backbone/backbone.localStorage-1.0',
         'jquery': 'libs/jquery-1.7.2.min',
         'underscore': 'libs/underscore-min-1.4.3',
