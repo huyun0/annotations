@@ -183,27 +183,6 @@ define(["jquery",
         }
       },
       
-      loadLoginModal: function(){
-        if(!this.userModal){
-            // Otherwise we load the login modal
-            this.$el.append(LoginTmpl);
-            this.userModal = $("#user-login");
-            this.userModal.modal({show: true, backdrop: true, keyboard: false });
-            this.userModal.on("hide",function(){
-                // If user not set, display the login window again
-                if(_.isUndefined(annotationsTool.user))
-                    setTimeout(function(){$("#user-login").modal("show")},5);
-            });
-        }
-        else{
-          this.userModal.find("#nickname")[0].value = "";
-          this.userModal.find("#email")[0].value = "";
-          this.userModal.find("#remember")[0].value = "";
-          this.userModal.modal("toggle");
-        }
-        
-      },
-      
       /**
        * Log the user out
        */
@@ -264,7 +243,7 @@ define(["jquery",
               concludeInitialization = $.proxy(function(){
               
                   // At least one private track should exist, we select the first one
-                  selectedTrack = tracks.getMyTracks()[0];
+                  selectedTrack = tracks.getMine()[0];
                   
                   if (!selectedTrack.get("id")) {
                       selectedTrack.bind("ready",function(){
@@ -298,7 +277,7 @@ define(["jquery",
                     tracks = tracks.getVisibleTracks();
                   }
 
-                  if (tracks.getMyTracks().length === 0) {
+                  if (tracks.getMine().length === 0) {
                       tracks.create({name:"Default "+annotationsTool.user.get("nickname"), description: "Default track for user "+annotationsTool.user.get("name")},{
                           wait: true, 
                           success: concludeInitialization
