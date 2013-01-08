@@ -277,7 +277,7 @@ define(["jquery",
                     tracks = tracks.getVisibleTracks();
                   }
 
-                  if (tracks.getMine().length === 0) {
+                  if (tracks.getMyTracks().length === 0) {
                       tracks.create({name:"Default "+annotationsTool.user.get("nickname"), description: "Default track for user "+annotationsTool.user.get("name")},{
                           wait: true, 
                           success: concludeInitialization
