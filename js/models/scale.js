@@ -57,6 +57,10 @@ define(["jquery",
                         
                     this.toCreate = true;
                 }
+
+                if (attr.tags) {
+                    attr.tags = this.parseJSONString(attr.tags);
+                }
                 
                 this.set(attr);
             },
@@ -65,6 +69,11 @@ define(["jquery",
                 attr.created_at = attr.created_at != null ? Date.parse(attr.created_at): null;
                 attr.updated_at = attr.updated_at != null ? Date.parse(attr.updated_at): null;
                 attr.deleted_at = attr.deleted_at != null ? Date.parse(attr.deleted_at): null;
+
+                if (attr.tags) {
+                    attr.tags = this.parseJSONString(attr.tags);
+                }
+
                 return attr;
             },
             
@@ -90,15 +99,6 @@ define(["jquery",
                 
                 if(attr.description && !_.isString(attr.description))
                     return "'description' attribute must be a string";
-                
-                if(attr.created_by && !(_.isNumber(attr.created_by) || attr.created_by instanceof User))
-                    return "'created_by' attribute must be a number or an instance of 'User'";
-                
-                if(attr.updated_by && !(_.isNumber(attr.updated_by) || attr.updated_by instanceof User))
-                    return "'updated_by' attribute must be a number or an instance of 'User'";
-                
-                if(attr.deleted_by && !(_.isNumber(attr.deleted_by) || attr.deleted_by instanceof User))
-                    return "'deleted_by' attribute must be a number or an instance of 'User'";
                 
                 if(attr.access && !_.include(ACCESS,attr.access))
                     return "'access' attribute is not valid.";
@@ -126,9 +126,34 @@ define(["jquery",
              */
             toJSON: function(){
                 var json = Backbone.Model.prototype.toJSON.call(this);
+                if (json.tags) {
+                    json.tags = JSON.stringify(json.tags);
+                }
                 delete json.scaleValues;
 
                 return json;
+            },
+
+
+            /**
+             * Parse the given parameter to JSON if given as String
+             * @param  {String} parameter the parameter as String
+             * @return {JSON} parameter as JSON object
+             */
+            parseJSONString: function (parameter) {
+                if (parameter && _.isString(parameter)) {
+                    try {
+                        parameter = JSON.parse(parameter);
+                        
+                    } catch (e) {
+                        console.warn("Can not parse parameter '" + parameter + "': " + e);
+                        return undefined;
+                    }
+                } else if (!_.isObject(parameter) || _.isFunction(parameter)) {
+                    return undefined;
+                }
+
+                return parameter;
             },
             
             /**

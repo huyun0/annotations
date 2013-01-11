@@ -1,10 +1,8 @@
-require(['domReady',
-         'jquery',
+require(['jquery',
 	     'models/user'],
                     
-        function(domReady,$,User){
+        function($,User){
         
-            domReady(function(){
                 
                 var user = null;
                 
@@ -47,7 +45,5 @@ require(['domReady',
                     
                     equal(newNickname, user.get("nickname") , "User should have "+newNickname+" as nickname.");
                 });
-                
-            });
             
 });

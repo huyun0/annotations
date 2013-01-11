@@ -69,6 +69,14 @@ define(["jquery",
                     category.setUrl();
                 });
             },
+
+            getMine: function(){
+                return this.where({isMine: true});
+            }, 
+
+            getPublic: function(){
+                return this.where({isPublic: true});
+            }, 
             
             /**
              * Add a copy from the given template to this collection

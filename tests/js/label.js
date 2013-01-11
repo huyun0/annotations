@@ -1,12 +1,10 @@
-require(['domReady',
-         'jquery',
+require(['jquery',
          'models/label',
          'models/category',
          'access'],
                     
-        function(domReady,$,Label,Category, ACCESS){
+        function($,Label,Category, ACCESS){
         
-            domReady(function(){
                 
                 var category, label;
                 
@@ -111,8 +109,5 @@ require(['domReady',
                     label.set({access:ACCESS.PRIVATE});
                     equal(label.get('access'), ACCESS.PRIVATE, "label  should have "+ACCESS.PRIVATE+" as access attribute.");
                 });
-                
-                
-            });
             
 });

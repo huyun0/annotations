@@ -95,7 +95,7 @@ define(["jquery",
                               async: false,
                               url: self.getURI(resource, false),
                               dataType: "json",
-                              data: JSON.parse(JSON.stringify(resource)),
+                              data: resource.toJSON(),
                               beforeSend: self.setHeaderParams,
                               success: function(data, textStatus, xmlHttpRequest){
 
@@ -128,7 +128,7 @@ define(["jquery",
                               async: false,
                               url: self.getURI(resource, false)+resource.get("copyUrl"),
                               dataType: "json",
-                              data: JSON.parse(JSON.stringify(resource)),
+                              data: resource.toJSON(),
                               beforeSend: self.setHeaderParams,
                               success: function(data, textStatus, xmlHttpRequest){
                                    resource.toCreate = false;
@@ -201,7 +201,7 @@ define(["jquery",
                               async: false,
                               type: "PUT",
                               url: self.getURI(resource, (!resource.toCreate && !resource.noPOST)),
-                              data: JSON.parse(JSON.stringify(resource)),
+                              data: resource.toJSON(),
                               beforeSend: self.setHeaderParams,
                               success: function(data, textStatus, xmlHttpRequest){
                                    resource.toCreate = false;

@@ -1,12 +1,9 @@
-require(['domReady',
-         'jquery',
+define(['jquery',
          'models/category',
          'access'],
                     
-        function(domReady,$,Category,ACCESS){
+        function($,Category,ACCESS){
         
-            domReady(function(){
-                
                 var category;
                 
                 module("Category",  {
@@ -99,8 +96,5 @@ require(['domReady',
                     });
                     category.set({tags:unvalidTags});                    
                 });
-                
-                
-            });
             
 });

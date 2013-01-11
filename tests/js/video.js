@@ -1,12 +1,9 @@
-require(['domReady',
-         'jquery',
+require(['jquery',
          'underscore',
          'models/video',
          'collections/videos'],
                     
-        function(domReady, $, _, Video, Videos){
-        
-            domReady(function(){
+        function($, _, Video, Videos){
                 
                 var video, videos;
 
@@ -48,6 +45,5 @@ require(['domReady',
                     });
                     video.set({tags:unvalidTags});                    
                 });
-            });
             
 });

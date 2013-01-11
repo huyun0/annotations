@@ -19,17 +19,15 @@
  * @module models-Annotation
  * @requires jQuery
  * @requires underscore
- * @requires models-user
  * @requires ACCESS
  * @requires backbone
  */
 define(["jquery",
-        "models/user",
         "access",
         "backbone",
         "localstorage"],
        
-    function($,User, ACCESS, Backbone){
+    function($, ACCESS, Backbone){
 
         "use strict";
     
@@ -78,6 +76,10 @@ define(["jquery",
                         attr.created_by = annotationsTool.user.get("id");
                         attr.created_by_nickname = annotationsTool.user.get("nickname");
                     }
+                }
+
+                if (attr.tags) {
+                    attr.tags = this.parseJSONString(attr.tags);
                 }
                 
                 // Add backbone events to the model 
@@ -250,6 +252,9 @@ define(["jquery",
              */
             toJSON: function(){
                 var json = $.proxy(Backbone.Model.prototype.toJSON,this)();
+                if (json.tags) {
+                    json.tags = JSON.stringify(json.tags);
+                }
                 if (json.label && json.label.toJSON) {
                     json.label = json.label.toJSON();
                 }

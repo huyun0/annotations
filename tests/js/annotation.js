@@ -1,11 +1,9 @@
-require(['domReady',
-         'jquery',
+define(['jquery',
          'models/annotation',
          'access'],
                     
-        function(domReady,$,Annotation,ACCESS){
-        
-            domReady(function(){
+        function($, Annotation, ACCESS){
+    
                 
                 var annotation = null;
 
@@ -60,7 +58,7 @@ require(['domReady',
                     var nbError=0;
                     annotation.bind('error',function(model,error){
                             ok(true,"Can not be modified, error: " + error); 
-                            if(++nbError > 0)
+                            if(nbError++ > 0)
                                 annotation.unbind('error');
                             start();
                     });
@@ -108,7 +106,5 @@ require(['domReady',
                     annotation.set({tags:unvalidTags});                    
                 });
 
-                
-            });
             
 });

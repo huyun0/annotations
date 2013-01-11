@@ -16,9 +16,10 @@
     
 define(["jquery",
         "roles",
+        "access",
         "backbone"],
        
-    function($, ROLES, Backbone) {
+    function($, ROLES, ACCESS, Backbone) {
 
         "use strict";
     
@@ -29,7 +30,8 @@ define(["jquery",
         var User = Backbone.Model.extend({
             
             defaults: {
-                role: ROLES.USER
+                role: ROLES.USER,
+                access: ACCESS.PUBLIC
             },
             
             initialize: function(attr) {
@@ -48,7 +50,7 @@ define(["jquery",
                     this.toCreate = true;
                 }
                 
-                if (annotationsTool.getUserRole) {
+                if (!attr.role && annotationsTool.getUserRole) {
                     attr.role = annotationsTool.getUserRole();
 
                     if (!attr.role) {
@@ -131,7 +133,8 @@ define(["jquery",
                         return "'deleted_at' attribute must be a number!";
                     }
                 }
-            }
+            },
+
             
         },
         // Class properties and functions

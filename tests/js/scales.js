@@ -1,12 +1,9 @@
-require(['domReady',
-         'jquery',
+require(['jquery',
          'models/scale',
          'collections/scales',
          'access'],
                     
-        function(domReady,$,Scale,Scales,ACCESS){
-        
-            domReady(function(){
+        function($,Scale,Scales,ACCESS){
                 
                 var scale,scales;
                 
@@ -38,7 +35,5 @@ require(['domReady',
                     var newScale = scales.addCopyFromTemplate(scale);
                     notEqual(scale.get('id'), newScale.get('id'),"Copied scale should have a different id as "+scale.get('id'));    
                 }); 
-                  
-            });
             
 });

@@ -84,15 +84,6 @@ define(["jquery",
                 if(attr.order && !_.isNumber(attr.order))
                     return "'order' attribute must be a number";
                 
-                if(attr.created_by && !(_.isNumber(attr.created_by) || attr.created_by instanceof User))
-                    return "'created_by' attribute must be a number or an instance of 'User'";
-                
-                if(attr.updated_by && !(_.isNumber(attr.updated_by) || attr.updated_by instanceof User))
-                    return "'updated_by' attribute must be a number or an instance of 'User'";
-                
-                if(attr.deleted_by && !(_.isNumber(attr.deleted_by) || attr.deleted_by instanceof User))
-                    return "'deleted_by' attribute must be a number or an instance of 'User'";
-                
                 if(attr.access && !_.include(ACCESS,attr.access))
                     return "'access' attribute is not valid.";
                 

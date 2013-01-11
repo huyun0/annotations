@@ -90,6 +90,10 @@ define(["jquery",
                     this.set({scales: new Scales([],this)});
                 }
 
+                if (attr.tags) {
+                    attr.tags = this.parseJSONString(attr.tags);
+                }
+
                 if (attr.id) {
                     this.get("categories").fetch({async:false});
                     this.get("tracks").fetch({async:false});
@@ -206,17 +210,6 @@ define(["jquery",
                     return "'tags' attribute must be a string or a JSON object";
                 }
                 
-                if (attr.created_by && !(_.isNumber(attr.created_by) || attr.created_by instanceof User)) {
-                    return "'created_by' attribute must be a number or an instance of 'User'";
-                }
-                
-                if (attr.updated_by && !(_.isNumber(attr.updated_by) || attr.updated_by instanceof User)) {
-                    return "'updated_by' attribute must be a number or an instance of 'User'";
-                }
-                
-                if (attr.deleted_by && !(_.isNumber(attr.deleted_by) || attr.deleted_by instanceof User)) {
-                    return "'deleted_by' attribute must be a number or an instance of 'User'";
-                }
                 
                 if (attr.created_at) {
                     if ((tmpCreated=this.get('created_at')) && tmpCreated!==attr.created_at) {
@@ -286,12 +279,15 @@ define(["jquery",
              */
             toJSON: function(){
                 var json = $.proxy(Backbone.Model.prototype.toJSON,this)();
+                if (json.tags) {
+                    json.tags = JSON.stringify(json.tags);
+                }
                 delete json.tracks;
                 delete json.categories;
                 delete json.scales;
 
                 return json;
-            }
+            },
         });
         
         return Video;

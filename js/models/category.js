@@ -24,7 +24,7 @@ define(["jquery",
         "backbone",
         "localstorage"],
     
-    function($, Labels, ACCESS, Backbone){
+    function ($, Labels, ACCESS, Backbone) {
 
         "use strict";
         
@@ -35,7 +35,7 @@ define(["jquery",
         var Category = Backbone.Model.extend({
             
             defaults: {
-                access: ACCESS.PUBLIC,
+                access: ACCESS.PRIVATE,
                 created_at: null,
                 created_by: null,
                 updated_at: null,
@@ -43,21 +43,19 @@ define(["jquery",
                 deleted_at: null,
                 deleted_by: null,
                 has_duration: true,
-                labels: new Labels([],this)
+                labels: new Labels([], this)
             },
             
             /**
              * Constructor
-             * @param {Object} attr Object literal containing the model initialion attribute. Should contain a name attribute. 
+             * @param {Object} attr Object literal containing the model initialion attribute. Should contain a name attribute.
              */
             initialize: function (attr) {
-                var saveChange;
-                
                 if (!attr || _.isUndefined(attr.name)) {
                     throw "'name' attribute is required";
                 }
                 
-                // Check if the track has been initialized 
+                // Check if the track has been initialized
                 if (!attr.id) {
                     // If local storage, we set the cid as id
                     if (window.annotationsTool.localStorage) {
@@ -67,7 +65,33 @@ define(["jquery",
                     this.toCreate = true;
                 }
 
-                attr.settings = this.parseJSONString(attr.settings);
+                // If localStorage used, we have to save the video at each change on the children
+                if (window.annotationsTool.localStorage){
+                    if (!attr.created_by) {
+                        attr.created_by = annotationsTool.user.get("id");
+                        attr.created_by_nickname = annotationsTool.user.get("nickname");
+                    }
+                }
+
+                if (attr.tags) {
+                    attr.tags = this.parseJSONString(attr.tags);
+                }
+
+                if (attr.settings) {
+                    attr.settings = this.parseJSONString(attr.settings);
+                }
+
+                if (annotationsTool.user.get("id") === attr.created_by) {
+                    attr.isMine = true;
+                } else {
+                    attr.isMine = false;
+                }
+
+                if (attr.access === ACCESS.PUBLIC) {
+                    attr.isPublic = true;
+                } else {
+                    attr.isPublic = false;
+                }
                 
                 if (attr.labels && _.isArray(attr.labels)) {
                     this.attributes.labels  = new Labels(attr.labels, this);
@@ -75,24 +99,14 @@ define(["jquery",
                 } else if (!attr.labels) {
                     this.attributes.labels  = new Labels([], this);
                 } else if (_.isObject(attr.labels) && !attr.labels.url && attr.labels.models) {
-                    attr.labels = new Labels(attr.labels.models, this);
+                    this.attributes.labels = new Labels(attr.labels.models, this);
                 } else {
                     this.attributes.labels = attr.labels;
                     delete attr.labels;
                 }
 
                 if (attr.id) {
-                    this.attributes.labels.fetch({async:false});
-                }
-                
-                // If localStorage used, we have to save the video at each change on the children
-                if (window.annotationsTool.localStorage) {
-                    saveChange = function (label) {
-                            this.save();
-                            this.trigger("change");
-                    }
-                    this.attributes.labels.bind('change', saveChange, this);
-                    this.attributes.labels.bind('remove', saveChange, this);
+                    this.attributes.labels.fetch({async: false});
                 }
                 
                 this.set(attr);
@@ -103,15 +117,27 @@ define(["jquery",
              * @param  {Object} data Object literal containing the model attribute to parse.
              * @return {Object}  The object literal with the list of parsed model attribute.
              */
-            parse: function(data) {
+            parse: function (data) {
                 var attr = data.attributes ? data.attributes : data;
 
-                attr.created_at = attr.created_at != null ? Date.parse(attr.created_at): null;
-                attr.updated_at = attr.updated_at != null ? Date.parse(attr.updated_at): null;
-                attr.deleted_at = attr.deleted_at != null ? Date.parse(attr.deleted_at): null;
+                attr.created_at = attr.created_at !== null ? Date.parse(attr.created_at): null;
+                attr.updated_at = attr.updated_at !== null ? Date.parse(attr.updated_at): null;
+                attr.deleted_at = attr.deleted_at !== null ? Date.parse(attr.deleted_at): null;
 
                 if (attr.settings) {
                     attr.settings = this.parseJSONString(attr.settings);
+                }
+
+                if (annotationsTool.user.get("id") === attr.created_by) {
+                    attr.isMine = true;
+                } else {
+                    attr.isMine = false;
+                }
+
+                if (attr.access === ACCESS.PUBLIC) {
+                    attr.isPublic = true;
+                } else {
+                    attr.isPublic = false;
                 }
 
                 // Parse tags if present
@@ -123,15 +149,19 @@ define(["jquery",
                     attr.category = this.parseJSONString(attr.category.settings);
                 }
 
+                if (attr.tags) {
+                    attr.tags = this.parseJSONString(attr.tags);
+                }
+
                 if (annotationsTool.localStorage && _.isArray(attr.labels)) {
-                    attr.labels = new Labels(attr.labels,this);
+                    attr.labels = new Labels(attr.labels, this);
                 }
 
                 if (!annotationsTool.localStorage &&  attr.scale_id && (_.isNumber(attr.scale_id) || _.isString(attr.scale_id))) {
                     attr.scale = annotationsTool.video.get("scales").get(attr.scale_id);
                 }
 
-                if(data.attributes) {
+                if (data.attributes) {
                     data.attributes = attr;
                 } else {
                     data = attr;
@@ -145,27 +175,27 @@ define(["jquery",
              * @param  {Object} data Object literal containing the model attribute to validate.
              * @return {String}  If the validation failed, an error message will be returned.
              */
-            validate: function(attr){
+            validate: function (attr) {
                 var tmpCreated,
-                    labels,
                     self = this;
                 
-                if (attr.id) { 
-                    if (this.get('id') !== attr.id) {
+                if (attr.id) {
+                    if (this.get("id") !== attr.id) {
                         this.id = attr.id;
                         this.setUrl();
                     }
+
+                    if (!this.ready && attr.labels && attr.labels.url && (attr.labels.length) === 0) {
+                        attr.labels.fetch({
+                            async: false,
+                            success: function () {
+                                self.ready = true;
+                            }
+                        });
+                    
+                    }
                 }
 
-                if (!this.ready && attr.labels && attr.labels.url && (attr.labels.length) === 0) {
-                    attr.labels.fetch({
-                        async:false,
-                        success: function () {
-                            self.ready = true;
-                        }
-                    });
-                
-                }
                 
                 if (attr.description && !_.isString(attr.description)) {
                     return "'description' attribute must be a string";
@@ -179,24 +209,20 @@ define(["jquery",
                     return "'tags' attribute must be a string or a JSON object";
                 }
                 
-                if (attr.access &&  !_.include(ACCESS,attr.access)) {
-                    return "'access' attribute is not valid.";
-                }
-                
-                if (attr.created_by && !(_.isNumber(attr.created_by) || attr.created_by instanceof User)) {
-                    return "'created_by' attribute must be a number or an instance of 'User'";
-                }
-                
-                if (attr.updated_by && !(_.isNumber(attr.updated_by) || attr.updated_by instanceof User)) {
-                    return "'updated_by' attribute must be a number or an instance of 'User'";
-                }
-                
-                if (attr.deleted_by && !(_.isNumber(attr.deleted_by) || attr.deleted_by instanceof User)) {
-                    return "'deleted_by' attribute must be a number or an instance of 'User'";
+                if (!_.isUndefined(attr.access)) {
+                    if (!_.include(ACCESS, attr.access)) {
+                        return "'access' attribute is not valid.";
+                    } else if (this.attributes.access !== attr.access) {
+                        if (attr.access === ACCESS.PUBLIC) {
+                            this.attributes.isPublic = true;
+                        } else {
+                            this.attributes.isPublic = false;
+                        }
+                    }
                 }
                 
                 if (attr.created_at) {
-                    if ((tmpCreated=this.get('created_at')) && tmpCreated!==attr.created_at) {
+                    if ((tmpCreated = this.get("created_at")) && tmpCreated !== attr.created_at) {
                         return "'created_at' attribute can not be modified after initialization!";
                     } else if (!_.isNumber(attr.created_at)) {
                         return "'created_at' attribute must be a number!";
@@ -207,41 +233,42 @@ define(["jquery",
                     return "'updated_at' attribute must be a number!";
                 }
 
-                if(attr.deleted_at && !_.isNumber(attr.deleted_at)) {
+                if (attr.deleted_at && !_.isNumber(attr.deleted_at)) {
                     return "'deleted_at' attribute must be a number!";
                 }
 
                 if (attr.labels) {
-                    attr.labels.each(function(value,index){
+                    attr.labels.each(function (value) {
                         var parseValue = value.parse({category: this.toJSON()});
                         
-                        if(parseValue.category) {
+                        if (parseValue.category) {
                             parseValue = parseValue.category;
                         }
 
                         value.category = parseValue;
-                    },this);
+                    }, this);
                 }
             },
 
             /**
              * Change category color
-             * @method 
+             * @method
              * @param  {String} color the new color
              */
-            setColor: function(color){
+            setColor: function (color) {
                 var settings = this.attributes.settings;
                 settings.color = color;
 
-                this.set('settings',settings);
+                this.set("settings", settings);
             },
             
             /**
              * Modify the current url for the annotations collection
              */
-            setUrl: function(){
-                if(this.get("labels"))
+            setUrl: function () {
+                if (this.get("labels")) {
                     this.get("labels").setUrl(this);
+                }
             },
 
             /**
@@ -249,11 +276,14 @@ define(["jquery",
              *
              * @return {JSON} JSON representation of the instane
              */
-            toJSON: function(){
+            toJSON: function () {
                 var json = Backbone.Model.prototype.toJSON.call(this);
+                if (json.tags) {
+                    json.tags = JSON.stringify(json.tags);
+                }
                 delete json.labels;
 
-                if(this.attributes.scale){
+                if (this.attributes.scale) {
                     if (this.attributes.scale.attributes) {
                         json.scale_id = this.attributes.scale.get("id");
                     } else {
@@ -269,14 +299,14 @@ define(["jquery",
              * @param  {String} parameter the parameter as String
              * @return {JSON} parameter as JSON object
              */
-            parseJSONString: function(parameter) {
+            parseJSONString: function (parameter) {
                 if (parameter && _.isString(parameter)) {
                     try {
                         parameter = JSON.parse(parameter);
                         
                     } catch (e) {
-                        console.warn("Can not parse parameter '"+parameter+"': "+e);
-                        return undefined; 
+                        console.warn("Can not parse parameter '" + parameter + "': " + e);
+                        return undefined;
                     }
                 } else if (!_.isObject(parameter) || _.isFunction(parameter)) {
                     return undefined;
@@ -285,14 +315,13 @@ define(["jquery",
                 return parameter;
             },
 
-            save: function(options){
+            save: function (options) {
                 this.attributes.settings = JSON.stringify(this.attributes.settings);
-
-                Backbone.Model.prototype.save.call(this,options);
+                Backbone.Model.prototype.save.call(this, options);
             }
 
         });
         
         return Category;
     
-});
+    });

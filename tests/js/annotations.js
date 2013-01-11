@@ -1,14 +1,15 @@
-require(['domReady',
-         'jquery',
+require(['jquery',
          'models/annotation',
          'collections/annotations',
          'access'],
                     
-        function(domReady,$,Annotation,Annotations,ACCESS){
+        function($,Annotation,Annotations,ACCESS){
         
-            domReady(function(){
                 
-                var annotations,annotation = null;
+                var annotations, 
+                    annotation,
+                    add,
+                    get;
 
                 module("Annotations",  {
                         setup: function() {
@@ -18,23 +19,24 @@ require(['domReady',
                         }
                 });
                 
+
                 test("Add", 2, function() {
                     equal(annotations.size(),2,"Should have 2 elements");                 
                     annotations.add(new Annotation({start:11}));
                     equal(annotations.size(),3, "Should have 3 elements");
                 });
-                
+
+            
+
                 test("Get", function() {
                     var newAnnotation = annotations.get(annotation.get('id'));
                     equal(annotation.get('id'), newAnnotation.get('id'),"annotation should have id "+annotation.get('id'));                 
-                });
+                })
+
                 
                 test("Remove", function() {
                     annotations.remove(annotation)
                     equal(annotations.size(),1, "Should have 1 element");
                 });
-                
-                  
-            });
             
 });

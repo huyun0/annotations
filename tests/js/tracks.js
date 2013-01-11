@@ -1,12 +1,9 @@
-require(['domReady',
-         'jquery',
+require(['jquery',
          'models/track',
          'collections/tracks',
          'access'],
                     
-        function(domReady,$,Track,Tracks,ACCESS){
-        
-            domReady(function(){
+        function($,Track,Tracks,ACCESS){
                 
                 var tracks,track = null;
                 
@@ -33,7 +30,5 @@ require(['domReady',
                     tracks.remove(track)
                     equal(tracks.size(),1, "Should have 1 element");
                 });
-                  
-            });
             
 });

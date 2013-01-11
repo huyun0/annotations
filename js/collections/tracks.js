@@ -48,6 +48,11 @@ define(["jquery",
                     return null;
             },
 
+            getMine: function(){
+                return this.where({isMine: true});
+            }, 
+
+
             getMyTracks: function(){
                 return this.where({isMine: true});
             }, 

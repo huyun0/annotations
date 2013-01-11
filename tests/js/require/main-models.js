@@ -1,7 +1,13 @@
 /* Bootstrap script for require.js */
 
 require(['config'], function () {
-    require(['tests/annotations-tool-configuration',
+
+    QUnit.config.reorder   = false;
+    QUnit.config.autostart = false;
+    QUnit.config.autorun = false;
+
+    require(['domReady',
+            'tests/annotations-tool-configuration',
             'tests/user',
             'tests/video',
             'tests/track',
@@ -11,7 +17,9 @@ require(['config'], function () {
             'tests/scale',
             'tests/scalevalue'],
 
-            function () {}
+            function (domReady) {
+                domReady(QUnit.start);
+            }
     );
 });
 

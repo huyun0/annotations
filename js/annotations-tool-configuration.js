@@ -71,7 +71,7 @@ define(['domReady',
             },
 
             getUserRole: function(){
-                return undefined;
+                return ROLES.USER;
             },
 
             /**

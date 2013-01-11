@@ -1,4 +1,4 @@
-require(['domReady',
+define(['domReady',
          'jquery',
          'models/user',
          'collections/users',
