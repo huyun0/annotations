@@ -53,6 +53,7 @@ define(["jquery",
           /** Events to handle by the annotate view */
           events: {
             "click .catItem-header i.delete"   : "onDeleteCategory",
+            "click .catItem-header i.scale"    : "toggleScale",
             "focusout .catItem-header input"   : "onFocusOut",
             "keydown .catItem-header input"    : "onKeyDown",
             "click   .catItem-add"             : "onCreateLabel",
@@ -79,11 +80,12 @@ define(["jquery",
               'onKeyDown',
               'onColorChange',
               'removeOne',
-              'onCreateLabel');
+              'onCreateLabel',
+              'toggleScale');
 
             // Type use for delete operation
             this.typeForDelete = annotationsTool.deleteOperation.targetTypes.CATEGORY;
-
+            this.roles = attr.roles;
             this.labelViews = new Array();
 
             if(attr.editModus)this.editModus = attr.editModus;
@@ -94,14 +96,16 @@ define(["jquery",
 
             this.addLabels(this.model.get("labels"));
 
-            this.model.bind('change', this.render);
-
             var labels = this.model.get("labels")
-            labels.bind('add',this.addCategory);
-            labels.bind('remove',this.removeOne);
-            labels.bind('destroy',this.removeOne);
-
-            $(annotationsTool.video).bind('switchEditModus',this.onSwitchEditModus);
+            this.listenTo(labels, 'add', this.addLabel);
+            this.listenTo(labels, 'change', this.render);
+            this.listenTo(labels, 'remove', this.removeOne);
+            this.listenTo(labels, 'destroy', this.removeOne);
+            this.listenTo(this.model, 'change', this.render);
+            
+            if (_.contains(this.roles, annotationsTool.user.get("role"))) {
+                this.listenTo(annotationsTool.video, 'switchEditModus', this.onSwitchEditModus);
+            }
 
             this.render();
 
@@ -114,7 +118,7 @@ define(["jquery",
            * Listener for edit modus switch.
            * @param {Event} event Event related to this action
            */
-          onSwitchEditModus: function(event, status){
+          onSwitchEditModus: function(status){
             this.switchEditModus(status);
           },
 
@@ -129,6 +133,21 @@ define(["jquery",
               this.$el.find('input[disabled="disabled"]').removeAttr('disabled');
             else
               this.$el.find('input').attr('disabled','disabled');
+          },
+
+          toggleScale: function(){
+            var enable = !this.$el.find('i.scale').hasClass('icon-star'),
+                settings = this.model.get("settings");
+
+            settings.hasScale = enable;
+
+            if (enable) {
+              this.$el.find('i.scale').addClass('icon-star');
+              this.$el.find('i.scale').removeClass('icon-star-empty');
+            } else {
+              this.$el.find('i.scale').addClass('icon-star-empty');
+              this.$el.find('i.scale').removeClass('icon-star');
+            }
           },
 
           /**
@@ -155,24 +174,29 @@ define(["jquery",
           },
 
           addLabel: function(label, single){
-            var labelView = new LabelView({label:label,editModus:this.editModus});
+            var labelView = new LabelView({
+                label:label,
+                editModus:this.editModus,
+                roles: this.roles
+            });
+
             this.labelViews.push(labelView);
 
             // If unique label added, we redraw all the category view
-            if(single)
+            if (single) {
                 this.render();
+            }
           },
 
           onCreateLabel: function(){
             var label = this.model.get("labels").create({value: "New label", 
                                                          abbreviation: "LB",
-                                                         category: this.model});
+                                                         category: this.model}, {wait:true});
+            label.save();
             this.model.save();
 
             if(annotationsTool.localStorage)
               annotationsTool.video.save();
-
-            this.addLabel(label,true);
           },
 
           /**
@@ -181,10 +205,10 @@ define(["jquery",
            * @param {Category} Category from which the view has to be deleted
            */
           removeOne: function(delLabel){
-            _.find(this.labelViews,function(catView,index){
-              if(delLabel === catView.model){
+            _.find(this.labelViews,function(labelView,index){
+              if(delLabel === labelView.model){
+                labelView.remove();
                 this.labelViews.splice(index,1);
-                this.render();
                 return;
               }
             },this);

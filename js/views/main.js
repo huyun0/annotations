@@ -32,6 +32,7 @@ define(["jquery",
         "backbone",
         "localstorage",
         "libs/bootstrap/bootstrap.min",
+        "libs/bootstrap/carousel2.2",
         "libs/bootstrap/tab"],
        
        function($, PlayerAdapter, Annotations,

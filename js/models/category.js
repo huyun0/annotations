@@ -42,8 +42,7 @@ define(["jquery",
                 updated_by: null,
                 deleted_at: null,
                 deleted_by: null,
-                has_duration: true,
-                labels: new Labels([], this)
+                has_duration: true
             },
             
             /**
@@ -51,6 +50,9 @@ define(["jquery",
              * @param {Object} attr Object literal containing the model initialion attribute. Should contain a name attribute.
              */
             initialize: function (attr) {
+
+                _.bindAll(this,'setUrl','validate');
+
                 if (!attr || _.isUndefined(attr.name)) {
                     throw "'name' attribute is required";
                 }
@@ -79,7 +81,13 @@ define(["jquery",
 
                 if (attr.settings) {
                     attr.settings = this.parseJSONString(attr.settings);
+                    if (attr.settings.hasScale === undefined) {
+                        attr.settings.hasScale = true;
+                    }
+                } else {
+                    attr.settings = {hasScale: true};
                 }
+
 
                 if (annotationsTool.user.get("id") === attr.created_by) {
                     attr.isMine = true;
@@ -98,12 +106,10 @@ define(["jquery",
                     delete attr.labels;
                 } else if (!attr.labels) {
                     this.attributes.labels  = new Labels([], this);
-                } else if (_.isObject(attr.labels) && !attr.labels.url && attr.labels.models) {
+                } else if (_.isObject(attr.labels) && attr.labels.model) {
                     this.attributes.labels = new Labels(attr.labels.models, this);
-                } else {
-                    this.attributes.labels = attr.labels;
                     delete attr.labels;
-                }
+                } 
 
                 if (attr.id) {
                     this.attributes.labels.fetch({async: false});
@@ -182,7 +188,7 @@ define(["jquery",
                 if (attr.id) {
                     if (this.get("id") !== attr.id) {
                         this.id = attr.id;
-                        this.setUrl();
+                        this.setUrl(attr.labels);
                     }
 
                     if (!this.ready && attr.labels && attr.labels.url && (attr.labels.length) === 0) {
@@ -265,9 +271,9 @@ define(["jquery",
             /**
              * Modify the current url for the annotations collection
              */
-            setUrl: function () {
-                if (this.get("labels")) {
-                    this.get("labels").setUrl(this);
+            setUrl: function (labels) {
+                if (labels) {
+                    labels.setUrl(this);
                 }
             },
 
