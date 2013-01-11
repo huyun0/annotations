@@ -12,7 +12,7 @@ define([],function () {
           'templates': '../templates',
           'domReady':'libs/require/config/domReady',
           'text':'libs/require/config/text',
-          'annotations-tool':'annotations-tool',
+          'annotations-tool':'../tests/js/annotations-tool-configuration',
           'tests':'../tests/js',
       },
       waitSeconds: 10,
