@@ -102,8 +102,9 @@ define(["jquery",
                                    resource.toCreate = false;
                                    resource.set(data);
 
-                                   if(resource.setUrl)
+                                   if(resource.setUrl) {
                                         resource.setUrl();
+                                   }
 
                                    if(resource.collection && options.wait)
                                       resource.collection.add(resource);

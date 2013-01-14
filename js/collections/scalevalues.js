@@ -31,6 +31,8 @@ define(["jquery",
             
             initialize: function(models, scale){
                 _.bindAll(this, "setUrl");
+
+                this.scale = scale;
                 
                 this.setUrl(scale);
             },
@@ -50,14 +52,18 @@ define(["jquery",
              * @param {Scale} scale containing the scale value
              */
             setUrl: function(scale){
-                if(!scale)
-                    throw "The parent scale of the scale value must be given!";
-                else if(scale.collection){
-                    this.url = scale.url() + "/scalevalues";
+                var currentScale = scale;
 
-                    if(annotationsTool.localStorage)
-                        this.localStorage = new Backbone.LocalStorage(this.url);
+                if (!scale && !this.scale) {
+                    throw "The parent scale of the scale value must be given!";
+                } else if (scale && scale.collection) {
+                    this.url = scale.url() + "/scalevalues";
+                } else if (this.scale.collection) {
+                    this.url = this.scale.url() + "/scalevalues";
                 }
+
+                if(annotationsTool.localStorage)
+                    this.localStorage = new Backbone.LocalStorage(this.url);
             }
         });
         

@@ -364,20 +364,17 @@ define(["jquery",
            */
           generateCategories: function(){
             var categories = new Array(),
-                scale, scalevalues;
-
-            var findByNameCat = function(cat){
+                scale, 
+                scalevalues,
+                findByNameCat = function(cat){
                   return categoriesSet[0].name == cat.get('name');
                 },
                 findByNameScale = function(scale){
                   return scalesSet[0].name == scale.get('name');
-                };
+                }, 
+                options = {wait:true};
 
-            var options = {wait:true};
-
-            //if(!annotationsTool.localStorage)
-            //  options.wait = true;
-
+            // Generate scales
             if(!annotationsTool.video.get("scales").find(findByNameScale)){
               scale = annotationsTool.video.get("scales").create({name: scalesSet[0].name},options);
               scalevalues = scale.get("scaleValues");
@@ -385,11 +382,11 @@ define(["jquery",
               _.each(scalesSet[0].values,function(scalevalue){
                 scalevalues.create({name: scalevalue.name, value: scalevalue.value, order: scalevalue.order, scale: scale},options);
               });
-            }
-            else{
-              scale = annotationsTool.video.get("scales").at(0);
+            } else{
+              scale = annotationsTool.video.get("scales").first();
             }
 
+            
             if(this.categories.find(findByNameCat)) {
               return categories;
             }
@@ -424,7 +421,7 @@ define(["jquery",
 
             },this);
 
-            return categories;
+            return categories; 
           },
 
           /**

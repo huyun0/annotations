@@ -99,7 +99,22 @@ define(["jquery",
 
                 if(attr.deleted_at && !_.isNumber(attr.deleted_at))
                     return "'deleted_at' attribute must be a number!";
-            }
+            },
+
+            /**
+             * @override
+             * 
+             * Override the default toJSON function to ensure complete JSONing.
+             *
+             * @return {JSON} JSON representation of the instane
+             */
+            toJSON: function(){
+                var json = $.proxy(Backbone.Model.prototype.toJSON,this)();
+                if (json.scale && json.scale.attributes) {
+                    json.scale = this.attributes.scale.toJSON();
+                }
+                return json;
+            },
         });
         
         return ScaleValue;

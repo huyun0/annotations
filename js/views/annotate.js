@@ -300,6 +300,7 @@ define(["jquery",
                 delete this.tracks;
                 this.undelegateEvents();
                 this.tabsContainerElement.empty();
+                this.$el.find("#editSwitch input").attr("checked",false);
                 this.tabsButtonsElement.find(".tab-button").remove();
             }
             

@@ -140,14 +140,21 @@ define(["jquery",
                 settings = this.model.get("settings");
 
             settings.hasScale = enable;
+            _.each(this.labelViews, function (labelView) {
+                labelView.toggleScale(enable);
+            });
+            this.model.set('settings',settings);
+            this.model.save();
 
-            if (enable) {
+            /*if (enable) {
               this.$el.find('i.scale').addClass('icon-star');
               this.$el.find('i.scale').removeClass('icon-star-empty');
             } else {
               this.$el.find('i.scale').addClass('icon-star-empty');
               this.$el.find('i.scale').removeClass('icon-star');
-            }
+            }*/
+
+            this.render();
           },
 
           /**
@@ -177,7 +184,8 @@ define(["jquery",
             var labelView = new LabelView({
                 label:label,
                 editModus:this.editModus,
-                roles: this.roles
+                roles: this.roles,
+                isScaleEnable: this.model.get("settings").hasScale
             });
 
             this.labelViews.push(labelView);

@@ -168,6 +168,27 @@ define(["jquery",
             },
 
             /**
+             * Parse the given parameter to JSON if given as String
+             * @param  {String} parameter the parameter as String
+             * @return {JSON} parameter as JSON object
+             */
+            parseJSONString: function (parameter) {
+                if (parameter && _.isString(parameter)) {
+                    try {
+                        parameter = JSON.parse(parameter);
+                        
+                    } catch (e) {
+                        console.warn("Can not parse parameter '" + parameter + "': " + e);
+                        return undefined;
+                    }
+                } else if (!_.isObject(parameter) || _.isFunction(parameter)) {
+                    return undefined;
+                }
+
+                return parameter;
+            },
+
+            /**
              * Parse the given settings to JSON if given as String
              * @param  {String} settings the settings as String
              * @return {JSON} settings as JSON object

@@ -150,7 +150,7 @@ define(["jquery",
                     annotationsTool.user = user;
                     this.$el.modal("toggle");
                     
-                    user.trigger("login");
+                    annotationsTool.users.trigger("login");
                         
                     return user;
                 },
@@ -159,7 +159,7 @@ define(["jquery",
                     this.$el.find("#nickname")[0].value = "";
                     this.$el.find("#email")[0].value = "";
                     this.$el.find("#remember")[0].value = "";
-                    this.$el.modal("toggle");
+                    //this.$el.modal("toggle");
                 }
 
 

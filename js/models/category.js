@@ -295,6 +295,10 @@ define(["jquery",
                     } else {
                         json.scale_id = this.attributes.scale.id;
                     }
+
+                    if (!annotationsTool.localStorage) {
+                        delete json.scale;
+                    }
                 }
 
                 return json;

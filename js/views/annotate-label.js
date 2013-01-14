@@ -80,7 +80,8 @@ define(["jquery",
                             'onFocusOut',
                             'onKeyDown',
                             'onDeleteLabel',
-                            'annnotateWithScaling');
+                            'annnotateWithScaling',
+                            'toggleScale');
 
             // Type use for delete operation
             this.typeForDelete = annotationsTool.deleteOperation.targetTypes.LABEL;
@@ -90,6 +91,7 @@ define(["jquery",
 
             this.model = attr.label;
             this.roles = attr.roles;
+            this.isScaleEnable = attr.isScaleEnable;
 
             // Add backbone events to the model 
             _.extend(this.model, Backbone.Events);
@@ -207,6 +209,14 @@ define(["jquery",
               this.$el.find('input').attr('disabled','disabled');
           },
 
+          toggleScale: function (enable) {
+            if (enable !== undefined) {
+              this.isScaleEnable = enable;
+            } else { 
+              this.isScaleEnable = !this.isScaleEnable;
+            }
+          },
+
           /**
            * Listener for focus out event on name field
            */
@@ -251,8 +261,14 @@ define(["jquery",
           render: function(){
             var modelJSON = this.model.toJSON();
             modelJSON.notEdit = !this.editModus;
-            if(this.scaleValues)
+            if (!this.isScaleEnable) {
+                if (modelJSON.scale_id) {
+                  delete modelJSON.scale_id;
+                }
+            } else if (this.scaleValues) {
               modelJSON.scaleValues = this.scaleValues.toJSON();
+            }
+
             this.$el.html(this.template(modelJSON));
             this.delegateEvents(this.events);
             return this;
