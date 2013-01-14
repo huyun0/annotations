@@ -5,7 +5,7 @@ define(['domReady',
         // Add here the files (PlayerAdapter, ...) required for your configuration
         ],
        
-    function(domReady, $, _undefined_){
+    function(domReady, $, _){
 
        
             

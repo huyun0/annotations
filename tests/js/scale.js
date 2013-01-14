@@ -1,11 +1,8 @@
-require(['domReady',
-         'jquery',
+require(['jquery',
          'models/scale',
          'access'],
                     
-        function(domReady,$,Scale,ACCESS){
-        
-            domReady(function(){
+        function($,Scale,ACCESS){
                 
                 var scale;
 
@@ -62,8 +59,5 @@ require(['domReady',
                     scale.set({access:ACCESS.PRIVATE});
                     equal(scale.get('access'), ACCESS.PRIVATE, "scale  should have "+ACCESS.PRIVATE+" as access attribute.");
                 });
-                
-                
-            });
             
 });

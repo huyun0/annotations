@@ -86,16 +86,18 @@ define(["jquery",
           events: {
             "click #carousel-prev"    : "moveCarouselPrevious",
             "click #carousel-next"    : "moveCarouselNext",
-            "click .page-link"        : "moveCarouselToFrame"
+            "click .page-link"        : "moveCarouselToFrame",
+            "mouseleave .carousel"    : "pauseCarousel"
           },
           
           /**
            * @constructor
            */
-          initialize: function(attr){
+          initialize: function (attr) {
 
-            if(!attr.id || !attr.name || !attr.categories)
+            if (!attr.id || !attr.name || !attr.categories) {
                 throw "Tab id,name and categories must be given as constuctor attributes!";
+            }
               
             // Set the current context for all these functions
             _.bindAll(this,
@@ -112,9 +114,13 @@ define(["jquery",
               'onSwitchEditModus',
               'switchEditModus',
               'insertCategoryView',
+              'initCarousel',
               'render');
 
             this.categories = attr.categories;
+            this.filter = attr.filter;
+            this.roles = attr.roles;
+            this.defaultCategoryAttributes = attr.attributes;
             
             this.categoryViews = new Array();
 
@@ -130,36 +136,29 @@ define(["jquery",
 
             this.categoriesContainer = this.carouselElement.find('.carousel-inner');
 
-            this.addCategories(this.categories.models);
+            this.addCategories(this.categories, this.filter);
 
             // Add default set of categories if nothing
-            if(this.categories.length == 0){
-              this.hasGeneratedValues = true;
-              this.addCategories(this.generateCategories());
-              this.hasGeneratedValues = false;
+            if (this.categories.length == 0) {
+                this.hasGeneratedValues = true;
+                this.addCategories(this.generateCategories());
+                this.hasGeneratedValues = false;
             }
 
-            this.categoriesContainer.find('.item:first-child').addClass("active");
-            
-            this.carouselElement
-                  .carousel({interval: false, pause: ""})
-                  .bind('slid',this.onCarouselSlid)
-                  .carousel('pause');
-
-            this.carouselPagination.find('.page-link:first').parent().addClass('active');
+            this.initCarousel();
 
             this.titleLink = attr.button;
             this.titleLink.find('i.add').bind('click',this.onAddCategory);
 
-            this.categories.bind('add',this.addCategory);
-            this.categories.bind('remove',this.removeOne);
-            this.categories.bind('destroy',this.removeOne);
+            this.listenTo(this.categories, 'add', this.addCategory);
+            this.listenTo(this.categories, 'remove', this.removeOne);
+            this.listenTo(this.categories, 'destroy', this.removeOne);
 
-            $(annotationsTool.video).bind('switchEditModus',this.onSwitchEditModus);
+            if (_.contains(this.roles, annotationsTool.user.get("role"))) {
+              this.listenTo(annotationsTool.video, 'switchEditModus', this.onSwitchEditModus);
+            }
 
-            $(document).on('mouseleave', '.carousel', function() {
-                  $(this).carousel('pause');
-            });
+            this.delegateEvents(this.events);
 
             return this;
           },
@@ -168,9 +167,27 @@ define(["jquery",
            * Add a list of category
            * @param {Categories} categories list of categories
            */
-          addCategories: function(categories){
-            _.each(categories,function(category,index){
-                this.addCategory(category);
+          addCategories: function (categories, filter) {
+            var filteredCategories;
+
+            if (categories.models) {
+              if (filter) {
+                filteredCategories = categories.where(filter);
+              } else {
+                filteredCategories = categories.models;
+              }
+            } else if (_.isArray(categories)) {
+              if (filter) {
+                _.where(categories,filter);
+              } else {
+                filteredCategories = categories;
+              }
+            } else {
+              return;
+            }
+
+            _.each(filteredCategories,function(category,index){
+                this.addCategory(category, categories, {skipTests: true});
             },this);
           },
 
@@ -179,14 +196,43 @@ define(["jquery",
            * @param {[type]}  category [description]
            * @param {Boolean} isNew    [description]
            */
-          addCategory: function(category, isTemplate){
-            var newCategory = category;
+          addCategory: function (category, collection, options) {
+            var newCategory = category,
+                isPresent = false,
+                testFilter = function () {
+                    return _.every(this.filter, function (value, attribute) {
+                        if (category.has(attribute) && category.get(attribute) === value) {
+                          return true;
+                        } else {
+                          return false;
+                        }
+                    });
+                };
 
-            if(isTemplate) // category to add is a template
+            if (!options.skipTests) {
+              if (!$.proxy(testFilter,this)()) {
+                return;
+              }
+            }
+
+
+            if (options && options.isTemplate) { // category to add is a template
               newCategory = this.categories.addCopyFromTemplate(category);
-            else if(!this.categories.get(category.get('id')))// Add this category if new
+            } else if(!this.categories.get(category.get('id'))) {// Add this category if new
               this.categories.add(newCategory,{silent:true});
+            } else {
+              _.find(this.categoryViews,function(catView,index) {
+                if(category === catView.model){
+                  isPresent = true;
+                  return true;
+                }
+              },this);
 
+              if (isPresent) {
+                return;
+              }
+              
+            }
             // Save new category    
             newCategory.save();
 
@@ -199,22 +245,36 @@ define(["jquery",
               });  
             };
             
-            if(annotationsTool.localStorage)
+            if(annotationsTool.localStorage) {
                 annotationsTool.video.save();
+            }
 
-            var categoryView = new CategoryView({category: newCategory, editModus: this.editModus});
+            var categoryView = new CategoryView({
+                category: newCategory, 
+                editModus: this.editModus,
+                roles: this.roles
+            });
 
             this.categoryViews.push(categoryView);
 
             this.insertCategoryView(categoryView);
+
           },
 
           /**
            * Listener for category creation request from UI
            * @param  {Event} event
            */
-          onAddCategory: function(event){
-            this.addCategory(new Category({name: "NEW CATEGORY", settings: {color:"grey"}, scale: annotationsTool.video.get("scales").at(0)}));
+          onAddCategory: function (event) {
+            event.stopPropagation();
+
+            var attributes = {
+              name: "NEW CATEGORY", 
+              settings: {color:"grey"}, 
+              scale: annotationsTool.video.get("scales").at(0)
+            };
+
+            this.categories.create(_.extend(attributes,this.defaultCategoryAttributes));
           },
 
           /**
@@ -222,11 +282,12 @@ define(["jquery",
            *
            * @param {Category} Category from which the view has to be deleted
            */
-          removeOne: function(delCategory){
+          removeOne: function (delCategory) {
             _.find(this.categoryViews,function(catView,index){
               if(delCategory === catView.model){
+                catView.remove();
                 this.categoryViews.splice(index,1);
-                this.render();
+                this.initCarousel();
                 return;
               }
             },this);
@@ -236,12 +297,17 @@ define(["jquery",
            * Insert the given category in the carousel
            * @param  {Category View} categoryView the view to insert
            */
-          insertCategoryView: function(categoryView){
+          insertCategoryView: function (categoryView) {
             var itemsLength = this.categoriesContainer.find('div.category-item').length;
 
             // Create a new carousel if the current one is full
-            if((itemsLength % 3)==0)
+            if ((itemsLength % 3)==0) {
               this.addCarouselItem();
+            }
+
+            if (itemsLength == 0) {
+                this.initCarousel();
+            }
 
             this.itemsCurrentContainer.append(categoryView.render().$el);
 
@@ -262,10 +328,34 @@ define(["jquery",
 
             this.itemsCurrentContainer = this.categoriesContainer.find('div div div.row-fluid').last();
 
-            if(length >= 3)
+            if(length >= 3) {
               this.carouselPagination.parent().css('display','block');
+            }
 
             this.carouselPagination.find('li:last').before(this.paginationBulletTemplate({number: (pageNumber+1), frame: pageNumber}));
+          },
+
+          initCarousel: function () {
+              var hasBeenInit = (this.categoriesContainer.find('.active').length > 0);
+
+              if (!hasBeenInit) {
+                  this.categoriesContainer.find('.item:first-child').addClass("active");
+                  this.carouselPagination.find('.page-link:first').parent().addClass('active');
+              }
+
+              this.carouselElement
+                    .carousel({interval: false, pause: ""})
+                    .bind('slid',this.onCarouselSlid)
+                    .carousel('pause');
+
+              if (!hasBeenInit) {
+                this.carouselElement.carousel(0);
+              }
+
+          },
+
+          pauseCarousel: function () {
+            this.carouselElement.carousel('pause');
           },
 
           /**
@@ -274,20 +364,17 @@ define(["jquery",
            */
           generateCategories: function(){
             var categories = new Array(),
-                scale, scalevalues;
-
-            var findByNameCat = function(cat){
+                scale, 
+                scalevalues,
+                findByNameCat = function(cat){
                   return categoriesSet[0].name == cat.get('name');
                 },
                 findByNameScale = function(scale){
                   return scalesSet[0].name == scale.get('name');
-                };
+                }, 
+                options = {wait:true};
 
-            var options = {wait:true};
-
-            //if(!annotationsTool.localStorage)
-            //  options.wait = true;
-
+            // Generate scales
             if(!annotationsTool.video.get("scales").find(findByNameScale)){
               scale = annotationsTool.video.get("scales").create({name: scalesSet[0].name},options);
               scalevalues = scale.get("scaleValues");
@@ -295,23 +382,33 @@ define(["jquery",
               _.each(scalesSet[0].values,function(scalevalue){
                 scalevalues.create({name: scalevalue.name, value: scalevalue.value, order: scalevalue.order, scale: scale},options);
               });
-            }
-            else{
-              scale = annotationsTool.video.get("scales").at(0);
+            } else{
+              scale = annotationsTool.video.get("scales").first();
             }
 
-            if(this.categories.find(findByNameCat))
+            
+            if(this.categories.find(findByNameCat)) {
               return categories;
+            }
 
             _.each(categoriesSet, function(cat,index){
 
-              var labels = cat.labels;
+              var labels = cat.labels,
+                  newCategory,
+                  newLabels;
+
+              if (_.isArray(cat.labels) || (_.isObject(cat.labels) && !cat.labels.models)) {
+                labels = cat.labels;
+              } else if (_.isObject(cat.labels) && cat.labels.models) {
+                labels = cat.labels.toJSON();
+              }
+
               cat.scale = scale;
               
               delete cat.labels;
 
-              var newCategory = new Category(cat);
-              var newLabels   = new Labels([],newCategory);
+              newCategory = new Category(cat);
+              newLabels   = new Labels([],newCategory);
 
               _.each(labels,function(lb,idx){
                 lb.category = newCategory;
@@ -324,7 +421,7 @@ define(["jquery",
 
             },this);
 
-            return categories;
+            return categories; 
           },
 
           /**
@@ -333,8 +430,7 @@ define(["jquery",
            */
           moveCarouselToFrame: function(event){
             var target = $(event.target);
-            this.carouselElement.carousel(parseInt(target.attr('title')));
-            this.carouselElement.carousel('pause');
+            this.carouselElement.carousel(parseInt(target.attr('title'))).carousel("pause");
             this.carouselPagination.find('.page-link').parent().removeClass('active');
             target.parent().addClass('active');
           },
@@ -363,19 +459,15 @@ define(["jquery",
             numberStr = numberStr.replace("item-","");
             this.carouselPagination.find('.page-link').parent().removeClass('active');
             this.carouselPagination.find('#page-'+numberStr).parent().addClass('active');
-            this.carouselElement
-                  .carousel({interval: false, pause: ""})
-                  .bind('slid',this.onCarouselSlid)
-                  .carousel('pause');
+            this.delegateEvents(this.events);
           },
 
           /**
            * Listener for edit modus switch.
            * @param {Event} event Event related to this action
            */
-          onSwitchEditModus: function(event, status){
+          onSwitchEditModus: function(status){
             this.switchEditModus(status);
-            this.carouselElement.carousel('pause');
           },
 
           /**
@@ -383,6 +475,8 @@ define(["jquery",
            * @param  {Boolean} status The current status
            */
           switchEditModus: function(status){
+            this.titleLink.toggleClass("edit-on", status)
+            this.$el.toggleClass("edit-on", status);
             this.editModus = status;
           },
 
@@ -390,8 +484,9 @@ define(["jquery",
            * Display the list
            */
           render: function(){
-            var currentId = this.categoriesContainer.find('div.item.active').attr('id');
-            var currentIndex = parseInt(currentId.replace("item-",""));
+            var currentId = this.categoriesContainer.find('div.item.active').attr('id'),
+                currentIndex;
+
             this.categoriesContainer.empty();
             this.carouselPagination.find('li:not(:last,:first)').remove();
             
@@ -399,17 +494,16 @@ define(["jquery",
                 this.insertCategoryView(catView);
             },this);
 
-            if(this.categoriesContainer.find('#'+currentId).length == 0)
-              currentIndex --;
+            if (currentId) {
+                currentIndex = parseInt(currentId.replace("item-",""));
+                if (this.categoriesContainer.find('#'+currentId).length == 0) {
+                  currentIndex --;
+                }
+                this.categoriesContainer.find('#item-'+currentIndex).addClass("active");
+                this.carouselPagination.find('#page-'+currentIndex).parent().addClass("active");
+            }
 
-
-            this.categoriesContainer.find('#item-'+currentIndex).addClass("active");
-            this.carouselPagination.find('#page-'+currentIndex).parent().addClass("active");
-
-            this.carouselElement
-                  .carousel({interval: false, pause: ""})
-                  .bind('slid',this.onCarouselSlid)
-                  .carousel('pause');
+            this.delegateEvents(this.events);
             
             return this;
           },

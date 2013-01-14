@@ -19,11 +19,10 @@
  * @module Label
  */
 define(["jquery",
-        "models/user",
         "access",
         "backbone"],
        
-    function($,User, ACCESS, Backbone){
+    function($, ACCESS, Backbone){
     
         /**
          * @constructor
@@ -74,6 +73,10 @@ define(["jquery",
 
                 if(attr.category && attr.category.attributes)
                     attr.category = attr.category.toJSON();
+
+                if (attr.tags) {
+                    attr.tags = this.parseJSONString(attr.tags);
+                }
                 
                 this.set('category',attr.category);
                 
@@ -126,15 +129,6 @@ define(["jquery",
 
                 if(attr.access && !_.include(ACCESS,attr.access))
                     return "'access' attribute is not valid.";
-                
-                if(!_.isNull(attr.created_by) && !(_.isNumber(attr.created_by) || attr.created_by instanceof User))
-                    return "'created_by' attribute must be a number or an instance of 'User'";
-            
-                if(!_.isNull(attr.updated_by) && !(_.isNumber(attr.updated_by) || attr.updated_by instanceof User))
-                    return "'updated_by' attribute must be a number or an instance of 'User'";
-                
-                if(!_.isNull(attr.deleted_by) && !(_.isNumber(attr.deleted_by) || attr.deleted_by instanceof User))
-                    return "'deleted_by' attribute must be a number or an instance of 'User'";
             
                 if(!_.isNull(attr.created_at)){
                     if((tmpCreated=this.get('created_at')) && tmpCreated!==attr.created_at)
@@ -164,9 +158,34 @@ define(["jquery",
              */
             toJSON: function(){
                 var json = $.proxy(Backbone.Model.prototype.toJSON,this)();
-                if(json.category && json.category.toJSON)
+                if (json.tags) {
+                    json.tags = JSON.stringify(json.tags);
+                }
+                if (json.category && json.category.toJSON) {
                     json.category = json.category.toJSON();
+                }
                 return json;
+            },
+
+            /**
+             * Parse the given parameter to JSON if given as String
+             * @param  {String} parameter the parameter as String
+             * @return {JSON} parameter as JSON object
+             */
+            parseJSONString: function (parameter) {
+                if (parameter && _.isString(parameter)) {
+                    try {
+                        parameter = JSON.parse(parameter);
+                        
+                    } catch (e) {
+                        console.warn("Can not parse parameter '" + parameter + "': " + e);
+                        return undefined;
+                    }
+                } else if (!_.isObject(parameter) || _.isFunction(parameter)) {
+                    return undefined;
+                }
+
+                return parameter;
             },
 
             /**

@@ -1,12 +1,9 @@
-require(['domReady',
-         'jquery',
+require(['jquery',
          'models/track',
          'collections/tracks',
          'access'],
                     
-        function(domReady,$,Track,Tracks, ACCESS){
-        
-            domReady(function(){
+        function($,Track,Tracks, ACCESS){
                 
                 var track = null;
 
@@ -94,6 +91,5 @@ require(['domReady',
                     });
                     track.set({tags:unvalidTags});                    
                 });   
-            });
             
 });

@@ -1,49 +1,23 @@
 <!doctype html>
 
     <head>
-	<meta charset="utf-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-	<title>Annotating Academic Video - Models unit tests</title>
-	<meta name="description" content="Video annotations tool - Unit Tests">
-	<meta name="author" content="Entwine">
+    	<meta charset="utf-8">
+    	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    	<title>Annotating Academic Video - Models unit tests</title>
+    	<meta name="description" content="Video annotations tool - Unit Tests">
+    	<meta name="author" content="Entwine">
         <link rel="stylesheet" href="../style/qunit.css">
-        <script data-main="../js/libs/require/config/test-config.js" src="../js/libs/require/require.js"></script>
-        
-        <script>
-            require(['domReady!',
-		     'jquery',
-		     'annotations-tool-configuration',
-		     'tests/rest-user', // User tests file
-		     'tests/rest-video-and-track',
-		     'tests/rest-scale-and-scalevalue',
-		     'tests/rest-category-and-label',
-		     //... add other test file here, files have to be in directory tests/js
-		     'libs/tests/qunit'
-		     ],
-                    
-                function(domReady,$){
-		    $('button').click(function() {
-			$.ajax({
-			  type: 'DELETE',
-			  async: false,
-			  url: window.annotationsTool.restEndpointsUrl + '/reset'
-			});
-		    });
-		    
-		    QUnit.config.reorder = false;
-		    QUnit.start();
-		});
-        </script>
-
+        <script data-main="js/require/main-rest.js" src="../js/libs/require/require.js"></script>
+        <script type="text/javascript" src="../js/libs/tests/qunit.js"></script>
     </head>
     <body>
-	<button type="button">Clear DB Tables!</button>
-        <h1 id="qunit-header">Rest</h1>
-        <h2 id="qunit-banner"></h2>
-        <div id="qunit-testrunner-toolbar"></div>
-        <h2 id="qunit-userAgent"></h2>
-        <ol id="qunit-tests"></ol>
-        <div id="qunit-fixture">test markup, will be hidden</div>
-	<video></video>
+    	<button type="button">Run tests</button>
+            <h1 id="qunit-header">Rest</h1>
+            <h2 id="qunit-banner"></h2>
+            <div id="qunit-testrunner-toolbar"></div>
+            <h2 id="qunit-userAgent"></h2>
+            <ol id="qunit-tests"></ol>
+            <div id="qunit-fixture">test markup, will be hidden</div>
+    	<video></video>
     </body>
 </html>

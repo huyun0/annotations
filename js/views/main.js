@@ -32,6 +32,7 @@ define(["jquery",
         "backbone",
         "localstorage",
         "libs/bootstrap/bootstrap.min",
+        "libs/bootstrap/carousel2.2",
         "libs/bootstrap/tab"],
        
        function($, PlayerAdapter, Annotations,
@@ -57,7 +58,7 @@ define(["jquery",
       
       /** Events to handle by the main view */
       events: {
-        "click #logout" : "logout"
+        "click #logout" : "logout",
       },
       
       initialize: function(playerAdapter){
@@ -181,27 +182,6 @@ define(["jquery",
         else{
           this.loginView.show();
         }
-      },
-      
-      loadLoginModal: function(){
-        if(!this.userModal){
-            // Otherwise we load the login modal
-            this.$el.append(LoginTmpl);
-            this.userModal = $("#user-login");
-            this.userModal.modal({show: true, backdrop: true, keyboard: false });
-            this.userModal.on("hide",function(){
-                // If user not set, display the login window again
-                if(_.isUndefined(annotationsTool.user))
-                    setTimeout(function(){$("#user-login").modal("show")},5);
-            });
-        }
-        else{
-          this.userModal.find("#nickname")[0].value = "";
-          this.userModal.find("#email")[0].value = "";
-          this.userModal.find("#remember")[0].value = "";
-          this.userModal.modal("toggle");
-        }
-        
       },
       
       /**

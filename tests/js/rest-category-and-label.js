@@ -1,7 +1,4 @@
-require(['domReady',
-         'jquery',
-         'require',
-	   'models/category',
+define(['models/category',
          'models/video',
          'models/user',
          'collections/categories',
@@ -11,10 +8,8 @@ require(['domReady',
          'underscore',
          'backbone'],
                     
-        function(domReady, $, require, Category, Video, User, Categories, Videos, Users, AnnotationsSync){
+        function(Category, Video, User, Categories, Videos, Users, AnnotationsSync){
             
-            domReady(function(){
-                QUnit.config.autostart = false;
                 Backbone.sync = AnnotationsSync;
                 
                 var category, 
@@ -29,7 +24,7 @@ require(['domReady',
                     setupLoaded = false,
                     loadUser,
                     setup,
-                    tags = '{"tag":"test tag"}',
+                    tags = {"tag":"test tag"},
                     userExtId;
                 
                 loadUser = function(){
@@ -121,7 +116,7 @@ require(['domReady',
                     notEqual(data.id,category.id, "Id is different as template category");
                     equal(data.name, category.get("name"), "Name is correct");
                     equal(data.description, category.get("description"), "Description is correct");
-                    ok(_.isEqual(data.tags, category.get("tags")), "Tags are correct");
+                    ok(_.isEqual(JSON.parse(data.tags), category.get("tags")), "Tags are correct");
                     equal(data.has_duration, category.get("has_duration"), "Duration is correct");
                     ok(data.created_at, "Created_at date is set");
                     equal(data.created_by_nickname, user.get('nickname'), "Created_by_nickname is correct");
@@ -311,8 +306,10 @@ require(['domReady',
                         success: function(data){
                             ok(true, "Get all labels successfully");
                             ok(_.isArray(data.labels), "Got all label");
-                            equal(data.labels.length, 1, "One label are successfully returned");
-                            notEqual(data.labels[0].id,label.id, "Copied label has a different id");
+                            equal(data.labels.length, category.get("labels").length, "One label are successfully returned");
+                            if (data.labels.length > 0) {
+                                notEqual(data.labels[0].id,label.id, "Copied label has a different id");
+                            }
                             start();
                         }
                     });
@@ -344,7 +341,6 @@ require(['domReady',
                     });
                 });
                 
-                
-            });
+
             
 });

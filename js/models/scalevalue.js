@@ -84,15 +84,6 @@ define(["jquery",
                 if(attr.order && !_.isNumber(attr.order))
                     return "'order' attribute must be a number";
                 
-                if(attr.created_by && !(_.isNumber(attr.created_by) || attr.created_by instanceof User))
-                    return "'created_by' attribute must be a number or an instance of 'User'";
-                
-                if(attr.updated_by && !(_.isNumber(attr.updated_by) || attr.updated_by instanceof User))
-                    return "'updated_by' attribute must be a number or an instance of 'User'";
-                
-                if(attr.deleted_by && !(_.isNumber(attr.deleted_by) || attr.deleted_by instanceof User))
-                    return "'deleted_by' attribute must be a number or an instance of 'User'";
-                
                 if(attr.access && !_.include(ACCESS,attr.access))
                     return "'access' attribute is not valid.";
                 
@@ -108,7 +99,22 @@ define(["jquery",
 
                 if(attr.deleted_at && !_.isNumber(attr.deleted_at))
                     return "'deleted_at' attribute must be a number!";
-            }
+            },
+
+            /**
+             * @override
+             * 
+             * Override the default toJSON function to ensure complete JSONing.
+             *
+             * @return {JSON} JSON representation of the instane
+             */
+            toJSON: function(){
+                var json = $.proxy(Backbone.Model.prototype.toJSON,this)();
+                if (json.scale && json.scale.attributes) {
+                    json.scale = this.attributes.scale.toJSON();
+                }
+                return json;
+            },
         });
         
         return ScaleValue;

@@ -1,14 +1,21 @@
 /* Bootstrap script for require.js */
 
-require(['config'], function () {});
+require(['config'], function () {
 
-require(['../annotations-tool-configuration',
-         '../tracks',
-         '../annotations',
-         '../categories',
-         '../labels',
-         '../scales',
-         '../scalevalues'],
+    QUnit.config.reorder   = false;
+    QUnit.config.autostart = false;
+    QUnit.config.autorun = false;
 
-        function () {}
-);
+    require(['domReady',
+             'tests/annotations-tool-configuration',
+             'tests/tracks',
+             'tests/annotations',
+             'tests/categories',
+             'tests/labels',
+             'tests/scales',
+             'tests/scalevalues'],
+            function (domReady) {
+                domReady(QUnit.start);
+            }
+    );
+});

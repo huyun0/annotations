@@ -56,16 +56,16 @@ define(["jquery",
              * @param {Video} video containing the scale
              */
             setUrl: function(video){
-                if(!video || !video.collection){ // If a template
+                if (!video || !video.collection) { // If a template
                     this.url = window.annotationsTool.restEndpointsUrl + "/scales";
                     this.isTemplate = true;
-                }
-                else{  // If not a template, we add video url      
+                } else {  // If not a template, we add video url      
                     this.url = video.url() + "/scales";
                     this.isTemplate = false;
 
-                    if(annotationsTool.localStorage)
+                    if (annotationsTool.localStorage) {
                         this.localStorage = new Backbone.LocalStorage(this.url);
+                    }
                 }
                 
                 this.each(function(scale){

@@ -6199,32 +6199,12 @@ div.timeline-item:hover {
 #annotate-container #label-tabs-contents div div.pagination a {
   line-height: 24px;
 }
-#annotate-container.edit-on #label-tabs-contents div.carousel .category-item .catItem-add {
-  margin-top: 2px;
-  padding: 5px;
-  text-align: left;
-  border-radius: 4px 4px;
-  display: block;
-  border-radius: 0px 0px 4px 4px;
-}
-#annotate-container.edit-on #label-tabs-contents div.carousel .category-item .catItem-add i {
-  margin-right: 3px;
-}
-#annotate-container.edit-on #label-tabs-contents div.carousel .category-item .catItem-add:hover {
-  cursor: pointer;
-}
-#annotate-container.edit-on #label-tabs-contents div.carousel .category-item .label-item {
-  height: 22px;
-}
-#annotate-container.edit-on #label-tabs-contents div.carousel .category-item .label-item:hover {
+#annotate-container.edit-on div.carousel .category-item .label-item:hover {
   cursor: default;
   background-color: #ffffff;
 }
-#annotate-container.edit-on #label-tabs-contents div.carousel .category-item .label-item:hover .scaling {
+#annotate-container.edit-on div.carousel .category-item .label-item:hover .scaling {
   display: none;
-}
-#annotate-container.edit-on #label-tabs-contents div.carousel .category-item .label-item:last-child {
-  border-radius: 0px;
 }
 #annotate-container.edit-on .edit {
   visibility: visible;
@@ -6242,6 +6222,51 @@ div.timeline-item:hover {
 }
 #annotate-container.edit-on .nav i.edit {
   float: none;
+}
+#annotate-container.edit-on ul.nav-tabs .edit {
+  visibility: hidden;
+}
+#annotate-container.edit-on ul.nav-tabs li.edit-on .edit {
+  visibility: visible;
+}
+#annotate-container #label-tabs-contents div.tab-pane .edit {
+  visibility: hidden;
+}
+#annotate-container #label-tabs-contents div.tab-pane .nav i.edit {
+  float: right;
+}
+#annotate-container #label-tabs-contents div.tab-pane i.edit {
+  visibility: hidden;
+}
+#annotate-container #label-tabs-contents div.tab-pane.edit-on .edit {
+  visibility: visible;
+}
+#annotate-container #label-tabs-contents div.tab-pane.edit-on div.carousel .category-item .catItem-add {
+  margin-top: 2px;
+  padding: 5px;
+  text-align: left;
+  border-radius: 4px 4px;
+  display: block;
+  border-radius: 0px 0px 4px 4px;
+}
+#annotate-container #label-tabs-contents div.tab-pane.edit-on div.carousel .category-item .catItem-add i {
+  margin-right: 3px;
+}
+#annotate-container #label-tabs-contents div.tab-pane.edit-on div.carousel .category-item .catItem-add:hover {
+  cursor: pointer;
+}
+#annotate-container #label-tabs-contents div.tab-pane.edit-on div.carousel .category-item .label-item {
+  height: 22px;
+}
+#annotate-container #label-tabs-contents div.tab-pane.edit-on div.carousel .category-item .label-item:hover {
+  cursor: default;
+  background-color: #ffffff;
+}
+#annotate-container #label-tabs-contents div.tab-pane.edit-on div.carousel .category-item .label-item:hover .scaling {
+  display: none;
+}
+#annotate-container #label-tabs-contents div.tab-pane.edit-on div.carousel .category-item .label-item:last-child {
+  border-radius: 0px;
 }
 .notrack {
   color: red;

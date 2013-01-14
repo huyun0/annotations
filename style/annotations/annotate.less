@@ -239,29 +239,8 @@
 
     &.edit-on{
 
-        #label-tabs-contents div.carousel .category-item{ 
-
-            .catItem-add{
-                margin-top: 2px;
-                padding: 5px;
-                text-align: left;
-                border-radius: 4px 4px;
-                display: block;
-                border-radius: 0px 0px 4px 4px;
-
-                i{
-                    margin-right: 3px;
-                }
-
-                &:hover{
-                    cursor: pointer;
-                    //background-color: @colorTwo;
-                }
-            }
-
+        div.carousel .category-item{ 
             .label-item{
-                height: 22px;
-
                 &:hover{
                     cursor: default;
                     background-color: @colorTwo;
@@ -269,13 +248,10 @@
                     .scaling{
                         display: none;
                     }
-                }
-
-                &:last-child{
-                    border-radius: 0px;
-                }   
-            }                     
+                } 
+            }            
         }
+
 
         .edit{
             visibility: visible;
@@ -298,7 +274,78 @@
             float: none;
         }
 
+        ul.nav-tabs {
+            .edit {
+                visibility: hidden;
+            }
+
+            li.edit-on .edit {
+                visibility: visible;
+            }
+        }
     }
+
+    #label-tabs-contents div.tab-pane {
+
+        .edit {
+            visibility: hidden;
+        }
+
+        .nav i.edit{
+            float: right;
+        }
+
+        i.edit {
+            visibility: hidden;
+        }
+
+        &.edit-on {
+
+            .edit {
+                visibility: visible;
+            }
+
+
+            div.carousel .category-item{ 
+
+                   .catItem-add{
+                        margin-top: 2px;
+                        padding: 5px;
+                        text-align: left;
+                        border-radius: 4px 4px;
+                        display: block;
+                        border-radius: 0px 0px 4px 4px;
+
+                        i{
+                            margin-right: 3px;
+                        }
+
+                        &:hover{
+                            cursor: pointer;
+                            //background-color: @colorTwo;
+                        }
+                    }
+
+                    .label-item{
+                        height: 22px;
+
+                        &:hover{
+                            cursor: default;
+                            background-color: @colorTwo;
+
+                            .scaling{
+                                display: none;
+                            }
+                        }
+
+                        &:last-child{
+                            border-radius: 0px;
+                        }   
+                    }            
+                }
+        }
+    }
+
 }
 
 

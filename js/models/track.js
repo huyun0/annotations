@@ -90,6 +90,10 @@ define(["jquery",
                 if (attr.id) {
                     this.get("annotations").fetch({async:false});
                 }
+
+                if (attr.tags) {
+                    attr.tags = this.parseJSONString(attr.tags);
+                }
                 
                 // Add backbone events to the model 
                 _.extend(this, Backbone.Events);
@@ -158,8 +162,9 @@ define(["jquery",
 
                         var annotations = this.get("annotations");
 
-                        if(annotations && (annotations.length) == 0)
+                        if (annotations && (annotations.length) == 0) {
                             annotations.fetch({async:false, add: true});
+                        }
                     }
                 }
                 
@@ -221,6 +226,9 @@ define(["jquery",
              */
             toJSON: function() {
                 var json = Backbone.Model.prototype.toJSON.call(this);
+                if (json.tags) {
+                    json.tags = JSON.stringify(json.tags);
+                }
                 delete json.annotations;
 
                 return json;

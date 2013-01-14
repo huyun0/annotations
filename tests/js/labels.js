@@ -1,13 +1,11 @@
-require(['domReady',
-         'jquery',
+require(['jquery',
          'models/label',
          'models/category',
          'collections/labels',
          'access'],
                     
-        function(domReady,$,Label,Category,Labels,ACCESS){
-        
-            domReady(function(){
+        function($,Label,Category,Labels,ACCESS){
+
                 
                 var labels,label,category;
                 
@@ -35,7 +33,5 @@ require(['domReady',
                     labels.remove(label)
                     equal(labels.size(),1, "Should have 1 element");
                 });
-                  
-            });
             
 });

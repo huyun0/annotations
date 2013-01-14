@@ -67,6 +67,8 @@ define(["jquery",
            */
           initialize: function(attr){
 
+            var scaleId;
+
             if(!attr.label || !_.isObject(attr.label))
                 throw "Label object must be given as constuctor attribute!";
               
@@ -78,7 +80,8 @@ define(["jquery",
                             'onFocusOut',
                             'onKeyDown',
                             'onDeleteLabel',
-                            'annnotateWithScaling');
+                            'annnotateWithScaling',
+                            'toggleScale');
 
             // Type use for delete operation
             this.typeForDelete = annotationsTool.deleteOperation.targetTypes.LABEL;
@@ -87,25 +90,31 @@ define(["jquery",
             if(attr.editModus)this.editModus = attr.editModus;
 
             this.model = attr.label;
+            this.roles = attr.roles;
+            this.isScaleEnable = attr.isScaleEnable;
 
             // Add backbone events to the model 
             _.extend(this.model, Backbone.Events);
             
             this.el.id = this.idPrefix+this.model.get('id');
 
-            this.model.bind('change', this.render);
+            this.listenTo(this.model, 'change', this.render);
 
-            var scaleId = this.model.get("category").scale_id;
+            scaleId = this.model.get("category").scale_id;
 
-            if(!scaleId && this.model.get("category").scale)
+            if (!scaleId && this.model.get("category").scale) {
               scaleId = this.model.get("category").scale.id;
+            }
 
             this.scaleValues = annotationsTool.video.get("scales").get(scaleId);
             
-            if(this.scaleValues)
-             this.scaleValues = this.scaleValues.get("scaleValues");
+            if (this.scaleValues) {
+              this.scaleValues = this.scaleValues.get("scaleValues");
+            }
 
-            $(annotationsTool.video).bind('switchEditModus',this.onSwitchEditModus);
+            if (_.contains(this.roles, annotationsTool.user.get("role"))) {
+              this.listenTo(annotationsTool.video, 'switchEditModus', this.onSwitchEditModus);
+            }
 
             return this.render();
           },
@@ -148,23 +157,28 @@ define(["jquery",
            * Annotate the video with this label
            */
           annotate: function(){
-            if(this.editModus)
+            if (this.editModus) {
               return;
+            }
 
-            var time = annotationsTool.playerAdapter.getCurrentTime();
+            var time = annotationsTool.playerAdapter.getCurrentTime(),
+                options = {},
+                params;
             
-            if(!_.isNumber(time) || time < 0)
+            if (!_.isNumber(time) || time < 0) {
               return;
+            }
 
-            var options = {};
-            var params = {
+            params = {
                 text: this.model.get('value'),
                 start:time,
                 label: this.model
             };
             
-            if(annotationsTool.user)
+            if (annotationsTool.user) {
                 params.created_by = annotationsTool.user.id;
+                params.created_by_nickname = annotationsTool.user.get("nickname");
+            }
 
 
             if(!annotationsTool.localStorage)
@@ -178,7 +192,7 @@ define(["jquery",
            * Listener for edit modus switch.
            * @param {Event} event Event related to this action
            */
-          onSwitchEditModus: function(event, status){
+          onSwitchEditModus: function(status){
             this.switchEditModus(status);
           },
 
@@ -193,6 +207,14 @@ define(["jquery",
               this.$el.find('input[disabled="disabled"]').removeAttr('disabled');
             else
               this.$el.find('input').attr('disabled','disabled');
+          },
+
+          toggleScale: function (enable) {
+            if (enable !== undefined) {
+              this.isScaleEnable = enable;
+            } else { 
+              this.isScaleEnable = !this.isScaleEnable;
+            }
           },
 
           /**
@@ -239,8 +261,14 @@ define(["jquery",
           render: function(){
             var modelJSON = this.model.toJSON();
             modelJSON.notEdit = !this.editModus;
-            if(this.scaleValues)
+            if (!this.isScaleEnable) {
+                if (modelJSON.scale_id) {
+                  delete modelJSON.scale_id;
+                }
+            } else if (this.scaleValues) {
               modelJSON.scaleValues = this.scaleValues.toJSON();
+            }
+
             this.$el.html(this.template(modelJSON));
             this.delegateEvents(this.events);
             return this;
