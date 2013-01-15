@@ -31,9 +31,9 @@ define(["jquery",
         "FiltersManager",
         "backbone",
         "localstorage",
-        "libs/bootstrap/bootstrap.min",
-        "libs/bootstrap/carousel2.2",
-        "libs/bootstrap/tab"],
+        "bootstrap",
+        "carousel",
+        "tab"],
        
        function($, PlayerAdapter, Annotations,
                 AnnotateView, ListView, TimelineView, LoginView,
@@ -58,7 +58,8 @@ define(["jquery",
       
       /** Events to handle by the main view */
       events: {
-        "click #logout" : "logout"
+        "click #logout" : "logout",
+        "click #print": "print"
       },
       
       initialize: function(playerAdapter){
@@ -70,7 +71,8 @@ define(["jquery",
                         "initModels",
                         "createViews",
                         "setLoadingProgress",
-                        "onWindowResize");
+                        "onWindowResize",
+                        "print");
         
         this.setLoadingProgress(10,"Starting tool.");
         
@@ -226,6 +228,16 @@ define(["jquery",
             });
 
         });
+      },
+
+      print: function () {
+        window.focus();
+        if (document.readyState === "complete") {
+          window.print();
+          document.location = document.location;
+        } else {
+          setTimeout(this.print, 1000);
+        }
       },
        
       // Get all the annotations for the current user       

@@ -42,8 +42,8 @@ define(["jquery",
         "backbone",
         "libs/handlebars",
         "libs/timeline",
-        "libs/bootstrap/tooltip",
-        "libs/bootstrap/popover"],
+        "tooltip",
+        "popover"],
        
     function($,PlayerAdapter,Annotation,Annotations,GroupTmpl,ItemTmpl,ModalGroupTmpl,ACCESS, ROLES, FiltersManager, Backbone){
 

@@ -4,7 +4,12 @@ require.config({
     paths: {
         'timeline': 'libs/timeline-min.js',
         'scrollspy': 'libs/bootstrap/scrollspy',
+        'tab': 'libs/bootstrap/tab',
+        'carousel': 'libs/bootstrap/carousel2.2',
+        'tooltip': 'libs/bootstrap/tooltip',
+        'popover': 'libs/bootstrap/popover',
         'backbone':'libs/backbone/backbone-0.9.9',
+        'jquery.colorPicker': 'libs/jquery.colorPicker.min',
         'localstorage': 'libs/backbone/backbone.localStorage-1.0',
         'jquery': 'libs/jquery-1.7.2.min',
         'underscore': 'libs/underscore-min-1.4.3',
@@ -12,9 +17,10 @@ require.config({
         'domReady':'libs/require/config/domReady',
         'text':'libs/require/config/text',
         'annotations-tool':'annotations-tool',
-        'annotations-tool-configuration':'annotations-tool-configuration'
+        'annotations-tool-configuration':'annotations-tool-configuration',
+        'bootstrap':'libs/bootstrap/bootstrap.min'
     },
-    waitSeconds: 10,
+    waitSeconds: 20,
     
     shim: {
        "underscore": {
@@ -29,7 +35,13 @@ require.config({
        "localstorage": {
         deps: ["backbone"],
         exports: "Backbone"
-       }
+       },
+
+       "bootstrap": ["jquery"],
+       "scrollspy": ["bootstrap"],
+       "carousel" : ["bootstrap"],
+       "tab" : ["bootstrap"],
+       "jquery.colorPicker": ["jquery"]
     }
 });
 

@@ -18,7 +18,7 @@
  * A module representing the player adapter implementation for the HTML5 native player
  * @module PlayerAdapterHTML5
  */
-define(['domReady!','jquery','prototypes/player_adapter'],function(domReady,$,PlayerAdapter){
+define(['domReady','jquery','prototypes/player_adapter'],function(domReady,$,PlayerAdapter){
     
 
     /**

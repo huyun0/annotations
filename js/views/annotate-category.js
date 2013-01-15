@@ -19,7 +19,7 @@ define(["jquery",
          "views/annotate-label",
         "text!templates/annotate-category.tmpl",
         "libs/handlebars",
-        "libs/jquery.colorPicker.min",
+        "jquery.colorPicker",
         "backbone"],
        
     function($, _not, LabelView, Template){
@@ -145,14 +145,6 @@ define(["jquery",
             });
             this.model.set('settings',settings);
             this.model.save();
-
-            /*if (enable) {
-              this.$el.find('i.scale').addClass('icon-star');
-              this.$el.find('i.scale').removeClass('icon-star-empty');
-            } else {
-              this.$el.find('i.scale').addClass('icon-star-empty');
-              this.$el.find('i.scale').removeClass('icon-star');
-            }*/
 
             this.render();
           },

@@ -1,13 +1,16 @@
-@import "bootstrap/bootstrap.less"; 
 
-body {
-  padding-top: 60px; 
-  padding-bottom: 40px; 
+@media screen {
+    @import "bootstrap/bootstrap.less"; 
+    @import "bootstrap/responsive.less";
+    @import "timeline/timeline-custom.less";
+    @import "colorpicker.css";
+
+    body {
+      padding-top: 60px; 
+      padding-bottom: 40px; 
+    }
 }
  
-@import "timeline/timeline-custom.less";
-@import "colorpicker.css";
-@import "bootstrap/responsive.less";
 @import "annotations/style.less";
 
 /* ===== Primary Styles ========================================================
