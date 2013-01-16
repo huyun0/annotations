@@ -1,3 +1,6 @@
+@import "colorpicker.css";
+
+@import "timeline/timeline.css";
 @media screen {
   {
     /*!
@@ -19,12 +22,6 @@
    *
    * Designed and built with all the love in the world @twitter by @mdo and @fat.
    */
-  
-    @import "timeline/timeline.css";
-  
-    /* Overlapping version */
-  
-    @import "colorpicker.css";
   
   }
   article,
@@ -4515,6 +4512,10 @@
   .invisible {
     visibility: hidden;
   }
+  body {
+    padding-top: 60px;
+    padding-bottom: 40px;
+  }
   .clearfix {
     *zoom: 1;
   }
@@ -4565,184 +4566,6 @@
   }
   .hidden-desktop {
     display: none;
-  }
-  .item-id,
-  .annotation-id,
-  .group-id,
-  .track-id,
-  .timeline-navigation-new {
-    display: none;
-  }
-  i.check {
-    visibility: hidden;
-  }
-  .checked i.check {
-    visibility: visible;
-  }
-  div.timeline-event {
-    background-color: rgba(249, 103, 38, 0.6);
-    z-index: 3;
-  }
-  div.timeline-event-selected {
-    background-color: rgba(245, 215, 115, 0.75);
-  }
-  div.timeline-groups-text {
-    font-weight: bold;
-    text-transform: capitalize;
-    font-size: 1.05em;
-    z-index: 1;
-    background-color: white;
-    position: absolute;
-    width: 2000px;
-    padding: 4px;
-    top: -6px;
-  }
-  div.timeline-groups-text div.content {
-    float: left;
-    padding: 3px;
-  }
-  div.timeline-groups-text div.timeline-group {
-    height: 55px;
-    z-index: 3;
-  }
-  div.timeline-groups-text div.timeline-group.mine:hover {
-    cursor: pointer;
-    background-color: #e6e6e6;
-  }
-  div.timeline-groups-text div.timeline-group div.content {
-    width: 105px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  div.timeline-groups-text:nth-child(odd) {
-    background-color: #ffffff;
-  }
-  div.timeline-groups-text.selected {
-    background-color: #cdcdcd;
-  }
-  div.timeline-groups-text.selected div.timeline-group:hover {
-    background-color: inherit;
-  }
-  div.timeline-groups-text i.delete,
-  div.timeline-groups-text i.visibility {
-    z-index: 4;
-    float: left;
-    margin-top: 5px;
-    margin-right: 4px;
-  }
-  div.timeline-groups-text i.delete:hover,
-  div.timeline-groups-text i.visibility:hover {
-    cursor: pointer;
-    background-color: #F66;
-    border-radius: 10px 10px 10px 10px;
-  }
-  div.timeline-groups-text i.private {
-    z-index: 4;
-    float: left;
-    margin-top: 5px;
-    margin-right: 4px;
-    top: 19px;
-    position: relative;
-    margin-left: -20px;
-    background-color: yellow;
-    border: 2px solid yellow;
-    border-radius: 20px;
-  }
-  div.timeline-customtime {
-    z-index: 3;
-  }
-  div.timeline-navigation {
-    z-index: 4;
-    height: 45px;
-    border-left: 0px;
-  }
-  div.timeline-navigation div.timeline-navigation-new,
-  div.timeline-navigation div.timeline-navigation-delete,
-  div.timeline-navigation div.timeline-navigation-zoom-in,
-  div.timeline-navigation div.timeline-navigation-zoom-out,
-  div.timeline-navigation div.timeline-navigation-move-left,
-  div.timeline-navigation div.timeline-navigation-move-right {
-    height: 22px;
-  }
-  div#reset-zoom {
-    float: left;
-  }
-  div#reset-zoom a.btn {
-    color: grey;
-  }
-  div.timeline-frame > div:first-child {
-    z-index: 2;
-    border-left: 2px solid grey;
-  }
-  div.timeline-groups-axis {
-    z-index: 1;
-    overflow: visible;
-  }
-  div.timeline-groups-axis .timeline-axis-grid-minor {
-    border: none;
-    display: none;
-  }
-  div.timeline-axis-grid-minor {
-    z-index: 2;
-  }
-  div.timeline-event-content {
-    overflow: visible;
-    margin: 0px;
-  }
-  div.timeline-event-selected {
-    background: none;
-    z-index: 10;
-  }
-  div.timeline-event-selected div.timeline-item {
-    background-color: rgba(245, 215, 115, 0.75);
-  }
-  div.timeline-event {
-    background: none;
-  }
-  div.timeline-event-range {
-    margin-top: 28px;
-    border: none;
-  }
-  div.timeline-navigation-delete {
-    display: none;
-  }
-  div.timeline-bottom-controls {
-    z-index: 50;
-    display: block;
-    position: relative;
-    float: right;
-    padding: 8px;
-  }
-  div.timeline-bottom-controls:hover {
-    cursor: pointer;
-  }
-  div.timeline-item {
-    background-color: rgba(249, 103, 38, 0.6);
-    padding: 5px;
-    border-radius: 3px;
-    overflow: hidden;
-  }
-  div.timeline-item span {
-    float: left;
-    width: 65%;
-    overflow: hidden;
-  }
-  div.timeline-item i.delete {
-    float: right;
-    display: none;
-  }
-  div.timeline-item i.delete:hover {
-    cursor: pointer;
-    background-color: #ff6666;
-    border-radius: 10px 10px 10px 10px;
-  }
-  div.timeline-item:hover {
-    cursor: pointer;
-  }
-  body {
-    padding-top: 60px;
-    padding-bottom: 40px;
   }
 }
 @media screen and (max-width: 767px) {
@@ -5813,6 +5636,181 @@
     margin-left: 30px;
   }
 }
+.item-id,
+.annotation-id,
+.group-id,
+.track-id,
+.timeline-navigation-new {
+  display: none;
+}
+i.check {
+  visibility: hidden;
+}
+.checked i.check {
+  visibility: visible;
+}
+div.timeline-event {
+  background-color: rgba(249, 103, 38, 0.6);
+  z-index: 3;
+}
+div.timeline-event-selected {
+  background-color: rgba(245, 215, 115, 0.75);
+}
+div.timeline-groups-text {
+  font-weight: bold;
+  text-transform: capitalize;
+  font-size: 1.05em;
+  z-index: 1;
+  background-color: white;
+  position: absolute;
+  width: 2000px;
+  padding: 4px;
+  top: -6px;
+}
+div.timeline-groups-text div.content {
+  float: left;
+  padding: 3px;
+}
+div.timeline-groups-text div.timeline-group {
+  height: 55px;
+  z-index: 3;
+}
+div.timeline-groups-text div.timeline-group.mine:hover {
+  cursor: pointer;
+  background-color: #e6e6e6;
+}
+div.timeline-groups-text div.timeline-group div.content {
+  width: 105px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+div.timeline-groups-text:nth-child(odd) {
+  background-color: #ffffff;
+}
+div.timeline-groups-text.selected {
+  background-color: #cdcdcd;
+}
+div.timeline-groups-text.selected div.timeline-group:hover {
+  background-color: inherit;
+}
+div.timeline-groups-text i.delete,
+div.timeline-groups-text i.visibility {
+  z-index: 4;
+  float: left;
+  margin-top: 5px;
+  margin-right: 4px;
+}
+div.timeline-groups-text i.delete:hover,
+div.timeline-groups-text i.visibility:hover {
+  cursor: pointer;
+  background-color: #F66;
+  border-radius: 10px 10px 10px 10px;
+}
+div.timeline-groups-text i.private {
+  z-index: 4;
+  float: left;
+  margin-top: 5px;
+  margin-right: 4px;
+  top: 19px;
+  position: relative;
+  margin-left: -20px;
+  background-color: yellow;
+  border: 2px solid yellow;
+  border-radius: 20px;
+}
+div.timeline-customtime {
+  z-index: 3;
+}
+div.timeline-navigation {
+  z-index: 4;
+  height: 45px;
+  border-left: 0px;
+}
+div.timeline-navigation div.timeline-navigation-new,
+div.timeline-navigation div.timeline-navigation-delete,
+div.timeline-navigation div.timeline-navigation-zoom-in,
+div.timeline-navigation div.timeline-navigation-zoom-out,
+div.timeline-navigation div.timeline-navigation-move-left,
+div.timeline-navigation div.timeline-navigation-move-right {
+  height: 22px;
+}
+div#reset-zoom {
+  float: left;
+}
+div#reset-zoom a.btn {
+  color: grey;
+}
+div.timeline-frame > div:first-child {
+  z-index: 2;
+  border-left: 2px solid grey;
+}
+div.timeline-groups-axis {
+  z-index: 1;
+  overflow: visible;
+}
+div.timeline-groups-axis .timeline-axis-grid-minor {
+  border: none;
+  display: none;
+}
+div.timeline-axis-grid-minor {
+  z-index: 2;
+}
+/* Overlapping version */
+div.timeline-event-content {
+  overflow: visible;
+  margin: 0px;
+}
+div.timeline-event-selected {
+  background: none;
+  z-index: 10;
+}
+div.timeline-event-selected div.timeline-item {
+  background-color: rgba(245, 215, 115, 0.75);
+}
+div.timeline-event {
+  background: none;
+}
+div.timeline-event-range {
+  margin-top: 28px;
+  border: none;
+}
+div.timeline-navigation-delete {
+  display: none;
+}
+div.timeline-bottom-controls {
+  z-index: 50;
+  display: block;
+  position: relative;
+  float: right;
+  padding: 8px;
+}
+div.timeline-bottom-controls:hover {
+  cursor: pointer;
+}
+div.timeline-item {
+  background-color: rgba(249, 103, 38, 0.6);
+  padding: 5px;
+  border-radius: 3px;
+  overflow: hidden;
+}
+div.timeline-item span {
+  float: left;
+  width: 65%;
+  overflow: hidden;
+}
+div.timeline-item i.delete {
+  float: right;
+  display: none;
+}
+div.timeline-item i.delete:hover {
+  cursor: pointer;
+  background-color: #ff6666;
+  border-radius: 10px 10px 10px 10px;
+}
+div.timeline-item:hover {
+  cursor: pointer;
+}
 /*
   Complete stylesheet for the annotations tool
 */
@@ -6199,12 +6197,31 @@
     -moz-box-shadow: inset 0px 0px 4px #767676;
     -webkit-box-shadow: inset 0px 0px 4px #767676;
   }
-  #list-container div.annotation .collapse i {
+  #list-container div.annotation .start input,
+  #list-container div.annotation .end input {
+    width: 65px !important;
+    padding: 1px;
+    margin: 1px;
+    border: none;
+  }
+  #list-container div.annotation .start input[disabled],
+  #list-container div.annotation .end input[disabled] {
+    border: none;
+    background: none;
+    box-shadow: none;
+    cursor: pointer;
+    margin: 1px;
+    color: white;
+    font-family: monospace;
+    /*border: 1px solid darken(@color1, 30%);*/
+  
+  }
+  #list-container .collapse i {
     float: left;
     margin-right: 5px;
     margin-left: 5px;
   }
-  #list-container div.annotation span.text {
+  #list-container span.text {
     display: block;
     margin: 5px 2px 2px 2px;
     padding: 4px;
@@ -6215,14 +6232,14 @@
     -moz-box-shadow: 0px 0px 4px #a9a9a9;
     -webkit-box-shadow: 0px 0px 4px #a9a9a9;
   }
-  #list-container div.annotation span.category {
+  #list-container span.category {
     border-radius: 3px 3px 3px 3px;
     background-color: orange;
     color: white;
     padding: 2px;
     font-size: 0.90em;
   }
-  #list-container div.annotation span.scaling {
+  #list-container span.scaling {
     border-radius: 15px;
     background-color: yellow;
     box-shadow: inset 0 0 3px;
@@ -6237,18 +6254,18 @@
     display: inline-block;
     text-align: center;
   }
-  #list-container div.annotation span.track {
+  #list-container span.track {
     border-radius: 3px 3px 3px 3px;
     background-color: #0099e6;
     color: white;
     padding: 3px;
     font-size: 0.90em;
   }
-  #list-container div.annotation span.user {
+  #list-container span.user {
     font-style: italic;
     font-weight: bold;
   }
-  #list-container div.annotation.selected {
+  #list-container.selected {
     background-color: #8f8f8f;
   }
 }
