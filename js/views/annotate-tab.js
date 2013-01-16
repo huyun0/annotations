@@ -27,10 +27,10 @@ define(["jquery",
         "text!templates/annotate-tab.tmpl",
         "default_categories_set",
         "default_scale_set",
-        "libs/handlebars",
+        "handlebars",
         "backbone"],
        
-    function($, _not, Category, Label, Scale, ScaleValue, Categories, Labels, ScaleValues, CategoryView, Template, categoriesSet, scalesSet){
+    function($, _, Category, Label, Scale, ScaleValue, Categories, Labels, ScaleValues, CategoryView, Template, categoriesSet, scalesSet, Handlebars, Backbone){
 
         /**
          * @class Tab view containing categories/label

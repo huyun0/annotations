@@ -234,7 +234,11 @@ define(["jquery",
         window.focus();
         if (document.readyState === "complete") {
           window.print();
-          document.location = document.location;
+
+          // If is Chrome, we need to refresh the window
+          if (/chrome/i.test( navigator.userAgent )) {
+            document.location.reload(false);
+          }
         } else {
           setTimeout(this.print, 1000);
         }

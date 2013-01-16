@@ -5970,7 +5970,7 @@ div.timeline-item:hover {
     float: left;
     font-weight: bold;
     margin: 0px;
-    width: 20px;
+    width: 24px;
     padding: 1px;
   }
   #annotate-container #label-tabs-contents div.carousel .category-item .label-item .item-abbreviation[disabled] {
@@ -6180,15 +6180,13 @@ div.timeline-item:hover {
   }
   #list-container div.annotation .start,
   #list-container div.annotation .end {
-    cursor: default;
+    cursor: text;
     border-radius: 3px 3px 3px 3px;
     background-color: #a9a9a9;
     padding: 2px;
     margin: 1px;
     color: white;
     font-family: monospace;
-    /*border: 1px solid darken(@color1, 30%);*/
-  
     box-shadow: 0px 0px 4px #a9a9a9;
     -moz-box-shadow: 0px 0px 4px #a9a9a9;
     -webkit-box-shadow: 0px 0px 4px #a9a9a9;
@@ -6203,25 +6201,28 @@ div.timeline-item:hover {
     padding: 1px;
     margin: 1px;
     border: none;
+    font-family: monospace;
   }
   #list-container div.annotation .start input[disabled],
   #list-container div.annotation .end input[disabled] {
     border: none;
     background: none;
     box-shadow: none;
-    cursor: pointer;
+    cursor: text;
     margin: 1px;
     color: white;
-    font-family: monospace;
-    /*border: 1px solid darken(@color1, 30%);*/
-  
   }
-  #list-container .collapse i {
+  #list-container div.annotation .start input.error,
+  #list-container div.annotation .end input.error {
+    color: red;
+    font-weight: bold;
+  }
+  #list-container div.annotation .collapse i {
     float: left;
     margin-right: 5px;
     margin-left: 5px;
   }
-  #list-container span.text {
+  #list-container div.annotation span.text {
     display: block;
     margin: 5px 2px 2px 2px;
     padding: 4px;
@@ -6232,14 +6233,14 @@ div.timeline-item:hover {
     -moz-box-shadow: 0px 0px 4px #a9a9a9;
     -webkit-box-shadow: 0px 0px 4px #a9a9a9;
   }
-  #list-container span.category {
+  #list-container div.annotation span.category {
     border-radius: 3px 3px 3px 3px;
     background-color: orange;
     color: white;
     padding: 2px;
     font-size: 0.90em;
   }
-  #list-container span.scaling {
+  #list-container div.annotation span.scaling {
     border-radius: 15px;
     background-color: yellow;
     box-shadow: inset 0 0 3px;
@@ -6254,18 +6255,18 @@ div.timeline-item:hover {
     display: inline-block;
     text-align: center;
   }
-  #list-container span.track {
+  #list-container div.annotation span.track {
     border-radius: 3px 3px 3px 3px;
     background-color: #0099e6;
     color: white;
     padding: 3px;
     font-size: 0.90em;
   }
-  #list-container span.user {
+  #list-container div.annotation span.user {
     font-style: italic;
     font-weight: bold;
   }
-  #list-container.selected {
+  #list-container div.annotation.selected {
     background-color: #8f8f8f;
   }
 }

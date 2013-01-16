@@ -89,7 +89,7 @@ define(["jquery",
                 * @param {Model, Collection} resource
                 */
                var create = function(resource){
-                    $.ajax({
+                    $.ajax(_.extend(_.clone(options),{
                               crossDomain: true,
                               type: "POST",
                               async: false,
@@ -113,7 +113,7 @@ define(["jquery",
                               },
                               
                               error: self.setError
-                    });
+                    }));
                }
                
                
@@ -123,7 +123,7 @@ define(["jquery",
                 * @param {Model, Collection} resource
                 */
                var copy = function(resource){
-                    $.ajax({
+                    $.ajax(_.extend(_.clone(options),{
                               crossDomain: true,
                               type: "POST",
                               async: false,
@@ -145,7 +145,7 @@ define(["jquery",
                               },
                               
                               error: self.setError
-                    });
+                    }));
                };
                
                /**
@@ -154,7 +154,7 @@ define(["jquery",
                 * @param {Model, Collection} resource
                 */
                var find = function(resource){
-                    $.ajax({
+                    $.ajax(_.extend(_.clone(options),{
                               crossDomain: true,
                               type: "GET",
                               url: self.getURI(resource, true),
@@ -165,7 +165,7 @@ define(["jquery",
                               },
                               
                               error: self.setError
-                    });
+                    }));
                };
                
                /**
@@ -174,7 +174,7 @@ define(["jquery",
                 * @param {Model, Collection} resource
                 */
                var findAll = function(resource){
-                    $.ajax({
+                    $.ajax(_.extend(_.clone(options),{
                               crossDomain: true,
                               type: "GET",
                               url: self.getURI(resource, false),
@@ -188,7 +188,7 @@ define(["jquery",
                               },
                               
                               error: self.setError
-                    });
+                    }));
                };
                
                /**
@@ -197,7 +197,7 @@ define(["jquery",
                 * @param {Model, Collection} resource
                 */
                var update = function(resource){
-                    $.ajax({
+                    $.ajax(_.extend(_.clone(options),{
                               crossDomain: true,
                               async: false,
                               type: "PUT",
@@ -212,7 +212,7 @@ define(["jquery",
                               },
                               
                               error: self.setError
-                    });
+                    }));
                };
                
                
@@ -222,7 +222,7 @@ define(["jquery",
                 * @param {Model, Collection} resource
                 */
                var destroy = function(resource){
-                    $.ajax({
+                    $.ajax(_.extend(_.clone(options),{
                               crossDomain: true,
                               type: "DELETE",
                               url: self.getURI(resource, true),
@@ -235,7 +235,7 @@ define(["jquery",
                                         options.error("Waiting for status code 204 but got: "+xmlHttpRequest.status);
                               },
                               error: self.setError
-                    });
+                    }));
                };
                
                     

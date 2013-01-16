@@ -23,10 +23,10 @@ define(["jquery",
         "views/annotate-tab",
         "roles",
         "access",
-        "libs/handlebars",
+        "handlebars",
         "backbone"],
        
-    function ($, _, PlayerAdapter, Annotation, Annotations, Categories, AnnotateTab, ROLES, ACCESS) {
+    function ($, _, PlayerAdapter, Annotation, Annotations, Categories, AnnotateTab, ROLES, ACCESS, Handlebars, Backbone) {
 
 
         "use strict";
@@ -49,7 +49,7 @@ define(["jquery",
               MINE: {
                       id:  "mine",
                       name: "Mine",
-                      filter: {isMine: true},
+                      filter: {isPublic: false},
                       roles: [ROLES.SUPERVISOR, ROLES.USER],
                       attributes: {access: ACCESS.PRIVATE}
                     }
@@ -145,7 +145,7 @@ define(["jquery",
             keydownOnAnnotate: function (e) {
                 // this.pressedKeys[e.keyCode] = true;
 
-                // If enter is pressed and shit not, we inset a new annotation
+                // If enter is pressed and shit not, we insert a new annotation
                 if (e.keyCode === 13 && !e.shiftKey) {
                     this.insert();
                 }

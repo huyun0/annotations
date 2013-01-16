@@ -18,10 +18,10 @@ define(["jquery",
         "underscore",
         "models/annotation",
         "text!templates/annotate-label.tmpl",
-        "libs/handlebars",
+        "handlebars",
         "backbone"],
        
-    function($, _not, Annotation, Template){
+    function($, _not, Annotation, Template, Handlebars, Backbone){
 
         /**
          * @class Label view for each item contained in annotate window

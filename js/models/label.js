@@ -81,7 +81,6 @@ define(["jquery",
                 this.set('category',attr.category);
                 
                 this.set(attr);
-                
             },
             
             parse: function(data) {                 

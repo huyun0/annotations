@@ -16,13 +16,13 @@
 
 define(["jquery",
         "underscore",
-         "views/annotate-label",
+        "views/annotate-label",
         "text!templates/annotate-category.tmpl",
-        "libs/handlebars",
+        "handlebars",
         "jquery.colorPicker",
         "backbone"],
        
-    function($, _not, LabelView, Template){
+    function ($, _not, LabelView, Template, Handlebars) {
 
         /**
          * @class label view for each item contained in annotate window
@@ -76,6 +76,7 @@ define(["jquery",
               'render',
               'switchEditModus',
               'onSwitchEditModus',
+              'onChange',
               'onFocusOut',
               'onKeyDown',
               'onColorChange',
@@ -101,7 +102,7 @@ define(["jquery",
             this.listenTo(labels, 'change', this.render);
             this.listenTo(labels, 'remove', this.removeOne);
             this.listenTo(labels, 'destroy', this.removeOne);
-            this.listenTo(this.model, 'change', this.render);
+            this.listenTo(this.model, 'change', this.onChange);
             
             if (_.contains(this.roles, annotationsTool.user.get("role"))) {
                 this.listenTo(annotationsTool.video, 'switchEditModus', this.onSwitchEditModus);
@@ -122,6 +123,13 @@ define(["jquery",
             this.switchEditModus(status);
           },
 
+          onChange: function () {
+            _.each(this.labelViews, function (labelView) {
+                labelView.toggleScale(this.model.get("settings").hasScale);
+            },this);
+            this.render();
+          },
+
           /**
            *  Switch the edit modus to the given status.
            * @param  {Boolean} status The current status
@@ -140,20 +148,15 @@ define(["jquery",
                 settings = this.model.get("settings");
 
             settings.hasScale = enable;
-            _.each(this.labelViews, function (labelView) {
-                labelView.toggleScale(enable);
-            });
             this.model.set('settings',settings);
             this.model.save();
-
-            this.render();
           },
 
           /**
            * Listener for category deletion request from UI
            * @param  {Event} event
            */
-          onDeleteCategory: function(event){
+          onDeleteCategory: function (event) {
             annotationsTool.deleteOperation.start(this.model,this.typeForDelete);
           },   
           
@@ -166,13 +169,13 @@ define(["jquery",
             this.deleted = true;
           },
 
-          addLabels: function(labels){
+          addLabels: function (labels) {
             labels.each(function(label,index){
                 this.addLabel(label, false);
             },this);
           },
 
-          addLabel: function(label, single){
+          addLabel: function (label, single) {
             var labelView = new LabelView({
                 label:label,
                 editModus:this.editModus,
@@ -188,7 +191,7 @@ define(["jquery",
             }
           },
 
-          onCreateLabel: function(){
+          onCreateLabel: function () {
             var label = this.model.get("labels").create({value: "New label", 
                                                          abbreviation: "LB",
                                                          category: this.model}, {wait:true});
@@ -204,7 +207,7 @@ define(["jquery",
            *
            * @param {Category} Category from which the view has to be deleted
            */
-          removeOne: function(delLabel){
+          removeOne: function (delLabel) {
             _.find(this.labelViews,function(labelView,index){
               if(delLabel === labelView.model){
                 labelView.remove();
@@ -232,12 +235,12 @@ define(["jquery",
             }
           },
 
-          onColorChange: function(id, newValue){
+          onColorChange: function (id, newValue) {
             this.model.setColor(newValue);
             this.model.save();
           },
 
-          render: function(){
+          render: function () {
             var modelJSON = this.model.toJSON();
             modelJSON.notEdit = !this.editModus;
 
