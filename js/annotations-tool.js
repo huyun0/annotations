@@ -19,9 +19,9 @@ define(['jquery',
         'views/main',
         'text!templates/delete-modal.tmpl',
         'text!templates/delete-warning-content.tmpl',
-        'libs/handlebars'],
+        'handlebars'],
        
-        function($, Backbone, MainView, DeleteModalTmpl,DeleteContentTmpl) {
+        function($, Backbone, MainView, DeleteModalTmpl,DeleteContentTmpl, Handlebars) {
             
             var self = this;
             

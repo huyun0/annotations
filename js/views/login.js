@@ -12,8 +12,8 @@ define(["jquery",
         "collections/users",
         "text!templates/user-login.tmpl",
         "roles",
-        "libs/handlebars"],
-        function ($, Backbone, User, Users, LoginTmpl, ROLES) {
+        "handlebars"],
+        function ($, Backbone, User, Users, LoginTmpl, ROLES, Handlebars) {
 
             "use strict";
 

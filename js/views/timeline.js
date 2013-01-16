@@ -40,12 +40,12 @@ define(["jquery",
         "roles",
         "FiltersManager",
         "backbone",
-        "libs/handlebars",
+        "handlebars",
         "libs/timeline",
-        "libs/bootstrap/tooltip",
-        "libs/bootstrap/popover"],
+        "tooltip",
+        "popover"],
        
-    function($,PlayerAdapter,Annotation,Annotations,GroupTmpl,ItemTmpl,ModalGroupTmpl,ACCESS, ROLES, FiltersManager, Backbone){
+    function ($, PlayerAdapter, Annotation, Annotations, GroupTmpl, ItemTmpl, ModalGroupTmpl, ACCESS, ROLES, FiltersManager, Backbone, Handlebars) {
 
         "use strict";
 
@@ -68,7 +68,6 @@ define(["jquery",
           
           /** Modal template for group insertion */
           modalGroupTemplate: Handlebars.compile(ModalGroupTmpl),
-
           
           /** Events to handle by the timeline view */
           events: {
@@ -95,31 +94,6 @@ define(["jquery",
            * @type {Array}
            */
           filteredItems: [],
-
-          /**
-           * List of filter used for the timeline elements
-           * @alias module:views-list.List#filters
-           * @type {Object}
-           */
-          filters: {
-              // Define if only the annotation created by the current user should be visible in the list
-              mine: {
-                active: false, 
-                filter: function(list){
-                  return _.filter(list, function(item){ 
-                    return item.isMine;
-                  },this); 
-                }
-              },
-              public: {
-                active: false, 
-                filter: function(list){
-                  return _.filter(list, function(item){ 
-                    return item.isPublic;
-                  },this); 
-                }
-              }
-          },
           
           /**
            * Constructor
@@ -142,7 +116,8 @@ define(["jquery",
                            'onTimelineItemAdded',
                            'onAnnotationDestroyed',
                            'onDeletePressed',
-                           'getVoidItem',
+                           'generateVoidItem',
+                           'generateItem',
                            'changeItem',
                            'getFormatedDate',
                            'getSelectedItemAndAnnotation',
@@ -206,22 +181,22 @@ define(["jquery",
             
             // Ensure that the timeline is redraw on window resize
             $(window).bind('resize',this.onWindowResize);
-            $(window).bind('selectTrack', $.proxy(this.onTrackSelected,this));
-            $(window).bind('deleteTrack', $.proxy(this.onDeleteTrack,this));
-            $(window).bind('updateTrack', $.proxy(this.onUpdateTrack,this));
-            $(window).bind('deleteAnnotation',$.proxy(this.onDeleteAnnotation,this));
-            $(window).bind('keydown',$.proxy(this.onDeletePressed,this));
+            $(window).bind('selectTrack', $.proxy(this.onTrackSelected, this));
+            $(window).bind('deleteTrack', $.proxy(this.onDeleteTrack, this));
+            $(window).bind('updateTrack', $.proxy(this.onUpdateTrack, this));
+            $(window).bind('deleteAnnotation', $.proxy(this.onDeleteAnnotation, this));
+            $(window).bind('keydown', $.proxy(this.onDeletePressed, this));
             
-            $(this.playerAdapter).bind('pa_timeupdate',this.onPlayerTimeUpdate);
-            links.events.addListener(this.timeline,'timechanged',this.onTimelineMoved);
-            links.events.addListener(this.timeline,'timechange',this.onTimelineMoved);
-            links.events.addListener(this.timeline,'change',this.onTimelineItemChanged);
-            links.events.addListener(this.timeline,'delete',this.onTimelineItemDeleted);
-            links.events.addListener(this.timeline,'select',this.onTimelineItemSelected);
-            links.events.addListener(this.timeline,'add',this.onTimelineItemAdded);
+            $(this.playerAdapter).bind('pa_timeupdate', this.onPlayerTimeUpdate);
+            links.events.addListener(this.timeline,'timechanged', this.onTimelineMoved);
+            links.events.addListener(this.timeline,'timechange', this.onTimelineMoved);
+            links.events.addListener(this.timeline,'change', this.onTimelineItemChanged);
+            links.events.addListener(this.timeline,'delete', this.onTimelineItemDeleted);
+            links.events.addListener(this.timeline,'select', this.onTimelineItemSelected);
+            links.events.addListener(this.timeline,'add', this.onTimelineItemAdded);
             
             this.tracks = annotationsTool.video.get("tracks");
-            this.tracks.bind('add',this.addTrack,this);
+            this.tracks.bind('add', this.addTrack,this);
             
             this.$el.show();
             this.addList(this.tracks);
@@ -252,13 +227,6 @@ define(["jquery",
            */
           addAnnotation: function(annotation, track) {
 
-            var annJSON,
-                trackJSON,
-                startTime,
-                endTime,
-                start,
-                end;
-
             if (annotation.get("oldId") && this.ignoreAdd === annotation.get("oldId")) {
               return;
             }
@@ -268,46 +236,18 @@ define(["jquery",
               annotation.bind('ready',this.addAnnotation, this);
               return;
             }
-              
-            annJSON = annotation.toJSON();
-            annJSON.id = annotation.id;
-            annJSON.track = track.id;
-            annJSON.top = this.getTopForStacking(annotation)+"px";
-            if (annJSON.label && annJSON.label.category && annJSON.label.category.settings) {
-              annJSON.category = annJSON.label.category;
-            }
 
-            trackJSON = track.toJSON();
-            trackJSON.id = track.id;
-            trackJSON.isSupervisor = (annotationsTool.user.get("role") === ROLES.SUPERVISOR);
-
-            // Calculate start/end time
-            startTime = annotation.get("start");
-            endTime   = startTime + annotation.get("duration");
-            start = this.getFormatedDate(startTime);
-            end = this.getFormatedDate(endTime);
-
-            this.allItems[annotation.id] = {
-                model: track,
-                id: annotation.id,
-                trackId: track.id,
-                isPublic: track.get("isPublic"),
-                isMine: track.get("isMine"),
-                start: start,
-                end: end,
-                content: this.itemTemplate(annJSON),
-                group: this.groupTemplate(trackJSON)
-            };
+            this.allItems[annotation.id] = this.generateItem(annotation, track);
 
 
             this.filterItems();
             this.timeline.redraw();
               
-            annotation.bind('destroy',this.onAnnotationDestroyed,this);
-            annotation.bind('selected',function() {
+            annotation.bind('destroy', this.onAnnotationDestroyed, this);
+            annotation.bind('selected', function() {
                 var itemId = this.getTimelineItemFromAnnotation(annotation).index;
                 this.timeline.selectItem(itemId);
-            },this);
+            }, this);
           },
 
           /**
@@ -328,7 +268,7 @@ define(["jquery",
             }
             
             // Add void item
-            this.allItems['track_'+track.id] = this.getVoidItem(track);
+            this.allItems['track_'+track.id] = this.generateVoidItem(track);
             this.filterItems();
             this.timeline.redraw();
 
@@ -354,7 +294,7 @@ define(["jquery",
            *
            * @param {Track} given track owning the void item
            */
-          getVoidItem: function(track){
+          generateVoidItem: function(track){
               var trackJSON = track.toJSON();
               trackJSON.id = track.id;
               trackJSON.isSupervisor = (annotationsTool.user.get("role") === ROLES.SUPERVISOR);
@@ -368,6 +308,46 @@ define(["jquery",
                 end: this.startDate-4500,
                 content: this.VOID_ITEM,
                 group: this.groupTemplate(trackJSON)
+              };
+          },
+
+
+          generateItem: function (annotation, track) {
+              var annotationJSON, 
+                  trackJSON,
+                  startTime,
+                  endTime,
+                  start,
+                  end;
+
+              annotationJSON = annotation.toJSON();
+              annotationJSON.id = annotation.id;
+              annotationJSON.track = track.id;
+              annotationJSON.top = this.getTopForStacking(annotation)+"px";
+              if (annotationJSON.label && annotationJSON.label.category && annotationJSON.label.category.settings) {
+                annotationJSON.category = annotationJSON.label.category;
+              }
+
+              trackJSON = track.toJSON();
+              trackJSON.id = track.id;
+              trackJSON.isSupervisor = (annotationsTool.user.get("role") === ROLES.SUPERVISOR);
+
+              // Calculate start/end time
+              startTime = annotation.get("start");
+              endTime   = startTime + annotation.get("duration");
+              start = this.getFormatedDate(startTime);
+              end = this.getFormatedDate(endTime);
+
+              return {
+                  model: track,
+                  id: annotation.id,
+                  trackId: track.id,
+                  isPublic: track.get("isPublic"),
+                  isMine: track.get("isMine"),
+                  start: start,
+                  end: end,
+                  content: this.itemTemplate(annotationJSON),
+                  group: this.groupTemplate(trackJSON)
               };
           },
           
@@ -517,6 +497,9 @@ define(["jquery",
            */
           changeItem: function(annotation){
             var value = this.getTimelineItemFromAnnotation(annotation);
+            this.allItems[annotation.id] = this.generateItem(annotation, value.model);
+            this.filterItems();
+            this.timeline.redraw();
             this.$el.find('.annotation-id:contains('+annotation.id+')').parent().css('margin-top',this.getTopForStacking(annotation)+"px");            
           },
           
@@ -643,7 +626,6 @@ define(["jquery",
               if (annJSON.label && annJSON.label.category && annJSON.label.category.settings) {
                 annJSON.category = annJSON.label.category;
               }
-
 
               delete this.allItems[oldItemId];
 
@@ -960,7 +942,7 @@ define(["jquery",
             
             return {
                     annotation: annotation,
-                    item: item,
+                    item: this.allItems[itemId],
                     index: selection[0].row,
                     newTrack: newTrack,
                     oldTrack: oldTrack

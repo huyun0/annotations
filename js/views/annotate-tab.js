@@ -27,10 +27,10 @@ define(["jquery",
         "text!templates/annotate-tab.tmpl",
         "default_categories_set",
         "default_scale_set",
-        "libs/handlebars",
+        "handlebars",
         "backbone"],
        
-    function($, _not, Category, Label, Scale, ScaleValue, Categories, Labels, ScaleValues, CategoryView, Template, categoriesSet, scalesSet){
+    function($, _, Category, Label, Scale, ScaleValue, Categories, Labels, ScaleValues, CategoryView, Template, categoriesSet, scalesSet, Handlebars, Backbone){
 
         /**
          * @class Tab view containing categories/label
@@ -139,11 +139,11 @@ define(["jquery",
             this.addCategories(this.categories, this.filter);
 
             // Add default set of categories if nothing
-            if (this.categories.length == 0) {
+            /*if (this.categories.length == 0) {
                 this.hasGeneratedValues = true;
                 this.addCategories(this.generateCategories());
                 this.hasGeneratedValues = false;
-            }
+            }*/
 
             this.initCarousel();
 

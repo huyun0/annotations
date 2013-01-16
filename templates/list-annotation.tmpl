@@ -1,7 +1,7 @@
 <i class="select icon-film"  id="{{id}}" href="#{{id}}" title="Move to this annotation"></i>
-<span class="start">{{time start}}</span>
+<span class="start"><input id="start-{{id}}" class="start-value" type="text" value="{{time start}}" disabled></input></span>
  {{#if duration}}
-        - <span class="duration">{{end start duration}}</span>
+        - <span class="end"><input id="start-{{id}}" class="end-value" type="text" value="{{end start duration}}" disabled></input></span>
 {{/if}}
 {{#if isMine}}<i class="private icon-user" title="You own this annotation"></i>{{/if}}
 <span class="category" {{#if label.category}}style="background-color:{{label.category.settings.color}}"{{/if}}>{{#if label}}{{label.category.name}}{{else}}Free text category{{/if}}</span>
