@@ -13,7 +13,8 @@ require(['config'], function () {
              'tests/categories',
              'tests/labels',
              'tests/scales',
-             'tests/scalevalues'],
+             'tests/scalevalues',
+             'tests/comments'],
             function (domReady) {
                 domReady(QUnit.start);
             }
