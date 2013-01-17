@@ -92,8 +92,8 @@ function ($, _not, PlayerAdapter, Annotation, User, Template, Backbone, Handleba
             "click a.collapse": "onCollapse",
             "dblclick .start": "startEdit",
             "dblclick .end": "startEdit",
-            "dblclick .start-value": "startEdit",
-            "dblclick .end-value": "startEdit",
+            "dblclick .end-btn": "startEdit",
+            "dblclick .start-btn": "startEdit",
             "keydown .start-value": "onKeyDownSaveStart",
             "keydown .end-value": "onKeyDownSaveEnd",
             "focusout .start-value": "saveStart",
@@ -159,8 +159,14 @@ function ($, _not, PlayerAdapter, Annotation, User, Template, Backbone, Handleba
         startEdit: function(event) {
             var $target = $(event.currentTarget).find("input");
 
+            if ($target.length == 0 && event.currentTarget.className.match(/-btn$/)) {
+                $target = $(event.currentTarget).parent().find("input");
+                $(event.currentTarget).parent().find("span").hide();
+            }
+
             if($target.attr("disabled")) {
                 $target.removeAttr("disabled");
+                $target.focus();
             }
         },
 
@@ -203,6 +209,7 @@ function ($, _not, PlayerAdapter, Annotation, User, Template, Backbone, Handleba
                     return;
                 } 
 
+                $target.parent().find("span").show();
                 this.model.set("duration", seconds-this.model.get("start")); 
                 this.model.save();
             }
@@ -237,6 +244,7 @@ function ($, _not, PlayerAdapter, Annotation, User, Template, Backbone, Handleba
                     return;
                 } 
 
+                $target.parent().find("span").show();
                 this.model.set({start: seconds, duration: this.model.get("duration")+this.model.get("start")-seconds}); 
                 this.model.save();
             }
@@ -252,15 +260,17 @@ function ($, _not, PlayerAdapter, Annotation, User, Template, Backbone, Handleba
                 return "";
             }
 
-            this.model.set({
-                collapsed: this.collapsed
-            }, {
-                silent: true
-            });
+            this.model.set({collapsed: this.collapsed}, {silent: true});
             var modelJSON = this.model.toJSON();
             modelJSON.track = this.track.get("name");
             modelJSON.text = modelJSON.text.replace(/\n/g, "<br/>");
             this.$el.html(this.template(modelJSON));
+
+            if ($.browser.mozilla) {
+                this.$el.find(".end").append("<span class=\"end-btn\" title=\"Double click to edit\">&nbsp;</span>");
+                this.$el.find(".start").append("<span class=\"start-btn\" title=\"Double click to edit\">&nbsp;</span>");
+            }
+
             this.delegateEvents(this.events);
             return this;
         },
@@ -280,7 +290,6 @@ function ($, _not, PlayerAdapter, Annotation, User, Template, Backbone, Handleba
             this.selectVisually();
             this.jumpTo();
         },
-
 
         /**
          * Show the selection on the annotation presentation

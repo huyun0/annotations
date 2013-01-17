@@ -6194,8 +6194,10 @@ div.timeline-item:hover {
     box-shadow: inset 0px 0px 4px #767676;
     -moz-box-shadow: inset 0px 0px 4px #767676;
     -webkit-box-shadow: inset 0px 0px 4px #767676;
-    z-index: 100;
     position: relative;
+    width: 65px !important;
+    height: 18px;
+    display: inline-block;
   }
   #list-container div.annotation .start input,
   #list-container div.annotation .end input {
@@ -6204,24 +6206,36 @@ div.timeline-item:hover {
     margin: 1px;
     border: none;
     font-family: monospace;
-    z-index: 5;
+    position: relative;
+    height: 18px;
+    z-index: 300;
   }
   #list-container div.annotation .start input[disabled],
   #list-container div.annotation .end input[disabled] {
+    z-index: 100;
     border: none;
     background: none;
     box-shadow: none;
     cursor: text;
     margin: 1px;
     color: white;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -khtml-user-select: none;
   }
   #list-container div.annotation .start input.error,
   #list-container div.annotation .end input.error {
     color: red;
     font-weight: bold;
+  }
+  #list-container div.annotation .start .start-btn,
+  #list-container div.annotation .end .start-btn,
+  #list-container div.annotation .start .end-btn,
+  #list-container div.annotation .end .end-btn {
+    position: absolute;
+    left: 0%;
+    right: 0%;
+    top: 0;
+    z-index: 150;
+    width: 65px;
+    height: 20px;
   }
   #list-container div.annotation .collapse i {
     float: left;

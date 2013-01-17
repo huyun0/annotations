@@ -59,8 +59,10 @@
             font-family: monospace;
             .box-shadow(0px,0px,4px,darken(@color1,30%));
             .inset-box-shadow(0px,0px,4px,darken(@color1,50%));
-            z-index: 100;
             position: relative;
+            width: 65px !important;
+            height: 18px;
+            display: inline-block;
 
                 input{
                     margin: 1px;
@@ -69,25 +71,34 @@
                     margin: 1px;
                     border: none;
                     font-family: monospace;
-                    z-index: 5;
+                    position: relative;
+                    height:18px;
+                    z-index: 300;
 
                     &[disabled] {
+                        z-index: 100;
                         border: none;
                         background: none;
                         box-shadow: none;
                         cursor: text;
                         margin: 1px;
                         color: white;
-
-                        -webkit-user-select: none; // webkit (safari, chrome) browsers
-                        -moz-user-select: none; // mozilla browsers
-                        -khtml-user-select: none; // webkit (konqueror) browsers
                     }
 
                     &.error {
                         color: red;
                         font-weight: bold;
                     }
+                }
+
+                .start-btn, .end-btn {
+                     position: absolute;
+                     left: 0%;
+                     right: 0%;
+                     top:0;
+                     z-index: 150;
+                     width: 65px;
+                     height: 20px;
                 }
         }
 
