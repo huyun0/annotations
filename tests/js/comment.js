@@ -1,15 +1,13 @@
 require(['jquery',
-         'models/label',
-         'models/annotation',
+         'models/comment',
          'access'],
                     
-        function($,Label,Annotation, ACCESS){
+        function($,Comment, ACCESS){
                 
             var annotation, comment;
             
             module("Comment",  {
                     setup: function() {
-                        annotation = new Annotation({start:12});
                         comment = new Comment({
                             text: "New comment"
                         })
@@ -39,24 +37,11 @@ require(['jquery',
                 equal(comment.get('text'), text, "Comment should have '"+text+"' as text.");
             });
             
-            test("Category", 2, function() {
-                stop();
-                label.bind('error',function(model,error){
-                        ok(true,"Can not be modified, error: " + error);
-                        label.unbind('error');
-                        start();
-                });
-                label.set({category:"wrong category"});
-                
-                label.set({category:category});
-                equal(label.get('category'), category, "Label  should have "+category.get("name")+" as category.");
-            });
-            
             test("Access", function() {
                 stop();
                 comment.bind('error',function(model,error){
                         ok(true,"Can not be modified, error: " + error);
-                        label.unbind('error');
+                        comment.unbind('error');
                         start();
                 });
                 comment.set({access:"Tata"});
