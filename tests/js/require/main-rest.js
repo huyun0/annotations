@@ -2,7 +2,7 @@
 // RequireJS configuration for main app
 define(['config'], function () {
     require(['jquery',
-             'tests/annotations-tool-configuration'
+             'annotations-tool-configuration'
              //... add other test file here, files have to be in directory tests/js
              ],
 
