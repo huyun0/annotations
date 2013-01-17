@@ -139,11 +139,11 @@ define(["jquery",
             this.addCategories(this.categories, this.filter);
 
             // Add default set of categories if nothing
-            if (this.categories.length == 0) {
+            /*if (this.categories.length == 0) {
                 this.hasGeneratedValues = true;
                 this.addCategories(this.generateCategories());
                 this.hasGeneratedValues = false;
-            }
+            }*/
 
             this.initCarousel();
 

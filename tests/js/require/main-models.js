@@ -16,7 +16,7 @@ require(['config'], function () {
             'tests/label',
             'tests/scale',
             'tests/scalevalue',
-            'tests/models'],
+            'tests/comment'],
 
             function (domReady) {
                 domReady(QUnit.start);

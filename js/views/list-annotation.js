@@ -87,6 +87,7 @@ function ($, _not, PlayerAdapter, Annotation, User, Template, Backbone, Handleba
         /** Events to handle */
         events: {
             "click": "onSelect",
+            ".proxy-anchor" : "onMoveToTop",
             "click i.delete": "deleteFull",
             "click .select": "onSelect",
             "click a.collapse": "onCollapse",
@@ -107,7 +108,19 @@ function ($, _not, PlayerAdapter, Annotation, User, Template, Backbone, Handleba
             if(!attr.annotation) throw "The annotations have to be given to the annotate view.";
 
             // Bind function to the good context 
-            _.bindAll(this, "render", "deleteFull", "deleteView", "onSelect", "onSelected", "selectVisually", "onCollapse", "startEdit", "saveStart", "saveEnd", "onKeyDownSaveStart", "onKeyDownSaveEnd");
+            _.bindAll(this, "render", 
+                            "deleteFull", 
+                            "deleteView", 
+                            "onSelect", 
+                            "onSelected", 
+                            "selectVisually", 
+                            "onCollapse", 
+                            "startEdit", 
+                            "saveStart", 
+                            "saveEnd", 
+                            "onKeyDownSaveStart", 
+                            "onKeyDownSaveEnd",
+                            "onMoveToTop");
 
             this.model = attr.annotation;
 
@@ -119,7 +132,7 @@ function ($, _not, PlayerAdapter, Annotation, User, Template, Backbone, Handleba
             this.listenTo(this.model, "change", this.render);
             this.listenTo(this.model, "destroy", this.deleteView);
             this.listenTo(this.model, "remove", this.deleteView);
-            this.listenTo(this.model, "selected selected_timeline", this.onSelected);
+            this.listenTo(this.model, "selected", this.onSelected);
 
             // Type use for delete operation
             this.typeForDelete = annotationsTool.deleteOperation.targetTypes.ANNOTATION;
@@ -159,6 +172,11 @@ function ($, _not, PlayerAdapter, Annotation, User, Template, Backbone, Handleba
         startEdit: function(event) {
             var $target = $(event.currentTarget).find("input");
 
+            if (!this.model.get("isMine")) {
+                return;
+            }
+
+            // Hack for Firefox, add an button over it
             if ($target.length == 0 && event.currentTarget.className.match(/-btn$/)) {
                 $target = $(event.currentTarget).parent().find("input");
                 $(event.currentTarget).parent().find("span").hide();
@@ -266,6 +284,7 @@ function ($, _not, PlayerAdapter, Annotation, User, Template, Backbone, Handleba
             modelJSON.text = modelJSON.text.replace(/\n/g, "<br/>");
             this.$el.html(this.template(modelJSON));
 
+            // Hack for Firefox, add an button over it
             if ($.browser.mozilla) {
                 this.$el.find(".end").append("<span class=\"end-btn\" title=\"Double click to edit\">&nbsp;</span>");
                 this.$el.find(".start").append("<span class=\"start-btn\" title=\"Double click to edit\">&nbsp;</span>");
@@ -278,17 +297,23 @@ function ($, _not, PlayerAdapter, Annotation, User, Template, Backbone, Handleba
         /**
          * Listener for click on this annotation
          */
-        onSelect: function() {
-            this.model.trigger("selected", this.model);
+        onSelect: function(event) {
+            this.model.trigger("selected", {model: this.model});
         },
 
         /**
          * Listener for selection done on this annotation
          */
-        onSelected: function() {
-            this.$el.parent().find(".selected").removeClass("selected");
-            this.selectVisually();
-            this.jumpTo();
+        onSelected: function(event, args) {
+            if (!this.$el.hasClass("selected")) {
+                this.$el.parent().find(".selected").removeClass("selected");
+                this.selectVisually();
+                this.jumpTo();
+            }
+        },
+
+        onMoveToTop: function (event) {
+            event.stopPropagation();
         },
 
         /**

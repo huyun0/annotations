@@ -244,10 +244,6 @@ define(["jquery",
             this.timeline.redraw();
               
             annotation.bind('destroy', this.onAnnotationDestroyed, this);
-            annotation.bind('selected', function() {
-                var itemId = this.getTimelineItemFromAnnotation(annotation).index;
-                this.timeline.selectItem(itemId);
-            }, this);
           },
 
           /**
@@ -575,7 +571,7 @@ define(["jquery",
             index = this.timeline.getItemIndex(htmlElement);
             newItem = this.timeline.getItem(index);
 
-            if (!values.newTrack.get("isMine")) { 
+            if (!values.newTrack.get("isMine") || !values.annotation.get("isMine")) { 
 
                 this.timeline.cancelChange();
                 
@@ -673,10 +669,13 @@ define(["jquery",
           /**
            * Listener for timeline item selection
            */          
-          onTimelineItemSelected: function(){
-            this.playerAdapter.pause();
-            var annotation = this.getSelectedItemAndAnnotation().annotation;
-            annotation.trigger("selected_timeline",annotation);
+          onTimelineItemSelected: function(event){
+            if (this.playerAdapter.getStatus() !== PlayerAdapter.STATUS.PLAYING) {
+              this.playerAdapter.pause();
+              var annotation = this.getSelectedItemAndAnnotation().annotation;
+              annotation.trigger("jumpto", annotation.get("start"));
+              
+            }
           },
           
           /**
