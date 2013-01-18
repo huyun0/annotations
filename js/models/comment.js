@@ -110,19 +110,19 @@ define(["jquery",
                 if(attr.access && !_.include(ACCESS,attr.access))
                     return "'access' attribute is not valid.";
                 
-                if(!_.isNull(attr.created_at)){
+                if(attr.created_at){
                     if((tmpCreated=this.get('created_at')) && tmpCreated!==attr.created_at)
                         return "'created_at' attribute can not be modified after initialization!";
                     if(!_.isNumber(attr.created_at))
                         return "'created_at' attribute must be a number!";
                 }
         
-                if(!_.isNull(attr.updated_at)){
+                if(attr.updated_at){
                     if(!_.isNumber(attr.updated_at))
                         return "'updated_at' attribute must be a number!";
                 }
 
-                if(!_.isNull(attr.deleted_at)){
+                if(attr.deleted_at){
                     if(!_.isNumber(attr.deleted_at))
                         return "'deleted_at' attribute must be a number!";
                 }
