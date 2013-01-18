@@ -113,7 +113,9 @@ define(["jquery",
                 this.filtersManager = new FiltersManager(annotationsTool.filtersManager);
                 this.listenTo(this.filtersManager, "switch", this.updateFiltersRender);
 
+                this.categories = annotationsTool.video.get("categories");
                 this.tracks = annotationsTool.video.get("tracks");
+                this.listenTo(this.categories, "change", this.render);
                 this.listenTo(this.tracks, "add", this.addTrack);
                 this.tracks.each(this.addTrack, this);
                 
@@ -136,7 +138,7 @@ define(["jquery",
                     this.addAnnotation(newAnnotation, annotationTrack);
                 }, this));
 
-                this.listenTo(ann, "destroy, destroy", this.removeOne);
+                this.listenTo(ann, "destroy", this.removeOne);
                 this.listenTo(ann, "change", this.sortViewsbyTime);
 
                 this.addList(ann.toArray(), annotationTrack);

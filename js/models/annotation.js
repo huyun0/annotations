@@ -93,7 +93,7 @@ define(["jquery",
                         attr.created_by = annotationsTool.user.get("id");
                     }
 
-                    if (attr.created_by_nickname) {
+                    if (!attr.created_by_nickname) {
                         attr.created_by_nickname = annotationsTool.user.get("nickname");
                     }
 

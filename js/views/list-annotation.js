@@ -19,11 +19,12 @@ define(["jquery",
         "prototypes/player_adapter", 
         "models/annotation", 
         "models/user", 
+        "views/comments-container",
         "text!templates/list-annotation.tmpl", 
         "backbone",
         "handlebars"],
 
-function ($, _not, PlayerAdapter, Annotation, User, Template, Backbone, Handlebars) {
+function ($, _not, PlayerAdapter, Annotation, User, CommentsContainer, Template, Backbone, Handlebars) {
 
     /**
      * Transform time in seconds (i.e. 12.344) into a well formated time (01:12:04)
@@ -87,7 +88,12 @@ function ($, _not, PlayerAdapter, Annotation, User, Template, Backbone, Handleba
         /** Events to handle */
         events: {
             "click": "onSelect",
-            ".proxy-anchor" : "onMoveToTop",
+            "click .toggle-edit": "switchEditModus",
+            "click .proxy-anchor": "stopPropagation",
+            "click .freetext textarea": "stopPropagation",
+            "click .scaling select": "stopPropagation",
+            "click .end-value": "stopPropagation",
+            "click .start-value": "stopPropagation",
             "click i.delete": "deleteFull",
             "click .select": "onSelect",
             "click a.collapse": "onCollapse",
@@ -95,10 +101,13 @@ function ($, _not, PlayerAdapter, Annotation, User, Template, Backbone, Handleba
             "dblclick .end": "startEdit",
             "dblclick .end-btn": "startEdit",
             "dblclick .start-btn": "startEdit",
-            "keydown .start-value": "onKeyDownSaveStart",
-            "keydown .end-value": "onKeyDownSaveEnd",
+            "keydown .start-value": "saveStart",
+            "keydown .end-value": "saveEnd",
+            "keydown .freetext textarea": "saveFreeText",
             "focusout .start-value": "saveStart",
-            "focusout .end-value": "saveEnd"
+            "focusout .end-value": "saveEnd",
+            "focusout .freetext textarea": "saveFreeText",
+            "change .scaling select": "saveScaling"
         },
 
         /**
@@ -118,13 +127,26 @@ function ($, _not, PlayerAdapter, Annotation, User, Template, Backbone, Handleba
                             "startEdit", 
                             "saveStart", 
                             "saveEnd", 
-                            "onKeyDownSaveStart", 
-                            "onKeyDownSaveEnd",
-                            "onMoveToTop");
+                            "saveFreeText",
+                            "saveScaling",
+                            "stopPropagation",
+                            "switchEditModus");
 
             this.model = attr.annotation;
 
             this.id = this.model.get("id");
+
+            this.isEditEnable = false;
+
+            this.commentContainer = new CommentsContainer({id: this.id, comments: this.model.get("comments")});
+
+            if (this.model.get("label")) {
+                this.scale = annotationsTool.video.get("scales").get(this.model.get("label").category.scale_id);
+            }
+
+            if (this.scale) {
+                this.scaleValues = this.scale.get("scaleValues");
+            }
 
             // Add backbone events to the model 
             _.extend(this.model, Backbone.Events);
@@ -143,7 +165,7 @@ function ($, _not, PlayerAdapter, Annotation, User, Template, Backbone, Handleba
             return this.render();
         },
 
-        /**
+        /** 
          * Delete completely the annotation
          */
         deleteFull: function(event) {
@@ -168,9 +190,28 @@ function ($, _not, PlayerAdapter, Annotation, User, Template, Backbone, Handleba
             this.model.trigger("jumpto", this.model.get("start"));
         },
 
+        switchEditModus: function (event) {
+            event.stopImmediatePropagation();
+
+            this.isEditEnable = !this.isEditEnable;
+            this.$el.toggleClass("edit-on");
+
+            if (this.isEditEnable) {
+                this.startEdit({currentTarget: this.$el.find(".start")});
+                this.startEdit({currentTarget: this.$el.find(".end")});
+            } else {
+                this.$el.find(".start input").attr("disabled", "disabled");
+                this.$el.find(".end input").attr("disabled", "disabled");
+            }
+        },
+
 
         startEdit: function(event) {
             var $target = $(event.currentTarget).find("input");
+
+            if (event.stopImmediatePropagation) {
+                event.stopImmediatePropagation();
+            }
 
             if (!this.model.get("isMine")) {
                 return;
@@ -188,16 +229,39 @@ function ($, _not, PlayerAdapter, Annotation, User, Template, Backbone, Handleba
             }
         },
 
-        onKeyDownSaveStart: function(event) {
-            if(event.keyCode === 13 && !event.shiftKey) {
-                this.saveStart(event);
+        saveFreeText: function (event) {
+            var newValue = _.escape(this.$el.find(".freetext textarea").val());
+
+            // If keydown event but not enter, value must not be saved
+            if (event.type === "keydown" && !(event.keyCode === 13 && !event.shiftKey)) {
+                return;
+            }
+
+            this.model.set({text: newValue});
+            this.model.save();
+            this.$el.find(".freetext span").html(newValue.replace(/\n/g, "<br/>"));
+
+            if (event.type === "keydown") {
+                $(event.currentTarget).blur();
             }
         },
 
-        onKeyDownSaveEnd: function(event) {
-            if(event.keyCode === 13 && !event.shiftKey) {
-                this.saveEnd(event);
+        saveScaling: function (event) {
+            var newValue = _.escape(this.$el.find(".scaling select").val());
+
+            // If keydown event but not enter, value must not be saved
+            if (event.type === "keydown" && event.keyCode !== 13) {
+                return;
             }
+
+            if (newValue === "OFF") {
+                this.model.unset("scalevalue");
+            } else {
+                this.model.set({scalevalue: this.scaleValues.get(newValue).toJSON()});
+                this.$el.find(".scaling span").html(this.scaleValues.get(newValue).get("name"));
+            }
+
+            this.model.save();
         },
 
         saveEnd: function(event) {
@@ -205,6 +269,11 @@ function ($, _not, PlayerAdapter, Annotation, User, Template, Backbone, Handleba
                 value = $target.val(),
                 values,
                 seconds;
+
+            // If keydown event but not enter, value must not be saved
+            if (event.type === "keydown" && event.keyCode !== 13) {
+                return;
+            }
 
             $target.removeClass("error");
 
@@ -232,7 +301,9 @@ function ($, _not, PlayerAdapter, Annotation, User, Template, Backbone, Handleba
                 this.model.save();
             }
 
-            $target.attr("disabled", "disabled");
+            if (!this.isEditEnable) {
+                $target.attr("disabled", "disabled");
+            }
         },
 
         saveStart: function(event) {
@@ -240,6 +311,11 @@ function ($, _not, PlayerAdapter, Annotation, User, Template, Backbone, Handleba
                 value = $target.val(),
                 values,
                 seconds;
+
+            // If keydown event but not enter, value must not be saved
+            if (event.type === "keydown" && event.keyCode !== 13) {
+                return;
+            }
 
             $target.removeClass("error");
 
@@ -267,21 +343,60 @@ function ($, _not, PlayerAdapter, Annotation, User, Template, Backbone, Handleba
                 this.model.save();
             }
 
-            $target.attr("disabled", "disabled");
+            if (!this.isEditEnable) {
+                $target.attr("disabled", "disabled");
+            }
         },
 
         /**
          * Render this view
          */
         render: function() {
+            var modelJSON,
+                scale,
+                scaleValues,
+                category,
+                selectedScaleValue;
+
             if(this.deleted) {
                 return "";
             }
 
             this.model.set({collapsed: this.collapsed}, {silent: true});
-            var modelJSON = this.model.toJSON();
+            modelJSON = this.model.toJSON();
             modelJSON.track = this.track.get("name");
-            modelJSON.text = modelJSON.text.replace(/\n/g, "<br/>");
+            modelJSON.textReadOnly = modelJSON.text.replace(/\n/g, "<br/>");
+
+
+
+            
+            if (modelJSON.isMine && this.scale && modelJSON.label.category.scale_id) {
+                category = annotationsTool.video.get("categories").get(this.model.get("label").category.id);
+
+                // Check if the category is still linked to the video to get the current version
+                if (category) {
+                    modelJSON.hasScale = category.get("settings").hasScale;
+                } else {
+                    // Othervise use the json copy
+                    modelJSON.hasScale = this.model.get("label").category.settings.hasScale;
+                }
+
+                if (modelJSON.hasScale && this.scale) {
+                    scaleValues = this.scaleValues.toJSON();
+                    selectedScaleValue = _.where(scaleValues, {id: modelJSON.scale_value_id});
+
+                    if (selectedScaleValue.length > 0) {
+                        selectedScaleValue[0].isSelected = true;
+                        scaleValues.push({id:"OFF",name:"- No scale value"});
+                    } else {
+                        scaleValues.push({id:"OFF",name:"- No scale value",isSelected:true});
+                    }
+                }
+                modelJSON.scalevalues = scaleValues;
+            }
+
+            modelJSON.isEditEnable = this.isEditEnable;
+
             this.$el.html(this.template(modelJSON));
 
             // Hack for Firefox, add an button over it
@@ -290,6 +405,7 @@ function ($, _not, PlayerAdapter, Annotation, User, Template, Backbone, Handleba
                 this.$el.find(".start").append("<span class=\"start-btn\" title=\"Double click to edit\">&nbsp;</span>");
             }
 
+            this.$el.find('div#text-container'+this.id).after(this.commentContainer.render().$el);
             this.delegateEvents(this.events);
             return this;
         },
@@ -312,8 +428,8 @@ function ($, _not, PlayerAdapter, Annotation, User, Template, Backbone, Handleba
             }
         },
 
-        onMoveToTop: function (event) {
-            event.stopPropagation();
+        stopPropagation: function (event) {
+            event.stopImmediatePropagation();
         },
 
         /**
@@ -331,10 +447,10 @@ function ($, _not, PlayerAdapter, Annotation, User, Template, Backbone, Handleba
 
             this.collapsed = !this.collapsed;
 
-            this.$el.find(".collapse > i").toggleClass("icon-chevron-right").toggleClass("icon-chevron-down");
+            this.$el.find("> a.collapse > i").toggleClass("icon-chevron-right").toggleClass("icon-chevron-down");
 
-            if(this.collapsed) this.$el.find("div.in").collapse("hide");
-            else this.$el.find("div.collapse").collapse("show");
+            if(this.collapsed) this.$el.find("> div.in").collapse("hide");
+            else this.$el.find("> div.collapse").collapse("show");
         }
 
     });
