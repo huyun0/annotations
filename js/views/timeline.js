@@ -670,9 +670,12 @@ define(["jquery",
            * Listener for timeline item selection
            */          
           onTimelineItemSelected: function(event){
-            if (this.playerAdapter.getStatus() !== PlayerAdapter.STATUS.PLAYING) {
+            var item = this.getSelectedItemAndAnnotation(),
+                annotation = item.annotation;
+
+            if (this.playerAdapter.getStatus() !== PlayerAdapter.STATUS.PLAYING || 
+                Math.abs(this.playerAdapter.getCurrentTime() - this.getTimeInSeconds(item.item.start)) > 1) {
               this.playerAdapter.pause();
-              var annotation = this.getSelectedItemAndAnnotation().annotation;
               annotation.trigger("jumpto", annotation.get("start"));
               
             }

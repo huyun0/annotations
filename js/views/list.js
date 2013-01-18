@@ -209,20 +209,26 @@ define(["jquery",
                         if (start <= currentTime && end >= currentTime) {
                             view.selectVisually();
                             
-                            if (firstSelection) {
+                            if (firstSelection && !view.isSelected) {
                                 this.doClick(view.$el.find("a.proxy-anchor")[0]);
+                                view.isSelected = true;
                                 firstSelection = false;
                             }
+                        } else {
+                            view.isSelected = false;
                         }
-                    } else if (start <= currentTime && (start + 5) >= currentTime) {
+                    } else if (start <= currentTime && (start + 5) >= currentTime && !view.isSelected) {
 
                         view.selectVisually();
 
-                        if (firstSelection) {
+                        if (firstSelection && !view.isSelected) {
                             this.doClick(view.$el.find("a.proxy-anchor")[0]);
+                            view.isSelected = true;
                             firstSelection = false;
                         }
                       
+                    } else {
+                        view.isSelected = false;
                     }
 
                 }, this);

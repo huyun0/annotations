@@ -130,6 +130,8 @@ define(["jquery",
            * Loading the video dependant views
            */
           var loadVideoDependantView = $.proxy(function(){
+              $(this.playerAdapter).off(PlayerAdapter.EVENTS.READY + " " + PlayerAdapter.EVENTS.PAUSE,loadVideoDependantView);
+
               this.setLoadingProgress(60,"Start creating views.");
               
               // Create views with Timeline
@@ -148,6 +150,8 @@ define(["jquery",
               
               this.setLoadingProgress(100,"Ready.");
               this.loadingBox.hide();
+
+              this.onWindowResize();
               
               // Show logout button
               $("a#logout").css("display","block");
@@ -161,7 +165,7 @@ define(["jquery",
           if(this.playerAdapter.getStatus() ===  PlayerAdapter.STATUS.PAUSED){
              loadVideoDependantView();
           } else{
-            $(this.playerAdapter).one(PlayerAdapter.EVENTS.READY + " " + PlayerAdapter.EVENTS.PAUSE,loadVideoDependantView);
+            $(this.playerAdapter).on(PlayerAdapter.EVENTS.READY + " " + PlayerAdapter.EVENTS.PAUSE,loadVideoDependantView);
           }
           
         },this));        
@@ -275,12 +279,13 @@ define(["jquery",
                   remindingFetchingTrack = tracks.length;
                 
                   // Function to add the different listener to the annotations
-                  tracks.each($.proxy(function (track,index) {
+                  tracks.each(function (track,index) {
                       annotations = track.get("annotations");
+                      this.listenTo(annotations, "add", this.onWindowResize);
                       if (--remindingFetchingTrack === 0) {
                           callback();
                       }
-                  }), this);
+                  }, this);
               
               },this),
               /**
