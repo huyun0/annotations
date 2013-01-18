@@ -113,7 +113,9 @@ define(["jquery",
                 this.filtersManager = new FiltersManager(annotationsTool.filtersManager);
                 this.listenTo(this.filtersManager, "switch", this.updateFiltersRender);
 
+                this.categories = annotationsTool.video.get("categories");
                 this.tracks = annotationsTool.video.get("tracks");
+                this.listenTo(this.categories, "change", this.render);
                 this.listenTo(this.tracks, "add", this.addTrack);
                 this.tracks.each(this.addTrack, this);
                 
@@ -136,7 +138,7 @@ define(["jquery",
                     this.addAnnotation(newAnnotation, annotationTrack);
                 }, this));
 
-                this.listenTo(ann, "destroy, destroy", this.removeOne);
+                this.listenTo(ann, "destroy", this.removeOne);
                 this.listenTo(ann, "change", this.sortViewsbyTime);
 
                 this.addList(ann.toArray(), annotationTrack);
@@ -207,20 +209,26 @@ define(["jquery",
                         if (start <= currentTime && end >= currentTime) {
                             view.selectVisually();
                             
-                            if (firstSelection) {
-                                //this.doClick(view.$el.find("a.proxy-anchor")[0]);
+                            if (firstSelection && !view.isSelected) {
+                                this.doClick(view.$el.find("a.proxy-anchor")[0]);
+                                view.isSelected = true;
                                 firstSelection = false;
                             }
+                        } else {
+                            view.isSelected = false;
                         }
-                    } else if (start <= currentTime && (start + 5) >= currentTime) {
+                    } else if (start <= currentTime && (start + 5) >= currentTime && !view.isSelected) {
 
                         view.selectVisually();
 
-                        if (firstSelection) {
-                            //this.doClick(view.$el.find("a.proxy-anchor")[0]);
+                        if (firstSelection && !view.isSelected) {
+                            this.doClick(view.$el.find("a.proxy-anchor")[0]);
+                            view.isSelected = true;
                             firstSelection = false;
                         }
                       
+                    } else {
+                        view.isSelected = false;
                     }
 
                 }, this);

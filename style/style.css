@@ -6171,8 +6171,47 @@ div.timeline-item:hover {
     cursor: pointer;
     box-shadow: inset 0px 0px 12px black;
   }
-  #list-container div.annotation i.delete {
+  #list-container div.annotation .edit {
+    display: none;
+    visibility: hidden;
+  }
+  #list-container div.annotation .read-only {
+    display: inline-block;
+  }
+  #list-container div.annotation.edit-on i.toggle-edit:before {
+    content: "save";
+    margin-left: -25px;
+    background-color: white;
+    padding: 2px;
+    border-radius: 4px;
+    border: 1px solid grey;
+    font-style: normal;
+    display: block;
+    box-shadow: inset 0px -1px 2px #000000;
+  }
+  #list-container div.annotation.edit-on i.toggle-edit:hover:before {
+    background-color: #b3b3b3;
+  }
+  #list-container div.annotation.edit-on span.label {
+    display: block;
+    height: 20px;
+    line-height: 20px;
+  }
+  #list-container div.annotation.edit-on .edit {
+    display: inline-block;
+    visibility: visible;
+  }
+  #list-container div.annotation.edit-on .read-only {
+    display: none;
+  }
+  #list-container div.annotation.edit-on .scaling:before {
+    content: "Scale value:";
+    margin-right: 2px;
+  }
+  #list-container div.annotation i.delete,
+  #list-container div.annotation i.toggle-edit {
     float: right;
+    visibility: visible;
   }
   #list-container div.annotation i:hover {
     cursor: pointer;
@@ -6260,8 +6299,22 @@ div.timeline-item:hover {
     padding: 2px;
     font-size: 0.90em;
   }
-  #list-container div.annotation span.scaling {
-    border-radius: 15px;
+  #list-container div.annotation span.label {
+    font-size: inherit;
+    margin: 5px;
+    font-weight: normal;
+  }
+  #list-container div.annotation span.label span.label-abr {
+    font-weight: bold;
+  }
+  #list-container div.annotation span.freetext textarea {
+    width: 97.5%;
+  }
+  #list-container div.annotation span.scaling select {
+    width: auto;
+  }
+  #list-container div.annotation span.scaling span {
+    border-radius: 5px;
     background-color: yellow;
     box-shadow: inset 0 0 3px;
     color: #D57E0F;
@@ -6271,7 +6324,7 @@ div.timeline-item:hover {
     font-weight: bold;
     padding: 0px 2px 0px 2px;
     border: 2px solid orange;
-    width: 16px;
+    width: auto;
     display: inline-block;
     text-align: center;
   }
@@ -6288,6 +6341,51 @@ div.timeline-item:hover {
   }
   #list-container div.annotation.selected {
     background-color: #8f8f8f;
+  }
+  #list-container i.add-comment {
+    float: right;
+  }
+  #list-container .comments-container {
+    border-radius: 4px 4px 4px 4px;
+    background-color: #c7c7c7;
+    margin: 2px;
+    padding: 5px;
+  }
+  #list-container .comments-container.collapse {
+    padding: 0px;
+  }
+  #list-container span.comments {
+    color: white;
+    padding: 2px;
+    font-size: 0.90em;
+  }
+  #list-container i.delete-comment {
+    float: right;
+    margin-right: 5px;
+    margin-left: 5px;
+  }
+  #list-container i.edit-comment {
+    float: right;
+    margin-right: 5px;
+    margin-left: 5px;
+  }
+  .collapse-comment i {
+    float: left;
+    margin-right: 5px;
+    margin-left: 5px;
+  }
+  .collapse-comment {
+    -webkit-transition: height 0.35s ease;
+    -moz-transition: height 0.35s ease;
+    -ms-transition: height 0.35s ease;
+    -o-transition: height 0.35s ease;
+    transition: height 0.35s ease;
+    position: relative;
+    overflow: hidden;
+    height: 0;
+  }
+  .collapse-comment.in {
+    height: auto;
   }
 }
 @media print {
@@ -6352,7 +6450,7 @@ div.timeline-item:hover {
   }
   div.navbar .brand {
     text-decoration: none;
-    font-size: 1.5em;
+    font-size: 1.3em;
   }
   div.navbar li {
     display: none;
@@ -6362,12 +6460,17 @@ div.timeline-item:hover {
   }
   div#list-container .annotation {
     padding: 2px;
-    border: gray 3px solid;
-    border-radius: 5px;
+    border-bottom: gray 3px solid;
     margin: 2px;
   }
   div#list-container .annotation > div {
     margin: 4px;
+  }
+  div#list-container .edit {
+    display: none;
+  }
+  div#list-container .label-abr {
+    font-weight: bold;
   }
   div#list-container .start,
   div#list-container .end {
@@ -6376,9 +6479,21 @@ div.timeline-item:hover {
     margin: 1px;
     border-radius: 3px;
   }
+  div#list-container input {
+    background: transparent !important;
+  }
   div#list-container .category {
     font-style: italic;
     font-weight: bold;
+  }
+  div#list-container span.freetext .read-only {
+    display: block;
+  }
+  div#list-container span.label:before {
+    content: "Label: ";
+    margin-left: 5px;
+    margin-right: 2px;
+    font-weight: normal;
   }
   div#list-container .category::before {
     content: "Category:";

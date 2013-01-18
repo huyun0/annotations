@@ -2,7 +2,7 @@
 // RequireJS configuration for main app
 define(['config'], function () {
     require(['jquery',
-             'tests/annotations-tool-configuration'
+             'annotations-tool-configuration'
              //... add other test file here, files have to be in directory tests/js
              ],
 
@@ -24,7 +24,8 @@ define(['config'], function () {
                             'tests/rest-user',
                              'tests/rest-video-and-track',
                              'tests/rest-category-and-label',
-                             'tests/rest-scale-and-scalevalue'
+                             'tests/rest-scale-and-scalevalue',
+                             'tests/rest-comments'
                              ], 
 
                              function (domReady) {

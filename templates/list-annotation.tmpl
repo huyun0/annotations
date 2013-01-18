@@ -1,3 +1,4 @@
+<a href="#{{id}}" class="proxy-anchor"></a>
 <i class="select icon-film"  id="{{id}}" href="#{{id}}" title="Move to this annotation"></i>
 <span class="start">
     <input id="start-{{id}}" class="start-value" type="text" value="{{time start}}" disabled></input>
@@ -7,10 +8,19 @@
             <input id="start-{{id}}" class="end-value" type="text" value="{{end start duration}}" disabled></input>
         </span>
 {{/if}}
-{{#if isMine}}<i class="private icon-user" title="You own this annotation"></i>{{/if}}
-<span class="category" {{#if label.category}}style="background-color:{{label.category.settings.color}}"{{/if}}>{{#if label}}{{label.category.name}}{{else}}Free text category{{/if}}</span>
 
-{{#if isMine}}<i class="delete icon-trash" title="Delete  annotation"></i>{{/if}}
+{{#if isMine}}
+<i class="private icon-user" title="You own this annotation"></i>
+{{/if}}
+
+<span class="category" {{#if label.category}}style="background-color:{{label.category.settings.color}}"{{/if}}>
+    {{#if label}}{{label.category.name}}{{else}}Free text category{{/if}}
+</span>
+
+{{#if isMine}}
+<i class="delete icon-trash" title="Delete annotation."></i>
+<i class="toggle-edit icon-edit" title="Edit annotation."></i>
+{{/if}}
 
 <a class="collapse" title="collapse">
  <i class="{{#if collapsed}}icon-chevron-right{{else}}icon-chevron-down{{/if}}"></i>
@@ -18,11 +28,37 @@
 
 <div id="text-container{{id}}" class="{{#if collapsed}}out{{else}}in{{/if}}">
         <span class="text">
-                {{#if scalevalue}}<span class="scaling">{{scalevalue.name}}</span>{{/if}} {{#if label}}<b>{{label.abbreviation}}</b>{{/if}} {{{text}}}
+                {{#if scalevalues}}
+                <span class="scaling">
+                    {{#if isMine}}
+                    <select class="edit">
+                        {{#each scalevalues}}
+                        <option value="{{this.id}}" {{#if this.isSelected}}selected="selected"{{/if}}>{{this.name}}</option>
+                        {{/each}}
+                    </select>
+                    {{/if}} 
+                    {{#if scalevalue}}
+                    <span class="read-only">{{scalevalue.name}}</span>
+                    {{/if}} 
+                </span>
+                {{/if}} 
+                {{#if label}}
+                <span class="label">
+                    <span class="label-abr">{{label.abbreviation}}</span>
+                    <span class="label-desc">{{label.value}}</span>
+                </span>
+                {{/if}}
+                <span class="freetext">
+                    {{#if isMine}}
+                    <textarea class="edit" placeholder="free text...">{{{text}}}</textarea>
+                    {{/if}}
+                    <span class="read-only">{{text}}</span>
+                </span>
                 {{#if created_by}}
-                <p align="right">added by <span class="user">{{#if created_by_nickname}}{{created_by_nickname}}{{else}}{{nickname created_by}}{{/if}}</span> on <span class="track">{{track}}</span></p>
+                <p align="right">added by 
+                    <span class="user">{{#if created_by_nickname}}{{created_by_nickname}}{{else}}{{nickname created_by}}{{/if}}</span> on 
+                    <span class="track">{{track}}</span></p>
                 {{/if}}
         </span>
 </div>
-<a href="#{{id}}" class="proxy-anchor"></a>
 <!--<button id="stopduration">Stop duration</button>-->

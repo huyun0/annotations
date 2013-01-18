@@ -23,11 +23,12 @@
  * @requires backbone
  */
 define(["jquery",
+        "collections/comments",
         "access",
         "backbone",
         "localstorage"],
        
-    function($, ACCESS, Backbone){
+    function($, Comments, ACCESS, Backbone){
 
         "use strict";
     
@@ -55,6 +56,7 @@ define(["jquery",
              * @param {Object} attr Object literal containing the model initialion attribute. 
              */
             initialize: function(attr){ 
+                var saveChange;
 
                 if (!attr || _.isUndefined(attr.start)) {
                     throw "'start' attribute is required";
@@ -70,12 +72,37 @@ define(["jquery",
                     this.toCreate = true;
                 }
 
+                if (attr.comments && _.isArray(attr.comments)){
+                    this.attributes.comments = new Comments(attr.comments,this);
+                    delete attr.comments;
+                } else if (!attr.comments){
+                    this.attributes.comments  = new Comments([],this);
+                } else {
+                    this.attributes.comments = attr.comments;
+                    delete attr.comments;
+                }
+
+                if (attr.id) {
+                    this.attributes.comments.fetch({async:false});
+                }
+
+
                 // If localStorage used, we have to save the video at each change on the children
                 if (window.annotationsTool.localStorage){
                     if (!attr.created_by) {
                         attr.created_by = annotationsTool.user.get("id");
+                    }
+
+                    if (!attr.created_by_nickname) {
                         attr.created_by_nickname = annotationsTool.user.get("nickname");
                     }
+
+                    saveChange = function(comment) {
+                        this.save();
+                        this.trigger("change");
+                    }
+                    this.attributes.comments.bind('change',saveChange,this);
+                    this.attributes.comments.bind('remove',saveChange,this);
                 }
 
                 if (attr.tags) {
@@ -131,6 +158,10 @@ define(["jquery",
                     }
                 }
 
+                if (annotationsTool.localStorage && _.isArray(attr.comments)) {
+                    attr.comments = new Comments(attr.comments,this);
+                }
+
                 if (!annotationsTool.localStorage &&  attr.label_id && (_.isNumber(attr.label_id) || _.isString(attr.label_id))) {
                     categories = annotationsTool.video.get('categories');
 
@@ -166,7 +197,7 @@ define(["jquery",
              * @return {String}  If the validation failed, an error message will be returned.
              */
             validate: function(attr){
-                var tmpCreated;
+                var tmpCreated, comments;
                 
                 if (attr.id) {
                     if (this.get('id') !== attr.id) {
@@ -174,6 +205,14 @@ define(["jquery",
                         this.attributes.id = attr.id;
                         this.toCreate = false;
                         this.trigger('ready',this);
+                        this.setUrl();
+                        
+                        comments = this.attributes.comments;
+
+                        if (comments && (comments.length) == 0) {
+                            comments.fetch({async:false});
+                        }
+
                     }
                 }
 
@@ -224,6 +263,15 @@ define(["jquery",
             },
 
             /**
+             * Modify the current url for the annotations collection
+             */
+            setUrl: function(){
+                if(this.get("comments"))
+                    this.get("comments").setUrl(this);
+            },
+
+
+            /**
              * Parse the given parameter to JSON if given as String
              * @alias module:models-track.Track#parseJSONString
              * @param  {String} parameter the parameter as String
@@ -252,6 +300,7 @@ define(["jquery",
              */
             toJSON: function(){
                 var json = $.proxy(Backbone.Model.prototype.toJSON,this)();
+                delete json.comments;
                 if (json.tags) {
                     json.tags = JSON.stringify(json.tags);
                 }

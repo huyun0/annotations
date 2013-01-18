@@ -107,6 +107,7 @@ define(["jquery",
               'removeOne',
               'addCarouselItem',
               'generateCategories',
+              'generateScales',
               'moveCarouselToFrame',
               'moveCarouselPrevious',
               'moveCarouselNext',
@@ -144,6 +145,7 @@ define(["jquery",
                 this.addCategories(this.generateCategories());
                 this.hasGeneratedValues = false;
             }*/
+            this.generateScales();
 
             this.initCarousel();
 
@@ -358,70 +360,73 @@ define(["jquery",
             this.carouselElement.carousel('pause');
           },
 
+          generateScales: function () {
+              var scale,
+                  scalevalues,
+                  findByNameScale = function(scale){
+                    return scalesSet[0].name == scale.get('name');
+                  }, 
+                  options = {wait:true};
+
+              // Generate scales
+              if(!annotationsTool.video.get("scales").find(findByNameScale)){
+                scale = annotationsTool.video.get("scales").create({name: scalesSet[0].name},options);
+                scalevalues = scale.get("scaleValues");
+   
+                _.each(scalesSet[0].values,function(scalevalue){
+                  scalevalues.create({name: scalevalue.name, value: scalevalue.value, order: scalevalue.order, scale: scale},options);
+                });
+              } else{
+                scale = annotationsTool.video.get("scales").first();
+              }
+          },
+
           /**
            * Temporaray function to generate sample categories / lables
            * @return {Categories} Category collection
            */
-          generateCategories: function(){
+          generateCategories: function(scale){
             var categories = new Array(),
-                scale, 
-                scalevalues,
                 findByNameCat = function(cat){
                   return categoriesSet[0].name == cat.get('name');
                 },
-                findByNameScale = function(scale){
-                  return scalesSet[0].name == scale.get('name');
-                }, 
                 options = {wait:true};
 
-            // Generate scales
-            if(!annotationsTool.video.get("scales").find(findByNameScale)){
-              scale = annotationsTool.video.get("scales").create({name: scalesSet[0].name},options);
-              scalevalues = scale.get("scaleValues");
- 
-              _.each(scalesSet[0].values,function(scalevalue){
-                scalevalues.create({name: scalevalue.name, value: scalevalue.value, order: scalevalue.order, scale: scale},options);
-              });
-            } else{
-              scale = annotationsTool.video.get("scales").first();
-            }
-
-            
-            if(this.categories.find(findByNameCat)) {
-              return categories;
-            }
-
-            _.each(categoriesSet, function(cat,index){
-
-              var labels = cat.labels,
-                  newCategory,
-                  newLabels;
-
-              if (_.isArray(cat.labels) || (_.isObject(cat.labels) && !cat.labels.models)) {
-                labels = cat.labels;
-              } else if (_.isObject(cat.labels) && cat.labels.models) {
-                labels = cat.labels.toJSON();
+              if(this.categories.find(findByNameCat)) {
+                return categories;
               }
 
-              cat.scale = scale;
-              
-              delete cat.labels;
+              _.each(categoriesSet, function(cat,index){
 
-              newCategory = new Category(cat);
-              newLabels   = new Labels([],newCategory);
+                var labels = cat.labels,
+                    newCategory,
+                    newLabels;
 
-              _.each(labels,function(lb,idx){
-                lb.category = newCategory;
-                newLabels.add(new Label(lb));
+                if (_.isArray(cat.labels) || (_.isObject(cat.labels) && !cat.labels.models)) {
+                  labels = cat.labels;
+                } else if (_.isObject(cat.labels) && cat.labels.models) {
+                  labels = cat.labels.toJSON();
+                }
+
+                cat.scale = scale;
+                
+                delete cat.labels;
+
+                newCategory = new Category(cat);
+                newLabels   = new Labels([],newCategory);
+
+                _.each(labels,function(lb,idx){
+                  lb.category = newCategory;
+                  newLabels.add(new Label(lb));
+                },this);
+
+                newCategory.set('labels',newLabels);
+
+                categories.push(newCategory);
+
               },this);
 
-              newCategory.set('labels',newLabels);
-
-              categories.push(newCategory);
-
-            },this);
-
-            return categories; 
+              return categories; 
           },
 
           /**
