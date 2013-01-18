@@ -2,7 +2,7 @@
  * Style for annotate view
  */
 
-@import "variables.less";
+@import-once "variables.less";
 
 // Set of color for the whole annotate view
 @colorOne: #E3E3E3;
@@ -13,22 +13,11 @@
 }
 
 #annotate-form{
-    
-    padding: 5px;
-    
+      
     div{
-        padding: 5px;
-        text-align: center;
+       /* Todo: do we need this?  text-align: center; */
     }
-    
-    .currentTrack{
-        text-align: left; 
-        
-        span.title{
-            font-weight: bold;
-        }
-    }
-    
+       
     .insert-fields, .stop-fields{
         display: inline-block;
     }
@@ -37,22 +26,52 @@
 
         width: 100%;
         text-align: left;
+        margin-bottom: 10px;
 
         #new-annotation{
-            width: 97%;
+            width: 100%;
+						-webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
+						-moz-box-sizing: border-box;    /* Firefox, other Gecko */
+						box-sizing: border-box;  
+            border: 4px solid @grayLight;
+            margin-bottom: 5px;
         }
         
+        #insert {
+        	float:right;
+        }
+        
+    }
+    
+    #label-tabs-buttons {
+    	margin-bottom: 0;
+    }
+    
+    #label-tabs-contents {
+    	background-color: @white;
+    	padding: 0;
     }
 
     #editSwitch{
         float: right;
-        margin-right: 20px;
+        margin-right: 4px;
+    }
+    
+    label, span, p {
+    	color: @white;
     }
 }
 
 #annotate-container{ 
     .navbar{
-        margin-bottom: 0px;
+       
+        .currentTrack {
+        	display: inline;
+        	color: @white;
+        	.content {
+        		font-weight: bold;
+        	}
+        }
     }
 
     h3{
@@ -78,7 +97,6 @@
                         margin: 0px;
                         padding: 1px;
                         font-size: 14px;
-                        border-radius: 4px;
                         box-shadow: inset -1px 1px 3px black;
                         font-weight: bold;
                         text-overflow: clip;  
@@ -95,6 +113,8 @@
 
                     .colorPicker-picker{
                         display: inline-block;
+                        background-image: url("@{iconGreySpritePath}");
+ 												background-position: -384px -168px;
                     }
 
                     padding: 5px;
@@ -102,7 +122,6 @@
                     background-color: @colorOne;
                     text-shadow: 1px 1px 1px black;
                     font-weight: bold;
-                    border-radius: 4px 4px 0px 0px;
                     color: white;
                 }
 
@@ -162,9 +181,7 @@
                         float: right;
                     }
 
-                    &:last-child{
-                        border-radius: 0px 0px 4px 4px;
-                    }
+
 
 
                     &:hover{
@@ -188,7 +205,6 @@
                             display: inline-block;
                             width: 18px;
                             margin: 1px;
-                            border-radius: 15px;
                             background-color: yellow;
                             box-shadow: inset 0 0 3px;
                             color: #D57E0F;
@@ -222,16 +238,21 @@
                 }
             }
 
-            height: 200px;
+            height: 150px;
 
+        }
+        
+        div.controls {
+        	text-align: right;
         }
 
         div.pagination{
-            margin: 10px;
-            height: 0px;
-
+            margin: 0px;
+            height: 22px;
+          	text-align: right;
+        	    
             a{
-                line-height: 24px;
+                line-height: 22px;
             }
         }
 
@@ -245,9 +266,7 @@
                 margin-top: 2px;
                 padding: 5px;
                 text-align: left;
-                border-radius: 4px 4px;
                 display: block;
-                border-radius: 0px 0px 4px 4px;
 
                 i{
                     margin-right: 3px;
@@ -269,11 +288,7 @@
                     .scaling{
                         display: none;
                     }
-                }
-
-                &:last-child{
-                    border-radius: 0px;
-                }   
+                }  
             }                     
         }
 
@@ -282,7 +297,6 @@
         }
 
         i.edit{ 
-            border-radius: 2px;
             background-color: white;
             border: 1px solid white;
             margin-left: 5px;

@@ -1,5 +1,13 @@
 @import "timeline/timeline.css";
 
+#timeline-container {
+	background-color: @white;
+	
+	.navbar {
+		margin: 0;
+	}
+}
+
 .item-id, .annotation-id, .group-id, .track-id, .timeline-navigation-new {
    display: none;
 } 
@@ -101,29 +109,56 @@ div.timeline-groups-text{
 
 div.timeline-customtime {
     z-index: 3;
+    background-color: @red;
+    width: 1px;
 }
 
 div.timeline-navigation{
     z-index: 4; 
-    height: 45px;
-    border-left: 0px;
-    
-    div.timeline-navigation-new, div.timeline-navigation-delete, div.timeline-navigation-zoom-in, div.timeline-navigation-zoom-out, div.timeline-navigation-move-left, div.timeline-navigation-move-right{
-        height: 22px;
+    height: 22px; 
+    border: none;
+    border-top: 2px solid @grayDark;
+    border-bottom: 2px solid @grayDark;
+    border-radius: 0;
+    background-color: @grayLight;  
+  
+    > [class^="timeline-navigation-"] {
+    	.btn();
+    	font-weight: bold;
     }
+    
+    > [class^="timeline-navigation-"]:hover {
+    	.btn.hover();
+    }
+    
+    /* Todo: Should use Icons instead */
+    .timeline-navigation-zoom-in:after {
+    	content: "+";
+    }
+    .timeline-navigation-zoom-out:after {
+    	content: "-";
+    }
+    .timeline-navigation-move-left:after {
+    	content: "<"
+    }
+    .timeline-navigation-move-right:after{
+    	content: ">"
+    }   
+               
 }
 
 div#reset-zoom{
     float: left;
-
-    a.btn{
-        color: grey;
-    }
 }
 
-div.timeline-frame > div:first-child{
+div.timeline-frame {
+	border: none;
+	border-top: 1px solid @gray;
+	
+	> div:first-child{
     z-index: 2;
-    border-left: 2px solid grey;
+    border-left: 2px solid @gray;
+	}
 }
 
 div.timeline-groups-axis{
@@ -176,9 +211,7 @@ div.timeline-bottom-controls{
     z-index: 50;
     display: block;
     position: relative;
-    float: right;
-    padding: 8px;
-    
+    float: right;   
     &:hover{
         cursor:pointer;
     }
@@ -211,6 +244,8 @@ div.timeline-item{
         cursor:pointer;
     }
 }
+
+
 
 
 

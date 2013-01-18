@@ -1,24 +1,34 @@
-<i class="select icon-film"  id="{{id}}" href="#{{id}}" title="Move to this annotation"></i>
-<span class="start">{{time start}}</span>
- {{#if duration}}
-        - <span class="duration">{{end start duration}}</span>
-{{/if}}
-{{#if isMine}}<i class="private icon-user" title="You own this annotation"></i>{{/if}}
-<span class="category" {{#if label.category}}style="background-color:{{label.category.settings.color}}"{{/if}}>{{#if label}}{{label.category.name}}{{else}}Free text category{{/if}}</span>
+<div class="header" {{#if label.category}}style="background-color:{{label.category.settings.color}}"{{/if}}>
+	<div class="right">
+		{{#if isMine}}<i class="delete icon-trash" title="Delete  annotation"></i>{{/if}}
+	</div>
+	<div class="left">
+		<span class="collapse-wrapper">
+			{{#if label}}  {{else}}
+			<a class="collapse" title="collapse">
+				<i class="{{#if collapsed}}icon-chevron-right{{else}}icon-chevron-down{{/if}}"></i>
+			</a>
+			{{/if}}	
+		</span>	
+		<i class="select icon-film"  id="{{id}}" href="#{{id}}" title="Move to this annotation"></i>
+		<span class="start">{{time start}}</span>
+		{{#if duration}}
+					- <span class="duration">{{end start duration}}</span>
+		{{/if}}
+		{{#if isMine}}<i class="private icon-user" title="You own this annotation"></i>{{/if}}
+		<span class="category">{{#if label}}{{label.category.name}}{{else}}{{{text}}}{{/if}}</span>
+	</div>
 
-{{#if isMine}}<i class="delete icon-trash" title="Delete  annotation"></i>{{/if}}
-
-<a class="collapse" title="collapse">
- <i class="{{#if collapsed}}icon-chevron-right{{else}}icon-chevron-down{{/if}}"></i>
-</a>
-
-<div id="text-container{{id}}" class="{{#if collapsed}}out{{else}}in{{/if}}">
+</div>
+<div class="body">
+	<div id="text-container{{id}}" class="{{#if collapsed}}out{{else}}in{{/if}}">
         <span class="text">
                 {{#if scalevalue}}<span class="scaling">{{scalevalue.name}}</span>{{/if}} {{#if label}}<b>{{label.abbreviation}}</b>{{/if}} {{{text}}}
                 {{#if created_by}}
                 <p align="right">added by <span class="user">{{#if created_by_nickname}}{{created_by_nickname}}{{else}}{{nickname created_by}}{{/if}}</span> on <span class="track">{{track}}</span></p>
                 {{/if}}
         </span>
-</div>
-<a href="#{{id}}" class="proxy-anchor"></a>
-<!--<button id="stopduration">Stop duration</button>-->
+	</div>
+	<a href="#{{id}}" class="proxy-anchor"></a>
+	<!--<button id="stopduration">Stop duration</button>-->
+<div>
