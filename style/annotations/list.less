@@ -2,69 +2,84 @@
  * Style for annotations list
  */
 
-@import "variables.less";
+@import-once "variables.less";
  
-@color1: #F5F5F5; /* dark grey */
 
 #list-container{
 
-    overflow: auto;
-    min-height: 80px;
+	overflow: auto;
+	min-height: 80px; 
 
-    #content-list{
-        overflow: auto;
-    }
-    
-    a.proxy-anchor{
-        display: none;
-    }
+	#content-list{
+		overflow: auto;
+	}
+	
+	a.proxy-anchor{
+		display: none;
+	}
 
-    i.check{
-        visibility: hidden;
-    }
+	i.check{
+		visibility: hidden;
+	}
 
-    .checked i.check{
-        visibility: visible;
-    }
-    
-    div.annotation{
-        .standard_border_radius;
-        background-color: darken(@color1, 7%);
-        margin: 5px;
-        padding: 5px;
-        
-        &:hover{
-            cursor: pointer;   
-            box-shadow: inset 0px 0px 12px black; 
-        }
-        
-        i{    
-            &.delete{
-               float: right; 
-            }
-            
-            &:hover{
-                cursor: pointer;
-                background-color: lighten(#66A3D2,10%); 
-            }
-        }
-        
-        .start,.end{
-            cursor: text;
-            border-radius: 3px 3px 3px 3px;
-            background-color: darken(@color1, 30%);
-            padding: 2px;
-            margin: 1px;
-            color: white;
-            font-family: monospace;
-            .box-shadow(0px,0px,4px,darken(@color1,30%));
-            .inset-box-shadow(0px,0px,4px,darken(@color1,50%));
-            position: relative;
-            width: 65px !important;
-            height: 18px;
-            display: inline-block;
+	.checked i.check{
+		visibility: visible;
+	}
+	
+	div.annotation{
+		background-color: @grayLighter;
+		padding: 0;
+		margin: 0;
+		border-bottom: 2px solid @grayDark;
 
-                input{
+		&:last-child{
+			border:none;   
+		}
+
+		&:hover{
+			cursor: pointer;   
+		}
+		&.selected{
+			 background-color: @grayLight; 
+		}
+		
+		.header {
+		
+			margin: 0;
+			padding: 0;
+			@headerheight: 20px;
+			height: @headerheight;
+
+			
+			.right {
+				float: right;
+				padding: 0 10px 0 0;
+				height: @headerheight;				
+			}	
+			
+			.left {
+				overflow:hidden;
+				height: @headerheight;
+			}	
+						 
+			i{    
+				&.delete{
+					 float: right; 
+				}
+					
+				&:hover{
+					cursor: pointer;
+						background-color: @white; 
+				}
+			}
+			
+			.start,.end{
+				cursor: default;
+				background-color: fade(@white,60%);
+				padding: 2px;
+				font-family: monospace;
+				display: inline-block;
+       input{
                     margin: 1px;
                     width: 65px !important;
                     padding: 1px;
@@ -100,63 +115,65 @@
                      width: 65px;
                      height: 20px;
                 }
-        }
+			}
+			
+			.collapse-wrapper {
+				width: 22px;
+				display:inline-block;
+			}
 
-        .collapse i{
-            float: left;
-            margin-right: 5px;
-            margin-left: 5px;
-        }
-        
-        span.text{
-            display: block;
-            margin: 5px 2px 2px 2px;
-            padding: 4px;
-            border-radius: 3px 3px 3px 3px;
-            background-color: white;
-            .box-shadow(0px,0px,4px,darken(@color1,30%));
-        }
-        
-        span.category{
-            border-radius: 3px 3px 3px 3px;
-            background-color: orange;
-            color: white;
-            padding: 2px;
-            font-size: 0.90em;
-        }
-
-        span.scaling{
-            border-radius: 15px;
-            background-color: yellow;
-            box-shadow: inset 0 0 3px;
-            color: #D57E0F;
-            text-shadow: 0 0 2px orange;
-            font-weight: bold padding: 2px;
-            font-weight: bold;
-            font-size: 0.90em;
-            font-weight: bold;
-            padding: 0px 2px 0px 2px;
-            border: 2px solid orange;
-            width: 16px;
-            display: inline-block;
-            text-align: center;
-        }
-        
-        span.track{
-            border-radius: 3px 3px 3px 3px;
-            background-color: lighten(#005580,20%);
-            color: white;
-            padding: 3px;
-            font-size: 0.90em;  
-        }
-        
-        span.user{
-            font-style: italic;
-                font-weight: bold;
-        }
-        
-        &.selected{
-           background-color: darken(@color1, 40%); 
-        }
-    }
+			.collapse i{
+				margin-right: 4px;
+				margin-left: 4px;
+			}
+			
+			span.category{
+				/* padding: 2px;
+				display:inline-block;
+				height: 16px;
+				width: 40%;
+				overflow:hidden;*/
+			}
+															
+		}
+		
+		.body {
+			
+			span.text{
+				display: block;
+				padding: 4px;
+				background-color: @white;
+			}
+			
+			span.scaling{
+				border-radius: 15px;
+				background-color: yellow;
+				box-shadow: inset 0 0 3px;
+				color: #D57E0F;
+				text-shadow: 0 0 2px @orange;
+				font-weight: bold padding: 2px;
+				font-weight: bold;
+				font-size: 0.90em;
+				font-weight: bold;
+				padding: 0px 2px 0px 2px;
+				border: 2px solid orange;
+				width: 16px;
+				display: inline-block;
+				text-align: center;
+			}
+			
+			span.track{
+				border-radius: 3px 3px 3px 3px;
+				background-color: lighten(#005580,20%);
+				color: white;
+				padding: 3px;
+				font-size: 0.90em;  
+			}
+			
+			span.user{
+				font-style: italic;
+				font-weight: bold;
+			}																
+		}       
+	}
 }
