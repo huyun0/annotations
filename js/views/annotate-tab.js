@@ -162,6 +162,8 @@ define(["jquery",
 
             this.delegateEvents(this.events);
 
+            this.carouselElement.carousel(0).carousel("pause");
+
             return this;
           },
 
@@ -268,7 +270,6 @@ define(["jquery",
            * @param  {Event} event
            */
           onAddCategory: function (event) {
-            event.stopPropagation();
 
             var attributes = {
               name: "NEW CATEGORY", 

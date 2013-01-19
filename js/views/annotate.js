@@ -230,7 +230,7 @@ define(["jquery",
              * @param {Event} event Event related to the action
              */
             showTab: function (event) {
-                var tabId = event.target.attributes.getNamedItem("href").value;
+                var tabId = event.currentTarget.attributes.getNamedItem("href").value;
                 event.preventDefault();
 
                 tabId = tabId.replace(TAB_LINK_PREFIX,"");
@@ -241,9 +241,6 @@ define(["jquery",
                 }, this));
 
                 $(event.currentTarget).tab("show");
-
-
-
                 
             },
 
