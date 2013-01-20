@@ -71,6 +71,10 @@ define(["jquery",
                 "keyup #new-annotation"             : "keydownOnAnnotate",
                // "keyup #new-annotation"             : "keyupOnAnnotate",
                 "click #insert"                     : "insert",
+                "click #annotate-full"              : "setLayoutFull",
+                "click #annotate-text"              : "setLayoutText",
+                "click #annotate-categories"        : "setLayoutCategories",
+                "click .toggle-collapse"            : "toggleVisibility",
                 "keydown #new-annotation"           : "onFocusIn",
                 "focusout #new-annotation"          : "onFocusOut",
                 "click #label-tabs-buttons a"       : "showTab",
@@ -113,7 +117,11 @@ define(["jquery",
                           "onSwitchEditModus",
                           "switchEditModus",
                           "keyupOnAnnotate",
-                          "keydownOnAnnotate");
+                          "keydownOnAnnotate",
+                          "setLayoutCategories",
+                          "setLayoutText",
+                          "setLayoutFull",
+                          "toggleVisibility");
                 
                 // Parameter for stop on write
                 this.continueVideo = false;
@@ -129,14 +137,29 @@ define(["jquery",
                 this.tracks.bind("selected_track", this.changeTrack, this);
                 this.playerAdapter = attr.playerAdapter;
 
-                categories = annotationsTool.video.get("categories");
+                if (annotationsTool.structuredAnnotation) {
+                  categories = annotationsTool.video.get("categories");
 
-                _.each(DEFAULT_TABS, function (params) {
-                  this.addTab(categories, params);
-                }, this)
+                  _.each(DEFAULT_TABS, function (params) {
+                    this.addTab(categories, params);
+                  }, this)
+                } else {
+                  this.$el.find("#categories").hide();
+                  this.$el.find("#annotate-categories").parent().hide();
+                }
+
+                if (!annotationsTool.freeText) {
+                  this.$el.find("#input-container").hide();
+                  this.$el.find("#annotate-text").parent().hide();
+                }
+
+                this.$el.find("#annotate-full").addClass("checked");
 
                 this.tabsContainerElement.find("div.tab-pane:first-child").addClass("active");
                 this.tabsButtonsElement.find("a:first-child").parent().first().addClass("active");
+
+                // Add backbone events to the model 
+                _.extend(this, Backbone.Events);
             },
             
             /**
@@ -288,6 +311,56 @@ define(["jquery",
                 // trigger an event that all element switch in edit modus
                 annotationsTool.video.trigger("switchEditModus", status);
             },
+
+            setLayoutFull: function (event) {
+              if (!$(event.target).hasClass("checked")) {
+                if (annotationsTool.structuredAnnotation) {
+                  this.$el.find("#categories").show();
+                }
+                if (annotationsTool.freeText) {
+                  this.$el.find("#input-container").show();
+                }
+                  this.$el.find("#annotate-text").removeClass("checked");
+                this.$el.find("#annotate-categories").removeClass("checked");
+                $(event.target).addClass("checked");
+                this.trigger("change-layout");
+              }
+            },
+
+            setLayoutText: function () {
+              if (!$(event.target).hasClass("checked")) {
+                this.$el.find("#categories").hide();
+                this.$el.find("#input-container").show();
+                this.$el.find("#annotate-full").removeClass("checked");
+                this.$el.find("#annotate-categories").removeClass("checked");
+                $(event.target).addClass("checked");
+                this.trigger("change-layout");
+              }
+            },
+
+            setLayoutCategories: function () {
+              if (!$(event.target).hasClass("checked")) {
+                this.$el.find("#categories").show();
+                this.$el.find("#input-container").hide();
+                this.$el.find("#annotate-text").removeClass("checked");
+                this.$el.find("#annotate-full").removeClass("checked");
+                $(event.target).addClass("checked");
+                this.trigger("change-layout");
+              }
+            },
+
+            toggleVisibility: function (event) {
+              var mainContainer = this.$el.find(".control-group");
+
+              if (mainContainer.css("display") === "none") {
+                mainContainer.show();
+                $(event.target).html("Collapse");
+              } else {
+                mainContainer.hide();
+                $(event.target).html("Expand");
+              }
+              this.trigger("change-layout");
+            },
             
             /**
              * Reset the view
@@ -296,9 +369,12 @@ define(["jquery",
                 this.$el.hide();
                 delete this.tracks;
                 this.undelegateEvents();
-                this.tabsContainerElement.empty();
-                this.$el.find("#editSwitch input").attr("checked",false);
-                this.tabsButtonsElement.find(".tab-button").remove();
+
+                if (annotationsTool.structuredAnnotation) {
+                  this.tabsContainerElement.empty();
+                  this.$el.find("#editSwitch input").attr("checked",false);
+                  this.tabsButtonsElement.find(".tab-button").remove();
+                }
             }
             
         });

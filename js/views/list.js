@@ -85,7 +85,8 @@ define(["jquery",
              */
             events: {
                 "click #filter-none" : "disableFilter",
-                "click .filter" : "switchFilter"
+                "click .filter" : "switchFilter",
+                "click .toggle-collapse" : "toggleVisibility"
             },
           
             /**
@@ -105,6 +106,7 @@ define(["jquery",
                                "unselect",
                                "switchFilter",
                                "updateFiltersRender",
+                               "toggleVisibility",
                                "disableFilter",
                                "doClick");
                 
@@ -121,6 +123,9 @@ define(["jquery",
                 
                 this.playerAdapter = annotationsTool.playerAdapter;
                 $(this.playerAdapter).bind(PlayerAdapter.EVENTS.TIMEUPDATE, this.updateSelection);
+
+                // Add backbone events to the model 
+                _.extend(this, Backbone.Events);
 
                 return this.render();
             },
@@ -344,6 +349,19 @@ define(["jquery",
                 delete this.annotationViews;
                 delete this.tracks;
                 this.undelegateEvents();
+            },
+
+            toggleVisibility: function (event) {
+              var mainContainer = this.$el.find("#content-list");
+
+              if (mainContainer.css("display") === "none") {
+                mainContainer.show();
+                $(event.target).html("Collapse");
+              } else {
+                mainContainer.hide();
+                $(event.target).html("Expand");
+              }
+              this.trigger("change-layout");
             },
             
             /**

@@ -1,12 +1,13 @@
 <a href="#{{id}}" class="proxy-anchor"></a>
 <i class="select icon-film"  id="{{id}}" href="#{{id}}" title="Move to this annotation"></i>
+<button class="in edit" title="Set the video playhead as start point.">IN</button>
 <span class="start">
-    <input id="start-{{id}}" class="start-value" type="text" value="{{time start}}" disabled></input>
+    <input id="start-{{id}}" class="start-value" type="text" value="{{time start}}" {{#if isEditEnable}} {{else}}disabled{{/if}}></input>
 </span>
- {{#if duration}}
+{{#if duration}}
         - <span class="end">
-            <input id="start-{{id}}" class="end-value" type="text" value="{{end start duration}}" disabled></input>
-        </span>
+            <input id="start-{{id}}" class="end-value" type="text" value="{{end start duration}}" {{#if isEditEnable}} {{else}}disabled{{/if}}></input>
+        </span><button class="out edit" title="Set the video playhead as end point.">OUT</button>
 {{/if}}
 
 {{#if isMine}}
@@ -52,7 +53,7 @@
                     {{#if isMine}}
                     <textarea class="edit" placeholder="free text...">{{{text}}}</textarea>
                     {{/if}}
-                    <span class="read-only">{{text}}</span>
+                    <span class="read-only">{{{textReadOnly}}}</span>
                 </span>
                 {{#if created_by}}
                 <p align="right">added by 

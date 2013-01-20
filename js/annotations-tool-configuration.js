@@ -52,6 +52,16 @@ define(['domReady',
              * @type {PlayerAdapter}
              */
             playerAdapter: undefined,
+
+            
+            layoutConfiguration: {
+                timeline: true,
+                list: true,
+                annotate: true
+            },
+
+            structuredAnnotation: true,
+            freeText: true,
             
             
             /**

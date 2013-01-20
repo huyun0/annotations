@@ -5876,6 +5876,12 @@ div.timeline-item:hover {
   .edit {
     visibility: hidden;
   }
+  i.check {
+    visibility: hidden;
+  }
+  .checked i.check {
+    visibility: visible;
+  }
   #annotate-form {
     padding: 5px;
   }
@@ -6178,9 +6184,13 @@ div.timeline-item:hover {
   #list-container div.annotation .read-only {
     display: inline-block;
   }
+  #list-container div.annotation button.in {
+    margin-right: -4px;
+  }
   #list-container div.annotation.edit-on i.toggle-edit:before {
-    content: "save";
-    margin-left: -25px;
+    content: "close edit";
+    white-space: nowrap;
+    margin-left: -55px;
     background-color: white;
     padding: 2px;
     border-radius: 4px;
