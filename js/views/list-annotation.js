@@ -440,7 +440,15 @@ function ($, _not, PlayerAdapter, Annotation, User, CommentsContainer, Template,
          * Listener for click on this annotation
          */
         onSelect: function(event) {
-            this.model.trigger("selected", {model: this.model});
+            // If annotation already selected
+            if (annotationsTool.currentSelection && annotationsTool.currentSelection.get("id") === this.model.get("id")) {
+                delete annotationsTool.currentSelection;
+                annotationsTool.dispatcher.trigger("unselect-annotation");
+                this.isSelected = false;
+            } else {
+                annotationsTool.currentSelection = this.model;
+                this.model.trigger("selected", {model: this.model});
+            }
         },
 
         /**

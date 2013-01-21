@@ -103,6 +103,7 @@ define(["jquery",
                                "sortViewsbyTime",
                                "reset",
                                "updateSelection",
+                               "selectView",
                                "unselect",
                                "switchFilter",
                                "updateFiltersRender",
@@ -119,6 +120,7 @@ define(["jquery",
                 this.tracks = annotationsTool.video.get("tracks");
                 this.listenTo(this.categories, "change", this.render);
                 this.listenTo(this.tracks, "add", this.addTrack);
+                this.listenTo(annotationsTool.dispatcher, "unselect-annotation", this.unselect);
                 this.tracks.each(this.addTrack, this);
                 
                 this.playerAdapter = annotationsTool.playerAdapter;
@@ -188,6 +190,12 @@ define(["jquery",
                     this.sortViewsbyTime();
                 }
             },
+
+            selectView: function (viewToSelect) {
+                viewToSelect.selectVisually();
+                this.doClick(viewToSelect.$el.find("a.proxy-anchor")[0]);
+                viewToSelect.isSelected = true;
+            },
             
             /**
              * Update the annotations selection
@@ -196,47 +204,49 @@ define(["jquery",
             updateSelection: function () {
                 //if(this.playerAdapter.getStatus() != PlayerAdapter.STATUS.PLAYING)
                 //  return;
-                
-                this.unselect();
-                
                 var currentTime = this.playerAdapter.getCurrentTime(),
                     firstSelection = true, // Tag for element selection
+                    view,
                     start,
+                    duration,
                     end;
                 
-                _.each(this.annotationViews, function (view) {
-                  
-                    start = view.model.get("start");
+                // If an annotation have been explicitely selected by an user
+                if (annotationsTool.currentSelection) {
+                    view = _.find(this.annotationViews, function (view) {
+                                    return view.model.get("id") === annotationsTool.currentSelection.get("id");
+                                }, this);
+
+                    // If the view is not visually selected
+                    if (!view.isSelected) {
+                        this.unselect();
+                        this.selectView(view);
+                    }
+                } else {
+                    this.unselect();
                     
-                    if (_.isNumber(view.model.get("duration"))) {
-                        end = start + view.model.get("duration");
+                    _.each(this.annotationViews, function (view) {
                       
-                        if (start <= currentTime && end >= currentTime) {
-                            view.selectVisually();
-                            
+                        start = view.model.get("start");
+                        duration = view.model.get("duration");
+                        end = start + duration;
+                        
+                        if (_.isNumber(duration) && start <= currentTime && end >= currentTime) {
+                          
                             if (firstSelection && !view.isSelected) {
-                                this.doClick(view.$el.find("a.proxy-anchor")[0]);
-                                view.isSelected = true;
+                                this.selectView(view);
                                 firstSelection = false;
+                            } else {
+                                view.selectVisually();
                             }
+                          
                         } else {
                             view.isSelected = false;
                         }
-                    } else if (start <= currentTime && (start + 5) >= currentTime && !view.isSelected) {
 
-                        view.selectVisually();
-
-                        if (firstSelection && !view.isSelected) {
-                            this.doClick(view.$el.find("a.proxy-anchor")[0]);
-                            view.isSelected = true;
-                            firstSelection = false;
-                        }
-                      
-                    } else {
-                        view.isSelected = false;
-                    }
-
-                }, this);
+                    }, this);
+                }
+                
             },
             
             /**
