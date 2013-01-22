@@ -113,6 +113,8 @@ define(["jquery",
                            'onTimelineItemChanged',
                            'onTimelineItemDeleted',
                            'onTimelineItemSelected',
+                           'onTimelineItemUnselected',
+                           'isAnnotationSelectedonTimeline',
                            'onTimelineItemAdded',
                            'onAnnotationDestroyed',
                            'onDeletePressed',
@@ -131,6 +133,7 @@ define(["jquery",
                            'switchFilter',
                            'updateFiltersRender',
                            'disableFilter',
+                           'redraw',
                            'reset');
             
 
@@ -178,6 +181,7 @@ define(["jquery",
             // Create the timeline 
             this.timeline = new links.Timeline(this.$el.find("#timeline")[0]);
             this.timeline.draw(this.filteredItems,this.options);
+            this.listenTo(annotationsTool.dispatcher, "unselect-annotation", this.timeline.unselectItem);
             
             // Ensure that the timeline is redraw on window resize
             $(window).bind('resize',this.onWindowResize);
@@ -202,21 +206,28 @@ define(["jquery",
             this.addList(this.tracks);
             this.timeline.setCustomTime(this.startDate);
             
-            this.timeline.redraw = $.proxy(function() {
-              
+            this.timeline.redraw = this.redraw;
+            
+            this.timeline.setAutoScale(false);
+            $('div.timeline-group .content').popover({});
+
+            this.timeline.redraw();
+          },
+
+          redraw: function() {
+              var selection;
+              selection = this.timeline.getSelection(selection);
               this.timeline.draw(this.filteredItems,this.option);
+
+              if (selection.length > 0) {
+                this.timeline.selectItem(selection[0].row);
+              }
 
               $('div.timeline-group .content').popover({});
 
               if(annotationsTool.selectedTrack) {
                 this.onTrackSelected(null,annotationsTool.selectedTrack.id);
               }
-            },this);
-            
-            this.timeline.setAutoScale(false);
-            $('div.timeline-group .content').popover({});
-
-            this.timeline.redraw();
           },
 
           /**
@@ -511,12 +522,20 @@ define(["jquery",
             // Select the good items
             data = this.timeline.getData();
             
-            this.timeline.unselectItem();            
-            _.each(data,function(item,index) {
-              if ((item.start <= newDate) && (item.end >= newDate)) {
-                this.timeline.selectItem(index);
-              }
-            },this);
+            if (!annotationsTool.currentSelection || !this.isAnnotationSelectedonTimeline(annotationsTool.currentSelection)) {
+              this.timeline.unselectItem();    
+
+              _.each(data,function(item,index) {
+                  if (annotationsTool.currentSelection && annotationsTool.currentSelection.get("id") === item.id) {
+                      this.timeline.selectItem(index);
+                  } else if (!annotationsTool.currentSelection && (item.start <= newDate) && (item.end >= newDate)) {
+                      this.timeline.selectItem(index);
+                  }
+              },this);     
+            } else if (annotationsTool.currentSelection) {
+                this.$el.find('div.timeline-event-selected div.timeline-event-content').one("click", this.onTimelineItemUnselected);
+            }
+
           },
           
           /**
@@ -564,8 +583,6 @@ define(["jquery",
 
             duration = this.getTimeInSeconds(values.item.end)-this.getTimeInSeconds(values.item.start);
             start = this.getTimeInSeconds(values.item.start);
-
-
 
             htmlElement = this.$el.find('.annotation-id:contains('+values.annotation.id+')').parent().parent()[0];
             index = this.timeline.getItemIndex(htmlElement);
@@ -670,11 +687,30 @@ define(["jquery",
            * Listener for timeline item selection
            */          
           onTimelineItemSelected: function(event){
-            if (this.playerAdapter.getStatus() !== PlayerAdapter.STATUS.PLAYING) {
-              this.playerAdapter.pause();
-              var annotation = this.getSelectedItemAndAnnotation().annotation;
-              annotation.trigger("jumpto", annotation.get("start"));
-              
+            var item = this.getSelectedItemAndAnnotation(),
+                annotation = item.annotation;
+            
+            if (this.playerAdapter.getStatus() !== PlayerAdapter.STATUS.PLAYING || 
+                  Math.abs(this.playerAdapter.getCurrentTime() - this.getTimeInSeconds(item.item.start)) > 1) {
+
+                this.playerAdapter.pause();
+                annotationsTool.currentSelection = annotation;
+                annotation.trigger("jumpto", annotation.get("start"));  
+            } 
+
+          },
+
+          onTimelineItemUnselected: function (event) {
+            var annotation = this.getSelectedItemAndAnnotation().annotation;
+
+            $(event.target).unbind("click", this.onTimelineItemUnselected);
+
+            if (annotationsTool.currentSelection && 
+                annotationsTool.currentSelection.get("id") === annotation.get("id") &&
+                this.isAnnotationSelectedonTimeline(annotation)) {
+              delete annotationsTool.currentSelection;
+              annotationsTool.dispatcher.trigger("unselect-annotation");
+              this.timeline.unselectItem();   
             }
           },
           
@@ -946,6 +982,10 @@ define(["jquery",
                     newTrack: newTrack,
                     oldTrack: oldTrack
             };
+          },
+
+          isAnnotationSelectedonTimeline: function (annotation) {
+            return this.$el.find("div.timeline-event-selected div.timeline-item div.annotation-id:contains('"+annotation.get("id")+"')").length !== 0;
           },
           
           /**

@@ -85,7 +85,8 @@ define(["jquery",
              */
             events: {
                 "click #filter-none" : "disableFilter",
-                "click .filter" : "switchFilter"
+                "click .filter" : "switchFilter",
+                "click .toggle-collapse" : "toggleVisibility"
             },
           
             /**
@@ -102,9 +103,11 @@ define(["jquery",
                                "sortViewsbyTime",
                                "reset",
                                "updateSelection",
+                               "selectView",
                                "unselect",
                                "switchFilter",
                                "updateFiltersRender",
+                               "toggleVisibility",
                                "disableFilter",
                                "doClick");
                 
@@ -113,12 +116,18 @@ define(["jquery",
                 this.filtersManager = new FiltersManager(annotationsTool.filtersManager);
                 this.listenTo(this.filtersManager, "switch", this.updateFiltersRender);
 
+                this.categories = annotationsTool.video.get("categories");
                 this.tracks = annotationsTool.video.get("tracks");
+                this.listenTo(this.categories, "change", this.render);
                 this.listenTo(this.tracks, "add", this.addTrack);
+                this.listenTo(annotationsTool.dispatcher, "unselect-annotation", this.unselect);
                 this.tracks.each(this.addTrack, this);
                 
                 this.playerAdapter = annotationsTool.playerAdapter;
                 $(this.playerAdapter).bind(PlayerAdapter.EVENTS.TIMEUPDATE, this.updateSelection);
+
+                // Add backbone events to the model 
+                _.extend(this, Backbone.Events);
 
                 return this.render();
             },
@@ -136,7 +145,7 @@ define(["jquery",
                     this.addAnnotation(newAnnotation, annotationTrack);
                 }, this));
 
-                this.listenTo(ann, "destroy, destroy", this.removeOne);
+                this.listenTo(ann, "destroy", this.removeOne);
                 this.listenTo(ann, "change", this.sortViewsbyTime);
 
                 this.addList(ann.toArray(), annotationTrack);
@@ -181,6 +190,12 @@ define(["jquery",
                     this.sortViewsbyTime();
                 }
             },
+
+            selectView: function (viewToSelect) {
+                viewToSelect.selectVisually();
+                this.doClick(viewToSelect.$el.find("a.proxy-anchor")[0]);
+                viewToSelect.isSelected = true;
+            },
             
             /**
              * Update the annotations selection
@@ -189,41 +204,49 @@ define(["jquery",
             updateSelection: function () {
                 //if(this.playerAdapter.getStatus() != PlayerAdapter.STATUS.PLAYING)
                 //  return;
-                
-                this.unselect();
-                
                 var currentTime = this.playerAdapter.getCurrentTime(),
                     firstSelection = true, // Tag for element selection
+                    view,
                     start,
+                    duration,
                     end;
                 
-                _.each(this.annotationViews, function (view) {
-                  
-                    start = view.model.get("start");
-                    
-                    if (_.isNumber(view.model.get("duration"))) {
-                        end = start + view.model.get("duration");
-                      
-                        if (start <= currentTime && end >= currentTime) {
-                            view.selectVisually();
-                            
-                            if (firstSelection) {
-                                this.doClick(view.$el.find("a.proxy-anchor")[0]);
-                                firstSelection = false;
-                            }
-                        }
-                    } else if (start <= currentTime && (start + 5) >= currentTime) {
+                // If an annotation have been explicitely selected by an user
+                if (annotationsTool.currentSelection) {
+                    view = _.find(this.annotationViews, function (view) {
+                                    return view.model.get("id") === annotationsTool.currentSelection.get("id");
+                                }, this);
 
-                        view.selectVisually();
-
-                        if (firstSelection) {
-                            this.doClick(view.$el.find("a.proxy-anchor")[0]);
-                            firstSelection = false;
-                        }
-                      
+                    // If the view is not visually selected
+                    if (!view.isSelected) {
+                        this.unselect();
+                        this.selectView(view);
                     }
+                } else {
+                    this.unselect();
+                    
+                    _.each(this.annotationViews, function (view) {
+                      
+                        start = view.model.get("start");
+                        duration = view.model.get("duration");
+                        end = start + duration;
+                        
+                        if (_.isNumber(duration) && start <= currentTime && end >= currentTime) {
+                          
+                            if (firstSelection && !view.isSelected) {
+                                this.selectView(view);
+                                firstSelection = false;
+                            } else {
+                                view.selectVisually();
+                            }
+                          
+                        } else {
+                            view.isSelected = false;
+                        }
 
-                }, this);
+                    }, this);
+                }
+                
             },
             
             /**
@@ -336,6 +359,19 @@ define(["jquery",
                 delete this.annotationViews;
                 delete this.tracks;
                 this.undelegateEvents();
+            },
+
+            toggleVisibility: function (event) {
+              var mainContainer = this.$el.find("#content-list");
+
+              if (mainContainer.css("display") === "none") {
+                mainContainer.show();
+                $(event.target).html("Collapse");
+              } else {
+                mainContainer.hide();
+                $(event.target).html("Expand");
+              }
+              this.trigger("change-layout");
             },
             
             /**

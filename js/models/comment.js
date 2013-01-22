@@ -31,13 +31,7 @@ define(["jquery",
         var Comment = Backbone.Model.extend({
             
             defaults: {
-                access: ACCESS.PUBLIC,
-                created_at: null,
-                created_by: null,
-                updated_at: null,
-                updated_by: null,
-                deleted_at: null,
-                deleted_by: null
+                access: ACCESS.PUBLIC
             },
             
             /**
@@ -56,6 +50,16 @@ define(["jquery",
                         attr['id'] = this.cid;
                         
                     this.toCreate = true;
+                }
+
+                if (window.annotationsTool.localStorage){
+                    if (!attr.created_by) {
+                        attr.created_by = annotationsTool.user.get("id");
+                    }
+
+                    if (!attr.created_by_nickname) {
+                        attr.created_by_nickname = annotationsTool.user.get("nickname");
+                    }
                 }
                 
                 if (attr.tags) {
@@ -106,19 +110,19 @@ define(["jquery",
                 if(attr.access && !_.include(ACCESS,attr.access))
                     return "'access' attribute is not valid.";
                 
-                if(!_.isNull(attr.created_at)){
+                if(attr.created_at){
                     if((tmpCreated=this.get('created_at')) && tmpCreated!==attr.created_at)
                         return "'created_at' attribute can not be modified after initialization!";
                     if(!_.isNumber(attr.created_at))
                         return "'created_at' attribute must be a number!";
                 }
         
-                if(!_.isNull(attr.updated_at)){
+                if(attr.updated_at){
                     if(!_.isNumber(attr.updated_at))
                         return "'updated_at' attribute must be a number!";
                 }
 
-                if(!_.isNull(attr.deleted_at)){
+                if(attr.deleted_at){
                     if(!_.isNumber(attr.deleted_at))
                         return "'deleted_at' attribute must be a number!";
                 }

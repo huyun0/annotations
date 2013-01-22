@@ -130,24 +130,37 @@ define(["jquery",
            * Loading the video dependant views
            */
           var loadVideoDependantView = $.proxy(function(){
+              $(this.playerAdapter).off(PlayerAdapter.EVENTS.READY + " " + PlayerAdapter.EVENTS.PAUSE,loadVideoDependantView);
+
               this.setLoadingProgress(60,"Start creating views.");
               
-              // Create views with Timeline
-              this.setLoadingProgress(70,"Creating timeline.");
-              this.timelineView = new TimelineView({playerAdapter: this.playerAdapter});
+
+              if (annotationsTool.getLayoutConfiguration().timeline) {
+                // Create views with Timeline
+                this.setLoadingProgress(70,"Creating timeline.");
+                this.timelineView = new TimelineView({playerAdapter: this.playerAdapter});
+              }
               
-              // Create views to annotate and see annotations list
-              this.setLoadingProgress(80,"Creating annotate view.");
-              this.annotateView = new AnnotateView({playerAdapter: this.playerAdapter});
-              this.annotateView.$el.show();
+              if (annotationsTool.getLayoutConfiguration().annotate) {
+                // Create view to annotate
+                this.setLoadingProgress(80,"Creating annotate view.");
+                this.annotateView = new AnnotateView({playerAdapter: this.playerAdapter});
+                this.listenTo(this.annotateView, "change-layout", this.onWindowResize);
+                this.annotateView.$el.show();
+              }
               
-              // Create annotations list view
-              this.setLoadingProgress(90,"Creating list view.");
-              this.listView = new ListView();
-              this.listView.$el.show();
+              if (annotationsTool.getLayoutConfiguration().list) {
+                // Create annotations list view
+                this.setLoadingProgress(90,"Creating list view.");
+                this.listView = new ListView();
+                this.listenTo(this.listView, "change-layout", this.onWindowResize);
+                this.listView.$el.show();
+              }
               
               this.setLoadingProgress(100,"Ready.");
               this.loadingBox.hide();
+
+              this.onWindowResize();
               
               // Show logout button
               $("a#logout").css("display","block");
@@ -161,7 +174,7 @@ define(["jquery",
           if(this.playerAdapter.getStatus() ===  PlayerAdapter.STATUS.PAUSED){
              loadVideoDependantView();
           } else{
-            $(this.playerAdapter).one(PlayerAdapter.EVENTS.READY + " " + PlayerAdapter.EVENTS.PAUSE,loadVideoDependantView);
+            $(this.playerAdapter).on(PlayerAdapter.EVENTS.READY + " " + PlayerAdapter.EVENTS.PAUSE,loadVideoDependantView);
           }
           
         },this));        
@@ -201,10 +214,18 @@ define(["jquery",
         annotationsTool.playerAdapter.setCurrentTime(0);
         $("#video-container").hide();
         
-        
-        this.timelineView.reset();
-        this.annotateView.reset();
-        this.listView.reset();
+        if (annotationsTool.getLayoutConfiguration().timeline) {
+           this.timelineView.reset();
+        }
+
+        if (annotationsTool.getLayoutConfiguration().annotate) {
+            this.annotateView.reset();
+        }
+
+        if (annotationsTool.getLayoutConfiguration().list) {
+            this.listView.reset();
+        }
+
         this.loginView.reset();
         
         // Delete the different objects
@@ -275,12 +296,13 @@ define(["jquery",
                   remindingFetchingTrack = tracks.length;
                 
                   // Function to add the different listener to the annotations
-                  tracks.each($.proxy(function (track,index) {
+                  tracks.each(function (track,index) {
                       annotations = track.get("annotations");
+                      this.listenTo(annotations, "add", this.onWindowResize);
                       if (--remindingFetchingTrack === 0) {
                           callback();
                       }
-                  }), this);
+                  }, this);
               
               },this),
               /**
@@ -337,15 +359,11 @@ define(["jquery",
         var listContent,
             windowHeight;
 
-        // If views are not set
-        if(!this.annotateView || !this.listView || !this.timelineView)
-          return;
-
-        windowHeight = $(window).height();
-
-
-        listContent = this.listView.$el.find("#content-list");
-        listContent.height(windowHeight-this.annotateView.$el.height()-200);
+        if (this.annotateView && this.listView) {
+          windowHeight = $(window).height();
+          listContent = this.listView.$el.find("#content-list");
+          listContent.height(windowHeight-this.annotateView.$el.height()-200);
+        }
       },
 
       ////////////

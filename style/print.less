@@ -28,7 +28,7 @@
   div.navbar {
     .brand {
       text-decoration: none;
-      font-size: 1.3em;
+      font-size: 1.5em;
     }
 
     li {
@@ -44,47 +44,26 @@
 
     .annotation {
       padding: 2px;
-      border-bottom: gray 3px solid;
+      border: gray 3px solid;
+      border-radius: 5px;
       margin: 2px;
 
       > div {
-        margin: 4px;
+        margin: 2px;
       }
     }
 
-    .edit {
-      display: none;
-    }
-
-    .label-abr {
-      font-weight: bold;
-    }
-
-    .start,.end {
+    .start,.duration {
       background: lighten(@color1, 20%) !important;
       padding: 0px;
       margin: 1px;
       border-radius: 3px;
     }
 
-    input {
-      background: transparent !important;
-    }
 
     .category {
       font-style: italic;
       font-weight: bold;
-    }
-
-    span.freetext .read-only {
-      display: block
-    }
-
-    span.label:before {
-      content: "Label: ";
-      margin-left: 5px;
-      margin-right: 2px;
-      font-weight: normal;
     }
 
     .category::before {
@@ -92,16 +71,6 @@
       margin-left: 5px;
       margin-right: 2px;
       font-weight: normal;
-    }
-
-    .scaling {
-      font-style: oblique;
-      float: right;
-    }
-
-
-    .scaling::before{
-      content: "Scale value: ";
     }
   }
 
