@@ -137,7 +137,7 @@ define(["jquery",
                 this.tracks.bind("selected_track", this.changeTrack, this);
                 this.playerAdapter = attr.playerAdapter;
 
-                if (annotationsTool.structuredAnnotation) {
+                if (annotationsTool.isStructuredAnnotationEnabled()) {
                   categories = annotationsTool.video.get("categories");
 
                   _.each(DEFAULT_TABS, function (params) {
@@ -148,7 +148,7 @@ define(["jquery",
                   this.$el.find("#annotate-categories").parent().hide();
                 }
 
-                if (!annotationsTool.freeText) {
+                if (!annotationsTool.isFreeTextEnabled()) {
                   this.$el.find("#input-container").hide();
                   this.$el.find("#annotate-text").parent().hide();
                 }
@@ -314,10 +314,10 @@ define(["jquery",
 
             setLayoutFull: function (event) {
               if (!$(event.target).hasClass("checked")) {
-                if (annotationsTool.structuredAnnotation) {
+                if (annotationsTool.isStructuredAnnotationEnabled()) {
                   this.$el.find("#categories").show();
                 }
-                if (annotationsTool.freeText) {
+                if (annotationsTool.isFreeTextEnabled()) {
                   this.$el.find("#input-container").show();
                 }
                   this.$el.find("#annotate-text").removeClass("checked");
@@ -370,7 +370,7 @@ define(["jquery",
                 delete this.tracks;
                 this.undelegateEvents();
 
-                if (annotationsTool.structuredAnnotation) {
+                if (annotationsTool.isStructuredAnnotationEnabled()) {
                   this.tabsContainerElement.empty();
                   this.$el.find("#editSwitch input").attr("checked",false);
                   this.tabsButtonsElement.find(".tab-button").remove();

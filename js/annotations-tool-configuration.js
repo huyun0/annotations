@@ -53,16 +53,26 @@ define(['domReady',
              */
             playerAdapter: undefined,
 
+
+            LAYOUT_CONFIGURATION: {
+                DEFAULT: {
+                    timeline: true,
+                    list: true,
+                    annotate: true
+                }
+            },
             
-            layoutConfiguration: {
-                timeline: true,
-                list: true,
-                annotate: true
+            getLayoutConfiguration: function () {
+                return this.LAYOUT_CONFIGURATION.DEFAULT;
             },
 
-            structuredAnnotation: true,
-            freeText: true,
-            
+            isStructuredAnnotationEnabled: function () {
+                return true;
+            },
+
+            isFreeTextEnabled: function () {
+                return true;
+            },
             
             /**
              * Get the current video id (video_extid) 

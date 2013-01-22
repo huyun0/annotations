@@ -135,13 +135,13 @@ define(["jquery",
               this.setLoadingProgress(60,"Start creating views.");
               
 
-              if (annotationsTool.layoutConfiguration.timeline) {
+              if (annotationsTool.getLayoutConfiguration().timeline) {
                 // Create views with Timeline
                 this.setLoadingProgress(70,"Creating timeline.");
                 this.timelineView = new TimelineView({playerAdapter: this.playerAdapter});
               }
               
-              if (annotationsTool.layoutConfiguration.annotate) {
+              if (annotationsTool.getLayoutConfiguration().annotate) {
                 // Create view to annotate
                 this.setLoadingProgress(80,"Creating annotate view.");
                 this.annotateView = new AnnotateView({playerAdapter: this.playerAdapter});
@@ -149,7 +149,7 @@ define(["jquery",
                 this.annotateView.$el.show();
               }
               
-              if (annotationsTool.layoutConfiguration.list) {
+              if (annotationsTool.getLayoutConfiguration().list) {
                 // Create annotations list view
                 this.setLoadingProgress(90,"Creating list view.");
                 this.listView = new ListView();
@@ -214,15 +214,15 @@ define(["jquery",
         annotationsTool.playerAdapter.setCurrentTime(0);
         $("#video-container").hide();
         
-        if (annotationsTool.layoutConfiguration.timeline) {
+        if (annotationsTool.getLayoutConfiguration().timeline) {
            this.timelineView.reset();
         }
 
-        if (annotationsTool.layoutConfiguration.annotate) {
+        if (annotationsTool.getLayoutConfiguration().annotate) {
             this.annotateView.reset();
         }
 
-        if (annotationsTool.layoutConfiguration.list) {
+        if (annotationsTool.getLayoutConfiguration().list) {
             this.listView.reset();
         }
 
