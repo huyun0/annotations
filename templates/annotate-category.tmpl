@@ -10,5 +10,5 @@
         <input id="color-{{name}}" type="text" class="colorpicker edit" value="{{#if settings}}{{settings.color}}{{/if}}" /></div>
     </div>
 </div>
-<div class="catItem-labels"></div>
+<div class="catItem-labels" {{#if settings.color}}style="background-color:{{settings.color}}"{{/if}}></div>
 <div class="catItem-add edit"><i class="icon-plus-sign"></i>Create a label</div>
