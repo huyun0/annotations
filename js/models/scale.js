@@ -32,6 +32,8 @@ define(["jquery",
             },
             
             initialize: function(attr){
+                _.bindAll(this, "toExportJSON");
+
                 if (!attr  || _.isUndefined(attr.name) || attr.name == "") {
                     throw "'name' attribute is required";
                 }
@@ -107,7 +109,7 @@ define(["jquery",
                         this.id = attr.id;
                         this.setUrl();
 
-                        scalevalues = this.attributes.scalevalues;
+                        scalevalues = this.attributes.scaleValues;
 
                         if (scalevalues && (scalevalues.length) == 0) {
                             scalevalues.fetch({async:false});
@@ -151,6 +153,24 @@ define(["jquery",
                     json.tags = JSON.stringify(json.tags);
                 }
                 delete json.scaleValues;
+
+                return json;
+            },
+
+            toExportJSON: function () {
+                var json = {
+                    id: this.id,
+                    name: this.attributes.name,
+                    scaleValues: this.attributes.scaleValues.toExportJSON()                  
+                }
+
+                if (this.attributes.tags) {
+                    json.tags = JSON.stringify(this.attributes.tags);
+                }
+
+                if (this.attributes.description) {
+                    json.description = this.attributes.description;
+                }                
 
                 return json;
             },

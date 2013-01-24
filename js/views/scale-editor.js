@@ -233,8 +233,8 @@ define(["jquery",
                 cancel: function () {
                     if (this.isInEditMode) {
                         this.isInEditMode = false;
-                        this.changeScale();
                         this.renderScaleSelect();
+                        this.changeScale();
                         this.$el.find(".modal-body").hide();
                         this.$el.find("select#scale-id").removeAttr("disabled");
                         this.$el.find("a#save-scale").text(this.TITLES.SAVE_BUTTON);

@@ -36,7 +36,7 @@ define(["jquery",
              * @param  {Video} video  Video supporting the scales collection
              */
             initialize: function(models, video){
-                _.bindAll(this, "setUrl","addCopyFromTemplate");
+                _.bindAll(this, "setUrl", "addCopyFromTemplate", "toExportJSON");
                 
                 this.setUrl(video);
             },
@@ -71,6 +71,17 @@ define(["jquery",
                 this.each(function(scale){
                     scale.setUrl();
                 });
+            },
+
+
+            toExportJSON: function () {
+                var scalesForExport = [];
+
+                this.each(function (scale) {
+                    scalesForExport.push(scale.toExportJSON());
+                });
+
+                return scalesForExport;
             },
             
             /**

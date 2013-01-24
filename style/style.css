@@ -5918,6 +5918,9 @@ div.timeline-item:hover {
     padding-top: 8px;
     padding-right: 8px;
   }
+  #annotate-container input.file {
+    display: none;
+  }
   #annotate-container #label-tabs-contents div {
     padding: 0px;
   }

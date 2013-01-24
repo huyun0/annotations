@@ -33,7 +33,9 @@ define(["jquery",
              * @constructor
              */
             initialize: function(models,category){
-                _.bindAll(this,"setUrl");
+                _.bindAll(this,
+                        "setUrl",
+                        "toExportJSON");
                 
                 this.setUrl(category);
             },
@@ -45,6 +47,16 @@ define(["jquery",
                 return resp;
               else
                 return null;
+            },
+
+            toExportJSON: function () {
+                var labelsForExport = [];
+
+                this.each(function (label) {
+                    labelsForExport.push(label.toExportJSON());
+                });
+
+                return labelsForExport;
             },
             
             /**

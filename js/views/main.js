@@ -75,14 +75,18 @@ define(["jquery",
                         "onWindowResize",
                         "print");
         
-        this.setLoadingProgress(10,"Starting tool.");
+        this.setLoadingProgress(10, "Starting tool.");
         
         // Load the good storage module
         if(window.annotationsTool.localStorage){
           // Local storage module 
           Backbone.sync = Backbone.localSync;
+
+          // Remove link for statistics exports, work only with backend implementation
+          this.$el.find("#export").parent().remove();
         }
         else{
+          this.$el.find("#export").attr("href", annotationsTool.exportURL());
           // REST annotations storage module
           Backbone.sync = AnnotationSync;
         }
@@ -93,6 +97,7 @@ define(["jquery",
         
         // Create a new users collection and get exciting local user
         annotationsTool.users = new Users();
+
         Backbone.localSync("read",annotationsTool.users,{
           success: function(data){
               annotationsTool.users.add(data);
@@ -113,6 +118,8 @@ define(["jquery",
         annotationsTool.dispatcher = _.clone(Backbone.Events);
 
         annotationsTool.filtersManager = new FiltersManager();
+
+        annotationsTool.importCategories = this.importCategories;
 
         this.onWindowResize();  
       },
@@ -328,7 +335,6 @@ define(["jquery",
                       concludeInitialization();
                   }
               };
-          
 
           // If we are using the localstorage
           if (window.annotationsTool.localStorage) {
@@ -352,7 +358,53 @@ define(["jquery",
                 video.once("ready",createDefaultTrack);
               }
           }
+      },
 
+      importCategories: function (imported) {
+        var videoCategories = annotationsTool.video.get("categories"),
+            videoScales = annotationsTool.video.get("scales"),
+            labelsToAdd,
+            newCat,
+            newScale,
+            scaleValuesToAdd,
+            scaleOldId,
+            scalesIdMap = {};
+
+        if (!imported.categories || imported.categories.length === 0) {
+          return;
+        }
+
+        _.each(imported.scales, function (scale) {
+            scaleOldId = scale.id;
+            scaleValuesToAdd = scale.scaleValues;
+            delete scale.id;
+            delete scale.scaleValues;
+
+            newScale = videoScales.create(scale, {async:false});
+            scalesIdMap[scaleOldId] = newScale.get("id");
+
+            if (scaleValuesToAdd) {
+                _.each(scaleValuesToAdd, function (scaleValue) {
+                    scaleValue.scale = newScale;
+                    newScale.get("scaleValues").create(scaleValue);
+                });
+            }
+        });
+
+        _.each(imported.categories, function (category) {
+            labelsToAdd = category.labels;
+            category.scale_id = scalesIdMap[category.scale_id];
+            delete category.labels;
+
+            newCat = videoCategories.create(category);
+
+            if (labelsToAdd) {
+                _.each(labelsToAdd, function (label) {
+                    label.category = newCat;
+                    newCat.get("labels").create(label);
+                });
+            }
+        });
       },
 
       /**

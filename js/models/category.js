@@ -51,7 +51,7 @@ define(["jquery",
              */
             initialize: function (attr) {
 
-                _.bindAll(this,'setUrl','validate');
+                _.bindAll(this,'setUrl','validate', 'toExportJSON');
 
                 if (!attr || _.isUndefined(attr.name)) {
                     throw "'name' attribute is required";
@@ -299,6 +299,39 @@ define(["jquery",
                     if (!annotationsTool.localStorage) {
                         delete json.scale;
                     }
+                }
+
+                return json;
+            },
+
+            toExportJSON: function () {
+                var json = {
+                    name: this.attributes.name,
+                    labels: this.attributes.labels.toExportJSON(),                  
+                }
+
+                if (this.attributes.tags) {
+                    json.tags = JSON.stringify(this.attributes.tags);
+                }
+
+                if (this.attributes.description) {
+                    json.description = this.attributes.description;
+                }                
+
+                if (this.attributes.has_duration) {
+                    json.has_duration = this.attributes.has_duration;
+                }                
+
+                if (this.attributes.scale_id) {
+                    json.scale_id = this.attributes.scale_id;
+                }
+
+                if (this.attributes.settings) {
+                    json.settings = this.attributes.settings;
+                }
+
+                if (this.attributes.tags) {
+                    json.tags = this.attributes.tags;
                 }
 
                 return json;

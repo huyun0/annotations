@@ -48,11 +48,17 @@ define(['domReady',
             restEndpointsUrl: "../../extended-annotations",
 
             /**
+             * Url from the export function for statistics usage
+             * @type {string}
+             * @readOnly
+             */
+            exportURL: "",
+
+            /**
              * Player adapter implementation to use for the annotations tool
              * @type {PlayerAdapter}
              */
             playerAdapter: undefined,
-
 
             LAYOUT_CONFIGURATION: {
                 DEFAULT: {
