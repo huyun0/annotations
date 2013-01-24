@@ -6397,6 +6397,25 @@ div.timeline-item:hover {
   .collapse-comment.in {
     height: auto;
   }
+  #scale-editor h3 .manage {
+    line-height: 27px;
+    float: right;
+  }
+  #scale-editor a {
+    margin-bottom: 8px;
+  }
+  #scale-editor .modal-body {
+    display: none;
+  }
+  #scale-editor .list-scale-values div.scale-value:first-child a.order-up,
+  #scale-editor .list-scale-values div.scale-value:last-child a.order-down {
+    visibility: hidden;
+  }
+  #scale-editor .list-scale-values .error {
+    color: red;
+    font-weight: bold;
+    border: 1px solid red;
+  }
 }
 @media print {
   * {

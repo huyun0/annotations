@@ -28,32 +28,47 @@ define(["jquery",
         var Scale = Backbone.Model.extend({
             
             defaults: {
-                access: ACCESS.PRIVATE,
-                created_at: null,
-                created_by: null,
-                updated_at: null,
-                updated_by: null,
-                deleted_at: null,
-                deleted_by: null
+                access: ACCESS.PRIVATE
             },
             
             initialize: function(attr){
-                if(!attr  || _.isUndefined(attr.name) || attr.name == "")
+                if (!attr  || _.isUndefined(attr.name) || attr.name == "") {
                     throw "'name' attribute is required";
+                }
                 
-                if(attr.scaleValues && _.isArray(attr.scaleValues))
+                if (attr.scaleValues && _.isArray(attr.scaleValues)) {
                     this.set({scaleValues: new ScaleValues(attr.scaleValues,this)});
-                else
+                } else {
                     this.set({scaleValues: new ScaleValues([],this)});
+                }
                 
-                if(attr.id)
+                if (attr.id) {
                     this.attributes.scaleValues.fetch({async:false});
+                }
+
+                // If localStorage used, we have to save the video at each change on the children
+                if (window.annotationsTool.localStorage) {
+                    if (!attr.created_by) {
+                        attr.created_by = annotationsTool.user.get("id");
+                    }
+
+                    if (!attr.created_by_nickname) {
+                        attr.created_by_nickname = annotationsTool.user.get("nickname");
+                    }
+                }
+
+                if (annotationsTool.user.get("id") === attr.created_by) {
+                    attr.isMine = true;
+                } else {
+                    attr.isMine = false;
+                }
 
                 // Check if the track has been initialized 
-                if(!attr.id){
+                if (!attr.id) {
                     // If local storage, we set the cid as id
-                    if(window.annotationsTool.localStorage)
+                    if (window.annotationsTool.localStorage) {
                         attr['id'] = this.cid;
+                    }
                         
                     this.toCreate = true;
                 }
@@ -69,6 +84,12 @@ define(["jquery",
                 attr.created_at = attr.created_at != null ? Date.parse(attr.created_at): null;
                 attr.updated_at = attr.updated_at != null ? Date.parse(attr.updated_at): null;
                 attr.deleted_at = attr.deleted_at != null ? Date.parse(attr.deleted_at): null;
+
+                if (annotationsTool.user.get("id") === attr.created_by) {
+                    attr.isMine = true;
+                } else {
+                    attr.isMine = false;
+                }
 
                 if (attr.tags) {
                     attr.tags = this.parseJSONString(attr.tags);

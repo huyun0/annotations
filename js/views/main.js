@@ -21,6 +21,7 @@ define(["jquery",
         "views/list",
         "views/timeline",
         "views/login",
+        "views/scale-editor",
         "collections/users",
         "models/user",
         "models/track",
@@ -36,7 +37,7 @@ define(["jquery",
         "tab"],
        
        function($, PlayerAdapter, Annotations,
-                AnnotateView, ListView, TimelineView, LoginView,
+                AnnotateView, ListView, TimelineView, LoginView, ScaleEditorView,
                 Users, User, Track, Video, Videos, AnnotationSync, ROLES, FiltersManager, Backbone){
 
     /**
@@ -102,6 +103,8 @@ define(["jquery",
         });
         
         this.loginView = new LoginView();
+        annotationsTool.scaleEditor = new ScaleEditorView();
+
         this.listenTo(annotationsTool.users, "login", this.createViews);
         this.checkUserAndLogin(); 
 
