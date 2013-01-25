@@ -30,7 +30,7 @@ define(["jquery",
         "handlebars",
         "backbone",
         "libs/FileSaver",
-        "libs/jquery.FileReader"],
+        "jquery.FileReader"],
        
     function($, _, Category, Label, Scale, ScaleValue, Categories, Labels, ScaleValues, CategoryView, Template, categoriesSet, scalesSet, Handlebars, Backbone){
 
