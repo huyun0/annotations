@@ -84,7 +84,7 @@ body {
 	transition: none;
 	background-position: 0 0;
 	text-shadow: none;
-	opacity:0.8;
+	opacity:0.95;
   @shadow: inset 0 2px 4px rgba(0,0,0,.15), 0 1px 2px rgba(0,0,0,.05);
   .box-shadow(@shadow);
 }
@@ -128,9 +128,16 @@ body {
 
 
 
+
 // Elements 
 // -------------------------
 input, textarea, select, .uneditable-input {
 	.standard_border_radius();
 }
 
+textarea {
+ 	&:hover, &:active, &:focus {
+   		border: 1px solid @blue;
+   		box-shadow: none;
+  }
+}

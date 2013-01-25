@@ -1,5 +1,5 @@
 <div class="catItem-header" {{#if settings.color}}style="background-color:{{settings.color}}"{{/if}}>
-    <input type="text" value="{{name}}" {{#if notEdit}}disabled='disabled'{{/if}}/> 
+    <input type="text" title="{{name}}" value="{{name}}" {{#if notEdit}}disabled='disabled'{{/if}}/> 
     {{#if settings.hasScale}}
     <i class="icon-star scale edit" title="disable scaling for this category"></i>
     {{else}}

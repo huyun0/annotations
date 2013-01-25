@@ -38,8 +38,8 @@ div.timeline-groups-text{
     background-color: white;
     position: absolute;
     width: 2000px;
-    padding: 4px;
     top: -6px;
+    padding: 0;
     
     div.content{
         float: left;
@@ -47,12 +47,13 @@ div.timeline-groups-text{
     }
     
     div.timeline-group {
+    		padding: 4px;
         height: 55px;
         z-index: 3;
         
         &.mine:hover{
             cursor: pointer;
-            background-color: lighten(grey, 40%)
+            background-color: lighten(@yellow, 30%);
         }
         
         div.content{
@@ -65,11 +66,11 @@ div.timeline-groups-text{
     }
 
     &:nth-child(odd){
-        background-color: lighten(grey, 60%);   
+        background-color: @grayLighter;   
     }
     
     &.selected {
-        background-color: lighten(grey, 30%);
+        background-color: lighten(@blue, 30%);
         
         div.timeline-group:hover{
             background-color: inherit;

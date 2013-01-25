@@ -53,11 +53,25 @@ i.check{
     
     #label-tabs-buttons {
     	margin-bottom: 0;
+    	position: relative;
+    	z-index: 10;
+    	
+    	> li a {
+    		
+    		&.active a{
+    			border-bottom: 2px solid @white;
+    			margin-bottom: 0;
+    		}
+    	}
     }
     
     #label-tabs-contents {
     	background-color: @white;
     	padding: 0;
+    	position: relative;
+    	z-index: 5;
+    	border-top: 2px solid @grayDark;
+			top: -2px;
     }
 
     #editSwitch{
@@ -82,6 +96,10 @@ i.check{
         	}
         }
     }
+    
+    .control-group {
+    	margin: 0;
+    }
 
     h3{
         line-height: 18px;
@@ -93,6 +111,17 @@ i.check{
         padding: 0px;
 
         &.carousel{
+        .row-fluid{
+        
+					> .span3 {
+						width: 25%;
+					}
+					
+					> [class*="span3"] {
+						margin-left: 0;
+					}
+        }
+        	overflow: auto;
             
             .category-item{ 
                 height: 100%;
@@ -101,21 +130,20 @@ i.check{
                     text-align: left;
 
                     input{
-                        width: 80px;
+                        width: 50px;
                         border: none;
-                        margin: 0px;
+                        margin: 0 0 3px 0;
                         padding: 1px;
-                        font-size: 14px;
-                        box-shadow: inset -1px 1px 3px @black;
                         font-weight: bold;
-                        text-overflow: clip;  
-                        
+                        text-overflow: clip;
+                        color: @black;  
+                        box-shadow: none;
+                       
                         &[disabled]{
-                            text-overflow: ellipsis;
-                            box-shadow: none;
-                            background: none;
-                            color: white;
-                            cursor: default;
+                        	margin: 0;
+                          text-overflow: ellipsis;
+                          background: none;
+                          cursor: default;
                         }
                     }
 
@@ -125,53 +153,57 @@ i.check{
  												background-position: -384px -168px;
                     }
 
-                    padding: 5px;
+                    padding: 1px 3px;
                     font-size: 14px;
                     font-weight: bold;
                     color: @white;
+                    border-right: 1px solid @white;
+                    border-bottom: 1px solid @white;
                 }
-
 
                 .label-item{
                     @labelPadding: 3px;
                     padding: @labelPadding;
-                    margin-top: 2px;
-                    min-height: 16px;
+                    height: 16px;
+                    position: relative;
+                    background-color: fade(@white, 60%);
+                    border-right: 1px solid @white;
+                    border-bottom: 1px solid @white;
 
                     .item-abbreviation{
-                        color: black;
+                        color: @black;
+                        background-color: @white;
+                        border:none;
                         float:left;
                         margin: 0px;
                         width: 24px;
                         padding: 1px;
-                        background-color: fade(@white, 50%);
+                        box-shadow: none;
 
                         &[disabled]{
                             text-overflow: ellipsis;
-                            box-shadow: none;
                             background: none;
                             cursor: pointer;
                             border: none;
+                            color: @black;
                         }
                     }
 
                     .item-value{
-                        color: black;
+                        color: @black;
+                        background-color: @white;
+												border: none;
                         float:left;
-                        padding: @labelPadding;
-                        display: inline-block;
                         padding: 1px;
-                        width: 80px;
-                        margin: 0px;
-                        margin-left: 4px;
-                        background-color: fade(@white, 50%);
+                        display: inline-block;
+                        width: 55px;
+                        margin: 0 0 0 2px;
+                        box-shadow: none;
 
                         &[disabled]{
                             text-overflow: ellipsis;
-                            box-shadow: none;
                             background: none;
                             cursor: pointer;
-                            border: none;
                         }
                     }
 
@@ -183,70 +215,98 @@ i.check{
 
 
                     &:hover{
-                        .box-shadow(0px,0px,4px,darken(@colorOne,30%));
-                        .inset-box-shadow(0px,0px,10px,darken(@colorOne,50%));
-
                         .scaling{
                             display: block;
                         }
                     }
 
                     .scaling{
-                        @itemsize: 20px;
-                        display: none;
+                        @itemWidth: 20px;
+                        @itemHeight: 22px;
+                        @itemPadding: 2px;
+                        @borderWidth: 1px;
+                        min-width: (((@itemWidth+@borderWidth)+(2*@itemPadding))*5);
                         width: 100%;
-                        float: left;
+                        background-color: fade(@black, 50%);
+                        height: @itemHeight; 
+                        display: none;
                         position: absolute;
                         margin: 0;
+                        left: 0;
+                        top: 0;
+                        z-index:200;
 
                         li {
                             list-style: none;
                             display: block;
                             float:left;
-                            width: @itemsize;
-                            height: @itemsize;
-                            line-height: @itemsize;
+                            width: @itemWidth;
+                            height: @itemHeight;
+                            line-height: @itemHeight;
                             background-color: @black;
                             color: @white;
-                            font-size: 0.85em;
+                            font-size: 0.8em;
                             font-weight: bold;
                             padding: 0px 2px 0px 2px;
-                            border-right: 1px solid @white;
+                            border-right: @borderWidth solid @white;
                             text-align: center;
-                           
 
                             &:hover{
                                 cursor: pointer;
-                                background-color: @grayDark;
-
+                                background-color: @white;
+                                color: @black;
                             }
+                            
                         }
 
                     }
 
                 }
 
-                .catItem-labels{
-                    max-height: 150px;
-                    overflow: auto;
-                }
             }
 
             height: 150px;
 
         }
         
+        @controlsHeight: 22px;
+        
         div.controls {
         	text-align: right;
         }
 
         div.pagination{
+        
+           border-bottom: 2px solid @gray;
             margin: 0px;
-            height: 22px;
+            height: @controlsHeight;
           	text-align: right;
-        	    
+          	
+          	ul {
+          		box-shadow: none;
+          		border-radius: 0;
+          	}
+          	
+          	li.active a {
+          		background-color: @grayLighter;
+          		background-image:none;
+          	}
+
             a{
-                line-height: 22px;
+              .btn();
+              // Override some Setting of .btn()
+           		padding-top: 0;
+           		padding-bottom: 0;          
+              border:none;
+        	  	border-left: 2px solid @grayDark;
+           		border-radius: 0;
+          		height: @controlsHeight;
+              line-height: @controlsHeight;
+                     	  	
+        	  	&:hover {
+          			background-color: @white;
+          			background-image:none;        	  	
+        	  	}
             }
         }
 
@@ -258,7 +318,6 @@ i.check{
             .label-item{
                 &:hover{
                     cursor: default;
-                    background-color: @colorTwo;
 
                     .scaling{
                         display: none;
@@ -273,14 +332,13 @@ i.check{
         }
 
         i.edit{ 
-            border-radius: 2px;
-            background-color: white;
-            border: 1px solid white;
+            background-color: none;
+            border: none;
             margin-left: 5px;
             float: right;
 
             &:hover{
-                background-color: #CACACA; 
+                background-color: @grayLighter; 
                 cursor: pointer;
             }
         }
@@ -303,7 +361,7 @@ i.check{
     #label-tabs-contents div.tab-pane {
 
         .edit {
-           visibility: hidden; 
+           visibility: hidden;
         }
 
         .nav i.edit{
@@ -324,52 +382,50 @@ i.check{
             div.carousel .category-item{ 
 
             	.catItem-add{
-                	margin-top: 2px;
-                	padding: 5px;
-                	text-align: left;
+                margin-top: 2px;
+                padding: 5px;
+                text-align: left;
 
-                	display: block;
+                display: block;
 
 
-                        i{
-                            margin-right: 3px;
-                        }
+								i{
+									margin-right: 3px;
+								}
+								&:hover{
+									cursor: pointer;
+								}
+							}
 
-                        &:hover{
-                            cursor: pointer;
-                            //background-color: @colorTwo;
-                        }
-                    }
+							.label-item{
+								height: 22px;
+								&:hover{
+									cursor: default;
+									background-color: fade(@white,40%);
+									.scaling{
+										display: none;
+									}
+								}
+							}
 
-                    .label-item{
-                        height: 22px;
-
-                        &:hover{
-                            cursor: default;
-                            background-color: @colorTwo;
-
-	                    	.scaling{
-	                        	display: none;
-	                    	}
-	
-                    	}
-
-                	}
-            }                      
+							.item-abbreviation, .item-value {
+								border: 1px solid @white;
+								&:focus, &:active {
+									border: 1px solid @blue;
+								}
+							}					
+            }	                                  
         }
 
-        .edit{
-            visibility: visible;
-        }
-
-        i.edit{ 
-            background-color: white;
-            border: 1px solid white;
-            margin-left: 5px;
+        i.edit{
+            margin: 2px 0 0 5px;
+            padding: 1px;
             float: right;
+            background-color: transparent;
+            border:none;
 
             &:hover{
-                background-color: #CACACA; 
+                background-color: @grayLighter; 
                 cursor: pointer;
             }
         }

@@ -31,7 +31,7 @@ define(["jquery",
 
           tagName: "div",
           
-          className: 'span4 category-item',
+          className: 'span3 category-item',
 
           idPrefix: "catItem-",
 

@@ -304,7 +304,7 @@ define(["jquery",
             var itemsLength = this.categoriesContainer.find('div.category-item').length;
 
             // Create a new carousel if the current one is full
-            if ((itemsLength % 3)==0) {
+            if ((itemsLength % 4)==0) {
               this.addCarouselItem();
             }
 
@@ -325,13 +325,13 @@ define(["jquery",
 
             var length = this.categoriesContainer.find('div.category-item').length;
 
-            var pageNumber = (length - (length % 3)) / 3;
+            var pageNumber = (length - (length % 4)) / 4;
 
             this.categoriesContainer.append(this.itemContainerTemplate({number:(pageNumber+1)}));
 
             this.itemsCurrentContainer = this.categoriesContainer.find('div div div.row-fluid').last();
 
-            if(length >= 3) {
+            if(length >= 4) {
               this.carouselPagination.parent().css('display','block');
             }
 

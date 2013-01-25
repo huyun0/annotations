@@ -366,9 +366,11 @@ define(["jquery",
 
               if (mainContainer.css("display") === "none") {
                 mainContainer.show();
+                $("div#list-container").toggleClass("expanded");
                 $(event.target).html("Collapse");
               } else {
                 mainContainer.hide();
+                $("div#list-container").toggleClass("expanded");
                 $(event.target).html("Expand");
               }
               this.trigger("change-layout");

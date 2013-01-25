@@ -2459,15 +2459,15 @@
     text-align: center;
     text-shadow: 0 1px 1px rgba(255, 255, 255, 0.75);
     vertical-align: middle;
-    background-color: #cfcfcf;
-    background-image: -moz-linear-gradient(top, #e3e3e3, #b0b0b0);
-    background-image: -ms-linear-gradient(top, #e3e3e3, #b0b0b0);
-    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#e3e3e3), to(#b0b0b0));
-    background-image: -webkit-linear-gradient(top, #e3e3e3, #b0b0b0);
-    background-image: -o-linear-gradient(top, #e3e3e3, #b0b0b0);
-    background-image: linear-gradient(top, #e3e3e3, #b0b0b0);
+    background-color: #b0b0b0;
+    background-image: -moz-linear-gradient(top, #b0b0b0, #b0b0b0);
+    background-image: -ms-linear-gradient(top, #b0b0b0, #b0b0b0);
+    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#b0b0b0), to(#b0b0b0));
+    background-image: -webkit-linear-gradient(top, #b0b0b0, #b0b0b0);
+    background-image: -o-linear-gradient(top, #b0b0b0, #b0b0b0);
+    background-image: linear-gradient(top, #b0b0b0, #b0b0b0);
     background-repeat: repeat-x;
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#e3e3e3', endColorstr='#b0b0b0', GradientType=0);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#b0b0b0', endColorstr='#b0b0b0', GradientType=0);
     border-color: #b0b0b0 #b0b0b0 #8a8a8a;
     border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
     filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
@@ -2607,15 +2607,15 @@
     color: rgba(255, 255, 255, 0.75);
   }
   .btn-primary {
-    background-color: #72bef5;
-    background-image: -moz-linear-gradient(top, #98cff8, #39a3f1);
-    background-image: -ms-linear-gradient(top, #98cff8, #39a3f1);
-    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#98cff8), to(#39a3f1));
-    background-image: -webkit-linear-gradient(top, #98cff8, #39a3f1);
-    background-image: -o-linear-gradient(top, #98cff8, #39a3f1);
-    background-image: linear-gradient(top, #98cff8, #39a3f1);
+    background-color: #39a3f1;
+    background-image: -moz-linear-gradient(top, #39a3f1, #39a3f1);
+    background-image: -ms-linear-gradient(top, #39a3f1, #39a3f1);
+    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#39a3f1), to(#39a3f1));
+    background-image: -webkit-linear-gradient(top, #39a3f1, #39a3f1);
+    background-image: -o-linear-gradient(top, #39a3f1, #39a3f1);
+    background-image: linear-gradient(top, #39a3f1, #39a3f1);
     background-repeat: repeat-x;
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#98cff8', endColorstr='#39a3f1', GradientType=0);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#39a3f1', endColorstr='#39a3f1', GradientType=0);
     border-color: #39a3f1 #39a3f1 #0f7dcf;
     border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
     filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
@@ -2643,15 +2643,15 @@
     background-color: #108ce7 \9;
   }
   .btn-warning {
-    background-color: #ff983d;
-    background-image: -moz-linear-gradient(top, #ffae66, #ff7800);
-    background-image: -ms-linear-gradient(top, #ffae66, #ff7800);
-    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#ffae66), to(#ff7800));
-    background-image: -webkit-linear-gradient(top, #ffae66, #ff7800);
-    background-image: -o-linear-gradient(top, #ffae66, #ff7800);
-    background-image: linear-gradient(top, #ffae66, #ff7800);
+    background-color: #ff7800;
+    background-image: -moz-linear-gradient(top, #ff7800, #ff7800);
+    background-image: -ms-linear-gradient(top, #ff7800, #ff7800);
+    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#ff7800), to(#ff7800));
+    background-image: -webkit-linear-gradient(top, #ff7800, #ff7800);
+    background-image: -o-linear-gradient(top, #ff7800, #ff7800);
+    background-image: linear-gradient(top, #ff7800, #ff7800);
     background-repeat: repeat-x;
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffae66', endColorstr='#ff7800', GradientType=0);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff7800', endColorstr='#ff7800', GradientType=0);
     border-color: #ff7800 #ff7800 #b35400;
     border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
     filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
@@ -2679,15 +2679,15 @@
     background-color: #cc6000 \9;
   }
   .btn-danger {
-    background-color: #ff4b4b;
-    background-image: -moz-linear-gradient(top, #ff7474, #ff0e0e);
-    background-image: -ms-linear-gradient(top, #ff7474, #ff0e0e);
-    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#ff7474), to(#ff0e0e));
-    background-image: -webkit-linear-gradient(top, #ff7474, #ff0e0e);
-    background-image: -o-linear-gradient(top, #ff7474, #ff0e0e);
-    background-image: linear-gradient(top, #ff7474, #ff0e0e);
+    background-color: #ff0e0e;
+    background-image: -moz-linear-gradient(top, #ff0e0e, #ff0e0e);
+    background-image: -ms-linear-gradient(top, #ff0e0e, #ff0e0e);
+    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#ff0e0e), to(#ff0e0e));
+    background-image: -webkit-linear-gradient(top, #ff0e0e, #ff0e0e);
+    background-image: -o-linear-gradient(top, #ff0e0e, #ff0e0e);
+    background-image: linear-gradient(top, #ff0e0e, #ff0e0e);
     background-repeat: repeat-x;
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff7474', endColorstr='#ff0e0e', GradientType=0);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff0e0e', endColorstr='#ff0e0e', GradientType=0);
     border-color: #ff0e0e #ff0e0e #c10000;
     border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
     filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
@@ -2715,15 +2715,15 @@
     background-color: #da0000 \9;
   }
   .btn-success {
-    background-color: #80ca45;
-    background-image: -moz-linear-gradient(top, #94dd5b, #61ae24);
-    background-image: -ms-linear-gradient(top, #94dd5b, #61ae24);
-    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#94dd5b), to(#61ae24));
-    background-image: -webkit-linear-gradient(top, #94dd5b, #61ae24);
-    background-image: -o-linear-gradient(top, #94dd5b, #61ae24);
-    background-image: linear-gradient(top, #94dd5b, #61ae24);
+    background-color: #61ae24;
+    background-image: -moz-linear-gradient(top, #61ae24, #61ae24);
+    background-image: -ms-linear-gradient(top, #61ae24, #61ae24);
+    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#61ae24), to(#61ae24));
+    background-image: -webkit-linear-gradient(top, #61ae24, #61ae24);
+    background-image: -o-linear-gradient(top, #61ae24, #61ae24);
+    background-image: linear-gradient(top, #61ae24, #61ae24);
     background-repeat: repeat-x;
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#94dd5b', endColorstr='#61ae24', GradientType=0);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#61ae24', endColorstr='#61ae24', GradientType=0);
     border-color: #61ae24 #61ae24 #3e6f17;
     border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
     filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
@@ -2751,15 +2751,15 @@
     background-color: #49841b \9;
   }
   .btn-info {
-    background-color: #a2d4f8;
-    background-image: -moz-linear-gradient(top, #c8e5fb, #69b9f4);
-    background-image: -ms-linear-gradient(top, #c8e5fb, #69b9f4);
-    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#c8e5fb), to(#69b9f4));
-    background-image: -webkit-linear-gradient(top, #c8e5fb, #69b9f4);
-    background-image: -o-linear-gradient(top, #c8e5fb, #69b9f4);
-    background-image: linear-gradient(top, #c8e5fb, #69b9f4);
+    background-color: #69b9f4;
+    background-image: -moz-linear-gradient(top, #69b9f4, #69b9f4);
+    background-image: -ms-linear-gradient(top, #69b9f4, #69b9f4);
+    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#69b9f4), to(#69b9f4));
+    background-image: -webkit-linear-gradient(top, #69b9f4, #69b9f4);
+    background-image: -o-linear-gradient(top, #69b9f4, #69b9f4);
+    background-image: linear-gradient(top, #69b9f4, #69b9f4);
     background-repeat: repeat-x;
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#c8e5fb', endColorstr='#69b9f4', GradientType=0);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#69b9f4', endColorstr='#69b9f4', GradientType=0);
     border-color: #69b9f4 #69b9f4 #2198ef;
     border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
     filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
@@ -2787,15 +2787,15 @@
     background-color: #39a3f1 \9;
   }
   .btn-inverse {
-    background-color: #4f4f4f;
-    background-image: -moz-linear-gradient(top, #636363, #303030);
-    background-image: -ms-linear-gradient(top, #636363, #303030);
-    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#636363), to(#303030));
-    background-image: -webkit-linear-gradient(top, #636363, #303030);
-    background-image: -o-linear-gradient(top, #636363, #303030);
-    background-image: linear-gradient(top, #636363, #303030);
+    background-color: #303030;
+    background-image: -moz-linear-gradient(top, #303030, #303030);
+    background-image: -ms-linear-gradient(top, #303030, #303030);
+    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#303030), to(#303030));
+    background-image: -webkit-linear-gradient(top, #303030, #303030);
+    background-image: -o-linear-gradient(top, #303030, #303030);
+    background-image: linear-gradient(top, #303030, #303030);
     background-repeat: repeat-x;
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#636363', endColorstr='#303030', GradientType=0);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#303030', endColorstr='#303030', GradientType=0);
     border-color: #303030 #303030 #0a0a0a;
     border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
     filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
@@ -4795,20 +4795,21 @@
     background-color: white;
     position: absolute;
     width: 2000px;
-    padding: 4px;
     top: -6px;
+    padding: 0;
   }
   div.timeline-groups-text div.content {
     float: left;
     padding: 3px;
   }
   div.timeline-groups-text div.timeline-group {
+    padding: 4px;
     height: 55px;
     z-index: 3;
   }
   div.timeline-groups-text div.timeline-group.mine:hover {
     cursor: pointer;
-    background-color: #e6e6e6;
+    background-color: #ffef99;
   }
   div.timeline-groups-text div.timeline-group div.content {
     width: 105px;
@@ -4817,10 +4818,10 @@
     text-overflow: ellipsis;
   }
   div.timeline-groups-text:nth-child(odd) {
-    background-color: #ffffff;
+    background-color: #eaeaea;
   }
   div.timeline-groups-text.selected {
-    background-color: #cdcdcd;
+    background-color: #c8e5fb;
   }
   div.timeline-groups-text.selected div.timeline-group:hover {
     background-color: inherit;
@@ -4880,15 +4881,15 @@
     text-align: center;
     text-shadow: 0 1px 1px rgba(255, 255, 255, 0.75);
     vertical-align: middle;
-    background-color: #cfcfcf;
-    background-image: -moz-linear-gradient(top, #e3e3e3, #b0b0b0);
-    background-image: -ms-linear-gradient(top, #e3e3e3, #b0b0b0);
-    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#e3e3e3), to(#b0b0b0));
-    background-image: -webkit-linear-gradient(top, #e3e3e3, #b0b0b0);
-    background-image: -o-linear-gradient(top, #e3e3e3, #b0b0b0);
-    background-image: linear-gradient(top, #e3e3e3, #b0b0b0);
+    background-color: #b0b0b0;
+    background-image: -moz-linear-gradient(top, #b0b0b0, #b0b0b0);
+    background-image: -ms-linear-gradient(top, #b0b0b0, #b0b0b0);
+    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#b0b0b0), to(#b0b0b0));
+    background-image: -webkit-linear-gradient(top, #b0b0b0, #b0b0b0);
+    background-image: -o-linear-gradient(top, #b0b0b0, #b0b0b0);
+    background-image: linear-gradient(top, #b0b0b0, #b0b0b0);
     background-repeat: repeat-x;
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#e3e3e3', endColorstr='#b0b0b0', GradientType=0);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#b0b0b0', endColorstr='#b0b0b0', GradientType=0);
     border-color: #b0b0b0 #b0b0b0 #8a8a8a;
     border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
     filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
@@ -4949,7 +4950,7 @@
     transition: none;
     background-position: 0 0;
     text-shadow: none;
-    opacity: 0.8;
+    opacity: 0.95;
     background-size: 100% 100%;
     box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05) 0 1px #000000;
     -moz-box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05) 0 1px #000000;
@@ -5074,7 +5075,7 @@
     padding: 0;
   }
   .window .navbar .nav > li > a {
-    padding: 0px;
+    padding: 0 0 0 1em;
   }
   .window .navbar .nav > li > a:hover {
     cursor: pointer;
@@ -5186,7 +5187,7 @@
     transition: none;
     background-position: 0 0;
     text-shadow: none;
-    opacity: 0.8;
+    opacity: 0.95;
     background-size: 100% 100%;
     box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05) 0 1px #000000;
     -moz-box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05) 0 1px #000000;
@@ -5230,8 +5231,20 @@
   .uneditable-input {
     border-radius: 0px 0px 0px 0px;
   }
+  textarea:hover,
+  textarea:active,
+  textarea:focus {
+    border: 1px solid #39a3f1;
+    box-shadow: none;
+  }
   .edit {
     visibility: hidden;
+  }
+  i.check {
+    visibility: hidden;
+  }
+  .checked i.check {
+    visibility: visible;
   }
   #annotate-form div {
     /* Todo: do we need this?  text-align: center; */
@@ -5263,10 +5276,20 @@
   }
   #annotate-form #label-tabs-buttons {
     margin-bottom: 0;
+    position: relative;
+    z-index: 10;
+  }
+  #annotate-form #label-tabs-buttons > li a.active a {
+    border-bottom: 2px solid #ffffff;
+    margin-bottom: 0;
   }
   #annotate-form #label-tabs-contents {
     background-color: #ffffff;
     padding: 0;
+    position: relative;
+    z-index: 5;
+    border-top: 2px solid #303030;
+    top: -2px;
   }
   #annotate-form #editSwitch {
     float: right;
@@ -5285,6 +5308,9 @@
   #annotate-container .navbar .currentTrack .content {
     font-weight: bold;
   }
+  #annotate-container .control-group {
+    margin: 0;
+  }
   #annotate-container h3 {
     line-height: 18px;
     padding-top: 8px;
@@ -5294,33 +5320,41 @@
     padding: 0px;
   }
   #annotate-container #label-tabs-contents div.carousel {
+    overflow: auto;
     height: 150px;
+  }
+  #annotate-container #label-tabs-contents div.carousel .row-fluid > .span3 {
+    width: 25%;
+  }
+  #annotate-container #label-tabs-contents div.carousel .row-fluid > [class*="span3"] {
+    margin-left: 0;
   }
   #annotate-container #label-tabs-contents div.carousel .category-item {
     height: 100%;
   }
   #annotate-container #label-tabs-contents div.carousel .category-item .catItem-header {
     text-align: left;
-    padding: 5px;
+    padding: 1px 3px;
     font-size: 14px;
     font-weight: bold;
     color: #ffffff;
+    border-right: 1px solid #ffffff;
+    border-bottom: 1px solid #ffffff;
   }
   #annotate-container #label-tabs-contents div.carousel .category-item .catItem-header input {
-    width: 80px;
+    width: 50px;
     border: none;
-    margin: 0px;
+    margin: 0 0 3px 0;
     padding: 1px;
-    font-size: 14px;
-    box-shadow: inset -1px 1px 3px #000000;
     font-weight: bold;
     text-overflow: clip;
+    color: #000000;
+    box-shadow: none;
   }
   #annotate-container #label-tabs-contents div.carousel .category-item .catItem-header input[disabled] {
+    margin: 0;
     text-overflow: ellipsis;
-    box-shadow: none;
     background: none;
-    color: white;
     cursor: default;
   }
   #annotate-container #label-tabs-contents div.carousel .category-item .catItem-header .colorPicker-picker {
@@ -5330,74 +5364,73 @@
   }
   #annotate-container #label-tabs-contents div.carousel .category-item .label-item {
     padding: 3px;
-    margin-top: 2px;
-    min-height: 16px;
+    height: 16px;
+    position: relative;
+    background-color: rgba(255, 255, 255, 0.6);
+    border-right: 1px solid #ffffff;
+    border-bottom: 1px solid #ffffff;
   }
   #annotate-container #label-tabs-contents div.carousel .category-item .label-item .item-abbreviation {
-    color: black;
+    color: #000000;
+    background-color: #ffffff;
+    border: none;
     float: left;
     margin: 0px;
     width: 24px;
     padding: 1px;
-    background-color: rgba(255, 255, 255, 0.5);
+    box-shadow: none;
   }
   #annotate-container #label-tabs-contents div.carousel .category-item .label-item .item-abbreviation[disabled] {
     text-overflow: ellipsis;
-    box-shadow: none;
     background: none;
     cursor: pointer;
     border: none;
+    color: #000000;
   }
   #annotate-container #label-tabs-contents div.carousel .category-item .label-item .item-value {
-    color: black;
+    color: #000000;
+    background-color: #ffffff;
+    border: none;
     float: left;
-    padding: 3px;
-    display: inline-block;
     padding: 1px;
-    width: 80px;
-    margin: 0px;
-    margin-left: 4px;
-    background-color: rgba(255, 255, 255, 0.5);
+    display: inline-block;
+    width: 55px;
+    margin: 0 0 0 2px;
+    box-shadow: none;
   }
   #annotate-container #label-tabs-contents div.carousel .category-item .label-item .item-value[disabled] {
     text-overflow: ellipsis;
-    box-shadow: none;
     background: none;
     cursor: pointer;
-    border: none;
   }
   #annotate-container #label-tabs-contents div.carousel .category-item .label-item .item-icon {
     float: right;
-  }
-  #annotate-container #label-tabs-contents div.carousel .category-item .label-item:hover {
-    box-shadow: 0px 0px 4px #969696;
-    -moz-box-shadow: 0px 0px 4px #969696;
-    -webkit-box-shadow: 0px 0px 4px #969696;
-    background-size: 100% 100%;
-    box-shadow: inset 0px 0px 10px #636363;
-    -moz-box-shadow: inset 0px 0px 10px #636363;
-    -webkit-box-shadow: inset 0px 0px 10px #636363;
   }
   #annotate-container #label-tabs-contents div.carousel .category-item .label-item:hover .scaling {
     display: block;
   }
   #annotate-container #label-tabs-contents div.carousel .category-item .label-item .scaling {
-    display: none;
+    min-width: 125px;
     width: 100%;
-    float: left;
+    background-color: rgba(0, 0, 0, 0.5);
+    height: 22px;
+    display: none;
     position: absolute;
     margin: 0;
+    left: 0;
+    top: 0;
+    z-index: 200;
   }
   #annotate-container #label-tabs-contents div.carousel .category-item .label-item .scaling li {
     list-style: none;
     display: block;
     float: left;
     width: 20px;
-    height: 20px;
-    line-height: 20px;
+    height: 22px;
+    line-height: 22px;
     background-color: #000000;
     color: #ffffff;
-    font-size: 0.85em;
+    font-size: 0.8em;
     font-weight: bold;
     padding: 0px 2px 0px 2px;
     border-right: 1px solid #ffffff;
@@ -5405,26 +5438,115 @@
   }
   #annotate-container #label-tabs-contents div.carousel .category-item .label-item .scaling li:hover {
     cursor: pointer;
-    background-color: #303030;
-  }
-  #annotate-container #label-tabs-contents div.carousel .category-item .catItem-labels {
-    max-height: 150px;
-    overflow: auto;
+    background-color: #ffffff;
+    color: #000000;
   }
   #annotate-container #label-tabs-contents div div.controls {
     text-align: right;
   }
   #annotate-container #label-tabs-contents div div.pagination {
+    border-bottom: 2px solid #4b4b4b;
     margin: 0px;
     height: 22px;
     text-align: right;
   }
+  #annotate-container #label-tabs-contents div div.pagination ul {
+    box-shadow: none;
+    border-radius: 0;
+  }
+  #annotate-container #label-tabs-contents div div.pagination li.active a {
+    background-color: #eaeaea;
+    background-image: none;
+  }
   #annotate-container #label-tabs-contents div div.pagination a {
+    display: inline-block;
+    *display: inline;
+    /* IE7 inline-block hack */
+  
+    *zoom: 1;
+    padding: 4px 10px 4px;
+    margin-bottom: 0;
+    font-size: 12px;
+    line-height: 16px;
+    color: #303030;
+    text-align: center;
+    text-shadow: 0 1px 1px rgba(255, 255, 255, 0.75);
+    vertical-align: middle;
+    background-color: #b0b0b0;
+    background-image: -moz-linear-gradient(top, #b0b0b0, #b0b0b0);
+    background-image: -ms-linear-gradient(top, #b0b0b0, #b0b0b0);
+    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#b0b0b0), to(#b0b0b0));
+    background-image: -webkit-linear-gradient(top, #b0b0b0, #b0b0b0);
+    background-image: -o-linear-gradient(top, #b0b0b0, #b0b0b0);
+    background-image: linear-gradient(top, #b0b0b0, #b0b0b0);
+    background-repeat: repeat-x;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#b0b0b0', endColorstr='#b0b0b0', GradientType=0);
+    border-color: #b0b0b0 #b0b0b0 #8a8a8a;
+    border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+    filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
+    border: 1px solid #000000;
+    border-bottom-color: #000000;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+    background-size: 100% 100%;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05) 0 1px #000000;
+    -moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05) 0 1px #000000;
+    -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05) 0 1px #000000;
+    -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
+    -moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
+    cursor: pointer;
+    *margin-left: .3em;
+    border-radius: 0px 0px 0px 0px;
+    color: #000000;
+    text-shadow: none;
+    border-color: #000000;
+    box-shadow: none;
+    font-weight: bold;
+    padding: 2px 6px;
+    padding-top: 0;
+    padding-bottom: 0;
+    border: none;
+    border-left: 2px solid #303030;
+    border-radius: 0;
+    height: 22px;
     line-height: 22px;
+  }
+  #annotate-container #label-tabs-contents div div.pagination a:hover,
+  #annotate-container #label-tabs-contents div div.pagination a:active,
+  #annotate-container #label-tabs-contents div div.pagination a.active,
+  #annotate-container #label-tabs-contents div div.pagination a.disabled,
+  #annotate-container #label-tabs-contents div div.pagination a[disabled] {
+    background-color: #b0b0b0;
+  }
+  #annotate-container #label-tabs-contents div div.pagination a:active,
+  #annotate-container #label-tabs-contents div div.pagination a.active {
+    background-color: #979797 \9;
+  }
+  #annotate-container #label-tabs-contents div div.pagination a:hover,
+  #annotate-container #label-tabs-contents div div.pagination a:active,
+  #annotate-container #label-tabs-contents div div.pagination a.active,
+  #annotate-container #label-tabs-contents div div.pagination a.disabled,
+  #annotate-container #label-tabs-contents div div.pagination a[disabled] {
+    background-color: #b0b0b0;
+  }
+  #annotate-container #label-tabs-contents div div.pagination a:active,
+  #annotate-container #label-tabs-contents div div.pagination a.active {
+    background-color: #979797 \9;
+  }
+  #annotate-container #label-tabs-contents div div.pagination a:first-child {
+    *margin-left: 0;
+  }
+  #annotate-container #label-tabs-contents div div.pagination a:first-child {
+    *margin-left: 0;
+  }
+  #annotate-container #label-tabs-contents div div.pagination a:hover {
+    background-color: #ffffff;
+    background-image: none;
   }
   #annotate-container.edit-on div.carousel .category-item .label-item:hover {
     cursor: default;
-    background-color: #ffffff;
   }
   #annotate-container.edit-on div.carousel .category-item .label-item:hover .scaling {
     display: none;
@@ -5433,14 +5555,13 @@
     visibility: visible;
   }
   #annotate-container.edit-on i.edit {
-    border-radius: 2px;
-    background-color: white;
-    border: 1px solid white;
+    background-color: none;
+    border: none;
     margin-left: 5px;
     float: right;
   }
   #annotate-container.edit-on i.edit:hover {
-    background-color: #CACACA;
+    background-color: #eaeaea;
     cursor: pointer;
   }
   #annotate-container.edit-on .nav i.edit {
@@ -5481,22 +5602,30 @@
   }
   #annotate-container #label-tabs-contents div.tab-pane.edit-on div.carousel .category-item .label-item:hover {
     cursor: default;
-    background-color: #ffffff;
+    background-color: rgba(255, 255, 255, 0.4);
   }
   #annotate-container #label-tabs-contents div.tab-pane.edit-on div.carousel .category-item .label-item:hover .scaling {
     display: none;
   }
-  #annotate-container #label-tabs-contents div.tab-pane .edit {
-    visibility: visible;
+  #annotate-container #label-tabs-contents div.tab-pane.edit-on div.carousel .category-item .item-abbreviation,
+  #annotate-container #label-tabs-contents div.tab-pane.edit-on div.carousel .category-item .item-value {
+    border: 1px solid #ffffff;
+  }
+  #annotate-container #label-tabs-contents div.tab-pane.edit-on div.carousel .category-item .item-abbreviation:focus,
+  #annotate-container #label-tabs-contents div.tab-pane.edit-on div.carousel .category-item .item-value:focus,
+  #annotate-container #label-tabs-contents div.tab-pane.edit-on div.carousel .category-item .item-abbreviation:active,
+  #annotate-container #label-tabs-contents div.tab-pane.edit-on div.carousel .category-item .item-value:active {
+    border: 1px solid #39a3f1;
   }
   #annotate-container #label-tabs-contents div.tab-pane i.edit {
-    background-color: white;
-    border: 1px solid white;
-    margin-left: 5px;
+    margin: 2px 0 0 5px;
+    padding: 1px;
     float: right;
+    background-color: transparent;
+    border: none;
   }
   #annotate-container #label-tabs-contents div.tab-pane i.edit:hover {
-    background-color: #CACACA;
+    background-color: #eaeaea;
     cursor: pointer;
   }
   .notrack {
@@ -5505,10 +5634,13 @@
   }
   #list-container {
     overflow: auto;
-    min-height: 80px;
+  }
+  #list-container.expanded {
+    min-height: 300px;
   }
   #list-container #content-list {
     overflow: auto;
+    min-height: 300px;
   }
   #list-container a.proxy-anchor {
     display: none;
@@ -5520,132 +5652,215 @@
     visibility: visible;
   }
   #list-container div.annotation {
-    background-color: #eaeaea;
-    padding: 0;
-    margin: 0;
+    background-color: #ffffff;
     border-bottom: 2px solid #303030;
-  }
-  #list-container div.annotation:last-child {
-    border: none;
   }
   #list-container div.annotation:hover {
     cursor: pointer;
   }
-  #list-container div.annotation.selected {
-    background-color: #c7c7c7;
+  #list-container div.annotation .edit {
+    display: none;
+    visibility: hidden;
+  }
+  #list-container div.annotation .read-only {
+    display: inline-block;
+  }
+  #list-container div.annotation button.in {
+    margin-right: -4px;
+  }
+  #list-container div.annotation.edit-on i.toggle-edit {
+    background-position: -312px 0;
+  }
+  #list-container div.annotation.edit-on span.label {
+    display: block;
+    height: 20px;
+    line-height: 20px;
+  }
+  #list-container div.annotation.edit-on .edit {
+    display: inline-block;
+    visibility: visible;
+  }
+  #list-container div.annotation.edit-on .read-only {
+    display: none;
+  }
+  #list-container div.annotation i.delete,
+  #list-container div.annotation i.toggle-edit {
+    float: right;
+    visibility: visible;
+  }
+  #list-container div.annotation i:hover {
+    cursor: pointer;
+    background-color: #eaeaea;
   }
   #list-container div.annotation .header {
     margin: 0;
-    padding: 0;
-    height: 20px;
+    height: 22px;
+    padding: 0 5px 0 0;
+    background-color: #eaeaea;
   }
-  #list-container div.annotation .header .right {
-    float: right;
-    padding: 0 10px 0 0;
-    height: 20px;
+  #list-container div.annotation .header i,
+  #list-container div.annotation .header a {
+    margin: 2px 2px 0 0;
   }
-  #list-container div.annotation .header .left {
-    overflow: hidden;
-    height: 20px;
-  }
-  #list-container div.annotation .header i.delete {
-    float: right;
-  }
-  #list-container div.annotation .header i:hover {
-    cursor: pointer;
-    background-color: #ffffff;
-  }
-  #list-container div.annotation .header .start,
-  #list-container div.annotation .header .end {
-    cursor: default;
+  #list-container div.annotation .start,
+  #list-container div.annotation .end {
+    cursor: text;
     background-color: rgba(255, 255, 255, 0.6);
+    height: 18px;
     padding: 2px;
-    height: 16px;
-    font-family: monospace;
     display: inline-block;
     position: relative;
+    color: #000000;
   }
-  #list-container div.annotation .header .start input,
-  #list-container div.annotation .header .end input {
+  #list-container div.annotation .start input,
+  #list-container div.annotation .end input {
     width: 65px;
     border: none;
-    font-family: monospace;
     position: relative;
     z-index: 300;
     padding: 0;
     margin: 0;
+    box-shadow: none;
+    color: #000000;
   }
-  #list-container div.annotation .header .start input[disabled],
-  #list-container div.annotation .header .end input[disabled] {
+  #list-container div.annotation .start input[disabled],
+  #list-container div.annotation .end input[disabled] {
     z-index: 100;
     border: none;
     background: none;
-    box-shadow: none;
     cursor: text;
   }
-  #list-container div.annotation .header .start input.error,
-  #list-container div.annotation .header .end input.error {
+  #list-container div.annotation .start input.error,
+  #list-container div.annotation .end input.error {
     color: #da0000;
     font-weight: bold;
   }
-  #list-container div.annotation .header .start .start-btn,
-  #list-container div.annotation .header .end .start-btn,
-  #list-container div.annotation .header .start .end-btn,
-  #list-container div.annotation .header .end .end-btn {
+  #list-container div.annotation .start .start-btn,
+  #list-container div.annotation .end .start-btn,
+  #list-container div.annotation .start .end-btn,
+  #list-container div.annotation .end .end-btn {
     position: absolute;
     left: 0%;
     right: 0%;
     top: 0;
     z-index: 150;
     width: 65px;
-    height: 16px;
+    height: 18px;
   }
-  #list-container div.annotation .header .collapse-wrapper {
-    width: 22px;
-    display: inline-block;
+  #list-container div.annotation .collapse i {
+    float: left;
+    margin-right: 5px;
+    margin-left: 5px;
   }
-  #list-container div.annotation .header .collapse i {
-    margin-right: 4px;
-    margin-left: 4px;
-  }
-  #list-container div.annotation .header span.category {
-    /* padding: 2px;
-  				display:inline-block;
-  				height: 16px;
-  				width: 40%;
-  				overflow:hidden;*/
-  
-  }
-  #list-container div.annotation .body span.text {
+  #list-container div.annotation span.text {
     display: block;
-    padding: 4px;
-    background-color: #ffffff;
+    margin: 5px;
+    background-color: white;
   }
-  #list-container div.annotation .body span.scaling {
-    border-radius: 15px;
-    background-color: yellow;
-    box-shadow: inset 0 0 3px;
-    color: #D57E0F;
-    text-shadow: 0 0 2px #ff7800;
-    font-weight: bold padding: 2px;
-    font-size: 0.90em;
+  #list-container div.annotation span.category {
+    overflow: hidden;
+    height: 1.25em;
+    width: 40%;
+    display: inline-block;
+    text-overflow: ellipsis;
+    color: #4b4b4b;
+  }
+  #list-container div.annotation span.category span.abbreviation {
+    color: #000000;
     font-weight: bold;
-    padding: 0px 2px 0px 2px;
-    border: 2px solid orange;
-    width: 16px;
+  }
+  #list-container div.annotation span.label {
+    display: none;
+    font-size: inherit;
+    margin: 5px;
+    font-weight: normal;
+  }
+  #list-container div.annotation span.label span.label-abr {
+    font-weight: bold;
+  }
+  #list-container div.annotation span.freetext textarea {
+    width: 97.5%;
+  }
+  #list-container div.annotation span.scaling select {
+    width: 50px;
+    height: 18px;
+    padding: 2px;
+    margin: 0;
+    font-size: 0.85em;
+    color: #ffffff;
+    background-color: #000000;
+    border: none;
+  }
+  #list-container div.annotation span.scaling span {
+    background-color: #000000;
+    color: #ffffff;
+    height: 18px;
+    padding: 2px;
+    font-weight: bold;
+    width: 18px;
     display: inline-block;
     text-align: center;
   }
-  #list-container div.annotation .body span.track {
-    border-radius: 3px 3px 3px 3px;
+  #list-container div.annotation span.track {
+    display: none;
     background-color: #0099e6;
     color: white;
     padding: 3px;
     font-size: 0.90em;
   }
-  #list-container div.annotation .body span.user {
+  #list-container div.annotation span.user {
+    display: none;
     font-style: italic;
     font-weight: bold;
+  }
+  #list-container div.annotation.selected .header {
+    background-image: url("../img/annotation/pattern.png");
+    background-repeat: repeat-x;
+    background-position: top;
+  }
+  #list-container i.add-comment {
+    float: right;
+  }
+  #list-container div.comments-container {
+    background-color: #eaeaea;
+    padding: 5px;
+    color: #000000;
+  }
+  #list-container div.comments-container span.text {
+    background-color: transparent;
+    margin: 5px 0;
+  }
+  #list-container .comments-container.collapse {
+    padding: 0px;
+  }
+  #list-container span.comments {
+    padding: 2px;
+    font-size: 0.90em;
+  }
+  #list-container i.delete-comment {
+    float: right;
+    margin-left: 5px;
+  }
+  #list-container i.edit-comment {
+    float: right;
+    margin-left: 5px;
+  }
+  .collapse-comment i {
+    float: left;
+    margin-right: 5px;
+  }
+  .collapse-comment {
+    -webkit-transition: height 0.35s ease;
+    -moz-transition: height 0.35s ease;
+    -ms-transition: height 0.35s ease;
+    -o-transition: height 0.35s ease;
+    transition: height 0.35s ease;
+    position: relative;
+    overflow: hidden;
+    height: 0;
+  }
+  .collapse-comment.in {
+    height: auto;
   }
 }
 @media screen and (max-width: 767px) {
@@ -6786,7 +7001,7 @@
   }
   div.navbar .brand {
     text-decoration: none;
-    font-size: 1.5em;
+    font-size: 1.3em;
   }
   div.navbar li {
     display: none;
@@ -6796,12 +7011,17 @@
   }
   div#list-container .annotation {
     padding: 2px;
-    border: gray 3px solid;
-    border-radius: 5px;
+    border-bottom: gray 3px solid;
     margin: 2px;
   }
   div#list-container .annotation > div {
     margin: 4px;
+  }
+  div#list-container .edit {
+    display: none;
+  }
+  div#list-container .label-abr {
+    font-weight: bold;
   }
   div#list-container .start,
   div#list-container .end {
@@ -6810,9 +7030,21 @@
     margin: 1px;
     border-radius: 3px;
   }
+  div#list-container input {
+    background: transparent !important;
+  }
   div#list-container .category {
     font-style: italic;
     font-weight: bold;
+  }
+  div#list-container span.freetext .read-only {
+    display: block;
+  }
+  div#list-container span.label:before {
+    content: "Label: ";
+    margin-left: 5px;
+    margin-right: 2px;
+    font-weight: normal;
   }
   div#list-container .category::before {
     content: "Category:";

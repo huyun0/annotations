@@ -2,9 +2,9 @@
 <input class="item-value" type="text" value="{{value}}" {{#if notEdit}}disabled='disabled'{{/if}}/> 
 <span class="item-icon">{{icon}}</span>
 <i class="icon-trash delete edit"></i>
-<ul class="scaling">
+<ul class="scaling"  title="Rate {{value}} ({{abbreviation}})">
   {{#each scaleValues}}
-  <li value="{{this.id}}">{{this.name}}</li>
+  <li value="{{this.id}}" >{{this.name}}</li>
   {{/each}}
 </ul>
 
