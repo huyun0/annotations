@@ -52,7 +52,7 @@ define(['domReady',
              * @type {string}
              * @readOnly
              */
-            exportURL: "",
+            exportUrl: "",
 
             /**
              * Player adapter implementation to use for the annotations tool

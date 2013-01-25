@@ -86,7 +86,7 @@ define(["jquery",
           this.$el.find("#export").parent().remove();
         }
         else{
-          this.$el.find("#export").attr("href", annotationsTool.exportURL());
+          this.$el.find("#export").attr("href", annotationsTool.exportUrl);
           // REST annotations storage module
           Backbone.sync = AnnotationSync;
         }
