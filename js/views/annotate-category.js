@@ -194,8 +194,8 @@ define(["jquery",
           },
 
           onCreateLabel: function () {
-            var label = this.model.get("labels").create({value: "", 
-                                                         abbreviation: "",
+            var label = this.model.get("labels").create({value: "LB", 
+                                                         abbreviation: "New",
                                                          category: this.model}, {wait:true});
             label.save();
             this.model.save();
