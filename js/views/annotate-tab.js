@@ -465,13 +465,13 @@ define(["jquery",
                   var importAsString = e.target.result,
                       importAsJSON;
 
-                  //try {
+                  try {
                     importAsJSON = JSON.parse(importAsString);
                     annotationsTool.importCategories(importAsJSON, defaultCategoryAttributes);
-                  //} catch (error) {
+                  } catch (error) {
                     // TODO pop up an error modal to the user
                     console.warn("The uploaded file is not valid!");
-                  //}
+                  }
                 };
               })(file);
 
