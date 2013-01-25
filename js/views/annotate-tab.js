@@ -446,7 +446,9 @@ define(["jquery",
             }, this);
 
             _.each(tmpScales, function (scale) {
-                json.scales.push(scale.toExportJSON());
+                if (scale) {
+                  json.scales.push(scale.toExportJSON());
+                }
             });
 
             saveAs(new Blob([JSON.stringify(json)], { type: 'application/octet-stream' }), "export-categories.json");
