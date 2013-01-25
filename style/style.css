@@ -5974,6 +5974,12 @@ div.timeline-item:hover {
   #annotate-container #label-tabs-contents div.carousel .category-item .label-item:nth-child(odd) {
     background-color: #e6e6e6;
   }
+  #annotate-container #label-tabs-contents div.carousel .category-item .label-item .edit {
+    display: none;
+  }
+  #annotate-container #label-tabs-contents div.carousel .category-item .label-item .read-only {
+    display: inline-block;
+  }
   #annotate-container #label-tabs-contents div.carousel .category-item .label-item .item-abbreviation {
     color: black;
     float: left;
@@ -5993,7 +5999,6 @@ div.timeline-item:hover {
     color: black;
     float: left;
     padding: 3px;
-    display: inline-block;
     padding: 1px;
     width: 80px;
     margin: 0px;
@@ -6078,9 +6083,6 @@ div.timeline-item:hover {
   #annotate-container.edit-on div.carousel .category-item .label-item:hover .scaling {
     display: none;
   }
-  #annotate-container.edit-on .edit {
-    visibility: visible;
-  }
   #annotate-container.edit-on i.edit {
     border-radius: 2px;
     background-color: white;
@@ -6129,6 +6131,12 @@ div.timeline-item:hover {
   }
   #annotate-container #label-tabs-contents div.tab-pane.edit-on div.carousel .category-item .label-item {
     height: 22px;
+  }
+  #annotate-container #label-tabs-contents div.tab-pane.edit-on div.carousel .category-item .label-item .edit {
+    display: inline-block;
+  }
+  #annotate-container #label-tabs-contents div.tab-pane.edit-on div.carousel .category-item .label-item .read-only {
+    display: none;
   }
   #annotate-container #label-tabs-contents div.tab-pane.edit-on div.carousel .category-item .label-item:hover {
     cursor: default;

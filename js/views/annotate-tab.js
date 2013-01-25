@@ -449,13 +449,14 @@ define(["jquery",
                 json.scales.push(scale.toExportJSON());
             });
 
-            saveAs(new Blob([JSON.stringify(json)], { type: 'text/javascript' }), "export-categories.json");
+            saveAs(new Blob([JSON.stringify(json)], { type: 'application/octet-stream' }), "export-categories.json");
           },
 
           onImport: function(evt) {
 
               var reader = new FileReader(),
                   file = evt.target.files[0];
+                  defaultCategoryAttributes = this.defaultCategoryAttributes;
 
               reader.onload = (function(addedFile) {
                 return function(e) {
@@ -466,7 +467,7 @@ define(["jquery",
 
                   //try {
                     importAsJSON = JSON.parse(importAsString);
-                    annotationsTool.importCategories(importAsJSON);
+                    annotationsTool.importCategories(importAsJSON, defaultCategoryAttributes);
                   //} catch (error) {
                     // TODO pop up an error modal to the user
                     console.warn("The uploaded file is not valid!");

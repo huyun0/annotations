@@ -360,7 +360,7 @@ define(["jquery",
           }
       },
 
-      importCategories: function (imported) {
+      importCategories: function (imported, defaultCategoryAttributes) {
         var videoCategories = annotationsTool.video.get("categories"),
             videoScales = annotationsTool.video.get("scales"),
             labelsToAdd,
@@ -395,8 +395,8 @@ define(["jquery",
             labelsToAdd = category.labels;
             category.scale_id = scalesIdMap[category.scale_id];
             delete category.labels;
-
-            newCat = videoCategories.create(category);
+            
+            newCat = videoCategories.create(_.extend(category, defaultCategoryAttributes));
 
             if (labelsToAdd) {
                 _.each(labelsToAdd, function (label) {

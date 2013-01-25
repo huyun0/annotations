@@ -200,12 +200,12 @@ define(["jquery",
                             });
                             this.currentScaleId = this.currentScale.get("id");
                             this.$el.find("select#scale-id").removeAttr("disabled");
-                            this.renderScaleSelect();
                         }
                         
+                        this.isInEditMode = false;
+                        this.renderScaleSelect();
                         this.changeScale();
 
-                        this.isInEditMode = false;
                         this.$el.find(".modal-body").hide();
                         this.$el.find("a#save-scale").text(this.TITLES.SAVE_BUTTON);
                     } else if (this.currentCategory) {
