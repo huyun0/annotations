@@ -21,6 +21,7 @@ define(["jquery",
         "views/list",
         "views/timeline",
         "views/login",
+        "views/scale-editor",
         "collections/users",
         "models/user",
         "models/track",
@@ -36,7 +37,7 @@ define(["jquery",
         "tab"],
        
        function($, PlayerAdapter, Annotations,
-                AnnotateView, ListView, TimelineView, LoginView,
+                AnnotateView, ListView, TimelineView, LoginView, ScaleEditorView,
                 Users, User, Track, Video, Videos, AnnotationSync, ROLES, FiltersManager, Backbone){
 
     /**
@@ -74,14 +75,18 @@ define(["jquery",
                         "onWindowResize",
                         "print");
         
-        this.setLoadingProgress(10,"Starting tool.");
+        this.setLoadingProgress(10, "Starting tool.");
         
         // Load the good storage module
         if(window.annotationsTool.localStorage){
           // Local storage module 
           Backbone.sync = Backbone.localSync;
+
+          // Remove link for statistics exports, work only with backend implementation
+          this.$el.find("#export").parent().remove();
         }
         else{
+          this.$el.find("#export").attr("href", annotationsTool.exportUrl);
           // REST annotations storage module
           Backbone.sync = AnnotationSync;
         }
@@ -92,6 +97,7 @@ define(["jquery",
         
         // Create a new users collection and get exciting local user
         annotationsTool.users = new Users();
+
         Backbone.localSync("read",annotationsTool.users,{
           success: function(data){
               annotationsTool.users.add(data);
@@ -102,6 +108,8 @@ define(["jquery",
         });
         
         this.loginView = new LoginView();
+        annotationsTool.scaleEditor = new ScaleEditorView();
+
         this.listenTo(annotationsTool.users, "login", this.createViews);
         this.checkUserAndLogin(); 
 
@@ -110,6 +118,8 @@ define(["jquery",
         annotationsTool.dispatcher = _.clone(Backbone.Events);
 
         annotationsTool.filtersManager = new FiltersManager();
+
+        annotationsTool.importCategories = this.importCategories;
 
         this.onWindowResize();  
       },
@@ -134,19 +144,28 @@ define(["jquery",
 
               this.setLoadingProgress(60,"Start creating views.");
               
-              // Create views with Timeline
-              this.setLoadingProgress(70,"Creating timeline.");
-              this.timelineView = new TimelineView({playerAdapter: this.playerAdapter});
+
+              if (annotationsTool.getLayoutConfiguration().timeline) {
+                // Create views with Timeline
+                this.setLoadingProgress(70,"Creating timeline.");
+                this.timelineView = new TimelineView({playerAdapter: this.playerAdapter});
+              }
               
-              // Create views to annotate and see annotations list
-              this.setLoadingProgress(80,"Creating annotate view.");
-              this.annotateView = new AnnotateView({playerAdapter: this.playerAdapter});
-              this.annotateView.$el.show();
+              if (annotationsTool.getLayoutConfiguration().annotate) {
+                // Create view to annotate
+                this.setLoadingProgress(80,"Creating annotate view.");
+                this.annotateView = new AnnotateView({playerAdapter: this.playerAdapter});
+                this.listenTo(this.annotateView, "change-layout", this.onWindowResize);
+                this.annotateView.$el.show();
+              }
               
-              // Create annotations list view
-              this.setLoadingProgress(90,"Creating list view.");
-              this.listView = new ListView();
-              this.listView.$el.show();
+              if (annotationsTool.getLayoutConfiguration().list) {
+                // Create annotations list view
+                this.setLoadingProgress(90,"Creating list view.");
+                this.listView = new ListView();
+                this.listenTo(this.listView, "change-layout", this.onWindowResize);
+                this.listView.$el.show();
+              }
               
               this.setLoadingProgress(100,"Ready.");
               this.loadingBox.hide();
@@ -205,10 +224,18 @@ define(["jquery",
         annotationsTool.playerAdapter.setCurrentTime(0);
         $("#video-container").hide();
         
-        
-        this.timelineView.reset();
-        this.annotateView.reset();
-        this.listView.reset();
+        if (annotationsTool.getLayoutConfiguration().timeline) {
+           this.timelineView.reset();
+        }
+
+        if (annotationsTool.getLayoutConfiguration().annotate) {
+            this.annotateView.reset();
+        }
+
+        if (annotationsTool.getLayoutConfiguration().list) {
+            this.listView.reset();
+        }
+
         this.loginView.reset();
         
         // Delete the different objects
@@ -308,7 +335,6 @@ define(["jquery",
                       concludeInitialization();
                   }
               };
-          
 
           // If we are using the localstorage
           if (window.annotationsTool.localStorage) {
@@ -332,7 +358,53 @@ define(["jquery",
                 video.once("ready",createDefaultTrack);
               }
           }
+      },
 
+      importCategories: function (imported, defaultCategoryAttributes) {
+        var videoCategories = annotationsTool.video.get("categories"),
+            videoScales = annotationsTool.video.get("scales"),
+            labelsToAdd,
+            newCat,
+            newScale,
+            scaleValuesToAdd,
+            scaleOldId,
+            scalesIdMap = {};
+
+        if (!imported.categories || imported.categories.length === 0) {
+          return;
+        }
+
+        _.each(imported.scales, function (scale) {
+            scaleOldId = scale.id;
+            scaleValuesToAdd = scale.scaleValues;
+            delete scale.id;
+            delete scale.scaleValues;
+
+            newScale = videoScales.create(scale, {async:false});
+            scalesIdMap[scaleOldId] = newScale.get("id");
+
+            if (scaleValuesToAdd) {
+                _.each(scaleValuesToAdd, function (scaleValue) {
+                    scaleValue.scale = newScale;
+                    newScale.get("scaleValues").create(scaleValue);
+                });
+            }
+        });
+
+        _.each(imported.categories, function (category) {
+            labelsToAdd = category.labels;
+            category.scale_id = scalesIdMap[category.scale_id];
+            delete category.labels;
+            
+            newCat = videoCategories.create(_.extend(category, defaultCategoryAttributes));
+
+            if (labelsToAdd) {
+                _.each(labelsToAdd, function (label) {
+                    label.category = newCat;
+                    newCat.get("labels").create(label);
+                });
+            }
+        });
       },
 
       /**
@@ -342,15 +414,11 @@ define(["jquery",
         var listContent,
             windowHeight;
 
-        // If views are not set
-        if(!this.annotateView || !this.listView || !this.timelineView)
-          return;
-
-        windowHeight = $(window).height();
-
-
-        listContent = this.listView.$el.find("#content-list");
-        listContent.height(windowHeight-this.annotateView.$el.height()-200);
+        if (this.annotateView && this.listView) {
+          windowHeight = $(window).height();
+          listContent = this.listView.$el.find("#content-list");
+          listContent.height(windowHeight-this.annotateView.$el.height()-200);
+        }
       },
 
       ////////////

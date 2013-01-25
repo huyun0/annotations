@@ -10,7 +10,7 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>Annotating Academic Video - 0.6 - Comments & Annotation edition </title>
+    <title>Annotating Academic Video - 0.8 - Exports and scales editor </title>
     <meta name="description" content="Video annotations tool">
     <meta name="author" content="">
     <meta name="viewport" content="width=device-width">
@@ -32,11 +32,12 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                   </a>
-                  <a class="brand" href="#">Annotating Academic video - 0.6 - Comments & Annotation edition </a>
+                  <a class="brand" href="#">Annotating Academic video - 0.8 - Exports and scales editor </a>
           
                 <ul class="nav pull-right">
-                        <li><a href="#" id="print">Print</a></li>
-                        <li><a href="#" id="logout">Logout</a></li>
+                    <li><a href="#" id="export">Export for statistics</a></li>
+                    <li><a href="#" id="print">Print</a></li>
+                    <li><a href="#" id="logout">Logout</a></li>
                 </ul>
         </div>
         
@@ -88,7 +89,6 @@
                           <div class="container-fluid">
                             <!-- Be sure to leave the brand out there if you want it shown -->
                             <a class="window-title" href="#">Timeline</a>
-                            
                             <ul class="nav pull-right">
                                   <li class="dropdown">
                                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">Filter <b class="caret"></b></a>
@@ -119,6 +119,18 @@
                         <div class="navbar-inner">
                           <div class="container">
                             <span class="window-title">Annotate</span>
+                            <ul class="nav pull-right">
+                                <li class="dropdown">
+                                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Layout <b class="caret"></b></a>
+                                    <ul class="dropdown-menu">
+                                      <li><a id="annotate-full" href="#"><i class="check icon-check"></i> Full</a></li>
+                                      <li><a id="annotate-text" href="#"><i class="check icon-check"></i> Only free text</a></li>
+                                      <li><a id="annotate-categories" href="#"><i class="check icon-check"></i> Only with labels</a></li>
+                                    </ul>
+                                  </li>
+                                <li><a href="#" class="toggle-collapse">
+                                    Collapse</a></li>
+                            </ul>
                           </div>
                         </div>
                     </div>
@@ -180,7 +192,8 @@
                                       <li><a id="filter-mine" class="filter" href="#"><i class="check icon-check"></i> Only my annotations</a></li>
                                     </ul>
                                   </li>
-                               </ul>
+                                  <li><a href="#" class="toggle-collapse">Collapse</a></i></li>
+                            </ul>
                           </div>
 
                         </div>
@@ -197,5 +210,6 @@
     </div> <!-- /container -->
     <div id="dialogs"></div>
     <div class="modal" id="user-login" style="display:none"></div>
+    <div class="modal" id="scale-editor" style="display:none"></div>
 </body>
 </html>

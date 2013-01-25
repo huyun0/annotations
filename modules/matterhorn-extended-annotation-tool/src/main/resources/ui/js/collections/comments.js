@@ -15,61 +15,48 @@
  */
 
 define(["jquery",
-        "models/label",
+        "models/comment",
         "backbone",
         "localstorage"],
     
-    function($,Label,Backbone){
+    function($,Comment,Backbone){
     
         /**
-         * Labels collection
+         * Comments collection
          * @class
          */
-        var Label = Backbone.Collection.extend({
-            model: Label,
-            localStorage: new Backbone.LocalStorage("Labels"),
+        var Comment = Backbone.Collection.extend({
+            model: Comment,
+            localStorage: new Backbone.LocalStorage("Comments"),
             
             /**
              * @constructor
              */
-            initialize: function(models,category){
-                _.bindAll(this,
-                        "setUrl",
-                        "toExportJSON");
+            initialize: function(models,annotation){
+                _.bindAll(this,"setUrl");
                 
-                this.setUrl(category);
+                this.setUrl(annotation);
             },
             
             parse: function(resp, xhr) {
-              if(resp.labels && _.isArray(resp.labels))
-                return resp.labels;
+              if(resp.comments && _.isArray(resp.comments))
+                return resp.comments;
               else if(_.isArray(resp))
                 return resp;
               else
                 return null;
             },
-
-            toExportJSON: function () {
-                var labelsForExport = [];
-
-                this.each(function (label) {
-                    labelsForExport.push(label.toExportJSON());
-                });
-
-                return labelsForExport;
-            },
             
             /**
-             * Define the url from the collection with the given category
+             * Define the url from the collection with the given annotation
              *
-             * @param {Category} category containing the labels
+             * @param {Annotation} annotation containing the comments
              */
-            setUrl: function(category){
-                if(!category){
-                    throw "The parent category of the labels must be given!";
-                }
-                else if(category.collection){
-                    this.url = category.url() + "/labels";  
+            setUrl: function(annotation){
+                if(!annotation){
+                    throw "The parent annotation of the comments must be given!";
+                } else if (annotation.collection) {
+                    this.url = annotation.url() + "/comments";  
                 }
 
                 if(window.annotationsTool && annotationsTool.localStorage)
@@ -77,7 +64,7 @@ define(["jquery",
             }
         });
         
-        return Label;
+        return Comment;
 
 });
     

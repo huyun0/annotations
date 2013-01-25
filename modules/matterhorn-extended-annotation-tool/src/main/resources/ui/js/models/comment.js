@@ -26,14 +26,10 @@ define(["jquery",
     
         /**
          * @constructor
-         * @alias module:Label
+         * @alias module:Comment
          */
-        var Label = Backbone.Model.extend({
+        var Comment = Backbone.Model.extend({
             
-            /** 
-             * Default models value 
-             * @alias module:models-track.Track#defaults
-             */
             defaults: {
                 access: ACCESS.PUBLIC,
                 created_at: null,
@@ -44,25 +40,16 @@ define(["jquery",
                 deleted_by: null
             },
             
-             /**
+            /**
              * Constructor
              * @param {Object} attr Object literal containing the model initialion attribute. 
-             *                      Must contain at least the following attribute: value, abbreviation and category.
+             *                      Must contain at least the following attribute: text and annotation.
              */
             initialize: function(attr){
+                if(!attr || _.isUndefined(attr.text))
+                    throw "'text' attribute is required";
                 
-                if(!attr || _.isUndefined(attr.value))
-                    throw "'value' attribute is required";
-                
-                if(!attr || _.isUndefined(attr.abbreviation))
-                    throw "'abbreviation' attribute is required";
-                
-                if(!attr || _.isUndefined(attr.category))
-                    throw "'category' attribute is required";
-
-                attr.settings = this.parseSettings(attr.settings);
-
-                // Check if the track has been initialized 
+                // Check if the comment has been initialized 
                 if(!attr.id){
                     // If local storage, we set the cid as id
                     if(window.annotationsTool.localStorage)
@@ -70,16 +57,11 @@ define(["jquery",
                         
                     this.toCreate = true;
                 }
-
-                if(attr.category && attr.category.attributes)
-                    attr.category = attr.category.toJSON();
-
+                
                 if (attr.tags) {
                     attr.tags = this.parseJSONString(attr.tags);
                 }
-                
-                this.set('category',attr.category);
-                
+
                 this.set(attr);
             },
             
@@ -89,10 +71,11 @@ define(["jquery",
                 attr.created_at = attr.created_at != null ? Date.parse(attr.created_at): null;
                 attr.updated_at = attr.updated_at != null ? Date.parse(attr.updated_at): null;
                 attr.deleted_at = attr.deleted_at != null ? Date.parse(attr.deleted_at): null;
-                attr.settings = this.parseSettings(attr.settings);
-
-                if(attr.category && attr.category.settings)
-                    attr.category.settings = this.parseSettings(attr.category.settings);
+                
+                // Parse tags if present
+                if (attr.tags) {
+                    attr.tags = this.parseJSONString(attr.tags);
+                }
 
                 if(data.attributes)
                     data.attributes = attr;
@@ -108,27 +91,21 @@ define(["jquery",
                 if(attr.id){
                     if(this.get('id') != attr.id){
                         this.id = attr.id;
+                        this.attributes.id = attr.id;
+                        this.toCreate = false;
                     }
                 }
                 
-                if(attr.value &&  !_.isString(attr.value))
-                    return "'value' attribute must be a string!";
+                if(attr.text &&  !_.isString(attr.text))
+                    return "'text' attribute must be a string!";
                 
-                if(attr.abbreviation &&  !_.isString(attr.abbreviation))
-                    return "'abbreviation' attribute must be a string!";
+                if (attr.tags && _.isUndefined(this.parseJSONString(attr.tags))) {
+                    return "'tags' attribute must be a string or a JSON object";
+                }
                 
-                if(attr.description &&  !_.isString(attr.description))
-                    return "'description' attribute must be a string!";
-                
-                if(attr.settings &&  !_.isString(attr.settings))
-                    return "'settings' attribute must be a string!";
-                
-                if(attr.category &&  !_.isObject(attr.category))
-                    return "'category' attribute must be a JSON Object!";
-
                 if(attr.access && !_.include(ACCESS,attr.access))
                     return "'access' attribute is not valid.";
-            
+                
                 if(!_.isNull(attr.created_at)){
                     if((tmpCreated=this.get('created_at')) && tmpCreated!==attr.created_at)
                         return "'created_at' attribute can not be modified after initialization!";
@@ -147,63 +124,21 @@ define(["jquery",
                 }
                 
             },
-
-            /**
-             * @override
-             * 
-             * Override the default toJSON function to ensure complete JSONing.
-             *
-             * @return {JSON} JSON representation of the instane
-             */
-            toJSON: function(){
-                var json = $.proxy(Backbone.Model.prototype.toJSON,this)();
-                if (json.tags) {
-                    json.tags = JSON.stringify(json.tags);
-                }
-                if (json.category && json.category.toJSON) {
-                    json.category = json.category.toJSON();
-                }
-                return json;
-            },
-
-            toExportJSON: function () {
-                var json = {
-                    value: this.attributes.value,
-                    abbreviation: this.attributes.abbreviation,                 
-                }
-
-                if (this.attributes.tags) {
-                    json.tags = JSON.stringify(this.attributes.tags);
-                }
-
-                if (this.attributes.description) {
-                    json.description = this.attributes.description;
-                }                
-
-                if (this.attributes.settings) {
-                    json.settings = this.attributes.settings;
-                }
-
-                if (this.attributes.tags) {
-                    json.tags = this.attributes.tags;
-                }
-
-                return json;
-            },
-
+            
             /**
              * Parse the given parameter to JSON if given as String
+             * @alias module:models-video.Video#parseJSONString
              * @param  {String} parameter the parameter as String
              * @return {JSON} parameter as JSON object
              */
-            parseJSONString: function (parameter) {
+            parseJSONString: function(parameter) {
                 if (parameter && _.isString(parameter)) {
                     try {
                         parameter = JSON.parse(parameter);
                         
                     } catch (e) {
-                        console.warn("Can not parse parameter '" + parameter + "': " + e);
-                        return undefined;
+                        console.warn("Can not parse parameter '"+parameter+"': "+e);
+                        return undefined; 
                     }
                 } else if (!_.isObject(parameter) || _.isFunction(parameter)) {
                     return undefined;
@@ -211,20 +146,22 @@ define(["jquery",
 
                 return parameter;
             },
-
+            
             /**
-             * Parse the given settings to JSON if given as String
-             * @param  {String} settings the settings as String
-             * @return {JSON} settings as JSON object
+             * Override the default toJSON function to ensure complete JSONing.
+             * @alias module:models-track.Track#toJSON
+             * @return {JSON} JSON representation of the instane
              */
-            parseSettings: function(settings){
-                if(settings && _.isString(settings))
-                    settings = JSON.parse(settings);
-
-                return settings;
-            }        
+            toJSON: function(){
+                var json = $.proxy(Backbone.Model.prototype.toJSON,this)();
+                if (json.tags) {
+                    json.tags = JSON.stringify(json.tags);
+                }
+                return json;
+            }
+            
         });
         
-        return Label;
-    
+        return Comment;
+        
 }); 

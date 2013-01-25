@@ -99,7 +99,6 @@ define(["jquery",
 
                     saveChange = function(comment) {
                         this.save();
-                        this.trigger("change");
                     }
                     this.attributes.comments.bind('change',saveChange,this);
                     this.attributes.comments.bind('remove',saveChange,this);

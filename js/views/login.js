@@ -1,4 +1,5 @@
 /**
+/**
  * A module representing the login modal
  * @module views-login
  * @requires jQuery

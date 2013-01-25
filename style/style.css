@@ -5876,6 +5876,12 @@ div.timeline-item:hover {
   .edit {
     visibility: hidden;
   }
+  i.check {
+    visibility: hidden;
+  }
+  .checked i.check {
+    visibility: visible;
+  }
   #annotate-form {
     padding: 5px;
   }
@@ -5911,6 +5917,9 @@ div.timeline-item:hover {
     line-height: 18px;
     padding-top: 8px;
     padding-right: 8px;
+  }
+  #annotate-container input.file {
+    display: none;
   }
   #annotate-container #label-tabs-contents div {
     padding: 0px;
@@ -5965,6 +5974,12 @@ div.timeline-item:hover {
   #annotate-container #label-tabs-contents div.carousel .category-item .label-item:nth-child(odd) {
     background-color: #e6e6e6;
   }
+  #annotate-container #label-tabs-contents div.carousel .category-item .label-item .edit {
+    display: none;
+  }
+  #annotate-container #label-tabs-contents div.carousel .category-item .label-item .read-only {
+    display: inline-block;
+  }
   #annotate-container #label-tabs-contents div.carousel .category-item .label-item .item-abbreviation {
     color: black;
     float: left;
@@ -5984,7 +5999,6 @@ div.timeline-item:hover {
     color: black;
     float: left;
     padding: 3px;
-    display: inline-block;
     padding: 1px;
     width: 80px;
     margin: 0px;
@@ -6069,9 +6083,6 @@ div.timeline-item:hover {
   #annotate-container.edit-on div.carousel .category-item .label-item:hover .scaling {
     display: none;
   }
-  #annotate-container.edit-on .edit {
-    visibility: visible;
-  }
   #annotate-container.edit-on i.edit {
     border-radius: 2px;
     background-color: white;
@@ -6120,6 +6131,12 @@ div.timeline-item:hover {
   }
   #annotate-container #label-tabs-contents div.tab-pane.edit-on div.carousel .category-item .label-item {
     height: 22px;
+  }
+  #annotate-container #label-tabs-contents div.tab-pane.edit-on div.carousel .category-item .label-item .edit {
+    display: inline-block;
+  }
+  #annotate-container #label-tabs-contents div.tab-pane.edit-on div.carousel .category-item .label-item .read-only {
+    display: none;
   }
   #annotate-container #label-tabs-contents div.tab-pane.edit-on div.carousel .category-item .label-item:hover {
     cursor: default;
@@ -6178,9 +6195,13 @@ div.timeline-item:hover {
   #list-container div.annotation .read-only {
     display: inline-block;
   }
+  #list-container div.annotation button.in {
+    margin-right: -4px;
+  }
   #list-container div.annotation.edit-on i.toggle-edit:before {
-    content: "save";
-    margin-left: -25px;
+    content: "close edit";
+    white-space: nowrap;
+    margin-left: -55px;
     background-color: white;
     padding: 2px;
     border-radius: 4px;
@@ -6386,6 +6407,25 @@ div.timeline-item:hover {
   }
   .collapse-comment.in {
     height: auto;
+  }
+  #scale-editor h3 .manage {
+    line-height: 27px;
+    float: right;
+  }
+  #scale-editor a {
+    margin-bottom: 8px;
+  }
+  #scale-editor .modal-body {
+    display: none;
+  }
+  #scale-editor .list-scale-values div.scale-value:first-child a.order-up,
+  #scale-editor .list-scale-values div.scale-value:last-child a.order-down {
+    visibility: hidden;
+  }
+  #scale-editor .list-scale-values .error {
+    color: red;
+    font-weight: bold;
+    border: 1px solid red;
   }
 }
 @media print {

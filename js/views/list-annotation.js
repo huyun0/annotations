@@ -96,6 +96,8 @@ function ($, _not, PlayerAdapter, Annotation, User, CommentsContainer, Template,
             "click .start-value": "stopPropagation",
             "click i.delete": "deleteFull",
             "click .select": "onSelect",
+            "click button.in" : "setCurrentTimeAsStart",
+            "click button.out" : "setCurrentTimeAsEnd",
             "click a.collapse": "onCollapse",
             "dblclick .start": "startEdit",
             "dblclick .end": "startEdit",
@@ -130,7 +132,9 @@ function ($, _not, PlayerAdapter, Annotation, User, CommentsContainer, Template,
                             "saveFreeText",
                             "saveScaling",
                             "stopPropagation",
-                            "switchEditModus");
+                            "switchEditModus",
+                            "setCurrentTimeAsStart",
+                            "setCurrentTimeAsEnd");
 
             this.model = attr.annotation;
 
@@ -202,6 +206,7 @@ function ($, _not, PlayerAdapter, Annotation, User, CommentsContainer, Template,
             } else {
                 this.$el.find(".start input").attr("disabled", "disabled");
                 this.$el.find(".end input").attr("disabled", "disabled");
+                this.render();
             }
         },
 
@@ -348,6 +353,28 @@ function ($, _not, PlayerAdapter, Annotation, User, CommentsContainer, Template,
             }
         },
 
+        setCurrentTimeAsStart: function (event) {
+            var currentTime = annotationsTool.playerAdapter.getCurrentTime(),
+                end = this.model.get("start")+this.model.get("duration");
+            event.stopImmediatePropagation();
+
+            if (currentTime < end) {
+                this.model.set({start: currentTime, duration: this.model.get("duration") + this.model.get("start") - currentTime});
+                this.model.save();
+                console.log("Set "+currentTime+" as start");   
+            }
+        },
+
+        setCurrentTimeAsEnd: function (event) {
+            var currentTime = annotationsTool.playerAdapter.getCurrentTime();
+            event.stopImmediatePropagation();
+            if (currentTime > this.model.get("start")) {
+                this.model.set({duration: currentTime - this.model.get("start")});
+                this.model.save();
+                console.log("Set "+currentTime+" as end");
+            }
+        },
+
         /**
          * Render this view
          */
@@ -368,8 +395,6 @@ function ($, _not, PlayerAdapter, Annotation, User, CommentsContainer, Template,
             modelJSON.textReadOnly = modelJSON.text.replace(/\n/g, "<br/>");
 
 
-
-            
             if (modelJSON.isMine && this.scale && modelJSON.label.category.scale_id) {
                 category = annotationsTool.video.get("categories").get(this.model.get("label").category.id);
 
@@ -414,7 +439,15 @@ function ($, _not, PlayerAdapter, Annotation, User, CommentsContainer, Template,
          * Listener for click on this annotation
          */
         onSelect: function(event) {
-            this.model.trigger("selected", {model: this.model});
+            // If annotation already selected
+            if (annotationsTool.currentSelection && annotationsTool.currentSelection.get("id") === this.model.get("id")) {
+                delete annotationsTool.currentSelection;
+                annotationsTool.dispatcher.trigger("unselect-annotation");
+                this.isSelected = false;
+            } else {
+                annotationsTool.currentSelection = this.model;
+                this.model.trigger("selected", {model: this.model});
+            }
         },
 
         /**

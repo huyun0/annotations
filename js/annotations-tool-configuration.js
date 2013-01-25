@@ -48,11 +48,37 @@ define(['domReady',
             restEndpointsUrl: "../../extended-annotations",
 
             /**
+             * Url from the export function for statistics usage
+             * @type {string}
+             * @readOnly
+             */
+            exportUrl: "",
+
+            /**
              * Player adapter implementation to use for the annotations tool
              * @type {PlayerAdapter}
              */
             playerAdapter: undefined,
+
+            LAYOUT_CONFIGURATION: {
+                DEFAULT: {
+                    timeline: true,
+                    list: true,
+                    annotate: true
+                }
+            },
             
+            getLayoutConfiguration: function () {
+                return this.LAYOUT_CONFIGURATION.DEFAULT;
+            },
+
+            isStructuredAnnotationEnabled: function () {
+                return true;
+            },
+
+            isFreeTextEnabled: function () {
+                return true;
+            },
             
             /**
              * Get the current video id (video_extid) 

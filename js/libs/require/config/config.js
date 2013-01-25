@@ -10,6 +10,7 @@ require.config({
     'popover': 'libs/bootstrap/popover',
     'backbone': 'libs/backbone/backbone-0.9.9',
     'jquery.colorPicker': 'libs/jquery.colorPicker.min',
+    'jquery.FileReader': 'libs/jquery.FileReader',
     'localstorage': 'libs/backbone/backbone.localStorage-1.0',
     'handlebars': "libs/handlebars",
     'jquery': 'libs/jquery-1.7.2.min',
@@ -42,11 +43,20 @@ require.config({
       exports: "Backbone"
     },
 
+    "jquery.FileReader": {
+            deps: ["jquery"],
+            exports: "jQuery.fn.fileReader"
+    },
+
+    "jquery.colorPicker": {
+            deps: ["jquery"],
+            exports: "jQuery.fn.colorPicker"
+    },
+
     "bootstrap": ["jquery"],
     "scrollspy": ["bootstrap"],
     "carousel": ["bootstrap"],
     "tab": ["bootstrap"],
-    "jquery.colorPicker": ["jquery"]
   }
 });
 

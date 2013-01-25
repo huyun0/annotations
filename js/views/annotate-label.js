@@ -67,125 +67,125 @@ define(["jquery",
            */
           initialize: function(attr){
 
-            var scaleId;
+              var scaleId;
 
-            if(!attr.label || !_.isObject(attr.label))
-                throw "Label object must be given as constuctor attribute!";
+              if(!attr.label || !_.isObject(attr.label))
+                  throw "Label object must be given as constuctor attribute!";
+                
+              // Set the current context for all these functions
+              _.bindAll(this, 'render',
+                              'annotate',
+                              'switchEditModus',
+                              'onSwitchEditModus',
+                              'onFocusOut',
+                              'onKeyDown',
+                              'onDeleteLabel',
+                              'annnotateWithScaling',
+                              'changeCategory');
+
+              // Type use for delete operation
+              this.typeForDelete = annotationsTool.deleteOperation.targetTypes.LABEL;
+
+              // Change the edit modus, if this config is given as parameter
+              if(attr.editModus)this.editModus = attr.editModus;
+
+              this.model = attr.label;
+              this.roles = attr.roles;
+              this.isScaleEnable = attr.isScaleEnable;
+
+              // Add backbone events to the model 
+              _.extend(this.model, Backbone.Events);
               
-            // Set the current context for all these functions
-            _.bindAll(this, 'render',
-                            'annotate',
-                            'switchEditModus',
-                            'onSwitchEditModus',
-                            'onFocusOut',
-                            'onKeyDown',
-                            'onDeleteLabel',
-                            'annnotateWithScaling',
-                            'toggleScale');
+              this.el.id = this.idPrefix+this.model.get('id');
 
-            // Type use for delete operation
-            this.typeForDelete = annotationsTool.deleteOperation.targetTypes.LABEL;
+              this.listenTo(this.model, 'change', this.render);
 
-            // Change the edit modus, if this config is given as parameter
-            if(attr.editModus)this.editModus = attr.editModus;
+              scaleId = this.model.get("category").scale_id;
 
-            this.model = attr.label;
-            this.roles = attr.roles;
-            this.isScaleEnable = attr.isScaleEnable;
+              if (!scaleId && this.model.get("category").scale) {
+                  scaleId = this.model.get("category").scale.id;
+              }
 
-            // Add backbone events to the model 
-            _.extend(this.model, Backbone.Events);
-            
-            this.el.id = this.idPrefix+this.model.get('id');
+              this.scaleValues = annotationsTool.video.get("scales").get(scaleId);
+              
+              if (this.scaleValues) {
+                  this.scaleValues = this.scaleValues.get("scaleValues");
+              }
 
-            this.listenTo(this.model, 'change', this.render);
+              if (_.contains(this.roles, annotationsTool.user.get("role"))) {
+                  this.listenTo(annotationsTool.video, 'switchEditModus', this.onSwitchEditModus);
+              }
 
-            scaleId = this.model.get("category").scale_id;
-
-            if (!scaleId && this.model.get("category").scale) {
-              scaleId = this.model.get("category").scale.id;
-            }
-
-            this.scaleValues = annotationsTool.video.get("scales").get(scaleId);
-            
-            if (this.scaleValues) {
-              this.scaleValues = this.scaleValues.get("scaleValues");
-            }
-
-            if (_.contains(this.roles, annotationsTool.user.get("role"))) {
-              this.listenTo(annotationsTool.video, 'switchEditModus', this.onSwitchEditModus);
-            }
-
-            return this.render();
+              return this.render();
           },
 
           annnotateWithScaling: function(event){
-            event.stopImmediatePropagation();
+              event.stopImmediatePropagation();
 
-            var id = event.target.getAttribute("value");
+              var id = event.target.getAttribute("value");
 
-            var scalevalue = this.scaleValues.get(id);
+              var scalevalue = this.scaleValues.get(id);
 
-            if(this.editModus)
-              return;
+              if(this.editModus)
+                return;
 
-            var time = annotationsTool.playerAdapter.getCurrentTime();
-            
-            if(!_.isNumber(time) || time < 0)
-              return;
+              var time = annotationsTool.playerAdapter.getCurrentTime();
+              
+              if(!_.isNumber(time) || time < 0)
+                return;
 
-            var options = {};
-            var params = {
-                text: this.model.get('value'),
-                start:time,
-                label: this.model,
-                scalevalue: scalevalue.toJSON()
-            };
-            
-            if(annotationsTool.user)
-                params.created_by = annotationsTool.user.id;
-
-
-            if(!annotationsTool.localStorage)
-              options.wait = true;
+              var options = {};
+              var params = {
+                  text: this.model.get('value'),
+                  start:time,
+                  label: this.model,
+                  scalevalue: scalevalue.toJSON()
+              };
+              
+              if(annotationsTool.user)
+                  params.created_by = annotationsTool.user.id;
 
 
-            annotationsTool.selectedTrack.get("annotations").create(params,options);
+              if(!annotationsTool.localStorage)
+                options.wait = true;
+
+
+              annotationsTool.selectedTrack.get("annotations").create(params,options);
           },
 
           /**
            * Annotate the video with this label
            */
           annotate: function(){
-            if (this.editModus) {
-              return;
-            }
+              if (this.editModus) {
+                return;
+              }
 
-            var time = annotationsTool.playerAdapter.getCurrentTime(),
-                options = {},
-                params;
-            
-            if (!_.isNumber(time) || time < 0) {
-              return;
-            }
+              var time = annotationsTool.playerAdapter.getCurrentTime(),
+                  options = {},
+                  params;
+              
+              if (!_.isNumber(time) || time < 0) {
+                return;
+              }
 
-            params = {
-                text: this.model.get('value'),
-                start:time,
-                label: this.model
-            };
-            
-            if (annotationsTool.user) {
-                params.created_by = annotationsTool.user.id;
-                params.created_by_nickname = annotationsTool.user.get("nickname");
-            }
-
-
-            if(!annotationsTool.localStorage)
-              options.wait = true;
+              params = {
+                  text: this.model.get('value'),
+                  start:time,
+                  label: this.model
+              };
+              
+              if (annotationsTool.user) {
+                  params.created_by = annotationsTool.user.id;
+                  params.created_by_nickname = annotationsTool.user.get("nickname");
+              }
 
 
-            annotationsTool.selectedTrack.get("annotations").create(params,options);
+              if(!annotationsTool.localStorage)
+                options.wait = true;
+
+
+              annotationsTool.selectedTrack.get("annotations").create(params,options);
           },
 
           /**
@@ -193,7 +193,7 @@ define(["jquery",
            * @param {Event} event Event related to this action
            */
           onSwitchEditModus: function(status){
-            this.switchEditModus(status);
+              this.switchEditModus(status);
           },
 
           /**
@@ -201,27 +201,35 @@ define(["jquery",
            * @param  {Boolean} status The current status
            */
           switchEditModus: function(status){
-            this.editModus = status;
+              this.editModus = status;
 
-            if(status)
-              this.$el.find('input[disabled="disabled"]').removeAttr('disabled');
-            else
-              this.$el.find('input').attr('disabled','disabled');
+              if(status)
+                this.$el.find('input[disabled="disabled"]').removeAttr('disabled');
+              else
+                this.$el.find('input').attr('disabled','disabled');
           },
 
-          toggleScale: function (enable) {
-            if (enable !== undefined) {
-              this.isScaleEnable = enable;
-            } else { 
-              this.isScaleEnable = !this.isScaleEnable;
-            }
+          changeCategory: function (category) {
+
+              var scale;
+
+              if (category.scale) {
+                scale = annotationsTool.video.get("scales").get(category.scale.id);
+                if (scale) {
+                  this.scaleValues = scale.get("scaleValues");
+                }
+              }
+
+              this.isScaleEnable = (category.settings && category.settings.hasScale);
+              this.model.set("category",category);
+              this.model.save();
           },
 
           /**
            * Listener for focus out event on name field
            */
           onFocusOut: function(e){
-            var attributeName = e.target.className.replace("item-","");
+            var attributeName = e.target.className.replace("item-","").replace(" edit", "");
             this.model.set(attributeName,_.escape(e.target.value));
             this.model.save();
           },
@@ -231,7 +239,7 @@ define(["jquery",
            */
           onKeyDown: function(e){
             if(e.keyCode == 13){ // If "return" key
-              var attributeName = e.target.className.replace("item-","");
+              var attributeName = e.target.className.replace("item-","").replace(" edit","");
               this.model.set(attributeName,_.escape(e.target.value));
               this.model.save();
             }
@@ -260,13 +268,16 @@ define(["jquery",
            */
           render: function(){
             var modelJSON = this.model.toJSON();
+
             modelJSON.notEdit = !this.editModus;
             if (!this.isScaleEnable) {
                 if (modelJSON.scale_id) {
                   delete modelJSON.scale_id;
                 }
             } else if (this.scaleValues) {
-              modelJSON.scaleValues = this.scaleValues.toJSON();
+              modelJSON.scaleValues = _.sortBy(this.scaleValues.toJSON(), function (scaleValue) {
+                      return scaleValue.order;
+              });
             }
 
             this.$el.html(this.template(modelJSON));

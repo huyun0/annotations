@@ -12,6 +12,14 @@
     visibility: hidden;
 }
 
+i.check{
+    visibility: hidden;
+}
+
+.checked i.check{
+    visibility: visible;
+}
+
 #annotate-form{
     
     padding: 5px;
@@ -61,8 +69,13 @@
         padding-right: 8px;
     }
 
+    input.file{
+        display: none;
+    }
+
     #label-tabs-contents div{
         padding: 0px;
+
 
         &.carousel{
             
@@ -122,6 +135,15 @@
                         background-color: darken(@colorTwo,10%);
                     }
 
+
+                    .edit {
+                        display: none;
+                    }
+
+                    .read-only {
+                        display: inline-block;
+                    }
+
                     .item-abbreviation{
                         color: black;
                         float:left;
@@ -143,7 +165,6 @@
                         color: black;
                         float:left;
                         padding: @labelPadding;
-                        display: inline-block;
                         padding: 1px;
                         width: 80px;
                         margin: 0px;
@@ -252,11 +273,6 @@
             }            
         }
 
-
-        .edit{
-            visibility: visible;
-        }
-
         i.edit{ 
             border-radius: 2px;
             background-color: white;
@@ -308,6 +324,7 @@
 
             div.carousel .category-item{ 
 
+
                    .catItem-add{
                         margin-top: 2px;
                         padding: 5px;
@@ -328,6 +345,14 @@
 
                     .label-item{
                         height: 22px;
+
+                        .edit {
+                            display: inline-block;
+                        }
+
+                        .read-only {
+                            display: none;
+                        }
 
                         &:hover{
                             cursor: default;

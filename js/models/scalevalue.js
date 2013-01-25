@@ -115,6 +115,21 @@ define(["jquery",
                 }
                 return json;
             },
+
+
+            toExportJSON: function () {
+                var json = {
+                    name: this.attributes.name,
+                    value: this.attributes.value,  
+                    order: this.attributes.order               
+                }
+
+                if (json.scale && json.scale.attributes) {
+                    json.scale = this.attributes.scale.toJSON();
+                }
+
+                return json;
+            }
         });
         
         return ScaleValue;

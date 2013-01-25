@@ -47,13 +47,18 @@
             display: inline-block;
         }
 
+        button.in {
+            margin-right: -4px;
+        }
+
         &.edit-on {
 
             i.toggle-edit{
 
                 &:before {
-                    content: "save";
-                    margin-left: -25px;
+                    content: "close edit";
+                    white-space:nowrap;
+                    margin-left: -55px;
                     background-color: white;
                     padding: 2px;
                     border-radius: 4px;
@@ -254,7 +259,7 @@
     .comments-container.collapse {
       padding: 0px;
     }
-    
+
     span.comments {
       color: white;
       padding: 2px;

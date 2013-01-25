@@ -198,6 +198,83 @@ define(['jquery',
                                 }
                             })
                     }
+                },
+
+                SCALEVALUE: {
+                    name: "scale value",
+                    getContent: function(target){
+                        return target.get("name");
+                    },
+                    destroy: function(target, callback){
+
+                        target.destroy({
+                            
+                            success: function(){
+                                if (window.annotationsTool.localStorage) {
+                                    if(target.collection)
+                                      target.collection.remove(target);
+
+                                    annotationsTool.video.save();
+                                }
+                                
+                                if(callback)
+                                    callback();
+                            },
+                            
+                            error: function(error){
+                                console.warn("Cannot delete scale value: "+error);
+                            }
+                        });
+                            
+                    }
+                },                
+
+                SCALE: {
+                    name: "scale",
+                    getContent: function(target){
+                        return target.get("name");
+                    },
+                    destroy: function(scale, callback){
+                            var scaleValues = scale.get("scaleValues");
+            
+                            /**
+                             * Recursive function to delete synchronously all scaleValues
+                             */
+                            var destroyScaleValues = function(){
+                              // End state, no more label
+                              if(scaleValues.length == 0)
+                                return;
+                              
+                              var scaleValue = scaleValues.at(0);
+                              scaleValue.destroy({
+                                error: function(){
+                                  throw "Cannot delete scaleValue!";
+                                },
+                                success: function(){
+                                  scaleValues.remove(scaleValue);
+                                  destroyScaleValues();
+                                }
+                              });
+                            };
+                            
+                            // Call the recursive function 
+                            destroyScaleValues();
+                            
+                            scale.destroy({
+                                success: function(){
+                                    if(window.annotationsTool.localStorage) {
+                                        annotationsTool.video.save();
+                                    }
+                                
+                                    if(callback)
+                                        callback();
+                                },
+                            
+                                error: function(error){
+                                    console.warn("Cannot delete scale: "+error);
+                                }
+                            })
+                    }
                 }
             };
             
