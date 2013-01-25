@@ -28,7 +28,9 @@ define(["jquery",
         "default_categories_set",
         "default_scale_set",
         "handlebars",
-        "backbone"],
+        "backbone",
+        "libs/FileSaver",
+        "jquery.FileReader"],
        
     function($, _, Category, Label, Scale, ScaleValue, Categories, Labels, ScaleValues, CategoryView, Template, categoriesSet, scalesSet, Handlebars, Backbone){
 
@@ -106,13 +108,15 @@ define(["jquery",
               'onAddCategory',
               'removeOne',
               'addCarouselItem',
-              'generateCategories',
               'generateScales',
               'moveCarouselToFrame',
               'moveCarouselPrevious',
               'moveCarouselNext',
               'onCarouselSlid',
               'onSwitchEditModus',
+              'onExport',
+              'onImport',
+              'chooseFile',
               'switchEditModus',
               'insertCategoryView',
               'initCarousel',
@@ -139,18 +143,30 @@ define(["jquery",
 
             this.addCategories(this.categories, this.filter);
 
-            // Add default set of categories if nothing
-            /*if (this.categories.length == 0) {
-                this.hasGeneratedValues = true;
-                this.addCategories(this.generateCategories());
-                this.hasGeneratedValues = false;
-            }*/
             this.generateScales();
 
             this.initCarousel();
 
             this.titleLink = attr.button;
             this.titleLink.find('i.add').bind('click',this.onAddCategory);
+            this.titleLink.find('i.export').bind('click',this.onExport);
+            this.titleLink.find('i.import').click(this.chooseFile);
+
+            this.titleLink.find('.file').fileReader({
+              id: "fileReaderSWFObject",
+              filereader: "js/libs/filereader.swf",
+              expressInstall: "js/libs/expressInstall.swf",
+              debugMode: false,
+              callback: function () {
+                console.log("File Reader ready!");
+              },
+              multiple: false,
+              //accept: "text/javascript",
+              label: "JSON files",
+              extensions: "*.json"
+            });
+
+            this.titleLink.find('.file').bind('change',this.onImport);
 
             this.listenTo(this.categories, 'add', this.addCategory);
             this.listenTo(this.categories, 'remove', this.removeOne);
@@ -239,15 +255,6 @@ define(["jquery",
             }
             // Save new category    
             newCategory.save();
-
-            // If categories have been generated
-            if(this.hasGeneratedValues){
-              var labels = newCategory.get('labels');
-              labels.setUrl(newCategory);
-              labels.each(function(label){
-                    label.save();
-              });  
-            };
             
             if(annotationsTool.localStorage) {
                 annotationsTool.video.save();
@@ -291,6 +298,7 @@ define(["jquery",
                 catView.remove();
                 this.categoryViews.splice(index,1);
                 this.initCarousel();
+                this.render();
                 return;
               }
             },this);
@@ -383,54 +391,6 @@ define(["jquery",
           },
 
           /**
-           * Temporaray function to generate sample categories / lables
-           * @return {Categories} Category collection
-           */
-          generateCategories: function(scale){
-            var categories = new Array(),
-                findByNameCat = function(cat){
-                  return categoriesSet[0].name == cat.get('name');
-                },
-                options = {wait:true};
-
-              if(this.categories.find(findByNameCat)) {
-                return categories;
-              }
-
-              _.each(categoriesSet, function(cat,index){
-
-                var labels = cat.labels,
-                    newCategory,
-                    newLabels;
-
-                if (_.isArray(cat.labels) || (_.isObject(cat.labels) && !cat.labels.models)) {
-                  labels = cat.labels;
-                } else if (_.isObject(cat.labels) && cat.labels.models) {
-                  labels = cat.labels.toJSON();
-                }
-
-                cat.scale = scale;
-                
-                delete cat.labels;
-
-                newCategory = new Category(cat);
-                newLabels   = new Labels([],newCategory);
-
-                _.each(labels,function(lb,idx){
-                  lb.category = newCategory;
-                  newLabels.add(new Label(lb));
-                },this);
-
-                newCategory.set('labels',newLabels);
-
-                categories.push(newCategory);
-
-              },this);
-
-              return categories; 
-          },
-
-          /**
            * Move the carousel to item related to the event target
            * @param  {Event} event 
            */
@@ -447,7 +407,6 @@ define(["jquery",
           moveCarouselNext: function(){
             this.carouselElement.carousel('next').carousel('pause');
           },
-
 
           /**
            * Move carousel to previous element
@@ -468,12 +427,70 @@ define(["jquery",
             this.delegateEvents(this.events);
           },
 
+          onExport: function () {
+            var  json = {
+                   categories: [],
+                   scales: []
+                 },
+                 tmpScales = {},
+                 tmpScaleId;
+
+            _.each(this.categories.where(this.filter), function (category) {
+                tmpScaleId = category.attributes.scale_id;
+
+                if (tmpScaleId && !tmpScales[tmpScaleId]) {
+                  tmpScales[tmpScaleId] = annotationsTool.video.get("scales").get(tmpScaleId);
+                }
+
+                json.categories.push(category.toExportJSON());
+            }, this);
+
+            _.each(tmpScales, function (scale) {
+                if (scale) {
+                  json.scales.push(scale.toExportJSON());
+                }
+            });
+
+            saveAs(new Blob([JSON.stringify(json)], { type: 'application/octet-stream' }), "export-categories.json");
+          },
+
+          onImport: function(evt) {
+
+              var reader = new FileReader(),
+                  file = evt.target.files[0];
+                  defaultCategoryAttributes = this.defaultCategoryAttributes;
+
+              reader.onload = (function(addedFile) {
+                return function(e) {
+
+                  // Render thumbnail.
+                  var importAsString = e.target.result,
+                      importAsJSON;
+
+                  try {
+                    importAsJSON = JSON.parse(importAsString);
+                    annotationsTool.importCategories(importAsJSON, defaultCategoryAttributes);
+                  } catch (error) {
+                    // TODO pop up an error modal to the user
+                    console.warn("The uploaded file is not valid!");
+                  }
+                };
+              })(file);
+
+              // Read in the image file as a data URL.
+              reader.readAsText(file);
+          },
+
           /**
            * Listener for edit modus switch.
            * @param {Event} event Event related to this action
            */
           onSwitchEditModus: function(status){
             this.switchEditModus(status);
+          },
+
+          chooseFile: function () {
+            this.titleLink.find(".file").click();
           },
 
           /**

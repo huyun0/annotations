@@ -102,7 +102,9 @@ define(["jquery",
             var data = {
             	creator: modelJSON.created_by_nickname, 
             	creationdate: new Date(modelJSON.created_at).toLocaleString(), 
-            	text: modelJSON.text
+              text: modelJSON.text,
+              canEdit: annotationsTool.user.get("id") == modelJSON.created_by
+
             };
             if(modelJSON.created_at != modelJSON.updated_at) {
             	data.updator = modelJSON.updated_by_nickname;

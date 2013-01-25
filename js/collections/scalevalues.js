@@ -30,7 +30,7 @@ define(["jquery",
             localStorage: new Backbone.LocalStorage("ScaleValue"),
             
             initialize: function(models, scale){
-                _.bindAll(this, "setUrl");
+                _.bindAll(this, "setUrl", "toExportJSON");
 
                 this.scale = scale;
                 
@@ -44,6 +44,17 @@ define(["jquery",
                     return resp;
                 else
                     return null;
+            },
+
+
+            toExportJSON: function () {
+                var valueForExport = [];
+
+                this.each(function (value) {
+                    valueForExport.push(value.toExportJSON());
+                });
+
+                return valueForExport;
             },
             
             /**

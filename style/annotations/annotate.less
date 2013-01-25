@@ -40,7 +40,7 @@ i.check{
             width: 100%;
 						-webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
 						-moz-box-sizing: border-box;    /* Firefox, other Gecko */
-						box-sizing: border-box;  
+						box-sizing:border-box;  
             border: 4px solid @grayLight;
             margin-bottom: 5px;
         }
@@ -107,8 +107,13 @@ i.check{
         padding-right: 8px;
     }
 
+    input.file{
+        display: none;
+    }
+
     #label-tabs-contents div{
         padding: 0px;
+
 
         &.carousel{
         .row-fluid{
@@ -170,6 +175,15 @@ i.check{
                     border-right: 1px solid @white;
                     border-bottom: 1px solid @white;
 
+
+                    .edit {
+                        display: none;
+                    }
+
+                    .read-only {
+                        display: inline-block;
+                    }
+
                     .item-abbreviation{
                         color: @black;
                         background-color: @white;
@@ -194,11 +208,12 @@ i.check{
                         background-color: @white;
 												border: none;
                         float:left;
-                        padding: 1px;
+                        padding: @labelPadding;
                         display: inline-block;
-                        width: 55px;
-                        margin: 0 0 0 2px;
-                        box-shadow: none;
+                        padding: 1px;
+                        width: 80px;
+                        margin: 0px;
+                        margin-left: 4px;
 
                         &[disabled]{
                             text-overflow: ellipsis;
@@ -326,11 +341,6 @@ i.check{
             }            
         }
 
-
-        .edit{
-            visibility: visible;
-        }
-
         i.edit{ 
             background-color: none;
             border: none;
@@ -399,6 +409,13 @@ i.check{
 
 							.label-item{
 								height: 22px;
+                        .edit {
+                            display: inline-block;
+                        }
+
+                        .read-only {
+                            display: none;
+                        }
 								&:hover{
 									cursor: default;
 									background-color: fade(@white,40%);

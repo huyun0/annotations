@@ -166,6 +166,31 @@ define(["jquery",
                 return json;
             },
 
+            toExportJSON: function () {
+                var json = {
+                    value: this.attributes.value,
+                    abbreviation: this.attributes.abbreviation,                 
+                }
+
+                if (this.attributes.tags) {
+                    json.tags = JSON.stringify(this.attributes.tags);
+                }
+
+                if (this.attributes.description) {
+                    json.description = this.attributes.description;
+                }                
+
+                if (this.attributes.settings) {
+                    json.settings = this.attributes.settings;
+                }
+
+                if (this.attributes.tags) {
+                    json.tags = this.attributes.tags;
+                }
+
+                return json;
+            },
+
             /**
              * Parse the given parameter to JSON if given as String
              * @param  {String} parameter the parameter as String

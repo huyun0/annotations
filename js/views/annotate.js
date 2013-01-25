@@ -21,12 +21,13 @@ define(["jquery",
         "collections/annotations",
         "collections/categories",
         "views/annotate-tab",
+        "text!templates/annotate-tab-title.tmpl",
         "roles",
         "access",
         "handlebars",
         "backbone"],
        
-    function ($, _, PlayerAdapter, Annotation, Annotations, Categories, AnnotateTab, ROLES, ACCESS, Handlebars, Backbone) {
+    function ($, _, PlayerAdapter, Annotation, Annotations, Categories, AnnotateTab, TabTitleTemplate, ROLES, ACCESS, Handlebars, Backbone) {
 
 
         "use strict";
@@ -82,7 +83,7 @@ define(["jquery",
             },
 
             /** Template for tabs button */
-            tabsButtonTemplate: Handlebars.compile("<li class='tab-button'><a href='"+TAB_LINK_PREFIX+"{{id}}'>{{name}} <i class='icon-plus-sign add edit'></i></a></li>"),
+            tabsButtonTemplate: Handlebars.compile(TabTitleTemplate),
 
             /** Element containing the tabs buttons */
             tabsButtonsElement: $("ul#label-tabs-buttons"),
@@ -254,7 +255,7 @@ define(["jquery",
              */
             showTab: function (event) {
                 var tabId = event.currentTarget.attributes.getNamedItem("href").value;
-                event.preventDefault();
+                //event.preventDefault();
 
                 tabId = tabId.replace(TAB_LINK_PREFIX,"");
 

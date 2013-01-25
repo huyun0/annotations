@@ -33,7 +33,9 @@ define(["jquery",
              * @constructor
              */
             initialize: function(models,video){
-                _.bindAll(this,"setUrl","addCopyFromTemplate");
+                _.bindAll(this, "setUrl",
+                                "addCopyFromTemplate",
+                                "toExportJSON");
                 
                 this.setUrl(video);                    
             },
@@ -77,6 +79,16 @@ define(["jquery",
             getPublic: function(){
                 return this.where({isPublic: true});
             }, 
+
+            toExportJSON: function () {
+                var categoriesForExport = [];
+
+                this.each(function (category) {
+                    categoriesForExport.push(category.toExportJSON());
+                });
+
+                return categoriesForExport;
+            },
             
             /**
              * Add a copy from the given template to this collection

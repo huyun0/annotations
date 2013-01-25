@@ -206,6 +206,7 @@ function ($, _not, PlayerAdapter, Annotation, User, CommentsContainer, Template,
             } else {
                 this.$el.find(".start input").attr("disabled", "disabled");
                 this.$el.find(".end input").attr("disabled", "disabled");
+                this.render();
             }
         },
 

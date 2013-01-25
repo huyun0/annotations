@@ -53,7 +53,7 @@ define(["jquery",
           /** Events to handle by the annotate view */
           events: {
             "click .catItem-header i.delete"   : "onDeleteCategory",
-            "click .catItem-header i.scale"    : "toggleScale",
+            "click .catItem-header i.scale"    : "editScale",
             "focusout .catItem-header input"   : "onFocusOut",
             "keydown .catItem-header input"    : "onKeyDown",
             "click   .catItem-add"             : "onCreateLabel",
@@ -82,7 +82,7 @@ define(["jquery",
               'onColorChange',
               'removeOne',
               'onCreateLabel',
-              'toggleScale');
+              'editScale');
 
             // Type use for delete operation
             this.typeForDelete = annotationsTool.deleteOperation.targetTypes.CATEGORY;
@@ -125,7 +125,7 @@ define(["jquery",
 
           onChange: function () {
             _.each(this.labelViews, function (labelView) {
-                labelView.toggleScale(this.model.get("settings").hasScale);
+                labelView.changeCategory(this.model.toJSON());
             },this);
             this.render();
           },
@@ -143,13 +143,15 @@ define(["jquery",
               this.$el.find('input').attr('disabled','disabled');
           },
 
-          toggleScale: function(){
+          editScale: function(){
             var enable = !this.$el.find('i.scale').hasClass('icon-star'),
                 settings = this.model.get("settings");
 
-            settings.hasScale = enable;
+            annotationsTool.scaleEditor.show(this.model);
+
+            /*settings.hasScale = enable;
             this.model.set('settings',settings);
-            this.model.save();
+            this.model.save();*/
           },
 
           /**
@@ -192,8 +194,8 @@ define(["jquery",
           },
 
           onCreateLabel: function () {
-            var label = this.model.get("labels").create({value: "New label", 
-                                                         abbreviation: "LB",
+            var label = this.model.get("labels").create({value: "", 
+                                                         abbreviation: "",
                                                          category: this.model}, {wait:true});
             label.save();
             this.model.save();
