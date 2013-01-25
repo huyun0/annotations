@@ -12,7 +12,7 @@
     visibility: hidden;
 }
 
-i.check{
+i.check{ 
     visibility: hidden;
 }
 
@@ -38,9 +38,7 @@ i.check{
 
         #new-annotation{
             width: 100%;
-						-webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
-						-moz-box-sizing: border-box;    /* Firefox, other Gecko */
-						box-sizing:border-box;  
+            .box-sizing(border-box);
             border: 4px solid @grayLight;
             margin-bottom: 5px;
         }
@@ -136,19 +134,19 @@ i.check{
 
                     input{
                         width: 50px;
-                        border: none;
                         margin: 0 0 3px 0;
                         padding: 1px;
                         font-weight: bold;
                         text-overflow: clip;
                         color: @black;  
-                        box-shadow: none;
                        
                         &[disabled]{
                         	margin: 0;
                           text-overflow: ellipsis;
                           background: none;
                           cursor: default;
+                          box-shadow: none;
+                          border:none;
                         }
                     }
 
@@ -166,117 +164,114 @@ i.check{
                     border-bottom: 1px solid @white;
                 }
 
-                .label-item{
-                    @labelPadding: 3px;
-                    padding: @labelPadding;
-                    height: 16px;
-                    position: relative;
-                    background-color: fade(@white, 60%);
-                    border-right: 1px solid @white;
-                    border-bottom: 1px solid @white;
+								.label-item{
+									@labelHeight: 16px; 
+									padding: 3px;
+									height: @labelHeight; 
+									position: relative;
+									background-color: fade(@white, 60%);
+									border-right: 1px solid @white;
+									border-bottom: 1px solid @white;
 
+									.edit {
+										display: none;
+									}
+									
+									.item-abbreviation{
+									 	padding: 1px;
+										width: 24px;
+									}
+									
+									.item-value{
+									 	padding: 1px;
+										width: 55px;
+										margin-left: 4px;
+										
+										&.read-only{
+											width: 65px; // Trashcan is not visible -> More Space.
+										}
+									}
 
-                    .edit {
-                        display: none;
-                    }
+									.read-only {
+										display: block;
+										float:left;
+										text-overflow: ellipsis;
+										overflow: hidden;
+										color: @black;
+										background: none;
+									 	padding: 1px;
+									 	border: 1px solid transparent;
+										height: (@labelHeight)-4; //Minus Borders and Padding
+										line-height: (@labelHeight)-4
+									}
+									
+									input {
+										color: @black;
+										background-color: @white;
+										float:left;
+										box-shadow: none;
+										padding: 1px;
+										margin: 0px;
+										display: inline-block;
+																					
+                                          
+										&[disabled]{
+											display:none;
+										}
+									}
+								
 
-                    .read-only {
-                        display: inline-block;
-                    }
+									.item-icon{
+											float: right;
+									}
 
-                    .item-abbreviation{
-                        color: @black;
-                        background-color: @white;
-                        border:none;
-                        float:left;
-                        margin: 0px;
-                        width: 24px;
-                        padding: 1px;
-                        box-shadow: none;
+									&:hover{
+											.scaling{
+													display: block;
+											}
+									}
 
-                        &[disabled]{
-                            text-overflow: ellipsis;
-                            background: none;
-                            cursor: pointer;
-                            border: none;
-                            color: @black;
-                        }
-                    }
+									.scaling{
+											@itemWidth: 20px;
+											@itemHeight: 22px;
+											@itemPadding: 2px;
+											@borderWidth: 1px;
+											width: 100%;
+											background-color: fade(@black, 50%);
+											display: none;
+											position: absolute;
+											margin: 0;
+											left: 0;
+											top: 0;
+											z-index:200;
+											
+											li {
+													list-style: none;
+													display: block;
+													float:left;
+													width: @itemWidth;
+													height: @itemHeight;
+													line-height: @itemHeight;
+													background-color: @black;
+													color: @white;
+													font-size: 0.8em;
+													font-weight: bold;
+													padding: 0px 2px 0px 2px;
+													border-right: @borderWidth solid @white;
+													border-bottom: @borderWidth solid @white;
+													text-align: center;
 
-                    .item-value{
-                        color: @black;
-                        background-color: @white;
-												border: none;
-                        float:left;
-                        padding: @labelPadding;
-                        display: inline-block;
-                        padding: 1px;
-                        width: 80px;
-                        margin: 0px;
-                        margin-left: 4px;
+													&:hover{
+															cursor: pointer;
+															background-color: @white;
+															color: @black;
+													}
+													
+											}
 
-                        &[disabled]{
-                            text-overflow: ellipsis;
-                            background: none;
-                            cursor: pointer;
-                        }
-                    }
+									}
 
-                    .item-icon{
-                        float: right;
-                    }
-
-
-
-
-                    &:hover{
-                        .scaling{
-                            display: block;
-                        }
-                    }
-
-                    .scaling{
-                        @itemWidth: 20px;
-                        @itemHeight: 22px;
-                        @itemPadding: 2px;
-                        @borderWidth: 1px;
-                        min-width: (((@itemWidth+@borderWidth)+(2*@itemPadding))*5);
-                        width: 100%;
-                        background-color: fade(@black, 50%);
-                        height: @itemHeight; 
-                        display: none;
-                        position: absolute;
-                        margin: 0;
-                        left: 0;
-                        top: 0;
-                        z-index:200;
-
-                        li {
-                            list-style: none;
-                            display: block;
-                            float:left;
-                            width: @itemWidth;
-                            height: @itemHeight;
-                            line-height: @itemHeight;
-                            background-color: @black;
-                            color: @white;
-                            font-size: 0.8em;
-                            font-weight: bold;
-                            padding: 0px 2px 0px 2px;
-                            border-right: @borderWidth solid @white;
-                            text-align: center;
-
-                            &:hover{
-                                cursor: pointer;
-                                background-color: @white;
-                                color: @black;
-                            }
-                            
-                        }
-
-                    }
-
-                }
+							}
 
             }
 
@@ -348,8 +343,7 @@ i.check{
             float: right;
 
             &:hover{
-                background-color: @grayLighter; 
-                cursor: pointer;
+              .iconHover();
             }
         }
 
@@ -407,28 +401,29 @@ i.check{
 								}
 							}
 
-							.label-item{
+							.label-item {
 								height: 22px;
-                        .edit {
-                            display: inline-block;
-                        }
+								.edit {
+									display: inline-block;
+								}
+								.read-only {
+									display: none;
+								}
+								textarea, input {
+									border: 1px solid @white;
+									background-color: @white;
+									&:focus, &:active {
+										box-shadow: 0 0 2px @blue;
+										border: 1px solid @blue;
+									}
+								}
 
-                        .read-only {
-                            display: none;
-                        }
 								&:hover{
 									cursor: default;
 									background-color: fade(@white,40%);
 									.scaling{
 										display: none;
 									}
-								}
-							}
-
-							.item-abbreviation, .item-value {
-								border: 1px solid @white;
-								&:focus, &:active {
-									border: 1px solid @blue;
 								}
 							}					
             }	                                  
@@ -442,8 +437,7 @@ i.check{
             border:none;
 
             &:hover{
-                background-color: @grayLighter; 
-                cursor: pointer;
+              .iconHover();          
             }
         }
 	}

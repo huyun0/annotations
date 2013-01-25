@@ -59,20 +59,32 @@
 @btnBackgroundHighlight: @grayButtons;
 @btnBorder:              @black;
 
-@btnPrimaryBackground:              lighten(@blue, 0%);
-@btnPrimaryBackgroundHighlight:     lighten(@blue, 0%);
+@btnPrimaryBackground:              lighten(@blue, 20%);
+@btnPrimaryBackgroundHighlight:     lighten(@blue, 20%);
 
-@btnInfoBackground:                 lighten(@blue, 10%);
-@btnInfoBackgroundHighlight:        lighten(@blue, 10%);
+@btnInfoBackground:                 lighten(@blue, 30%);
+@btnInfoBackgroundHighlight:        lighten(@blue, 30%);
 
-@btnSuccessBackground:              lighten(@green, 0%);
-@btnSuccessBackgroundHighlight:     lighten(@green, 0%);
+@btnSuccessBackground:              lighten(@green, 20%);
+@btnSuccessBackgroundHighlight:     lighten(@green, 20%);
 
-@btnWarningBackground:              lighten(@orange, 0%);
-@btnWarningBackgroundHighlight:     lighten(@orange, 0%);
+@btnWarningBackground:              lighten(@orange, 20%);
+@btnWarningBackgroundHighlight:     lighten(@orange, 20%);
 
-@btnDangerBackground:               lighten(@red, 10%);
-@btnDangerBackgroundHighlight:      lighten(@red, 10%);
+@btnDangerBackground:               lighten(@red, 30%);
+@btnDangerBackgroundHighlight:      lighten(@red, 30%);
 
-@btnInverseBackground:              lighten(@grayDark, 0%);
-@btnInverseBackgroundHighlight:     lighten(@grayDark, 0%);
+@btnInverseBackground:              lighten(@grayDark, 20%);
+@btnInverseBackgroundHighlight:     lighten(@grayDark, 20%);
+
+// Hover
+// -------------------------
+
+
+.iconHover(@color1: fade(@blue,30%),@color2: fade(@blue,70%),@cursor: pointer,@radius: 3px) {
+	background-color: @color1;
+	box-shadow: 0 0 3px @color2 inset;
+	border-radius: @radius;
+  cursor: @cursor;
+}	
+

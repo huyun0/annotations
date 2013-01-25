@@ -1,4 +1,4 @@
-<div class='timeline-item' style="margin-top:{{top}}{{#if category.settings.color}};border:2px solid {{category.settings.color}}{{/if}}">
+<div title="{{text}}" class='timeline-item' style="margin-top:{{top}}{{#if category.settings.color}};background-color: {{category.settings.color}}{{/if}}">
     <span>{{#if label}}<b>{{label.abbreviation}}</b>{{/if}} {{text}}</span>
     <i class="delete icon-remove" title="Delete  annotation" onclick="$(window).trigger('deleteAnnotation', ['{{id}}','{{track}}'])"></i>
     <div class='annotation-id'>{{id}}</div>
