@@ -229,7 +229,7 @@ define(["jquery",
            * Listener for focus out event on name field
            */
           onFocusOut: function(e){
-            var attributeName = e.target.className.replace("item-","");
+            var attributeName = e.target.className.replace("item-","").replace(" edit", "");
             this.model.set(attributeName,_.escape(e.target.value));
             this.model.save();
           },
@@ -239,7 +239,7 @@ define(["jquery",
            */
           onKeyDown: function(e){
             if(e.keyCode == 13){ // If "return" key
-              var attributeName = e.target.className.replace("item-","");
+              var attributeName = e.target.className.replace("item-","").replace(" edit","");
               this.model.set(attributeName,_.escape(e.target.value));
               this.model.save();
             }
