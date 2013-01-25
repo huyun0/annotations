@@ -15,7 +15,7 @@
  */
 
 define(['jquery',
-        'localstorage',
+        'backbone',
         'views/main',
         'text!templates/delete-modal.tmpl',
         'text!templates/delete-warning-content.tmpl',
