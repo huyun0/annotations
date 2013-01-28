@@ -5281,17 +5281,19 @@
   }
   #annotate-form #editSwitch {
     float: right;
-    margin-right: 4px;
+    margin-right: 10px;
     padding: 0;
   }
   #annotate-form label,
   #annotate-form span,
   #annotate-form p {
     color: #ffffff;
+    white-space: nowrap;
   }
   #annotate-container .navbar .currentTrack {
     display: inline;
     color: #ffffff;
+    float: left;
   }
   #annotate-container .navbar .currentTrack .content {
     font-weight: bold;
