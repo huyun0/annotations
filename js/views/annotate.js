@@ -328,7 +328,7 @@ define(["jquery",
               }
             },
 
-            setLayoutText: function () {
+            setLayoutText: function (event) {
               if (!$(event.target).hasClass("checked")) {
                 this.$el.find("#categories").hide();
                 this.$el.find("#input-container").show();
@@ -339,7 +339,7 @@ define(["jquery",
               }
             },
 
-            setLayoutCategories: function () {
+            setLayoutCategories: function (event) {
               if (!$(event.target).hasClass("checked")) {
                 this.$el.find("#categories").show();
                 this.$el.find("#input-container").hide();
