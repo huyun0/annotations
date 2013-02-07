@@ -482,7 +482,7 @@ function ($, _not, PlayerAdapter, Annotation, User, CommentsContainer, Template,
 
             this.collapsed = !this.collapsed;
 
-            this.$el.find("> .header > a.collapse > i").toggleClass("icon-chevron-right").toggleClass("icon-chevron-down");
+            this.$el.find("> .header-container > div > a.collapse > i").toggleClass("icon-chevron-right").toggleClass("icon-chevron-down");
 
             if(this.collapsed) this.$el.find("> div.in").collapse("hide");
             else this.$el.find("> div.collapse").collapse("show");

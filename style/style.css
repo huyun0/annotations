@@ -59,7 +59,7 @@
    * Style for the base element of the annotations tool
    */
   
-    /* No border radius as default */
+    /* Override mixin. We dont want rounded corners in this tool. */
   
     /* Additional icon color: Grey (#c4c4c4) */
   
@@ -817,6 +817,9 @@
     -webkit-border-radius: 3px;
     -moz-border-radius: 3px;
     border-radius: 3px;
+    -webkit-border-radius: 0px;
+    -moz-border-radius: 0px;
+    border-radius: 0px;
   }
   code {
     padding: 2px 4px;
@@ -836,6 +839,9 @@
     -webkit-border-radius: 4px;
     -moz-border-radius: 4px;
     border-radius: 4px;
+    -webkit-border-radius: 0px;
+    -moz-border-radius: 0px;
+    border-radius: 0px;
     white-space: pre;
     white-space: pre-wrap;
     word-break: break-all;
@@ -913,6 +919,9 @@
     -webkit-border-radius: 3px;
     -moz-border-radius: 3px;
     border-radius: 3px;
+    -webkit-border-radius: 0px;
+    -moz-border-radius: 0px;
+    border-radius: 0px;
   }
   .uneditable-textarea {
     width: auto;
@@ -938,6 +947,9 @@
     -webkit-border-radius: 0;
     -moz-border-radius: 0;
     border-radius: 0;
+    -webkit-border-radius: 0px;
+    -moz-border-radius: 0px;
+    border-radius: 0px;
     border: 0 \9;
     /* IE9 and down */
   
@@ -1460,6 +1472,9 @@
     -webkit-border-radius: 0 3px 3px 0;
     -moz-border-radius: 0 3px 3px 0;
     border-radius: 0 3px 3px 0;
+    -webkit-border-radius: 0px;
+    -moz-border-radius: 0px;
+    border-radius: 0px;
   }
   .input-prepend input:focus,
   .input-append input:focus,
@@ -1496,6 +1511,9 @@
     -webkit-border-radius: 3px 0 0 3px;
     -moz-border-radius: 3px 0 0 3px;
     border-radius: 3px 0 0 3px;
+    -webkit-border-radius: 0px;
+    -moz-border-radius: 0px;
+    border-radius: 0px;
   }
   .input-prepend .active,
   .input-append .active {
@@ -1511,6 +1529,9 @@
     -webkit-border-radius: 3px 0 0 3px;
     -moz-border-radius: 3px 0 0 3px;
     border-radius: 3px 0 0 3px;
+    -webkit-border-radius: 0px;
+    -moz-border-radius: 0px;
+    border-radius: 0px;
   }
   .input-append .uneditable-input {
     border-left-color: #eee;
@@ -1522,6 +1543,9 @@
     -webkit-border-radius: 0 3px 3px 0;
     -moz-border-radius: 0 3px 3px 0;
     border-radius: 0 3px 3px 0;
+    -webkit-border-radius: 0px;
+    -moz-border-radius: 0px;
+    border-radius: 0px;
   }
   .input-prepend.input-append input,
   .input-prepend.input-append select,
@@ -1529,6 +1553,9 @@
     -webkit-border-radius: 0;
     -moz-border-radius: 0;
     border-radius: 0;
+    -webkit-border-radius: 0px;
+    -moz-border-radius: 0px;
+    border-radius: 0px;
   }
   .input-prepend.input-append .add-on:first-child,
   .input-prepend.input-append .btn:first-child {
@@ -1536,6 +1563,9 @@
     -webkit-border-radius: 3px 0 0 3px;
     -moz-border-radius: 3px 0 0 3px;
     border-radius: 3px 0 0 3px;
+    -webkit-border-radius: 0px;
+    -moz-border-radius: 0px;
+    border-radius: 0px;
   }
   .input-prepend.input-append .add-on:last-child,
   .input-prepend.input-append .btn:last-child {
@@ -1543,6 +1573,9 @@
     -webkit-border-radius: 0 3px 3px 0;
     -moz-border-radius: 0 3px 3px 0;
     border-radius: 0 3px 3px 0;
+    -webkit-border-radius: 0px;
+    -moz-border-radius: 0px;
+    border-radius: 0px;
   }
   .search-query {
     padding-left: 14px;
@@ -1551,6 +1584,9 @@
     -webkit-border-radius: 14px;
     -moz-border-radius: 14px;
     border-radius: 14px;
+    -webkit-border-radius: 0px;
+    -moz-border-radius: 0px;
+    border-radius: 0px;
   }
   .form-search input,
   .form-inline input,
@@ -1700,6 +1736,9 @@
     -webkit-border-radius: 4px;
     -moz-border-radius: 4px;
     border-radius: 4px;
+    -webkit-border-radius: 0px;
+    -moz-border-radius: 0px;
+    border-radius: 0px;
   }
   .table-bordered th,
   .table-bordered td {
@@ -1715,24 +1754,36 @@
     -webkit-border-radius: 4px 0 0 0;
     -moz-border-radius: 4px 0 0 0;
     border-radius: 4px 0 0 0;
+    -webkit-border-radius: 0px;
+    -moz-border-radius: 0px;
+    border-radius: 0px;
   }
   .table-bordered thead:first-child tr:first-child th:last-child,
   .table-bordered tbody:first-child tr:first-child td:last-child {
     -webkit-border-radius: 0 4px 0 0;
     -moz-border-radius: 0 4px 0 0;
     border-radius: 0 4px 0 0;
+    -webkit-border-radius: 0px;
+    -moz-border-radius: 0px;
+    border-radius: 0px;
   }
   .table-bordered thead:last-child tr:last-child th:first-child,
   .table-bordered tbody:last-child tr:last-child td:first-child {
     -webkit-border-radius: 0 0 0 4px;
     -moz-border-radius: 0 0 0 4px;
     border-radius: 0 0 0 4px;
+    -webkit-border-radius: 0px;
+    -moz-border-radius: 0px;
+    border-radius: 0px;
   }
   .table-bordered thead:last-child tr:last-child th:last-child,
   .table-bordered tbody:last-child tr:last-child td:last-child {
     -webkit-border-radius: 0 0 4px 0;
     -moz-border-radius: 0 0 4px 0;
     border-radius: 0 0 4px 0;
+    -webkit-border-radius: 0px;
+    -moz-border-radius: 0px;
+    border-radius: 0px;
   }
   .table-striped tbody tr:nth-child(odd) td,
   .table-striped tbody tr:nth-child(odd) th {
@@ -2295,6 +2346,9 @@
     -webkit-border-radius: 0 0 5px 5px;
     -moz-border-radius: 0 0 5px 5px;
     border-radius: 0 0 5px 5px;
+    -webkit-border-radius: 0px;
+    -moz-border-radius: 0px;
+    border-radius: 0px;
     background-size: 100% 100%;
     box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2) 0 1px #000000;
     -moz-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2) 0 1px #000000;
@@ -2369,6 +2423,9 @@
     -webkit-border-radius: 4px;
     -moz-border-radius: 4px;
     border-radius: 4px;
+    -webkit-border-radius: 0px;
+    -moz-border-radius: 0px;
+    border-radius: 0px;
   }
   .well {
     min-height: 20px;
@@ -2380,6 +2437,9 @@
     -webkit-border-radius: 4px;
     -moz-border-radius: 4px;
     border-radius: 4px;
+    -webkit-border-radius: 0px;
+    -moz-border-radius: 0px;
+    border-radius: 0px;
     background-size: 100% 100%;
     box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05) 0 1px #000000;
     -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05) 0 1px #000000;
@@ -2397,12 +2457,18 @@
     -webkit-border-radius: 6px;
     -moz-border-radius: 6px;
     border-radius: 6px;
+    -webkit-border-radius: 0px;
+    -moz-border-radius: 0px;
+    border-radius: 0px;
   }
   .well-small {
     padding: 9px;
     -webkit-border-radius: 3px;
     -moz-border-radius: 3px;
     border-radius: 3px;
+    -webkit-border-radius: 0px;
+    -moz-border-radius: 0px;
+    border-radius: 0px;
   }
   .fade {
     -webkit-transition: opacity 0.15s linear;
@@ -2476,6 +2542,9 @@
     -webkit-border-radius: 4px;
     -moz-border-radius: 4px;
     border-radius: 4px;
+    -webkit-border-radius: 0px;
+    -moz-border-radius: 0px;
+    border-radius: 0px;
     background-size: 100% 100%;
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05) 0 1px #000000;
     -moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05) 0 1px #000000;
@@ -2566,6 +2635,9 @@
     -webkit-border-radius: 5px;
     -moz-border-radius: 5px;
     border-radius: 5px;
+    -webkit-border-radius: 0px;
+    -moz-border-radius: 0px;
+    border-radius: 0px;
   }
   .btn-large [class^="icon-"] {
     margin-top: 1px;
@@ -2895,6 +2967,9 @@
     -webkit-border-radius: 0;
     -moz-border-radius: 0;
     border-radius: 0;
+    -webkit-border-radius: 0px;
+    -moz-border-radius: 0px;
+    border-radius: 0px;
   }
   .btn-group .btn:first-child {
     margin-left: 0;
@@ -2978,6 +3053,9 @@
     -webkit-border-radius: 5px;
     -moz-border-radius: 5px;
     border-radius: 5px;
+    -webkit-border-radius: 0px;
+    -moz-border-radius: 0px;
+    border-radius: 0px;
   }
   .btn-group.open .dropdown-toggle {
     background-image: none;
@@ -3030,6 +3108,9 @@
     -webkit-border-radius: 4px;
     -moz-border-radius: 4px;
     border-radius: 4px;
+    -webkit-border-radius: 0px;
+    -moz-border-radius: 0px;
+    border-radius: 0px;
     color: #c09853;
   }
   .alert-heading {
@@ -3176,6 +3257,9 @@
     -webkit-border-radius: 4px 4px 0 0;
     -moz-border-radius: 4px 4px 0 0;
     border-radius: 4px 4px 0 0;
+    -webkit-border-radius: 0px;
+    -moz-border-radius: 0px;
+    border-radius: 0px;
   }
   .nav-tabs > li > a:hover {
     border-color: #eaeaea #eaeaea #dddddd;
@@ -3196,6 +3280,9 @@
     -webkit-border-radius: 5px;
     -moz-border-radius: 5px;
     border-radius: 5px;
+    -webkit-border-radius: 0px;
+    -moz-border-radius: 0px;
+    border-radius: 0px;
   }
   .nav-pills > .active > a,
   .nav-pills > .active > a:hover {
@@ -3216,16 +3303,25 @@
     -webkit-border-radius: 0;
     -moz-border-radius: 0;
     border-radius: 0;
+    -webkit-border-radius: 0px;
+    -moz-border-radius: 0px;
+    border-radius: 0px;
   }
   .nav-tabs.nav-stacked > li:first-child > a {
     -webkit-border-radius: 4px 4px 0 0;
     -moz-border-radius: 4px 4px 0 0;
     border-radius: 4px 4px 0 0;
+    -webkit-border-radius: 0px;
+    -moz-border-radius: 0px;
+    border-radius: 0px;
   }
   .nav-tabs.nav-stacked > li:last-child > a {
     -webkit-border-radius: 0 0 4px 4px;
     -moz-border-radius: 0 0 4px 4px;
     border-radius: 0 0 4px 4px;
+    -webkit-border-radius: 0px;
+    -moz-border-radius: 0px;
+    border-radius: 0px;
   }
   .nav-tabs.nav-stacked > li > a:hover {
     border-color: #ddd;
@@ -3246,6 +3342,9 @@
     -webkit-border-radius: 4px;
     -moz-border-radius: 4px;
     border-radius: 4px;
+    -webkit-border-radius: 0px;
+    -moz-border-radius: 0px;
+    border-radius: 0px;
   }
   .nav-tabs .dropdown-toggle .caret,
   .nav-pills .dropdown-toggle .caret {
@@ -3332,6 +3431,9 @@
     -webkit-border-radius: 0 0 4px 4px;
     -moz-border-radius: 0 0 4px 4px;
     border-radius: 0 0 4px 4px;
+    -webkit-border-radius: 0px;
+    -moz-border-radius: 0px;
+    border-radius: 0px;
   }
   .tabs-below .nav-tabs > li > a:hover {
     border-bottom-color: transparent;
@@ -3361,6 +3463,9 @@
     -webkit-border-radius: 4px 0 0 4px;
     -moz-border-radius: 4px 0 0 4px;
     border-radius: 4px 0 0 4px;
+    -webkit-border-radius: 0px;
+    -moz-border-radius: 0px;
+    border-radius: 0px;
   }
   .tabs-left .nav-tabs > li > a:hover {
     border-color: #eaeaea #dddddd #eaeaea #eaeaea;
@@ -3380,6 +3485,9 @@
     -webkit-border-radius: 0 4px 4px 0;
     -moz-border-radius: 0 4px 4px 0;
     border-radius: 0 4px 4px 0;
+    -webkit-border-radius: 0px;
+    -moz-border-radius: 0px;
+    border-radius: 0px;
   }
   .tabs-right .nav-tabs > li > a:hover {
     border-color: #eaeaea #eaeaea #eaeaea #dddddd;
@@ -3410,6 +3518,9 @@
     -webkit-border-radius: 4px;
     -moz-border-radius: 4px;
     border-radius: 4px;
+    -webkit-border-radius: 0px;
+    -moz-border-radius: 0px;
+    border-radius: 0px;
     background-size: 100% 100%;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25), inset 0 -1px 0 rgba(0, 0, 0, 0.1) 0 1px #000000;
     -moz-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25), inset 0 -1px 0 rgba(0, 0, 0, 0.1) 0 1px #000000;
@@ -3477,6 +3588,9 @@
     -webkit-border-radius: 1px;
     -moz-border-radius: 1px;
     border-radius: 1px;
+    -webkit-border-radius: 0px;
+    -moz-border-radius: 0px;
+    border-radius: 0px;
     background-size: 100% 100%;
     box-shadow: 0 1px 0 rgba(0, 0, 0, 0.25) 0 1px #000000;
     -moz-box-shadow: 0 1px 0 rgba(0, 0, 0, 0.25) 0 1px #000000;
@@ -3628,6 +3742,9 @@
     -webkit-border-radius: 0;
     -moz-border-radius: 0;
     border-radius: 0;
+    -webkit-border-radius: 0px;
+    -moz-border-radius: 0px;
+    border-radius: 0px;
   }
   .navbar-fixed-top .container,
   .navbar-fixed-bottom .container {
@@ -3689,6 +3806,9 @@
     -webkit-border-radius: 4px;
     -moz-border-radius: 4px;
     border-radius: 4px;
+    -webkit-border-radius: 0px;
+    -moz-border-radius: 0px;
+    border-radius: 0px;
   }
   .navbar .dropdown-menu:before {
     content: '';
@@ -3773,6 +3893,9 @@
     -webkit-border-radius: 3px;
     -moz-border-radius: 3px;
     border-radius: 3px;
+    -webkit-border-radius: 0px;
+    -moz-border-radius: 0px;
+    border-radius: 0px;
     background-size: 100% 100%;
     box-shadow: inset 0 1px 0 #ffffff 0 1px #000000;
     -moz-box-shadow: inset 0 1px 0 #ffffff 0 1px #000000;
@@ -3811,6 +3934,9 @@
     -webkit-border-radius: 3px;
     -moz-border-radius: 3px;
     border-radius: 3px;
+    -webkit-border-radius: 0px;
+    -moz-border-radius: 0px;
+    border-radius: 0px;
     background-size: 100% 100%;
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05) 0 1px #000000;
     -moz-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05) 0 1px #000000;
@@ -3850,11 +3976,17 @@
     -webkit-border-radius: 3px 0 0 3px;
     -moz-border-radius: 3px 0 0 3px;
     border-radius: 3px 0 0 3px;
+    -webkit-border-radius: 0px;
+    -moz-border-radius: 0px;
+    border-radius: 0px;
   }
   .pagination li:last-child a {
     -webkit-border-radius: 0 3px 3px 0;
     -moz-border-radius: 0 3px 3px 0;
     border-radius: 0 3px 3px 0;
+    -webkit-border-radius: 0px;
+    -moz-border-radius: 0px;
+    border-radius: 0px;
   }
   .pagination-centered {
     text-align: center;
@@ -3896,6 +4028,9 @@
     -webkit-border-radius: 15px;
     -moz-border-radius: 15px;
     border-radius: 15px;
+    -webkit-border-radius: 0px;
+    -moz-border-radius: 0px;
+    border-radius: 0px;
   }
   .pager a:hover {
     text-decoration: none;
@@ -3959,6 +4094,9 @@
     -webkit-border-radius: 6px;
     -moz-border-radius: 6px;
     border-radius: 6px;
+    -webkit-border-radius: 0px;
+    -moz-border-radius: 0px;
+    border-radius: 0px;
     background-size: 100% 100%;
     box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3) 0 1px #000000;
     -moz-box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3) 0 1px #000000;
@@ -4005,6 +4143,9 @@
     -webkit-border-radius: 0 0 6px 6px;
     -moz-border-radius: 0 0 6px 6px;
     border-radius: 0 0 6px 6px;
+    -webkit-border-radius: 0px;
+    -moz-border-radius: 0px;
+    border-radius: 0px;
     background-size: 100% 100%;
     box-shadow: inset 0 1px 0 #ffffff 0 1px #000000;
     -moz-box-shadow: inset 0 1px 0 #ffffff 0 1px #000000;
@@ -4105,6 +4246,9 @@
     -webkit-border-radius: 4px;
     -moz-border-radius: 4px;
     border-radius: 4px;
+    -webkit-border-radius: 0px;
+    -moz-border-radius: 0px;
+    border-radius: 0px;
   }
   .tooltip-arrow {
     position: absolute;
@@ -4177,6 +4321,9 @@
     -webkit-border-radius: 6px;
     -moz-border-radius: 6px;
     border-radius: 6px;
+    -webkit-border-radius: 0px;
+    -moz-border-radius: 0px;
+    border-radius: 0px;
     background-size: 100% 100%;
     box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3) 0 1px #000000;
     -moz-box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3) 0 1px #000000;
@@ -4193,6 +4340,9 @@
     -webkit-border-radius: 3px 3px 0 0;
     -moz-border-radius: 3px 3px 0 0;
     border-radius: 3px 3px 0 0;
+    -webkit-border-radius: 0px;
+    -moz-border-radius: 0px;
+    border-radius: 0px;
   }
   .popover-content {
     padding: 14px;
@@ -4200,6 +4350,9 @@
     -webkit-border-radius: 0 0 3px 3px;
     -moz-border-radius: 0 0 3px 3px;
     border-radius: 0 0 3px 3px;
+    -webkit-border-radius: 0px;
+    -moz-border-radius: 0px;
+    border-radius: 0px;
     -webkit-background-clip: padding-box;
     -moz-background-clip: padding-box;
     background-clip: padding-box;
@@ -4242,6 +4395,9 @@
     -webkit-border-radius: 4px;
     -moz-border-radius: 4px;
     border-radius: 4px;
+    -webkit-border-radius: 0px;
+    -moz-border-radius: 0px;
+    border-radius: 0px;
     background-size: 100% 100%;
     box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) 0 1px #000000;
     -moz-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) 0 1px #000000;
@@ -4282,6 +4438,9 @@
     -webkit-border-radius: 3px;
     -moz-border-radius: 3px;
     border-radius: 3px;
+    -webkit-border-radius: 0px;
+    -moz-border-radius: 0px;
+    border-radius: 0px;
   }
   .label:hover {
     color: #ffffff;
@@ -4327,6 +4486,9 @@
     -webkit-border-radius: 9px;
     -moz-border-radius: 9px;
     border-radius: 9px;
+    -webkit-border-radius: 0px;
+    -moz-border-radius: 0px;
+    border-radius: 0px;
   }
   .badge:hover {
     color: #ffffff;
@@ -4418,6 +4580,9 @@
     -webkit-border-radius: 4px;
     -moz-border-radius: 4px;
     border-radius: 4px;
+    -webkit-border-radius: 0px;
+    -moz-border-radius: 0px;
+    border-radius: 0px;
   }
   .progress .bar {
     width: 0%;
@@ -4559,6 +4724,9 @@
     -webkit-border-radius: 4px;
     -moz-border-radius: 4px;
     border-radius: 4px;
+    -webkit-border-radius: 0px;
+    -moz-border-radius: 0px;
+    border-radius: 0px;
   }
   .accordion-heading {
     border-bottom: 0;
@@ -4641,6 +4809,9 @@
     -webkit-border-radius: 23px;
     -moz-border-radius: 23px;
     border-radius: 23px;
+    -webkit-border-radius: 0px;
+    -moz-border-radius: 0px;
+    border-radius: 0px;
     opacity: 0.5;
     filter: alpha(opacity=50);
   }
@@ -4674,6 +4845,9 @@
     -webkit-border-radius: 6px;
     -moz-border-radius: 6px;
     border-radius: 6px;
+    -webkit-border-radius: 0px;
+    -moz-border-radius: 0px;
+    border-radius: 0px;
   }
   .hero-unit h1 {
     margin-bottom: 0;
@@ -4702,10 +4876,6 @@
   }
   .invisible {
     visibility: hidden;
-  }
-  body {
-    padding-top: 60px;
-    padding-bottom: 40px;
   }
   .standard_border_radius {
     border-radius: 0px 0px 0px 0px;
@@ -4895,6 +5065,9 @@
     -webkit-border-radius: 4px;
     -moz-border-radius: 4px;
     border-radius: 4px;
+    -webkit-border-radius: 0px;
+    -moz-border-radius: 0px;
+    border-radius: 0px;
     background-size: 100% 100%;
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05) 0 1px #000000;
     -moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05) 0 1px #000000;
@@ -5043,11 +5216,15 @@
     border: 1px solid #da0000;
     box-shadow: 0 0 2px #303030;
   }
+  body {
+    padding-top: 35px;
+    padding-bottom: 10px;
+  }
   .window {
     background-color: #4b4b4b;
     border: 4px solid #303030;
     border-radius: 0px 0px 0px 0px;
-    margin-bottom: 20px;
+    margin-bottom: 15px;
     overflow: hidden;
     max-height: 40%;
   }
@@ -5065,19 +5242,33 @@
     border-radius: 0px 0px 0px 0px;
     background-color: #303030;
     background-image: none;
-    padding: 0 5px 2px 5px;
-    line-height: 19px;
+    padding: 0 5px 0 5px;
+    line-height: 16px;
+    border-bottom: 4px solid #303030;
   }
   .window .navbar .navbar-inner .container-fluid {
     padding: 0;
   }
   .window .navbar .nav > li > a {
     padding: 0 0 0 1em;
+    line-height: 16px;
   }
   .window .navbar .nav > li > a:hover {
     cursor: pointer;
   }
-  .navbar a#logout {
+  .navbar a.brand {
+    font-size: 12px;
+    line-height: 20px;
+    font-weight: bold;
+    padding: 0px 1em 0px 20px;
+  }
+  .navbar .nav > li > a {
+    font-size: 12px;
+    line-height: 20px;
+    font-weight: normal;
+    padding: 0 0 0 1em;
+  }
+  .navbar .nav > li > a#logout {
     display: none;
   }
   #video-container {
@@ -5086,6 +5277,7 @@
   }
   #video-container video {
     width: 100%;
+    vertical-align: bottom;
   }
   body {
     background: url("../img/annotation/background.png") #636363 repeat;
@@ -5314,6 +5506,7 @@
   }
   #annotate-container #label-tabs-contents div.carousel {
     overflow: auto;
+    margin-bottom: 0;
     height: 150px;
   }
   #annotate-container #label-tabs-contents div.carousel .row-fluid > .span3 {
@@ -5422,7 +5615,8 @@
     list-style: none;
     display: block;
     float: left;
-    width: 20px;
+    min-width: 20px;
+    max-width: 40px;
     height: 22px;
     line-height: 22px;
     background-color: #000000;
@@ -5433,6 +5627,8 @@
     border-right: 1px solid #ffffff;
     border-bottom: 1px solid #ffffff;
     text-align: center;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
   #annotate-container #label-tabs-contents div.carousel .category-item .label-item .scaling li:hover {
     cursor: pointer;
@@ -5487,6 +5683,9 @@
     -webkit-border-radius: 4px;
     -moz-border-radius: 4px;
     border-radius: 4px;
+    -webkit-border-radius: 0px;
+    -moz-border-radius: 0px;
+    border-radius: 0px;
     background-size: 100% 100%;
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05) 0 1px #000000;
     -moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05) 0 1px #000000;
@@ -5661,9 +5860,51 @@
   #list-container div.annotation {
     background-color: #ffffff;
     border-bottom: 2px solid #303030;
+    /* Layout of headerbar*/
+  
+    /* Content Elements in headerbar*/
+  
+    /* Content elements in body*/
+  
   }
   #list-container div.annotation:hover {
     cursor: pointer;
+  }
+  #list-container div.annotation .header-container {
+    margin: 0;
+    height: 20px;
+    padding: 0 5px;
+    background-color: #eaeaea;
+  }
+  #list-container div.annotation .header-container .right {
+    float: right;
+    padding: 0;
+    height: 20px;
+  }
+  #list-container div.annotation .header-container .left {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    height: 20px;
+  }
+  #list-container div.annotation .header-container * {
+    vertical-align: top;
+  }
+  #list-container div.annotation .header-container i {
+    vertical-align: middle;
+  }
+  #list-container div.annotation .header-container button {
+    border: none;
+    height: 20px;
+    border: 1px solid #000000;
+    border-top: none;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -ms-box-sizing: border-box;
+    box-sizing: border-box;
+    padding: 2px;
+    vertical-align: middle;
+    line-height: headerHeight;
   }
   #list-container div.annotation .edit {
     display: none;
@@ -5672,11 +5913,8 @@
   #list-container div.annotation .read-only {
     display: inline-block;
   }
-  #list-container div.annotation button.in {
-    margin-right: -4px;
-  }
   #list-container div.annotation.edit-on i.toggle-edit {
-    background-position: -312px 0;
+    background-position: -288px 0;
   }
   #list-container div.annotation.edit-on span.label {
     display: block;
@@ -5692,7 +5930,6 @@
   }
   #list-container div.annotation i.delete,
   #list-container div.annotation i.toggle-edit {
-    float: right;
     visibility: visible;
   }
   #list-container div.annotation i:hover {
@@ -5701,21 +5938,11 @@
     border-radius: 3px;
     cursor: pointer;
   }
-  #list-container div.annotation .header {
-    margin: 0;
-    height: 22px;
-    padding: 0 5px 0 0;
-    background-color: #eaeaea;
-  }
-  #list-container div.annotation .header i,
-  #list-container div.annotation .header a {
-    margin: 2px 2px 0 0;
-  }
   #list-container div.annotation .start,
   #list-container div.annotation .end {
     cursor: text;
     background-color: rgba(255, 255, 255, 0.6);
-    height: 18px;
+    height: 16px;
     padding: 2px;
     display: inline-block;
     position: relative;
@@ -5731,6 +5958,8 @@
     margin: 0;
     box-shadow: none;
     color: #000000;
+    text-align: center;
+    font-family: monospace;
   }
   #list-container div.annotation .start input[disabled],
   #list-container div.annotation .end input[disabled] {
@@ -5754,45 +5983,11 @@
     top: 0;
     z-index: 150;
     width: 65px;
-    height: 18px;
-  }
-  #list-container div.annotation .collapse i {
-    float: left;
-    margin-right: 5px;
-    margin-left: 5px;
-  }
-  #list-container div.annotation span.text {
-    display: block;
-    margin: 5px;
-    background-color: white;
-  }
-  #list-container div.annotation span.category {
-    overflow: hidden;
-    height: 1.25em;
-    width: 35%;
-    display: inline-block;
-    text-overflow: ellipsis;
-    color: #4b4b4b;
-  }
-  #list-container div.annotation span.category span.abbreviation {
-    color: #000000;
-    font-weight: bold;
-  }
-  #list-container div.annotation span.label {
-    display: none;
-    font-size: inherit;
-    margin: 5px;
-    font-weight: normal;
-  }
-  #list-container div.annotation span.label span.label-abr {
-    font-weight: bold;
-  }
-  #list-container div.annotation span.freetext textarea {
-    width: 97.5%;
+    height: 16px;
   }
   #list-container div.annotation span.scaling select {
     width: 50px;
-    height: 18px;
+    height: 20px;
     padding: 2px;
     margin: 0;
     font-size: 0.85em;
@@ -5803,12 +5998,31 @@
   #list-container div.annotation span.scaling span {
     background-color: #000000;
     color: #ffffff;
-    height: 18px;
+    height: 16px;
     padding: 2px;
     font-weight: bold;
-    width: 18px;
+    width: 16px;
     display: inline-block;
     text-align: center;
+  }
+  #list-container div.annotation span.category {
+    color: #4b4b4b;
+    vertical-align: middle;
+  }
+  #list-container div.annotation span.category span.abbreviation {
+    color: #000000;
+    font-weight: bold;
+    display: inline-block;
+    height: 20px;
+    vertical-align: middle;
+  }
+  #list-container div.annotation span.text {
+    display: block;
+    margin: 5px;
+    background-color: white;
+  }
+  #list-container div.annotation span.freetext textarea {
+    width: 97.5%;
   }
   #list-container div.annotation span.track {
     display: none;
@@ -5822,7 +6036,7 @@
     font-style: italic;
     font-weight: bold;
   }
-  #list-container div.annotation.selected .header {
+  #list-container div.annotation.selected .header-container {
     background-image: url("../img/annotation/pattern.png");
     background-repeat: repeat-x;
     background-position: top;
@@ -6456,6 +6670,9 @@
     -webkit-border-radius: 3px;
     -moz-border-radius: 3px;
     border-radius: 3px;
+    -webkit-border-radius: 0px;
+    -moz-border-radius: 0px;
+    border-radius: 0px;
   }
   .navbar .dropdown-menu li + li a {
     margin-bottom: 2px;
@@ -6478,6 +6695,9 @@
     -webkit-border-radius: 0;
     -moz-border-radius: 0;
     border-radius: 0;
+    -webkit-border-radius: 0px;
+    -moz-border-radius: 0px;
+    border-radius: 0px;
     background-size: 100% 100%;
     box-shadow: none 0 1px #000000;
     -moz-box-shadow: none 0 1px #000000;

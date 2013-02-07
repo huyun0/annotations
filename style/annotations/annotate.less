@@ -127,6 +127,7 @@ i.check{
 					}
         }
         	overflow: auto;
+        	margin-bottom: 0;
             
             .category-item{ 
                 height: 100%;
@@ -251,7 +252,8 @@ i.check{
 													list-style: none;
 													display: block;
 													float:left;
-													width: @itemWidth;
+													min-width: @itemWidth;
+													max-width: (2*@itemWidth);
 													height: @itemHeight;
 													line-height: @itemHeight;
 													background-color: @black;
@@ -262,6 +264,8 @@ i.check{
 													border-right: @borderWidth solid @white;
 													border-bottom: @borderWidth solid @white;
 													text-align: center;
+													overflow:hidden;
+													text-overflow: ellipsis;
 
 													&:hover{
 															cursor: pointer;
