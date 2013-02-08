@@ -204,7 +204,11 @@
 							height: @headerHeight;
 							padding: @headerPadding;                
 							font-weight: bold;
-							width: @headerHeight;
+							min-width: @headerHeight;
+							max-width: 4*@headerHeight;
+							text-overflow: ellipsis;
+							overflow:hidden;
+							font-size: 0.9em;
 							display: inline-block;
 							text-align: center;
             }
@@ -269,6 +273,19 @@
       padding: 5px;
       color: @black;
       
+      span.header {
+        padding-top: 5px;
+        margin-top: 5px;
+      	border-top: 1px solid @grayDarker;
+      	display: block;
+      	font-size: 1em;
+      	
+      	.username {
+      		color: @black;
+      		font-weight: bold;
+      	}
+      }
+      
       span.text {
       	background-color: transparent;
       	margin: 5px 0;
@@ -280,7 +297,7 @@
     }
 
     span.comments {
-      padding: 2px;
+      padding: 2px 0px;
       font-size: 0.90em;
     }
     i.delete-comment {
