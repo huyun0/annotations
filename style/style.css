@@ -5632,10 +5632,9 @@
     left: 100%;
     top: 0;
     margin: 0;
-    border: 1px solid #000000;
     padding: 1px 1px 0 0;
     max-width: 250px;
-    min-width: 135px;
+    min-width: 145px;
   }
   #annotate-container div.carousel .category-item .label-item .scaling:before {
     right: 100%;
@@ -5666,8 +5665,8 @@
     border: none;
     text-align: center;
     float: left;
-    min-width: 26px;
-    max-width: 65px;
+    min-width: 28px;
+    max-width: 70px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
