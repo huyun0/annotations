@@ -6086,6 +6086,7 @@
   }
   #list-container div.annotation span.freetext textarea {
     width: 97.5%;
+    resize: vertical;
   }
   #list-container div.annotation span.track {
     display: none;
@@ -6126,6 +6127,9 @@
   #list-container div.comments-container span.text {
     background-color: transparent;
     margin: 5px 0;
+  }
+  #list-container div.comments-container textarea {
+    resize: vertical;
   }
   #list-container .comments-container.collapse {
     padding: 0px;

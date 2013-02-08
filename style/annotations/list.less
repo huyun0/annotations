@@ -117,11 +117,6 @@
             .edit {
                 display: inline-block;
                 visibility: visible;
-
-                span.freetext textarea{
-                    //display: block;
-                }
-
             }
 
             .read-only {
@@ -238,6 +233,7 @@
         span.freetext {
         	textarea {
           	width: 97.5%;
+            resize:vertical;
           }
         }
        
@@ -289,7 +285,10 @@
       span.text {
       	background-color: transparent;
       	margin: 5px 0;
-      }     
+      } 
+      textarea { 
+      	resize:vertical;  
+      }  
     }
 
     .comments-container.collapse {
