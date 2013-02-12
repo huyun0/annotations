@@ -236,7 +236,7 @@ define(["jquery",
            * @param {module:models-annotation.Annotation} annotation the annotation to add
            * @param {module:models-track.Track} track  the track where the annotation must be added    
            */
-          addAnnotation: function(annotation, track) {
+          addAnnotation: function(annotation, track, isList) {
 
             if (annotation.get("oldId") && this.ignoreAdd === annotation.get("oldId")) {
               return;
@@ -250,9 +250,13 @@ define(["jquery",
 
             this.allItems[annotation.id] = this.generateItem(annotation, track);
 
-
             this.filterItems();
             this.timeline.redraw();
+
+            if (!isList) {
+              annotationsTool.currentSelection = annotation;
+              this.onPlayerTimeUpdate();
+            }
               
             annotation.bind('destroy', this.onAnnotationDestroyed, this);
           },
@@ -265,7 +269,7 @@ define(["jquery",
           addTrack: function(track) {
             var annotations,
                 proxyToAddAnnotation = function(annotation) {
-                  this.addAnnotation(annotation,track,true);
+                  this.addAnnotation(annotation, track, false);
                 };
 
             // If track has not id, we save it to have an id
@@ -293,7 +297,7 @@ define(["jquery",
            * Add a list of tracks, creating a view for each of them
            */
           addList: function(tracks) {
-            tracks.each(this.addTrack,this);
+            tracks.each(this.addTrack, this, true);
           },
           
           /**

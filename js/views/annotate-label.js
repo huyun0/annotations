@@ -53,7 +53,6 @@ define(["jquery",
           /** Events to handle by the annotate view */
           events: {
             "click"                         : "annotate",
-            "click .item-value, .item-abbreviation"        : "annotate",
             "click i.delete"                : "onDeleteLabel",
             "focusout .item-value"          : "onFocusOut",
             "keydown .item-value"           : "onKeyDown",
@@ -122,25 +121,21 @@ define(["jquery",
           annnotateWithScaling: function(event){
               event.stopImmediatePropagation();
 
-              var id = event.target.getAttribute("value");
+              var id = event.target.getAttribute("value"),
+                  scalevalue = this.scaleValues.get(id),
+                  time = annotationsTool.playerAdapter.getCurrentTime(),
+                  annotation,
+                  options = {},
+                  params = {
+                      text: this.model.get('value'),
+                      start: time,
+                      label: this.model,
+                      scalevalue: scalevalue.toJSON()
+                  };
 
-              var scalevalue = this.scaleValues.get(id);
-
-              if(this.editModus)
+              if (this.editModus || (!_.isNumber(time) || time < 0)) {
                 return;
-
-              var time = annotationsTool.playerAdapter.getCurrentTime();
-              
-              if(!_.isNumber(time) || time < 0)
-                return;
-
-              var options = {};
-              var params = {
-                  text: this.model.get('value'),
-                  start:time,
-                  label: this.model,
-                  scalevalue: scalevalue.toJSON()
-              };
+              }
               
               if(annotationsTool.user)
                   params.created_by = annotationsTool.user.id;
@@ -150,20 +145,24 @@ define(["jquery",
                 options.wait = true;
 
 
-              annotationsTool.selectedTrack.get("annotations").create(params,options);
+              annotation = annotationsTool.selectedTrack.get("annotations").create(params,options);
+              annotationsTool.currentSelection = annotation;
           },
 
           /**
            * Annotate the video with this label
            */
           annotate: function(){
+              event.stopImmediatePropagation();
+
               if (this.editModus) {
                 return;
               }
 
               var time = annotationsTool.playerAdapter.getCurrentTime(),
                   options = {},
-                  params;
+                  params,
+                  annotation;
               
               if (!_.isNumber(time) || time < 0) {
                 return;
@@ -185,7 +184,8 @@ define(["jquery",
                 options.wait = true;
 
 
-              annotationsTool.selectedTrack.get("annotations").create(params,options);
+              annotation = annotationsTool.selectedTrack.get("annotations").create(params,options);
+              annotationsTool.currentSelection = annotation;
           },
 
           /**

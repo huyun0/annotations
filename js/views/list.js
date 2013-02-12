@@ -172,6 +172,8 @@ define(["jquery",
 
                 if (!isPartofList) {
                     this.sortViewsbyTime();
+                    annotationsTool.currentSelection = addAnnotation;
+                    this.updateSelection(); 
                 }
             },
             
@@ -183,7 +185,7 @@ define(["jquery",
              */
             addList: function (annotationsList, track) {
                 _.each(annotationsList, function (annotation) {
-                    this.addAnnotation(annotation, track);
+                    this.addAnnotation(annotation, track, true);
                 }, this);
                 
                 if (annotationsList.length > 0) {
