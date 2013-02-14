@@ -1,65 +1,65 @@
 <a href="#{{id}}" class="proxy-anchor"></a>
-<i class="select icon-film"  id="{{id}}" href="#{{id}}" title="Move to this annotation"></i>
-<button class="in edit" title="Set the video playhead as start point.">IN</button>
-<span class="start">
-    <input id="start-{{id}}" class="start-value" type="text" value="{{time start}}" {{#if isEditEnable}} {{else}}disabled{{/if}}></input>
-</span>
-{{#if duration}}
-        - <span class="end">
-            <input id="start-{{id}}" class="end-value" type="text" value="{{end start duration}}" {{#if isEditEnable}} {{else}}disabled{{/if}}></input>
-        </span><button class="out edit" title="Set the video playhead as end point.">OUT</button>
-{{/if}}
-
-{{#if isMine}}
-<i class="private icon-user" title="You own this annotation"></i>
-{{/if}}
-
-<span class="category" {{#if label.category}}style="background-color:{{label.category.settings.color}}"{{/if}}>
-    {{#if label}}{{label.category.name}}{{else}}Free text category{{/if}}
-</span>
-
-{{#if isMine}}
-<i class="delete icon-trash" title="Delete annotation."></i>
-<i class="toggle-edit icon-edit" title="Edit annotation."></i>
-{{/if}}
-
-<a class="collapse" title="collapse">
- <i class="{{#if collapsed}}icon-chevron-right{{else}}icon-chevron-down{{/if}}"></i>
-</a>
-
-<div id="text-container{{id}}" class="{{#if collapsed}}out{{else}}in{{/if}}">
+<div class="header-container" {{#if label.category}}style="background-color:{{label.category.settings.color}}"{{/if}}>
+	<div class="right">
+		{{#if isMine}}
+		<i class="delete icon-trash" title="Delete annotation."></i>
+		<i class="toggle-edit icon-pencil" title="Edit annotation."></i>
+		{{/if}}
+	</div>
+	<div class="left">
+		<a class="collapse" title="collapse">
+		 <i class="{{#if collapsed}}icon-chevron-right{{else}}icon-chevron-down{{/if}}"></i>
+		</a>
+		<button class="btn in edit" title="Set the video playhead as start point.">IN</button>
+		<span class="start">
+				<input id="start-{{id}}" class="start-value" type="text" value="{{time start}}" {{#if isEditEnable}} {{else}}disabled{{/if}}></input>
+		</span>
+		{{#if duration}}
+						<span class="end">
+								<input id="start-{{id}}" class="end-value" type="text" value="{{end start duration}}" {{#if isEditEnable}} {{else}}disabled{{/if}}></input>
+						</span>
+						<button class="btn out edit" title="Set the video playhead as end point.">OUT</button>
+		{{/if}}
+		
+							{{#if scalevalues}}
+						<span class="scaling">
+								{{#if isMine}}
+								<select class="edit">
+										{{#each scalevalues}}
+										<option value="{{this.id}}" {{#if this.isSelected}}selected="selected"{{/if}}>{{this.name}}</option>
+										{{/each}}
+								</select>
+								{{/if}} 
+								{{#if scalevalue}}
+								<span class="read-only" title="{{scalevalue.name}}">{{scalevalue.name}}</span>
+								{{/if}} 
+						</span>
+						{{/if}} 
+		
+		{{#if isMine}}
+		<i class="private icon-user" title="You own this annotation"></i>
+		{{/if}}
+		
+		<span class="category" title="{{#if label}}{{label.category.name}} - {{label.value}} ({{label.abbreviation}}){{/if}}">
+				{{#if label}}<span class="abbreviation">{{label.abbreviation}}</span>{{else}}{{{text}}}{{/if}}
+		</span>
+	</div>
+</div>
+<div id="text-container{{id}}" class="{{#if collapsed}}out{{else}}in{{/if}} text-container">
         <span class="text">
-                {{#if scalevalues}}
-                <span class="scaling">
-                    {{#if isMine}}
-                    <select class="edit">
-                        {{#each scalevalues}}
-                        <option value="{{this.id}}" {{#if this.isSelected}}selected="selected"{{/if}}>{{this.name}}</option>
-                        {{/each}}
-                    </select>
-                    {{/if}} 
-                    {{#if scalevalue}}
-                    <span class="read-only">{{scalevalue.name}}</span>
-                    {{/if}} 
-                </span>
-                {{/if}} 
-                {{#if label}}
-                <span class="label">
-                    <span class="label-abr">{{label.abbreviation}}</span>
-                    <span class="label-desc">{{label.value}}</span>
-                </span>
-                {{/if}}
                 <span class="freetext">
                     {{#if isMine}}
                     <textarea class="edit" placeholder="free text...">{{{text}}}</textarea>
                     {{/if}}
                     <span class="read-only">{{{textReadOnly}}}</span>
                 </span>
+                <!--Todo: Muss als Infobutton in die Headerzeile 
                 {{#if created_by}}
                 <p align="right">added by 
                     <span class="user">{{#if created_by_nickname}}{{created_by_nickname}}{{else}}{{nickname created_by}}{{/if}}</span> on 
                     <span class="track">{{track}}</span></p>
                 {{/if}}
+                -->
         </span>
 </div>
 <!--<button id="stopduration">Stop duration</button>-->

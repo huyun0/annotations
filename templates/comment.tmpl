@@ -1,6 +1,6 @@
-<span class="comments">Created: {{creationdate}} by {{creator}}{{#if updateddate}} - Modified: {{updateddate}} by {{updator}}{{/if}}</span>
+<span class="comments header">Created: {{creationdate}} by <span class="username">{{creator}}</span>{{#if updateddate}} - Modified: {{updateddate}} by <span class="username">{{updator}}</span>{{/if}}</span>
 {{#if canEdit}}
 <i class="delete-comment icon-trash" title="Delete comment"></i>
-<i class="edit-comment icon-edit" title="Edit comment"></i>
+<i class="edit-comment icon-pencil" title="Edit comment"></i>
 {{/if}}
 <span class="text">{{text}}</span>

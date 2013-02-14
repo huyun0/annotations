@@ -1,4 +1,11 @@
-@import "timeline/timeline.css";
+
+#timeline-container {
+	background-color: @white;
+	
+	.navbar {
+		margin: 0;
+	}
+}
 
 .item-id, .annotation-id, .group-id, .track-id, .timeline-navigation-new {
    display: none;
@@ -31,8 +38,8 @@ div.timeline-groups-text{
     background-color: white;
     position: absolute;
     width: 2000px;
-    padding: 4px;
     top: -6px;
+    padding: 0;
     
     div.content{
         float: left;
@@ -40,29 +47,31 @@ div.timeline-groups-text{
     }
     
     div.timeline-group {
+    		padding: 4px;
         height: 55px;
         z-index: 3;
         
         &.mine:hover{
             cursor: pointer;
-            background-color: lighten(grey, 40%)
+            background-color: fade(@yellow, 15%);
         }
-        
+               
         div.content{
-            width: 105px;
+        		width: 105px;
             overflow: hidden;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+            color: @gray; 
         }
     }
 
     &:nth-child(odd){
-        background-color: lighten(grey, 60%);   
+        // Currently no odd even highlighting
     }
     
     &.selected {
-        background-color: lighten(grey, 30%);
+        background-color:  @grayLighter;
         
         div.timeline-group:hover{
             background-color: inherit;
@@ -77,9 +86,7 @@ div.timeline-groups-text{
         margin-right: 4px;
         
         &:hover {
-            cursor: pointer;
-            background-color: #F66;
-            border-radius: 10px 10px 10px 10px;
+          .iconHover();
         }
     }
 
@@ -92,38 +99,63 @@ div.timeline-groups-text{
         top: 19px;
         position: relative;
         margin-left: -20px;
-        background-color: yellow;
-        border: 2px solid yellow;
-        border-radius: 20px;
+        border: 2px solid transparent;
     }
    
 }
 
 div.timeline-customtime {
     z-index: 3;
+    background-color: @red;
+    width: 1px;
 }
 
 div.timeline-navigation{
     z-index: 4; 
-    height: 45px;
-    border-left: 0px;
-    
-    div.timeline-navigation-new, div.timeline-navigation-delete, div.timeline-navigation-zoom-in, div.timeline-navigation-zoom-out, div.timeline-navigation-move-left, div.timeline-navigation-move-right{
-        height: 22px;
+    height: 22px; 
+    border: none;
+    border-top: 2px solid @grayDark;
+    border-bottom: 2px solid @grayDark;
+    border-radius: 0;
+    background-color: @grayLight;  
+  
+    > [class^="timeline-navigation-"] {
+    	.btn();
+    	font-weight: bold;
     }
+    
+    > [class^="timeline-navigation-"]:hover {
+    	.btn.hover();
+    }
+    
+    /* Todo: Should use Icons instead */
+    .timeline-navigation-zoom-in:after {
+    	content: "+";
+    }
+    .timeline-navigation-zoom-out:after {
+    	content: "-";
+    }
+    .timeline-navigation-move-left:after {
+    	content: "<"
+    }
+    .timeline-navigation-move-right:after{
+    	content: ">"
+    }   
+               
 }
 
 div#reset-zoom{
     float: left;
-
-    a.btn{
-        color: grey;
-    }
 }
 
-div.timeline-frame > div:first-child{
+div.timeline-frame {
+	border: none;
+	border-top: 1px solid @gray;
+	
+	> div:first-child{
     z-index: 2;
-    border-left: 2px solid grey;
+    border-left: 2px solid @gray;
+	}
 }
 
 div.timeline-groups-axis{
@@ -149,15 +181,6 @@ div.timeline-event-content {
     margin: 0px;
 }
 
-div.timeline-event-selected {
-    background: none;
-    z-index: 10;
-    
-    div.timeline-item{
-        background-color: rgba(245, 215, 115, 0.75);
-    }
-}
-
 div.timeline-event {
     background: none;
 }
@@ -176,18 +199,16 @@ div.timeline-bottom-controls{
     z-index: 50;
     display: block;
     position: relative;
-    float: right;
-    padding: 8px;
-    
+    float: right;   
     &:hover{
         cursor:pointer;
     }
 }
 
 div.timeline-item{
-    background-color: rgba(249, 103, 38, 0.6);
-    padding: 5px;
-    border-radius: 3px;
+		background-color: fade(@grayLight,25%);
+		border: 1px solid transparent;
+    padding: 2px;
     overflow: hidden;
     
     span{
@@ -202,15 +223,28 @@ div.timeline-item{
             
             &:hover{
                 cursor: pointer;
-                background-color: lighten(red,20%);
-                border-radius: 10px 10px 10px 10px;
+                background-color: @blue;
             }
     }
     
     &:hover{
         cursor:pointer;
     }
+    
 }
+
+div.timeline-event-selected {
+    background: none;
+    z-index: 10;
+    
+    div.timeline-item{
+        border: 1px solid @red;
+        box-shadow: 0 0 2px @grayDark;
+    }
+}
+
+
+
 
 
 
