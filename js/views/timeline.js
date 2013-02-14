@@ -422,7 +422,7 @@ define(["jquery",
             }
             else if (!this.groupModal) {
                 // Otherwise we load the login modal if not loaded
-                this.$el.append(this.modalGroupTemplate({isSupervisor: annotationsTool.user.get('role') === ROLES.SUPERVISOR}));
+                $("body").append(this.modalGroupTemplate({isSupervisor: annotationsTool.user.get('role') === ROLES.SUPERVISOR}));
                 this.groupModal = $('#modal-add-group');
                 this.groupModal.modal({show: true, backdrop: false, keyboard: true });                
                 this.groupModal.find('a#add-group').bind("click",insertTrack);
