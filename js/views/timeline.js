@@ -419,13 +419,12 @@ define(["jquery",
             // If the modal is already loaded and displayed, we do nothing
             if ($('div#modal-add-group.modal.in').length > 0) { 
               return;
-            }
-            else if (!this.groupModal) {
+            } else if (!this.groupModal) {
                 // Otherwise we load the login modal if not loaded
                 $("body").append(this.modalGroupTemplate({isSupervisor: annotationsTool.user.get('role') === ROLES.SUPERVISOR}));
                 this.groupModal = $('#modal-add-group');
                 this.groupModal.modal({show: true, backdrop: false, keyboard: true });                
-                this.groupModal.find('a#add-group').bind("click",insertTrack);
+                this.groupModal.find('a#add-group').bind("click", insertTrack);
                 this.groupModal.bind("keypress",function(event){
                   if(event.keyCode === 13){
                     insertTrack();  
