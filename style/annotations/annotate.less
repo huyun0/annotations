@@ -235,77 +235,96 @@ i.check{
 				
 
 					.item-icon{
-							float: right;
+						float: right;
 					}
 					
-					/* Hover needs to be done twice to keep the overlay open when mouse enters the .scaling area */
-					.scalinghover(){
-						display: block;
-					}
-
 					&:hover {
-							.scaling{
-									.scalinghover();
-							}
+						background-color: rgba(255, 255, 255, 0.4);						
+					}	
+					
+					&.scale-disabled {			
+						cursor: pointer;
+						&:active {
+							background-color: transparent;						
+						}						
 					}
 					
-					.scaling:hover {
-						.scalinghover();
-					}
-
-					.scaling{
-						@itemWidth: 28px;
-					
-						display: none;
-						background-color: @gray;
-						position: absolute;
-						z-index:100;
-						left: 100%;
-						top: 0; 
-						margin: 0;
-						padding: 1px 1px 0 0;
-						max-width:250px;
-						min-width:(5*(@itemWidth+1)); //Add 1 because of margins and border 
-							
-						&:before {
-							right: 100%;
-							border: solid transparent;
-							content: " ";
-							height: 0;
-							width: 0;
-							position: absolute;
-							pointer-events: none;
-							border-color: rgba(0, 0, 0, 0);
-							border-right-color: @black;
-							border-width: 8px;
-							margin-top: 2px;
-						}
-
-							
-						li {
-							list-style: none;
+					&.scale-enabled { 
+						
+						/* Hover needs to be done twice to keep the overlay open when mouse enters the .scaling area */
+						.scalinghover(){
 							display: block;
-							background-color: @black;
-							color: @white;
-							font-size: 0.8em;
-							font-weight: bold;
-							padding: 4px;
-							.box-sizing(border-box);
-							margin: 0 0 1px 1px;
-							border:none;
-							text-align: center;
-							float:left;
-							min-width:@itemWidth;
-							max-width:2.5*@itemWidth;
-							overflow: hidden;
-							text-overflow:ellipsis;
-							white-space:nowrap;
-
-							&:hover{
-								cursor: pointer;
-								background-color: @white;
-								color: @black;
-							}										
+						}
+	
+						&:hover {
+								.scaling{
+										.scalinghover();
+								}
+						}
+						
+						.scaling:hover {
+							.scalinghover();
+						}					
+						
+						.scaling{
+							@itemWidth: 28px;
+						
+							display: none;
+							background-color: @gray;
+							position: absolute;
+							z-index:100;
+							left: 100%;
+							top: 0; 
+							margin: 0;
+							padding: 1px 1px 0 0;
+							max-width:250px;
+							min-width:(5*(@itemWidth+1)); //Add 1 because of margins and border 
+								
+							&:before {
+								right: 100%;
+								border: solid transparent;
+								content: " ";
+								height: 0;
+								width: 0;
+								position: absolute;
+								pointer-events: none;
+								border-color: rgba(0, 0, 0, 0);
+								border-right-color: @black;
+								border-width: 8px;
+								margin-top: 2px;
+							}
+	
+								
+							li {
+								list-style: none;
+								display: block;
+								background-color: @black;
+								color: @white;
+								font-size: 0.8em;
+								font-weight: bold;
+								padding: 4px;
+								.box-sizing(border-box);
+								margin: 0 0 1px 1px;
+								border:none;
+								text-align: center;
+								float:left;
+								min-width:@itemWidth;
+								max-width:2.5*@itemWidth;
+								overflow: hidden;
+								text-overflow:ellipsis;
+								white-space:nowrap;
+	
+								&:hover{
+									cursor: pointer;
+									background-color: @white;
+									color: @black;
+								}	
+								
+								&:active {
+									background-color: @grayLighter;
+									color: @grayDark;
+								}										
+							}
 						}
 					}
 				}

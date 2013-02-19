@@ -5570,8 +5570,6 @@
     background-color: rgba(255, 255, 255, 0.6);
     border-right: 1px solid #ffffff;
     border-bottom: 1px solid #ffffff;
-    /* Hover needs to be done twice to keep the overlay open when mouse enters the .scaling area */
-  
   }
   #annotate-container div.carousel .category-item .label-item .edit {
     display: none;
@@ -5618,13 +5616,26 @@
   #annotate-container div.carousel .category-item .label-item .item-icon {
     float: right;
   }
-  #annotate-container div.carousel .category-item .label-item:hover .scaling {
+  #annotate-container div.carousel .category-item .label-item:hover {
+    background-color: rgba(255, 255, 255, 0.4);
+  }
+  #annotate-container div.carousel .category-item .label-item.scale-disabled {
+    cursor: pointer;
+  }
+  #annotate-container div.carousel .category-item .label-item.scale-disabled:active {
+    background-color: transparent;
+  }
+  #annotate-container div.carousel .category-item .label-item.scale-enabled {
+    /* Hover needs to be done twice to keep the overlay open when mouse enters the .scaling area */
+  
+  }
+  #annotate-container div.carousel .category-item .label-item.scale-enabled:hover .scaling {
     display: block;
   }
-  #annotate-container div.carousel .category-item .label-item .scaling:hover {
+  #annotate-container div.carousel .category-item .label-item.scale-enabled .scaling:hover {
     display: block;
   }
-  #annotate-container div.carousel .category-item .label-item .scaling {
+  #annotate-container div.carousel .category-item .label-item.scale-enabled .scaling {
     display: none;
     background-color: #4b4b4b;
     position: absolute;
@@ -5636,7 +5647,7 @@
     max-width: 250px;
     min-width: 145px;
   }
-  #annotate-container div.carousel .category-item .label-item .scaling:before {
+  #annotate-container div.carousel .category-item .label-item.scale-enabled .scaling:before {
     right: 100%;
     border: solid transparent;
     content: " ";
@@ -5649,7 +5660,7 @@
     border-width: 8px;
     margin-top: 2px;
   }
-  #annotate-container div.carousel .category-item .label-item .scaling li {
+  #annotate-container div.carousel .category-item .label-item.scale-enabled .scaling li {
     list-style: none;
     display: block;
     background-color: #000000;
@@ -5671,10 +5682,14 @@
     text-overflow: ellipsis;
     white-space: nowrap;
   }
-  #annotate-container div.carousel .category-item .label-item .scaling li:hover {
+  #annotate-container div.carousel .category-item .label-item.scale-enabled .scaling li:hover {
     cursor: pointer;
     background-color: #ffffff;
     color: #000000;
+  }
+  #annotate-container div.carousel .category-item .label-item.scale-enabled .scaling li:active {
+    background-color: #eaeaea;
+    color: #303030;
   }
   #annotate-container div.carousel .category-item:nth-child(1n+7) .scaling {
     right: 100%;
