@@ -29,11 +29,18 @@ define(["jquery",
          */
         var LabelView = Backbone.View.extend({
 
+          /** Prefix for the element id */
+          ID_PREFIX: "labelItem-",
+
+          /** CSS classname related to the scale usage */
+          CLASS_SCALE: {
+              ENABLED: "scale-enabled",
+              DISABLED: "scale-disabled"
+          },
+
           tagName: "div",
           
           className: 'label-item',
-
-          idPrefix: "labelItem-",
 
           /** Define if the view has been or not deleted */
           deleted: false,
@@ -95,7 +102,7 @@ define(["jquery",
               // Add backbone events to the model 
               _.extend(this.model, Backbone.Events);
               
-              this.el.id = this.idPrefix+this.model.get('id');
+              this.el.id = this.ID_PREFIX+this.model.get('id');
 
               this.listenTo(this.model, 'change', this.render);
 
@@ -281,6 +288,16 @@ define(["jquery",
             }
 
             this.$el.html(this.template(modelJSON));
+
+            // Add CSS class to label about scale usage 
+            if (this.isScaleEnable) {
+                this.$el.removeClass(this.CLASS_SCALE.DISABLED);
+                this.$el.addClass(this.CLASS_SCALE.ENABLED);
+            } else {
+                this.$el.removeClass(this.CLASS_SCALE.ENABLED);
+                this.$el.addClass(this.CLASS_SCALE.DISABLED);
+            }
+
             this.delegateEvents(this.events);
             return this;
           }
