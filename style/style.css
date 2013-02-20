@@ -5933,7 +5933,7 @@
   }
   #list-container div.annotation {
     background-color: #ffffff;
-    border-bottom: 2px solid #303030;
+    border-top: 2px solid #303030;
     /* Layout of headerbar*/
   
     /* Content Elements in headerbar*/
@@ -5941,8 +5941,22 @@
     /* Content elements in body*/
   
   }
+  #list-container div.annotation:first-child {
+    border-top: none;
+  }
   #list-container div.annotation:hover {
     cursor: pointer;
+  }
+  #list-container div.annotation.selected {
+    border-left: 1px solid #da0000;
+    border-right: 1px solid #da0000;
+    border-bottom: 1px solid #da0000;
+  }
+  #list-container div.annotation.selected .header-container {
+    border-top: 1px solid #da0000;
+    background-image: url("../img/annotation/pattern.png");
+    background-repeat: repeat-x;
+    background-position: top;
   }
   #list-container div.annotation .header-container {
     margin: 0;
@@ -6114,11 +6128,6 @@
     display: none;
     font-style: italic;
     font-weight: bold;
-  }
-  #list-container div.annotation.selected .header-container {
-    background-image: url("../img/annotation/pattern.png");
-    background-repeat: repeat-x;
-    background-position: top;
   }
   #list-container i.add-comment {
     float: right;

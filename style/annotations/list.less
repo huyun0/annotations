@@ -34,11 +34,28 @@
     
     div.annotation{
         background-color: @white;
-        border-bottom: 2px solid @grayDark;
-
-        
+				border-top: 2px solid @grayDark;
+				
+				&:first-child {
+					border-top: none;
+				}
+				       
         &:hover{
-            cursor: pointer;   
+          cursor: pointer;   
+        }
+        
+        &.selected {
+        
+        	border-left: 1px solid @red;
+        	border-right: 1px solid @red;
+					border-bottom: 1px solid @red;
+					
+        	.header-container{
+						border-top: 1px solid @red;         
+        		background-image: url("../img/annotation/pattern.png");
+        		background-repeat: repeat-x;
+        		background-position: top;
+        	}
         }
 
         /* Layout of headerbar*/
@@ -249,15 +266,6 @@
         	display:none;
           font-style: italic;
           font-weight: bold;
-        }
-        
-        &.selected { 
-
-        	.header-container{
-        		background-image: url("../img/annotation/pattern.png");
-        		background-repeat: repeat-x;
-        		background-position: top;
-        	}
         }
     }
 
