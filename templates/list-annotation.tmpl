@@ -1,6 +1,7 @@
 <a href="#{{id}}" class="proxy-anchor"></a>
 <div class="header-container" {{#if label.category}}style="background-color:{{label.category.settings.color}}"{{/if}}>
 	<div class="right">
+		<i class="icon-comment-amount"><span class="comment-amount">{{numberOfComments}}</span></i>
 		{{#if isMine}}
 		<i class="delete icon-trash" title="Delete annotation."></i>
 		<i class="toggle-edit icon-pencil" title="Edit annotation."></i>
@@ -21,7 +22,7 @@
 						<button class="btn out edit" title="Set the video playhead as end point.">OUT</button>
 		{{/if}}
 		
-							{{#if scalevalues}}
+						{{#if scalevalues}}
 						<span class="scaling">
 								{{#if isMine}}
 								<select class="edit">
@@ -46,6 +47,7 @@
 	</div>
 </div>
 <div id="text-container{{id}}" class="{{#if collapsed}}out{{else}}in{{/if}} text-container">
+        {{#if label}} {{else}} 
         <span class="text">
                 <span class="freetext">
                     {{#if isMine}}
@@ -61,5 +63,6 @@
                 {{/if}}
                 -->
         </span>
+        {{/if}}
 </div>
 <!--<button id="stopduration">Stop duration</button>-->

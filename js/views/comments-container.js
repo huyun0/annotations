@@ -38,7 +38,7 @@ define(["jquery",
           
           /** Events to handle */
           events: {
-        	"click i.add-comment" : "onAddComment",
+        	"click a.add-comment" : "onAddComment",
             "click a.collapse-comment" : "onCollapse",
             "click button[type=submit]" : "onSubmit",
         	"click button[type=button]" : "onCancelComment"

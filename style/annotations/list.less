@@ -46,13 +46,13 @@
         
         &.selected {
         
-        	border-left: 1px solid @red;
-        	border-right: 1px solid @red;
+					border-left: 1px solid @red;
+					border-right: 1px solid @red;
 					border-bottom: 1px solid @red;
 					
         	.header-container{
 						border-top: 1px solid @red;         
-        		background-image: url("../img/annotation/pattern.png");
+						background-image: url("../img/annotation/pattern.png");
         		background-repeat: repeat-x;
         		background-position: top;
         	}
@@ -116,7 +116,14 @@
             display: inline-block;
         }
 
-
+				.comment-amount {
+					float:right;
+					font-size: 9px;
+					line-height: 10px;
+					text-align: center;
+					width: 15px;
+					font-style:normal;					
+				}
 
         &.edit-on {
 
@@ -269,7 +276,7 @@
         }
     }
 
-    i.add-comment {
+    a.add-comment {
       float: right;
     }
     div.comments-container {

@@ -5306,6 +5306,7 @@
   }
   .icon-comment-amount {
     background-position: -96px -168px;
+    width: 22px;
   }
   .icon-window-minimize {
     background-position: -120px -168px;
@@ -6001,6 +6002,14 @@
   #list-container div.annotation .read-only {
     display: inline-block;
   }
+  #list-container div.annotation .comment-amount {
+    float: right;
+    font-size: 9px;
+    line-height: 10px;
+    text-align: center;
+    width: 15px;
+    font-style: normal;
+  }
   #list-container div.annotation.edit-on i.toggle-edit {
     background-position: -288px 0;
   }
@@ -6129,7 +6138,7 @@
     font-style: italic;
     font-weight: bold;
   }
-  #list-container i.add-comment {
+  #list-container a.add-comment {
     float: right;
   }
   #list-container div.comments-container {
