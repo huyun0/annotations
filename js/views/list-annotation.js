@@ -423,6 +423,7 @@ function ($, _not, PlayerAdapter, Annotation, User, CommentsContainer, Template,
             }
 
             modelJSON.isEditEnable = this.isEditEnable;
+            modelJSON.numberOfComments = this.model.get("comments").length;
 
             this.$el.html(this.template(modelJSON));
 
