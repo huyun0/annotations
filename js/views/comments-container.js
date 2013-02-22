@@ -34,7 +34,7 @@ define(["jquery",
           /** View template */
           template: Handlebars.compile(Template),
           
-          collapsed: true,
+          collapsed: false, //Todo: Collapse function needs to be completely removed. 
           
           /** Events to handle */
           events: {

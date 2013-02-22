@@ -18,7 +18,7 @@ i.check{
 
 .checked i.check{
     visibility: visible;
-}
+} 
 
 #annotate-form{
       
@@ -151,7 +151,7 @@ i.check{
 					}
 						
 					input{
-						width: 50px;
+						width: 45px;
 						margin: 0 0 3px 0;
 						padding: 1px;
 						font-weight: bold;
@@ -184,24 +184,18 @@ i.check{
 					background-color: fade(@white, 60%);
 					border-right: 1px solid @white;
 					border-bottom: 1px solid @white;
-
+					
 					.edit {
 						display: none;
 					}
 					
 					.item-abbreviation{
-						padding: 1px;
-						width: 24px;
+						width: 28px;
 					}
 					
 					.item-value{
-						padding: 1px;
-						width: 55px;
+						width: 100%;
 						margin-left: 4px;
-						
-						&.read-only{
-							width: auto; // Trashcan is not visible -> More Space.
-						}
 					}
 
 					.read-only {
@@ -325,12 +319,13 @@ i.check{
 									color: @grayDark;
 								}										
 							}
-						}
-					}
-				}
+						} //end .scaling
+					} //end .scale-enabled
+				} //end .label-item
+				 
 				/* Position 6 to 12 need to carry the scaling on the left side */
 				
-				&:nth-child(1n+7) {
+				&:nth-child(1n+7) .scale-enabled {
 					.scaling {
 						
 						right: 100%;
@@ -345,7 +340,7 @@ i.check{
 						}
 					}
 				}
-			}
+			} // end category-item
 		}
 			
 		@controlsHeight: 22px;
@@ -445,11 +440,32 @@ i.check{
 				height:250px;
 				
 				.carousel-inner {
-					width:350%; 
+					width:300%; 
 				} 
 			
 				.category-item{ 
 					.label-item{
+					
+					display: table;
+					
+						.cell {
+							display: table-cell;
+							padding: 1px;
+						}
+						
+						.left {
+							width: 30px;
+						}
+						
+						.center {
+						}
+						
+						.right {
+							width: 30px;
+						}
+						.scaling{
+							display:none;
+						}
 						&:hover{
 							cursor: default;
 
