@@ -178,12 +178,15 @@ i.check{
 
 				.label-item{
 					@labelHeight: 16px; 
-					padding: 3px;
-					height: @labelHeight; 
+					@padding: 3px;
+					padding:@padding;
+					height: @labelHeight+(2*@padding); 
 					position: relative;
 					background-color: fade(@white, 60%);
 					border-right: 1px solid @white;
 					border-bottom: 1px solid @white;
+					width:100%;
+					.box-sizing(border-box);
 					
 					.edit {
 						display: none;
@@ -446,23 +449,10 @@ i.check{
 				.category-item{ 
 					.label-item{
 					
-					display: table;
-					
-						.cell {
-							display: table-cell;
-							padding: 1px;
-						}
-						
-						.left {
-							width: 30px;
-						}
-						
-						.center {
-						}
-						
-						.right {
-							width: 30px;
-						}
+					  .item-value {
+					  	width:50px;
+					  }
+										
 						.scaling{
 							display:none;
 						}
@@ -492,7 +482,7 @@ i.check{
 					}
 
 					.label-item {
-						height: 22px;
+						height: 26px;
 						.edit {
 							display: inline-block;
 						}

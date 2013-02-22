@@ -5566,11 +5566,16 @@
   }
   #annotate-container div.carousel .category-item .label-item {
     padding: 3px;
-    height: 16px;
+    height: 22px;
     position: relative;
     background-color: rgba(255, 255, 255, 0.6);
     border-right: 1px solid #ffffff;
     border-bottom: 1px solid #ffffff;
+    width: 100%;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -ms-box-sizing: border-box;
+    box-sizing: border-box;
   }
   #annotate-container div.carousel .category-item .label-item .edit {
     display: none;
@@ -5845,18 +5850,8 @@
   #annotate-container #label-tabs-contents div.tab-pane.edit-on div.carousel .carousel-inner {
     width: 300%;
   }
-  #annotate-container #label-tabs-contents div.tab-pane.edit-on div.carousel .category-item .label-item {
-    display: table;
-  }
-  #annotate-container #label-tabs-contents div.tab-pane.edit-on div.carousel .category-item .label-item .cell {
-    display: table-cell;
-    padding: 1px;
-  }
-  #annotate-container #label-tabs-contents div.tab-pane.edit-on div.carousel .category-item .label-item .left {
-    width: 30px;
-  }
-  #annotate-container #label-tabs-contents div.tab-pane.edit-on div.carousel .category-item .label-item .right {
-    width: 30px;
+  #annotate-container #label-tabs-contents div.tab-pane.edit-on div.carousel .category-item .label-item .item-value {
+    width: 50px;
   }
   #annotate-container #label-tabs-contents div.tab-pane.edit-on div.carousel .category-item .label-item .scaling {
     display: none;
@@ -5880,7 +5875,7 @@
     cursor: pointer;
   }
   #annotate-container #label-tabs-contents div.tab-pane.edit-on div.carousel .category-item .label-item {
-    height: 22px;
+    height: 26px;
   }
   #annotate-container #label-tabs-contents div.tab-pane.edit-on div.carousel .category-item .label-item .edit {
     display: inline-block;
