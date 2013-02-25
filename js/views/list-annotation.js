@@ -156,6 +156,8 @@ function ($, _not, PlayerAdapter, Annotation, User, CommentsContainer, Template,
             _.extend(this.model, Backbone.Events);
 
             this.listenTo(this.model, "change", this.render);
+            this.listenTo(this.model.get("comments"), "change", this.render);
+            this.listenTo(this.model.get("comments"), "remove", this.render);
             this.listenTo(this.model, "destroy", this.deleteView);
             this.listenTo(this.model, "remove", this.deleteView);
             this.listenTo(this.model, "selected", this.onSelected);
