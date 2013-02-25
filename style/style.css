@@ -5543,7 +5543,7 @@
     display: none;
   }
   #annotate-container div.carousel .category-item .catItem-header input {
-    width: 50px;
+    width: 45px;
     margin: 0 0 3px 0;
     padding: 1px;
     font-weight: bold;
@@ -5566,26 +5566,26 @@
   }
   #annotate-container div.carousel .category-item .label-item {
     padding: 3px;
-    height: 16px;
+    height: 22px;
     position: relative;
     background-color: rgba(255, 255, 255, 0.6);
     border-right: 1px solid #ffffff;
     border-bottom: 1px solid #ffffff;
+    width: 100%;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -ms-box-sizing: border-box;
+    box-sizing: border-box;
   }
   #annotate-container div.carousel .category-item .label-item .edit {
     display: none;
   }
   #annotate-container div.carousel .category-item .label-item .item-abbreviation {
-    padding: 1px;
-    width: 24px;
+    width: 28px;
   }
   #annotate-container div.carousel .category-item .label-item .item-value {
-    padding: 1px;
-    width: 55px;
+    width: 100%;
     margin-left: 4px;
-  }
-  #annotate-container div.carousel .category-item .label-item .item-value.read-only {
-    width: auto;
   }
   #annotate-container div.carousel .category-item .label-item .read-only {
     color: #000000;
@@ -5692,11 +5692,11 @@
     background-color: #eaeaea;
     color: #303030;
   }
-  #annotate-container div.carousel .category-item:nth-child(1n+7) .scaling {
+  #annotate-container div.carousel .category-item:nth-child(1n+7) .scale-enabled .scaling {
     right: 100%;
     left: auto;
   }
-  #annotate-container div.carousel .category-item:nth-child(1n+7) .scaling:before {
+  #annotate-container div.carousel .category-item:nth-child(1n+7) .scale-enabled .scaling:before {
     left: 100%;
     right: auto;
     border-color: rgba(0, 0, 0, 0);
@@ -5848,7 +5848,13 @@
     height: 250px;
   }
   #annotate-container #label-tabs-contents div.tab-pane.edit-on div.carousel .carousel-inner {
-    width: 350%;
+    width: 300%;
+  }
+  #annotate-container #label-tabs-contents div.tab-pane.edit-on div.carousel .category-item .label-item .item-value {
+    width: 50px;
+  }
+  #annotate-container #label-tabs-contents div.tab-pane.edit-on div.carousel .category-item .label-item .scaling {
+    display: none;
   }
   #annotate-container #label-tabs-contents div.tab-pane.edit-on div.carousel .category-item .label-item:hover {
     cursor: default;
@@ -5869,7 +5875,7 @@
     cursor: pointer;
   }
   #annotate-container #label-tabs-contents div.tab-pane.edit-on div.carousel .category-item .label-item {
-    height: 22px;
+    height: 26px;
   }
   #annotate-container #label-tabs-contents div.tab-pane.edit-on div.carousel .category-item .label-item .edit {
     display: inline-block;
@@ -6138,38 +6144,59 @@
     font-style: italic;
     font-weight: bold;
   }
-  #list-container a.add-comment {
-    float: right;
-  }
   #list-container div.comments-container {
-    background-color: #eaeaea;
-    padding: 5px;
+    background-color: #c7c7c7;
     color: #000000;
   }
-  #list-container div.comments-container span.header {
-    padding-top: 5px;
-    margin-top: 5px;
-    border-top: 1px solid #222222;
+  #list-container div.comments-container .comment-header {
+    padding: 2px;
+  }
+  #list-container div.comments-container .comment-header span.add-comment {
+    line-height: 16px;
+    min-height: 16px;
+    display: inline-block;
+    text-align: right;
+    width: 100%;
+  }
+  #list-container div.comments-container .comment-header span.add-comment a.add-comment {
+    color: #303030;
+  }
+  #list-container div.comments-container .comment-header textarea {
+    resize: vertical;
+  }
+  #list-container div.comments-container .comment-header button {
+    margin-bottom: 5px;
+  }
+  #list-container div.comments-container .comment-list {
+    font-size: 0.92em;
+    padding: 2px;
+  }
+  #list-container div.comments-container .comment-list > div[id^="comment"] {
+    padding: 5px;
+  }
+  #list-container div.comments-container .comment-list > div[id^="comment"]:nth-child(odd) {
+    background-color: #eaeaea;
+  }
+  #list-container div.comments-container .comment-list > div[id^="comment"]:nth-child(even) {
+    background-color: #ffffff;
+  }
+  #list-container div.comments-container .comment-list > div[id^="comment"] span.header {
     display: block;
     font-size: 1em;
   }
-  #list-container div.comments-container span.header .username {
+  #list-container div.comments-container .comment-list > div[id^="comment"] span.header .username {
     color: #000000;
     font-weight: bold;
   }
-  #list-container div.comments-container span.text {
-    background-color: transparent;
-    margin: 5px 0;
+  #list-container div.comments-container .comment-list > div[id^="comment"] span.header .date {
+    color: #707070;
   }
-  #list-container div.comments-container textarea {
-    resize: vertical;
+  #list-container div.comments-container .comment-list > div[id^="comment"] span.text {
+    background-color: transparent;
+    margin: 0;
   }
   #list-container .comments-container.collapse {
     padding: 0px;
-  }
-  #list-container span.comments {
-    padding: 2px 0px;
-    font-size: 0.90em;
   }
   #list-container i.delete-comment {
     float: right;

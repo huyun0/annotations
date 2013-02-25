@@ -3,9 +3,17 @@
 	<div class="right">
 		<i class="icon-comment-amount"><span class="comment-amount">{{numberOfComments}}</span></i>
 		{{#if isMine}}
-		<i class="delete icon-trash" title="Delete annotation."></i>
 		<i class="toggle-edit icon-pencil" title="Edit annotation."></i>
 		{{/if}}
+
+		{{#if created_by}}
+		<i class="icon-info-sign" title="added by {{#if created_by_nickname}}{{created_by_nickname}}{{else}}{{nickname created_by}}{{/if}} on {{track}}"></i>
+    {{/if}}
+    
+    {{#if isMine}}
+		<i class="delete icon-trash" title="Delete annotation."></i>
+    {{/if}}
+
 	</div>
 	<div class="left">
 		<a class="collapse" title="collapse">
@@ -55,14 +63,12 @@
                     {{/if}}
                     <span class="read-only">{{textReadOnly}}</span>
                 </span>
-                <!--Todo: Muss als Infobutton in die Headerzeile 
-                {{#if created_by}}
-                <p align="right">added by 
-                    <span class="user">{{#if created_by_nickname}}{{created_by_nickname}}{{else}}{{nickname created_by}}{{/if}}</span> on 
-                    <span class="track">{{track}}</span></p>
-                {{/if}}
-                -->
         </span>
         {{/if}}
+        <!--{{#if created_by}}
+            <p>added by 
+              <span class="user">{{#if created_by_nickname}}{{created_by_nickname}}{{else}}{{nickname created_by}}{{/if}}</span> on 
+              <span class="track">{{track}}</span></p>
+        {{/if}}-->
 </div>
 <!--<button id="stopduration">Stop duration</button>-->

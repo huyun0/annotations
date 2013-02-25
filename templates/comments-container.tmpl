@@ -1,12 +1,8 @@
-<span class="comments">{{comments.length}} Comments</span>
-<a href="#" class="add-comment">add comment</a>
+<div class="comment-header">
+	<span class="add-comment"><a href="#" class="add-comment">add comment</a></span>
+	<textarea style="display: none;" class="input-block-level focused hide" id="focusedInput" placeholder="comment..."></textarea>
+	<button type="submit" class="btn btn-primary hide">Comment</button>
+	<button type="button" class="btn hide">Cancel</button>
+</div>
 
-{{#if comments}}
-<a class="collapse-comment" title="collapse">
- <i class="icon-chevron-right"></i>
-</a>
-{{/if}}
-<textarea style="display: none;" class="input-block-level focused hide" id="focusedInput" placeholder="comment..."></textarea>
-<button type="submit" class="btn btn-primary hide">Comment</button>
-<button type="button" class="btn hide">Cancel</button>
-<div id="comment-list{{id}}" class="collapse"></div>
+<div id="comment-list{{id}}" class="collapse comment-list"></div>

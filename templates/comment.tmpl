@@ -1,4 +1,7 @@
-<span class="comments header">Created: {{creationdate}} by <span class="username">{{creator}}</span>{{#if updateddate}} - Modified: {{updateddate}} by <span class="username">{{updator}}</span>{{/if}}</span>
+<span class="comments header">
+	<span class="username">{{creator}}</span>
+	<span class="date">added on the {{creationdate}}{{#if updateddate}}	and modified on the {{updateddate}}{{/if}}:</span>
+</span>
 {{#if canEdit}}
 <i class="delete-comment icon-trash" title="Delete comment"></i>
 <i class="edit-comment icon-pencil" title="Edit comment"></i>
