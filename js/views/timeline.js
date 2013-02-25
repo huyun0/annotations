@@ -49,6 +49,11 @@ define(["jquery",
 
         "use strict";
 
+        Handlebars.registerHelper('secure', function(text) {
+            // Add security for XSS
+            return _.unescape(text).replace(/\"/g,"'").replace(/<\/?script>/gi,"NO-SCRIPT");
+        });
+
         /**
          * @constructor
          * @see {@link http://www.backbonejs.org/#View}
@@ -335,6 +340,7 @@ define(["jquery",
               annotationJSON.id = annotation.id;
               annotationJSON.track = track.id;
               annotationJSON.top = this.getTopForStacking(annotation)+"px";
+              annotationJSON.text = annotation.text 
               if (annotationJSON.label && annotationJSON.label.category && annotationJSON.label.category.settings) {
                 annotationJSON.category = annotationJSON.label.category;
               }
@@ -394,11 +400,22 @@ define(["jquery",
 
             var self = this,
                 access,
+                name,
+                description,
                 insertTrack = function() {
-                  if (self.groupModal.find('#name')[0].value === '') {
+
+                  name = self.groupModal.find('#name')[0].value;
+                  description = self.groupModal.find('#description')[0].value;
+
+                  if (name === '') {
                       self.groupModal.find('.alert #content').html("Name is required!");
                       self.groupModal.find('.alert').show();
                       return;
+                  } else if (name.search(/<\/?script>/i) >= 0 || 
+                             description.search(/<\/?script>/i) >= 0) {
+                      //self.groupModal.find('.alert #content').html("Scripts are not allowed!");
+                      //self.groupModal.find('.alert').show();
+                      //return;
                   }
 
                   if (self.groupModal.find('#public').length > 0) {
@@ -408,8 +425,8 @@ define(["jquery",
                   }
 
                   self.createTrack({
-                      name: _.escape(self.groupModal.find('#name')[0].value),
-                      description: _.escape(self.groupModal.find('#description')[0].value),
+                      name: name,
+                      description: description,
                       access: access
                   },this);
                     

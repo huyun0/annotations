@@ -162,9 +162,12 @@ function ($, _not, PlayerAdapter, Annotation, User, CommentsContainer, Template,
 
             // Type use for delete operation
             this.typeForDelete = annotationsTool.deleteOperation.targetTypes.ANNOTATION;
-
-            if(attr.track) this.track = attr.track;
-            else this.track = annotationsTool.selectedTrack;
+            
+            if (attr.track) {
+                this.track = attr.track;
+            } else {
+                this.track = annotationsTool.selectedTrack;
+            }
 
             return this.render();
         },
