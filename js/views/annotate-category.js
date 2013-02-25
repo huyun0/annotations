@@ -33,7 +33,7 @@ define(["jquery",
           
           className: 'span1 category-item',
 
-          idPrefix: "catItem-",
+          ID_PREFIX: "catItem-",
 
           /** Define if the view has been or not deleted */
           deleted: false,
@@ -91,7 +91,7 @@ define(["jquery",
 
             if(attr.editModus)this.editModus = attr.editModus;
             
-            this.el.id = this.idPrefix+attr.category.get('id');
+            this.el.id = this.ID_PREFIX+attr.category.get('id');
 
             this.model = attr.category;
 
@@ -99,7 +99,6 @@ define(["jquery",
 
             var labels = this.model.get("labels")
             this.listenTo(labels, 'add', this.addLabel);
-            this.listenTo(labels, 'change', this.render);
             this.listenTo(labels, 'remove', this.removeOne);
             this.listenTo(labels, 'destroy', this.removeOne);
             this.listenTo(this.model, 'change', this.onChange);
@@ -223,7 +222,7 @@ define(["jquery",
            * Listener for focus out event on name field
            */
           onFocusOut: function(){
-            this.model.set('name',_.escape(this.nameInput.val()))
+            this.model.set('name',_.escape(this.nameInput.val()), {silent:true})
             this.model.save();
           },
 

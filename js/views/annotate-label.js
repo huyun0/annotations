@@ -237,7 +237,7 @@ define(["jquery",
            */
           onFocusOut: function(e){
             var attributeName = e.target.className.replace("item-","").replace(" edit", "");
-            this.model.set(attributeName,_.escape(e.target.value));
+            this.model.set(attributeName, _.escape(e.target.value), {silent: true});
             this.model.save();
           },
 
