@@ -435,10 +435,13 @@ function ($, _not, PlayerAdapter, Annotation, User, CommentsContainer, Template,
             modelJSON.numberOfComments = this.model.get("comments").length;
 
             this.$el.html(this.template(modelJSON));
+            this.$el.attr("id", this.id);
 
             // Hack for Firefox, add an button over it
             if ($.browser.mozilla) {
-                this.$el.find(".end").append("<span class=\"end-btn\" title=\"Double click to edit\">&nbsp;</span>");
+                if (duration > 0) {
+                    this.$el.find(".end").append("<span class=\"end-btn\" title=\"Double click to edit\">&nbsp;</span>");
+                }
                 this.$el.find(".start").append("<span class=\"start-btn\" title=\"Double click to edit\">&nbsp;</span>");
             }
 
