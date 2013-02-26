@@ -26,22 +26,24 @@ define(["jquery",
 
 function ($, _not, PlayerAdapter, Annotation, User, CommentsContainer, Template, Backbone, Handlebars) {
 
+    "use strict";
+
     /**
      * Transform time in seconds (i.e. 12.344) into a well formated time (01:12:04)
      *
      * @param {number} the time in seconds
      */
-    var getWellFormatedTime = function(time) {
+    var getWellFormatedTime = function (time) {
             var twoDigit = function(number) {
                     return(number < 10 ? "0" : "") + number;
-                }
+                },
+                base    = time.toFixed(),
+                seconds = base % 60,
+                minutes = ((base - seconds) / 60) % 60,
+                hours   = (base - seconds - minutes * 60) / 3600;
 
-            var base = time.toFixed();
-            var seconds = base % 60;
-            var minutes = ((base - seconds) / 60) % 60;
-            var hours = (base - seconds - minutes * 60) / 3600;
             return twoDigit(hours) + ":" + twoDigit(minutes) + ":" + twoDigit(seconds);
-        };
+    };
 
     /**
      * Function to display time for handlebars
@@ -52,8 +54,9 @@ function ($, _not, PlayerAdapter, Annotation, User, CommentsContainer, Template,
      * Function to display the duration
      */
     Handlebars.registerHelper("end", function(start, duration) {
-        if(duration && _.isNumber(duration) && duration > 0) return getWellFormatedTime(start + duration);
-        else return undefined;
+
+        return getWellFormatedTime(start + (duration || 0.0));
+
     });
 
     /**
@@ -398,6 +401,7 @@ function ($, _not, PlayerAdapter, Annotation, User, CommentsContainer, Template,
             modelJSON = this.model.toJSON();
             modelJSON.track = this.track.get("name");
             modelJSON.textReadOnly = modelJSON.text.replace(/\n/g, "<br/>");
+            modelJSON.duration = (modelJSON.duration || 0.0);
 
 
 

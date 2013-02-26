@@ -61,6 +61,9 @@ define(["jquery",
          * @alias Timeline
          */
         var Timeline = Backbone.View.extend({
+
+          /** Default minimal duration for an annotation on the timline*/
+          MIN_DURATION: 5,
           
           /** Main container of the timeline */
           el: $('div#timeline-container'),
@@ -153,7 +156,7 @@ define(["jquery",
             
             
             this.endDate = this.getFormatedDate(this.playerAdapter.getDuration()+2);
-            this.startDate = new Date(this.endDate.getFullYear(),this.endDate.getMonth(),this.endDate.getDate(),0,0,3);
+            this.startDate = new Date(this.endDate.getFullYear(), this.endDate.getMonth(), this.endDate.getDate(), 0, 0, 3);
             
             this.options = {
               width:  "100%",
@@ -336,11 +339,12 @@ define(["jquery",
                   start,
                   end;
 
-              annotationJSON = annotation.toJSON();
-              annotationJSON.id = annotation.id;
+              annotationJSON       = annotation.toJSON();
+              annotationJSON.id    = annotation.id;
               annotationJSON.track = track.id;
-              annotationJSON.top = this.getTopForStacking(annotation)+"px";
-              annotationJSON.text = annotation.text 
+              annotationJSON.top   = this.getTopForStacking(annotation)+"px";
+              annotationJSON.text  = annotation.text 
+
               if (annotationJSON.label && annotationJSON.label.category && annotationJSON.label.category.settings) {
                 annotationJSON.category = annotationJSON.label.category;
               }
@@ -351,9 +355,9 @@ define(["jquery",
 
               // Calculate start/end time
               startTime = annotation.get("start");
-              endTime   = startTime + annotation.get("duration");
-              start = this.getFormatedDate(startTime);
-              end = this.getFormatedDate(endTime);
+              endTime   = startTime + Math.max(this.MIN_DURATION, annotation.get("duration"));
+              start     = this.getFormatedDate(startTime);
+              end       = this.getFormatedDate(endTime);
 
               return {
                   model: track,

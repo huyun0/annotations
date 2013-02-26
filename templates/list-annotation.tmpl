@@ -3,17 +3,9 @@
 	<div class="right">
 		<i class="icon-comment-amount"><span class="comment-amount">{{numberOfComments}}</span></i>
 		{{#if isMine}}
+		<i class="delete icon-trash" title="Delete annotation."></i>
 		<i class="toggle-edit icon-pencil" title="Edit annotation."></i>
 		{{/if}}
-
-		{{#if created_by}}
-		<i class="icon-info-sign" title="added by {{#if created_by_nickname}}{{created_by_nickname}}{{else}}{{nickname created_by}}{{/if}} on {{track}}"></i>
-    {{/if}}
-    
-    {{#if isMine}}
-		<i class="delete icon-trash" title="Delete annotation."></i>
-    {{/if}}
-
 	</div>
 	<div class="left">
 		<a class="collapse" title="collapse">
@@ -23,27 +15,27 @@
 		<span class="start">
 				<input id="start-{{id}}" class="start-value" type="text" value="{{time start}}" {{#if isEditEnable}} {{else}}disabled{{/if}}></input>
 		</span>
-		{{#if duration}}
-						<span class="end">
-								<input id="start-{{id}}" class="end-value" type="text" value="{{end start duration}}" {{#if isEditEnable}} {{else}}disabled{{/if}}></input>
-						</span>
-						<button class="btn out edit" title="Set the video playhead as end point.">OUT</button>
-		{{/if}}
-		
-						{{#if scalevalues}}
-						<span class="scaling">
-								{{#if isMine}}
-								<select class="edit">
-										{{#each scalevalues}}
-										<option value="{{this.id}}" {{#if this.isSelected}}selected="selected"{{/if}}>{{this.name}}</option>
-										{{/each}}
-								</select>
-								{{/if}} 
-								{{#if scalevalue}}
-								<span class="read-only" title="{{scalevalue.name}}">{{scalevalue.name}}</span>
-								{{/if}} 
-						</span>
-						{{/if}} 
+
+		<span class="end {{#if duration}}has-duration{{else}}no-duration{{/if}}">
+				<input id="end-{{id}}" class="end-value" type="text" value="{{end start duration}}" {{#if isEditEnable}} {{else}}disabled{{/if}}></input>
+		</span>
+		<button class="btn out edit" title="Set the video playhead as end point.">OUT</button>
+
+
+		{{#if scalevalues}}
+		<span class="scaling">
+				{{#if isMine}}
+				<select class="edit">
+						{{#each scalevalues}}
+						<option value="{{this.id}}" {{#if this.isSelected}}selected="selected"{{/if}}>{{this.name}}</option>
+						{{/each}}
+				</select>
+				{{/if}} 
+				{{#if scalevalue}}
+				<span class="read-only" title="{{scalevalue.name}}">{{scalevalue.name}}</span>
+				{{/if}} 
+		</span>
+		{{/if}} 
 		
 		{{#if isMine}}
 		<i class="private icon-user" title="You own this annotation"></i>
@@ -63,12 +55,14 @@
                     {{/if}}
                     <span class="read-only">{{textReadOnly}}</span>
                 </span>
+                <!--Todo: Muss als Infobutton in die Headerzeile 
+                {{#if created_by}}
+                <p align="right">added by 
+                    <span class="user">{{#if created_by_nickname}}{{created_by_nickname}}{{else}}{{nickname created_by}}{{/if}}</span> on 
+                    <span class="track">{{track}}</span></p>
+                {{/if}}
+                -->
         </span>
         {{/if}}
-        <!--{{#if created_by}}
-            <p>added by 
-              <span class="user">{{#if created_by_nickname}}{{created_by_nickname}}{{else}}{{nickname created_by}}{{/if}}</span> on 
-              <span class="track">{{track}}</span></p>
-        {{/if}}-->
 </div>
 <!--<button id="stopduration">Stop duration</button>-->
