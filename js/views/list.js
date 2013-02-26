@@ -84,9 +84,9 @@ define(["jquery",
              * @type {object}
              */
             events: {
-                "click #filter-none" : "disableFilter",
-                "click .filter" : "switchFilter",
-                "click .toggle-collapse" : "toggleVisibility"
+                "click #filter-none"    : "disableFilter",
+                "click .filter"         : "switchFilter",
+                "click .toggle-collapse": "toggleVisibility"
             },
           
             /**
@@ -108,8 +108,7 @@ define(["jquery",
                                "switchFilter",
                                "updateFiltersRender",
                                "toggleVisibility",
-                               "disableFilter",
-                               "doClick");
+                               "disableFilter");
                 
                 this.annotationViews = [];
 
@@ -195,7 +194,7 @@ define(["jquery",
 
             selectView: function (viewToSelect) {
                 viewToSelect.selectVisually();
-                this.doClick(viewToSelect.$el.find("a.proxy-anchor")[0]);
+                location.hash = "#" + viewToSelect.id;
                 viewToSelect.isSelected = true;
             },
             
@@ -376,21 +375,6 @@ define(["jquery",
                 $(event.target).html("Expand");
               }
               this.trigger("change-layout");
-            },
-            
-            /**
-             * Simple function to simulate a click on the given element
-             * @alias module:views-list.List#doClick
-             * @param {DOM element} el click event target
-             */
-            doClick: function eventFire(el) {
-                if (el.fireEvent) {
-                    (el.fireEvent("onclick"));
-                } else {
-                    var evObj = document.createEvent("Events");
-                    evObj.initEvent("click", true, false);
-                    el.dispatchEvent(evObj);
-                }
             }
             
         });
