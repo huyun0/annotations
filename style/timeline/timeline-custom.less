@@ -206,15 +206,20 @@ div.timeline-bottom-controls{
 }
 
 div.timeline-item{
-		background-color: fade(@grayLight,25%);
-		border: 1px solid transparent;
+	background-color: fade(@grayLight,25%);
+	border: 1px solid transparent;
     padding: 2px;
     overflow: hidden;
+    min-width: 20px;
     
     span{
         float: left;
         width: 65%;
         overflow: hidden;
+    }
+
+    &.at-end{
+        margin-left: -10px;
     }
     
     i.delete{
