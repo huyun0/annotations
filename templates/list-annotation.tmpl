@@ -61,15 +61,8 @@
                     {{#if isMine}}
                     <textarea class="edit" placeholder="free text...">{{text}}</textarea>
                     {{/if}}
-                    <span class="read-only">{{textReadOnly}}</span>
+                    <span class="read-only">{{{textReadOnly}}}</span>
                 </span>
-                <!--Todo: Muss als Infobutton in die Headerzeile 
-                {{#if created_by}}
-                <p align="right">added by 
-                    <span class="user">{{#if created_by_nickname}}{{created_by_nickname}}{{else}}{{nickname created_by}}{{/if}}</span> on 
-                    <span class="track">{{track}}</span></p>
-                {{/if}}
-                -->
         </span>
         {{/if}}
 </div>

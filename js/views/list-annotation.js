@@ -400,7 +400,7 @@ function ($, _not, PlayerAdapter, Annotation, User, CommentsContainer, Template,
             this.model.set({collapsed: this.collapsed}, {silent: true});
             modelJSON = this.model.toJSON();
             modelJSON.track = this.track.get("name");
-            modelJSON.textReadOnly = modelJSON.text.replace(/\n/g, "<br/>");
+            modelJSON.textReadOnly = _.escape(modelJSON.text).replace(/\n/g, "<br/>");
             modelJSON.duration = (modelJSON.duration || 0.0);
 
 
