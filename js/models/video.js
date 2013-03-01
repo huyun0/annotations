@@ -58,6 +58,8 @@ define(["jquery",
              * @param {Object} attr Object literal containing the model initialion attribute. 
              */
             initialize: function(attr){
+
+                _.bindAll(this, "getTrack", "getAnnotation");
                 
                 // Check if the video has been initialized 
                 if (!attr.id) {
@@ -247,6 +249,31 @@ define(["jquery",
 
                 if (this.attributes.scales) {
                     this.attributes.scales.setUrl(this);    
+                }
+            },
+            
+            /**
+             * Get the track with the given id
+             * @alias module:models-video.Video#getTrack
+             * @param  {Integer} trackId The id from the wanted track
+             * @return {Track}           The track with the given id
+             */
+            getTrack: function (trackId) {
+                return this.get("tracks").get(trackId);
+            },
+
+            /**
+             * Get the annotation with the given id on the given track
+             * @alias module:models-video.Video#getAnnotation
+             * @param  {Integer} annotationId The id from the wanted annotation
+             * @param  {Integer} trackId      The id from the track containing the annotation
+             * @return {Track}                The annotation with the given id
+             */
+            getAnnotation: function (annotationId, trackId) {
+                var track = this.getTrack(trackId);
+
+                if (track) {
+                    return track.getAnnotation(annotationId);
                 }
             },
 

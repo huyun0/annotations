@@ -34,11 +34,11 @@ define(["jquery",
           /** View template */
           template: Handlebars.compile(Template),
           
-          collapsed: true,
+          collapsed: false, //Todo: Collapse function needs to be completely removed. 
           
           /** Events to handle */
           events: {
-        	"click i.add-comment" : "onAddComment",
+        	"click a.add-comment" : "onAddComment",
             "click a.collapse-comment" : "onCollapse",
             "click button[type=submit]" : "onSubmit",
         	"click button[type=button]" : "onCancelComment"

@@ -10,7 +10,7 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>Annotating Academic Video - 0.8 - Exports and scales editor </title>
+    <title>Annotating Academic Video</title>
     <meta name="description" content="Video annotations tool">
     <meta name="author" content="">
     <meta name="viewport" content="width=device-width">
@@ -32,7 +32,7 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                   </a>
-                  <a class="brand" href="#">Annotating Academic video - 0.8 - Exports and scales editor </a>
+                  <a class="brand" href="#">Annotating Academic video - 0.9 - Release candidate 1 </a>
           
                 <ul class="nav pull-right">
                     <li><a href="#" id="export">Export for statistics</a></li>
@@ -72,7 +72,7 @@
         <div class="span6"> 
         
             <!-- container for the video -->
-            <div id="video-container" style="display:none">
+            <div id="video-container" class="window" style="display:none">
                 <video id="example" style="width:100%" controls >
                     <source src="resources/aav1.mp4" type="video/mp4" />
 <source src="resources/aav1.webm" type="video/webm" />
@@ -119,6 +119,10 @@
                         <div class="navbar-inner">
                           <div class="container">
                             <span class="window-title">Annotate</span>
+                              <div class='currentTrack'>
+                               <span class='title'>&nbsp;on</span>
+                               <span class="content">No track selected</span>
+                             </div>
                             <ul class="nav pull-right">
                                 <li class="dropdown">
                                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">Layout <b class="caret"></b></a>
@@ -137,20 +141,16 @@
     
                     <div class="control-group" id="annotate-form">
                         
-                        <div class='currentTrack'>
-                            <span class='title'>Selected track ></span>
-                            <span class="content">No track selected</span>
-                        </div>
+
                         
                         <div id="input-container" class="insert-fields">
-                            <textarea id="new-annotation" placeholder="Write a free text annotation ..." rows="3"></textarea>
-                            <p class="muted">Use "shift" + "return" keys to create a new line.</p>
-                            <button id="insert" type="button" class="btn">Insert</button> 
+                            <textarea id="new-annotation" placeholder="Write a free text annotation. Use &raquo;shift + return&laquo; keys to create a new line." rows="3" title="Use &raquo;shift + return&laquo; keys to create a new line."></textarea>
                             <div class="controls stop-fields">
                                 <label class="checkbox inline">
-                                    <input id="pause-video" type="checkbox"> <nobr>Pause video during writing</nobr>
+                                    <input id="pause-video" type="checkbox">Pause video during writing
                                 </label>
-                            </div>  
+                            </div>
+                            <button id="insert" type="button" class="btn">Insert</button>                               
                         </div>
     
     
@@ -158,9 +158,8 @@
                         <div id="categories">
                             
                             <ul class="nav nav-tabs" id="label-tabs-buttons">
-                              <li><h3>Labels</h3> </li>
-                              <label class="checkbox inline" id="editSwitch">
-                                  <input type="checkbox" value="option1"> Edit    
+                                  <label class="checkbox inline" id="editSwitch">
+                                  <input type="checkbox" value="option1"> Edit mode    
                               </label>
                             </ul>
                              
@@ -176,7 +175,7 @@
         
             <!-- container for the annotations list -->
             <div>
-                <div class="window" id="list-container" style="display:none" data-spy="scroll">
+                <div class="window expanded" id="list-container" style="display:none" data-spy="scroll">
                     <div class="navbar">
                         <div class="navbar-inner">
                           <div class="container">

@@ -29,11 +29,18 @@ define(["jquery",
          */
         var LabelView = Backbone.View.extend({
 
+          /** Prefix for the element id */
+          ID_PREFIX: "labelItem-",
+
+          /** CSS classname related to the scale usage */
+          CLASS_SCALE: {
+              ENABLED: "scale-enabled",
+              DISABLED: "scale-disabled"
+          },
+
           tagName: "div",
           
           className: 'label-item',
-
-          idPrefix: "labelItem-",
 
           /** Define if the view has been or not deleted */
           deleted: false,
@@ -53,7 +60,6 @@ define(["jquery",
           /** Events to handle by the annotate view */
           events: {
             "click"                         : "annotate",
-            "click .item-value, .item-abbreviation"        : "annotate",
             "click i.delete"                : "onDeleteLabel",
             "focusout .item-value"          : "onFocusOut",
             "keydown .item-value"           : "onKeyDown",
@@ -96,7 +102,7 @@ define(["jquery",
               // Add backbone events to the model 
               _.extend(this.model, Backbone.Events);
               
-              this.el.id = this.idPrefix+this.model.get('id');
+              this.el.id = this.ID_PREFIX+this.model.get('id');
 
               this.listenTo(this.model, 'change', this.render);
 
@@ -122,25 +128,21 @@ define(["jquery",
           annnotateWithScaling: function(event){
               event.stopImmediatePropagation();
 
-              var id = event.target.getAttribute("value");
+              var id = event.target.getAttribute("value"),
+                  scalevalue = this.scaleValues.get(id),
+                  time = annotationsTool.playerAdapter.getCurrentTime(),
+                  annotation,
+                  options = {},
+                  params = {
+                      text: this.model.get('value'),
+                      start: time,
+                      label: this.model,
+                      scalevalue: scalevalue.toJSON()
+                  };
 
-              var scalevalue = this.scaleValues.get(id);
-
-              if(this.editModus)
+              if (this.editModus || (!_.isNumber(time) || time < 0)) {
                 return;
-
-              var time = annotationsTool.playerAdapter.getCurrentTime();
-              
-              if(!_.isNumber(time) || time < 0)
-                return;
-
-              var options = {};
-              var params = {
-                  text: this.model.get('value'),
-                  start:time,
-                  label: this.model,
-                  scalevalue: scalevalue.toJSON()
-              };
+              }
               
               if(annotationsTool.user)
                   params.created_by = annotationsTool.user.id;
@@ -150,20 +152,24 @@ define(["jquery",
                 options.wait = true;
 
 
-              annotationsTool.selectedTrack.get("annotations").create(params,options);
+              annotation = annotationsTool.selectedTrack.get("annotations").create(params,options);
+              annotationsTool.currentSelection = annotation;
           },
 
           /**
            * Annotate the video with this label
            */
           annotate: function(){
+              event.stopImmediatePropagation();
+
               if (this.editModus) {
                 return;
               }
 
               var time = annotationsTool.playerAdapter.getCurrentTime(),
                   options = {},
-                  params;
+                  params,
+                  annotation;
               
               if (!_.isNumber(time) || time < 0) {
                 return;
@@ -185,7 +191,8 @@ define(["jquery",
                 options.wait = true;
 
 
-              annotationsTool.selectedTrack.get("annotations").create(params,options);
+              annotation = annotationsTool.selectedTrack.get("annotations").create(params,options);
+              annotationsTool.currentSelection = annotation;
           },
 
           /**
@@ -230,7 +237,7 @@ define(["jquery",
            */
           onFocusOut: function(e){
             var attributeName = e.target.className.replace("item-","").replace(" edit", "");
-            this.model.set(attributeName,_.escape(e.target.value));
+            this.model.set(attributeName, _.escape(e.target.value), {silent: true});
             this.model.save();
           },
 
@@ -281,6 +288,16 @@ define(["jquery",
             }
 
             this.$el.html(this.template(modelJSON));
+
+            // Add CSS class to label about scale usage 
+            if (this.isScaleEnable) {
+                this.$el.removeClass(this.CLASS_SCALE.DISABLED);
+                this.$el.addClass(this.CLASS_SCALE.ENABLED);
+            } else {
+                this.$el.removeClass(this.CLASS_SCALE.ENABLED);
+                this.$el.addClass(this.CLASS_SCALE.DISABLED);
+            }
+
             this.delegateEvents(this.events);
             return this;
           }

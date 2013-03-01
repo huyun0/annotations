@@ -47,7 +47,7 @@ define(["jquery",
             defaults: {
                 access: ACCESS.PRIVATE,
                 start: 0,
-                duration: 5
+                duration: 0
             },
             
             /**

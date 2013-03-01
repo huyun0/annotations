@@ -29,3 +29,8 @@ div.colorPicker-swatch {
   cursor: pointer;
   line-height: 12px;
 }
+
+
+div.colorPicker_hexWrap {
+	display:none;
+}

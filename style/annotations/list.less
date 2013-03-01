@@ -2,17 +2,22 @@
  * Style for annotations list
  */
 
-@import "variables.less";
+@import-once "variables.less";
  
-@color1: #F5F5F5; /* dark grey */
 
 #list-container{
 
     overflow: auto;
-    min-height: 80px;
+    
+   	@min-height: 300px;
+    
+    &.expanded {
+    	min-height: @min-height;
+    }
 
     #content-list{
         overflow: auto;
+       	min-height: @min-height;
     }
     
     a.proxy-anchor{
@@ -28,15 +33,79 @@
     }
     
     div.annotation{
-        .standard_border_radius;
-        background-color: darken(@color1, 7%);
-        margin: 5px;
-        padding: 5px;
-        
+        background-color: @white;
+				border-top: 2px solid @grayDark;
+				
+				&:first-child {
+					border-top: none;
+				}
+				       
         &:hover{
-            cursor: pointer;   
-            box-shadow: inset 0px 0px 12px black; 
+          cursor: pointer;   
         }
+        
+        &.selected {
+        
+					border-left: 1px solid @red;
+					border-right: 1px solid @red;
+					border-bottom: 1px solid @red;
+					
+        	.header-container{
+						border-top: 1px solid @red;         
+						background-image: url("../img/annotation/pattern.png");
+        		background-repeat: repeat-x;
+        		background-position: top;
+        	}
+        }
+
+        /* Layout of headerbar*/
+
+				@headerHeight: 16px; 
+				@headerPadding: 2px;
+				@headerSumHeight: @headerHeight+(2*@headerPadding);
+      
+				.header-container {
+				
+					margin: 0;
+					height: @headerSumHeight;
+					//line-height: @headerSumHeight;
+					padding: 0 5px;
+		      background-color: @grayLighter;
+
+					.right {
+						float: right;
+						padding: 0;
+						height: @headerSumHeight;	
+					}	
+					
+					.left {
+						overflow:hidden;
+    				text-overflow: ellipsis;
+				    white-space: nowrap;
+				    height: @headerSumHeight;
+					}				
+				    
+					& * {
+						vertical-align: top;
+					}
+					
+					i { //Center all icons
+						vertical-align: middle;			    	
+					}
+		      button {
+        		border:none;
+					  height: @headerSumHeight;
+					  border: 1px solid @btnBorder;
+					  border-top: none;
+					  .box-sizing(border-box);
+					  padding: @headerPadding;
+					  vertical-align: middle;
+					  line-height: headerHeight;    	
+        	}			
+				}	
+				
+				
+        /* Content Elements in headerbar*/
 
         .edit {
             display: none;
@@ -47,30 +116,20 @@
             display: inline-block;
         }
 
-        button.in {
-            margin-right: -4px;
-        }
+				.comment-amount {
+					float:right;
+					font-size: 9px;
+					line-height: 10px;
+					text-align: center;
+					width: 15px;
+					font-style:normal;					
+				}
 
         &.edit-on {
 
             i.toggle-edit{
 
-                &:before {
-                    content: "close edit";
-                    white-space:nowrap;
-                    margin-left: -55px;
-                    background-color: white;
-                    padding: 2px;
-                    border-radius: 4px;
-                    border: 1px solid grey;
-                    font-style: normal;
-                    display: block;
-                    box-shadow: inset 0px -1px 2px black;
-                }
-
-                &:hover:before {
-                    background-color: lighten(grey, 20%);
-                }
+                .icon-ok(); 
             }
 
             span.label {
@@ -82,197 +141,225 @@
             .edit {
                 display: inline-block;
                 visibility: visible;
+            }
 
-                span.freetext textarea{
-                    //display: block;
+            .end {
+                &.no-duration {
+                    display: inline-block;
                 }
-
             }
 
             .read-only {
                 display: none;
             }
-
-            .scaling:before {
-                content: "Scale value:";
-                margin-right: 2px;
-            }
-        }
+        	}
         
         i{    
             &.delete, &.toggle-edit{
-               float: right; 
                visibility: visible;
             }
             
             &:hover{
-                cursor: pointer;
-                background-color: lighten(#66A3D2,10%); 
+            	.iconHover();
             }
         }
         
-        .start,.end{
-            cursor: text;
-            border-radius: 3px 3px 3px 3px;
-            background-color: darken(@color1, 30%);
-            padding: 2px;
-            margin: 1px;
-            color: white;
-            font-family: monospace;
-            .box-shadow(0px,0px,4px,darken(@color1,30%));
-            .inset-box-shadow(0px,0px,4px,darken(@color1,50%));
-            position: relative;
-            width: 65px !important;
-            height: 18px;
-            display: inline-block;
 
-                input{
-                    margin: 1px;
-                    width: 65px !important;
-                    padding: 1px;
-                    margin: 1px;
-                    border: none;
-                    font-family: monospace;
-                    position: relative;
-                    height:18px;
-                    z-index: 300;
+		.start,.end{
+			cursor: text;
+			background-color: fade(@white,60%);
+			height: @headerHeight;
+			padding: @headerPadding;
+			display: inline-block;
+			position: relative;
+			color: @black;
 
-                    &[disabled] {
-                        z-index: 100;
-                        border: none;
-                        background: none;
-                        box-shadow: none;
-                        cursor: text;
-                        margin: 1px;
-                        color: white;
-                    }
-
-                    &.error {
-                        color: red;
-                        font-weight: bold;
-                    }
-                }
-
-                .start-btn, .end-btn {
-                     position: absolute;
-                     left: 0%;
-                     right: 0%;
-                     top:0;
-                     z-index: 150;
-                     width: 65px;
-                     height: 20px;
-                }
-        }
-
-        .collapse i{
-            float: left;
-            margin-right: 5px;
-            margin-left: 5px;
-        }
-        
-        span.text{
-            display: block;
-            margin: 5px 2px 2px 2px;
-            padding: 4px;
-            border-radius: 3px 3px 3px 3px;
-            background-color: white;
-            .box-shadow(0px,0px,4px,darken(@color1,30%));
-        }
-        
-        span.category{
-            border-radius: 3px 3px 3px 3px;
-            background-color: orange;
-            color: white;
-            padding: 2px;
-            font-size: 0.90em;
-        }
-
-        span.label {
-            font-size: inherit;
-            margin: 5px;
-            font-weight: normal;
-
-            span.label-abr{
-                font-weight: bold;
+            &.no-duration {
+                display: none;
             }
-        }
+						
+			input{
+				width: 65px;
+				border: none;
+				position: relative;
+				z-index: 300;
+				padding: 0;
+				margin: 0;
+				box-shadow: none;
+				color: @black;
+				text-align: center;
+				font-family: monospace;
 
+				&[disabled] {
+					z-index: 100;
+					border: none;
+					background: none;
+					cursor: text;
+				}
 
-        span.freetext {
-            textarea {
-                width: 97.5%;
-            }
-        }
+				&.error {
+					color: @red;
+					font-weight: bold;
+				}
+			}
 
+			.start-btn, .end-btn {
+				position: absolute;
+				left: 0%;
+				right: 0%;
+				top:0;
+				z-index: 150;
+				width: 65px;
+				height: @headerHeight;
+			}
+		}
+				
         span.scaling{
 
             select {
-                width: auto;
-            }
+							width: 50px;
+							height: @headerSumHeight;
+							padding: @headerPadding;
+							margin: 0;
+							font-size: 0.85em;
+							color: @white;
+							background-color: @black;
+							border: none;                
+					  }
 
             span {
-                border-radius: 5px;
-                background-color: yellow;
-                box-shadow: inset 0 0 3px;
-                color: #D57E0F;
-                text-shadow: 0 0 2px orange;
-                font-weight: bold padding: 2px;
-                font-weight: bold;
-                font-size: 0.90em;
-                font-weight: bold;
-                padding: 0px 2px 0px 2px;
-                border: 2px solid orange;
-                width: auto;
-                display: inline-block;
-                text-align: center;
+							background-color: @black;
+							color: @white;
+							height: @headerHeight;
+							padding: @headerPadding;                
+							font-weight: bold;
+							min-width: @headerHeight;
+							max-width: 4*@headerHeight;
+							text-overflow: ellipsis;
+							overflow:hidden;
+							font-size: 0.9em;
+							display: inline-block;
+							text-align: center;
             }
+        }				
+				
+        span.category{
+					color: @gray;
+					vertical-align: middle;
+
+					span.abbreviation {
+						color: @black;
+						font-weight: bold;
+						display:inline-block;
+						height: @headerSumHeight;
+						vertical-align: middle;
+					}               
+        }				
+
+        /* Content elements in body*/
+			
+        span.text{
+        	display: block;
+          margin: 5px;
+          background-color: white;
         }
-        
+
+        span.freetext {
+        	textarea {
+          	width: 97.5%;
+            resize:vertical;
+          }
+        }
+       
         span.track{
-            border-radius: 3px 3px 3px 3px;
-            background-color: lighten(#005580,20%);
-            color: white;
-            padding: 3px;
-            font-size: 0.90em;  
+        	display:none;
+          background-color: lighten(#005580,20%);
+          color: white;
+          padding: 3px;
+          font-size: 0.90em;  
         }
         
         span.user{
-            font-style: italic;
-                font-weight: bold;
-        }
-        
-        &.selected{
-           background-color: darken(@color1, 40%); 
+        	display:none;
+          font-style: italic;
+          font-weight: bold;
         }
     }
 
-    i.add-comment {
-      float: right;
-    }
-    .comments-container {
-      border-radius: 4px 4px 4px 4px;
-      background-color: rgb(199, 199, 199);
-      margin: 2px;
-      padding: 5px;
+
+
+    div.comments-container {
+      background-color: @grayLight;
+      color: @black;
+      
+      .comment-header {
+
+				padding: 2px; 
+				
+				span.add-comment {
+					line-height: 16px;
+					min-height: 16px;
+					display: inline-block;
+					text-align:right;	
+					width:100%;				
+					a.add-comment {		
+						color: @grayDark;
+					}
+				}
+				textarea { 
+						resize:vertical;  
+				}
+				
+				button {
+					margin-bottom: 5px;
+				}
+			}
+			
+			.comment-list {
+			
+	      font-size: 0.92em;
+	      padding: 2px; 
+
+				> div[id^="comment"] {
+					padding: 5px;
+
+					&:nth-child(odd) {
+						background-color:@grayLighter;
+					}  
+					&:nth-child(even) {
+						background-color:@white;
+					}					    	
+					span.header {
+						display: block;
+						font-size: 1em;
+						
+						.username {
+							color: @black;
+							font-weight: bold;
+						}
+						.date {
+							color: #707070;
+						}
+					}			
+					span.text {
+						background-color: transparent;
+						margin: 0;
+					} 
+ 
+				}	
+			}
     }
 
     .comments-container.collapse {
       padding: 0px;
     }
 
-    span.comments {
-      color: white;
-      padding: 2px;
-      font-size: 0.90em;
-    }
     i.delete-comment {
       float: right;
-      margin-right: 5px;
       margin-left: 5px;
     }
     i.edit-comment {
       float: right;
-      margin-right: 5px;
       margin-left: 5px;
     }
 
@@ -281,18 +368,7 @@
 .collapse-comment i {
   float: left;
   margin-right: 5px;
-  margin-left: 5px;
 }
 .collapse-comment {
-  -webkit-transition: height 0.35s ease;
-  -moz-transition: height 0.35s ease;
-  -ms-transition: height 0.35s ease;
-  -o-transition: height 0.35s ease;
-  transition: height 0.35s ease;
-  position: relative;
-  overflow: hidden;
-  height: 0;
-}
-.collapse-comment.in {
-  height: auto;
+	.collapse();
 }

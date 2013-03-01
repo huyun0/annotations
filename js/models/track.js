@@ -56,6 +56,8 @@ define(["jquery",
              * @param {Object} attr Object literal containing the model initialion attribute. 
              */
             initialize: function(attr){
+
+                _.bindAll(this, "getAnnotation");
                 
                 if (!attr || _.isUndefined(attr.name)) {
                     throw "'name' attribute is required";
@@ -93,6 +95,12 @@ define(["jquery",
 
                 if (attr.tags) {
                     attr.tags = this.parseJSONString(attr.tags);
+                }
+
+                if ((attr.created_by && annotationsTool.user.get("id") === attr.created_by) || !attr.created_by){
+                    attr.isMine = true;
+                } else {
+                    attr.isMine = false;
                 }
                 
                 // Add backbone events to the model 
@@ -217,6 +225,17 @@ define(["jquery",
                 if (this.attributes.annotations) {
                     this.attributes.annotations.setUrl(this);
                 }
+            },
+
+
+            /**
+             * Get the annotation with the given id
+             * @alias module:models-track.Track#getAnnotation
+             * @param  {Integer} annotationId The id from the wanted annotation
+             * @return {Annotatoin}           The annotation with the given id
+             */
+            getAnnotation: function (annotationId) {
+                return this.get("annotations").get(annotationId);
             },
 
             /**

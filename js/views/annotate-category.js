@@ -31,9 +31,9 @@ define(["jquery",
 
           tagName: "div",
           
-          className: 'span4 category-item',
+          className: 'span1 category-item',
 
-          idPrefix: "catItem-",
+          ID_PREFIX: "catItem-",
 
           /** Define if the view has been or not deleted */
           deleted: false,
@@ -91,7 +91,7 @@ define(["jquery",
 
             if(attr.editModus)this.editModus = attr.editModus;
             
-            this.el.id = this.idPrefix+attr.category.get('id');
+            this.el.id = this.ID_PREFIX+attr.category.get('id');
 
             this.model = attr.category;
 
@@ -99,7 +99,6 @@ define(["jquery",
 
             var labels = this.model.get("labels")
             this.listenTo(labels, 'add', this.addLabel);
-            this.listenTo(labels, 'change', this.render);
             this.listenTo(labels, 'remove', this.removeOne);
             this.listenTo(labels, 'destroy', this.removeOne);
             this.listenTo(this.model, 'change', this.onChange);
@@ -223,7 +222,7 @@ define(["jquery",
            * Listener for focus out event on name field
            */
           onFocusOut: function(){
-            this.model.set('name',_.escape(this.nameInput.val()))
+            this.model.set('name',_.escape(this.nameInput.val()), {silent:true})
             this.model.save();
           },
 
@@ -253,6 +252,9 @@ define(["jquery",
             },this);
 
             this.nameInput = this.$el.find(".catItem-header input");
+            
+            // Define the colors (global setting for all color pickers)
+            $.fn.colorPicker.defaults.colors = ['ffff99', 'ffd800', 'ffcc99', 'ffa800', 'ff7800', 'c36e00', 'd5d602', 'd9be6c', 'ff99cc', 'ff5d7c', 'da0000', 'd15c49', '969601', 'adfded', '8fc7c7', 'a4d2ff', '00ccff', '64b0e8', '61ae24', '9ded0a', '92ffaa', 'c0adfd', 'ac5bff', '6569ff'];
 
             this.$el.find('.colorpicker').colorPicker({pickerDefault: this.model.attributes.settings.color.replace("#",""), onColorChange : this.onColorChange});
             this.$el.find('.colorPicker-picker').addClass("edit");

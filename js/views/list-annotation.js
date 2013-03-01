@@ -26,22 +26,24 @@ define(["jquery",
 
 function ($, _not, PlayerAdapter, Annotation, User, CommentsContainer, Template, Backbone, Handlebars) {
 
+    "use strict";
+
     /**
      * Transform time in seconds (i.e. 12.344) into a well formated time (01:12:04)
      *
      * @param {number} the time in seconds
      */
-    var getWellFormatedTime = function(time) {
+    var getWellFormatedTime = function (time) {
             var twoDigit = function(number) {
                     return(number < 10 ? "0" : "") + number;
-                }
+                },
+                base    = time.toFixed(),
+                seconds = base % 60,
+                minutes = ((base - seconds) / 60) % 60,
+                hours   = (base - seconds - minutes * 60) / 3600;
 
-            var base = time.toFixed();
-            var seconds = base % 60;
-            var minutes = ((base - seconds) / 60) % 60;
-            var hours = (base - seconds - minutes * 60) / 3600;
             return twoDigit(hours) + ":" + twoDigit(minutes) + ":" + twoDigit(seconds);
-        };
+    };
 
     /**
      * Function to display time for handlebars
@@ -52,8 +54,9 @@ function ($, _not, PlayerAdapter, Annotation, User, CommentsContainer, Template,
      * Function to display the duration
      */
     Handlebars.registerHelper("end", function(start, duration) {
-        if(duration && _.isNumber(duration) && duration > 0) return getWellFormatedTime(start + duration);
-        else return undefined;
+
+        return getWellFormatedTime(start + (duration || 0.0));
+
     });
 
     /**
@@ -156,15 +159,20 @@ function ($, _not, PlayerAdapter, Annotation, User, CommentsContainer, Template,
             _.extend(this.model, Backbone.Events);
 
             this.listenTo(this.model, "change", this.render);
+            this.listenTo(this.model.get("comments"), "change", this.render);
+            this.listenTo(this.model.get("comments"), "remove", this.render);
             this.listenTo(this.model, "destroy", this.deleteView);
             this.listenTo(this.model, "remove", this.deleteView);
             this.listenTo(this.model, "selected", this.onSelected);
 
             // Type use for delete operation
             this.typeForDelete = annotationsTool.deleteOperation.targetTypes.ANNOTATION;
-
-            if(attr.track) this.track = attr.track;
-            else this.track = annotationsTool.selectedTrack;
+            
+            if (attr.track) {
+                this.track = attr.track;
+            } else {
+                this.track = annotationsTool.selectedTrack;
+            }
 
             return this.render();
         },
@@ -392,9 +400,12 @@ function ($, _not, PlayerAdapter, Annotation, User, CommentsContainer, Template,
             this.model.set({collapsed: this.collapsed}, {silent: true});
             modelJSON = this.model.toJSON();
             modelJSON.track = this.track.get("name");
-            modelJSON.textReadOnly = modelJSON.text.replace(/\n/g, "<br/>");
+            modelJSON.textReadOnly = _.escape(modelJSON.text).replace(/\n/g, "<br/>");
+            modelJSON.duration = (modelJSON.duration || 0.0);
 
 
+
+            
             if (modelJSON.isMine && this.scale && modelJSON.label.category.scale_id) {
                 category = annotationsTool.video.get("categories").get(this.model.get("label").category.id);
 
@@ -421,12 +432,16 @@ function ($, _not, PlayerAdapter, Annotation, User, CommentsContainer, Template,
             }
 
             modelJSON.isEditEnable = this.isEditEnable;
+            modelJSON.numberOfComments = this.model.get("comments").length;
 
             this.$el.html(this.template(modelJSON));
+            this.$el.attr("id", this.id);
 
             // Hack for Firefox, add an button over it
             if ($.browser.mozilla) {
-                this.$el.find(".end").append("<span class=\"end-btn\" title=\"Double click to edit\">&nbsp;</span>");
+                if (modelJSON.duration > 0) {
+                    this.$el.find(".end").append("<span class=\"end-btn\" title=\"Double click to edit\">&nbsp;</span>");
+                }
                 this.$el.find(".start").append("<span class=\"start-btn\" title=\"Double click to edit\">&nbsp;</span>");
             }
 
@@ -480,7 +495,7 @@ function ($, _not, PlayerAdapter, Annotation, User, CommentsContainer, Template,
 
             this.collapsed = !this.collapsed;
 
-            this.$el.find("> a.collapse > i").toggleClass("icon-chevron-right").toggleClass("icon-chevron-down");
+            this.$el.find("> .header-container > div > a.collapse > i").toggleClass("icon-chevron-right").toggleClass("icon-chevron-down");
 
             if(this.collapsed) this.$el.find("> div.in").collapse("hide");
             else this.$el.find("> div.collapse").collapse("show");
