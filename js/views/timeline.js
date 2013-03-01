@@ -201,7 +201,7 @@ define(["jquery",
                     intervalMin: 1000,
                     showCustomTime: true,
                     showNavigation: true,
-                    showMajorLabels: true,
+                    showMajorLabels: false,
                     snapEvents: false,
                     stackEvents: true,
                     minHeight: "200",
@@ -212,7 +212,7 @@ define(["jquery",
                     // cluster: true,
                     eventMarginAxis: 0,
                     eventMargin: 0,
-                    // dragAreaWidth: 10,
+                    dragAreaWidth: 5,
                     groupsChangeable: true
                 };
                 
@@ -652,8 +652,6 @@ define(["jquery",
                 var newTime = this.getTimeInSeconds(event.time) ,
                     hasToPlay = (this.playerAdapter.getStatus() === PlayerAdapter.STATUS.PLAYING);
 
-                console.log("TIMELINE: Timeline update");
-
                 if (hasToPlay) {
                     this.playerAdapter.pause();
                 }
@@ -684,7 +682,7 @@ define(["jquery",
                 this.playerAdapter.pause();
                 
                 // Return if no values related to to item
-                if (!values) {
+                if (!values || !values.annotation) {
                     console.warning("Can not get infos from updated item!");
                     return;
                 }
@@ -697,18 +695,22 @@ define(["jquery",
 
                 // If the annotation is not owned by the current user or the annotation is moved outside the timeline,
                 // the update is canceled
-                if (!values.newTrack.get("isMine") || !values.annotation.get("isMine") ||  this.getTimeInSeconds(values.item.end) > this.playerAdapter.getDuration()) {
+                if (!values.newTrack.get("isMine") || 
+                    !values.annotation.get("isMine") ||  
+                    this.getTimeInSeconds(values.item.end) > this.playerAdapter.getDuration() || 
+                    this.getTimeInSeconds(values.item.start) > this.playerAdapter.getDuration())  {
 
                     this.timeline.cancelChange();
                     
                     this.allItems[values.annotation.id] = {
-                        start  : values.item.start,
-                        end    : values.item.end,
-                        content: values.item.content,
-                        group  : this.groupTemplate(values.oldTrack.toJSON()),
-                        id     : values.annotation.id,
-                        trackId: values.oldTrack.id,
-                        model  : values.oldTrack
+                        start    : values.item.start,
+                        end      : values.item.end,
+                        content  : values.item.content,
+                        group    : this.groupTemplate(values.oldTrack.toJSON()),
+                        id       : values.annotation.id,
+                        trackId  : values.oldTrack.id,
+                        model    : values.oldTrack,
+                        className: values.item.className
                     };
 
                     this.filterItems();
@@ -738,9 +740,10 @@ define(["jquery",
                     values.annotation.destroy();
                     newAnnotation = values.newTrack.get("annotations").create(annJSON, {wait: true});
                     annotationsTool.currentSelection = newAnnotation;
+                    newAnnotation.set("level", this.PREFIX_STACKING_CLASS + this.getStackLevel(newAnnotation), {silent: true});
                     annJSON.id    = newAnnotation.get("id");
                     annJSON.track = values.newTrack.id;
-                    annJSON.level = this.PREFIX_STACKING_CLASS + this.getStackLevel(values.annotation);
+                    annJSON.level = newAnnotation.get("level");
 
                     if (annJSON.label && annJSON.label.category && annJSON.label.category.settings) {
                         annJSON.category = annJSON.label.category;
@@ -749,21 +752,22 @@ define(["jquery",
                     delete this.allItems[oldItemId];
 
                     this.allItems[annJSON.id] = {
-                        start   : values.item.start,
-                        end     : values.item.end,
-                        content : this.itemTemplate(annJSON),
-                        group   : values.item.group,
-                        id      : annJSON.id,
-                        trackId : values.newTrack.id,
-                        isPublic: values.newTrack.get("isPublic"),
-                        isMine  : values.newTrack.get("isMine"),
-                        model   : values.newTrack
+                        start    : values.item.start,
+                        end      : values.item.end,
+                        content  : this.itemTemplate(annJSON),
+                        group    : values.item.group,
+                        id       : annJSON.id,
+                        trackId  : values.newTrack.id,
+                        isPublic : values.newTrack.get("isPublic"),
+                        isMine   : values.newTrack.get("isMine"),
+                        className: annJSON.level,
+                        model    : values.newTrack
                     };
                 } else {
-                    values.annotation.set({start: start, duration: duration});
                     this.allItems[values.annotation.id] = values.item;
-                    values.annotation.save();
                     annotationsTool.currentSelection = values.annotation;
+                    values.annotation.set({start: start, duration: duration});
+                    values.annotation.save();
                 }
 
 
@@ -803,11 +807,11 @@ define(["jquery",
                 var item = this.getSelectedItemAndAnnotation(),
                     annotation;
 
-                if (!item || !item.annotion) {
+                if (!item || !item.annotation) {
                     return;
                 } 
 
-                annotion = item.annotion;
+                annotation = item.annotation;
 
                 this.updateDraggingCtrl();
                 
@@ -1002,9 +1006,9 @@ define(["jquery",
                 var track;
 
                 if (_.isString(trackId) && !annotationsTool.localStorage) {
-                    track = this.getTrack(parseInt(trackId, 10));
+                    track = annotationsTool.video.getTrack(parseInt(trackId, 10));
                 } else {
-                    track = this.getTrack(trackId);
+                    track = annotationsTool.video.getTrack(trackId);
                 }
                 
                 // If the track does not exist, and it has been thrown by an event
