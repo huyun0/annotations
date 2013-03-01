@@ -1,4 +1,4 @@
-<div class="timeline-group{{#if isMine}} mine{{/if}}" {{#if isMine}}onclick="$(window).trigger('selectTrack', ['{{id}}'])"{{/if}}>
+<div class="timeline-group{{#if isMine}} mine{{/if}} track-max-level-{{#if timlineMaxLevel}}{{timelineMaxLevel}}{{else}}0{{/if}}" {{#if isMine}}onclick="$(window).trigger('selectTrack', ['{{id}}'])"{{/if}}>
     <div class="track-id">{{id}}</div>
     {{#if isMine}}
     <i onclick="$(window).trigger('deleteTrack', ['{{id}}'])" class="delete icon-trash" title="Delete  track"></i>

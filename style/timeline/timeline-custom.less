@@ -1,3 +1,17 @@
+.stacking-level (@level) {
+    .stack-level-@{level} {
+        div.timeline-item{
+            margin-top: 18px-(@level*23px);
+        }
+    }
+}
+
+.track-max-level (@level) {
+    .track-max-level-@{level} {
+        height: (@level)*23px;
+    }
+}
+
 
 #timeline-container {
 	background-color: @white;
@@ -47,8 +61,8 @@ div.timeline-groups-text{
     }
     
     div.timeline-group {
-    		padding: 4px;
-        height: 55px;
+    	padding: 4px;
+        min-height: 60px;
         z-index: 3;
         
         &.mine:hover{
@@ -57,7 +71,7 @@ div.timeline-groups-text{
         }
                
         div.content{
-        		width: 105px;
+        	width: 105px;
             overflow: hidden;
             white-space: nowrap;
             overflow: hidden;
@@ -205,32 +219,27 @@ div.timeline-bottom-controls{
     }
 }
 
+.stacking-level(0);
+.stacking-level(1);
+.stacking-level(2);
+.stacking-level(3);
+.stacking-level(4);
+.stacking-level(5);  
+
+.track-max-level(0);
+.track-max-level(1);
+.track-max-level(2);
+.track-max-level(3);
+.track-max-level(4);
+.track-max-level(5);
+
+
 div.timeline-item{
 	background-color: fade(@grayLight,25%);
 	border: 1px solid transparent;
     padding: 2px;
     overflow: hidden;
     min-width: 20px;
-
-    &.stack-level-0 {
-        margin-top: 13px;
-    }
-
-    &.stack-level-1 {
-        margin-top: -10px;
-    }
-
-    &.stack-level-2 {
-        margin-top: -33px;
-    }
-
-    &.stack-level-3 {
-        margin-top: -56px;
-    }
-
-    &.stack-level-4 {
-        margin-top: -79px;
-    }    
     
     span{
         float: left;
@@ -267,6 +276,12 @@ div.timeline-event-selected {
         box-shadow: 0 0 2px @grayDark;
     }
 }
+
+div.timeline-event-range-drag-left, div.timeline-event-range-drag-left{
+    height: 22px!important;
+}
+
+
 
 
 
