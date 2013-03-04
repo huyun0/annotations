@@ -46,7 +46,7 @@ define(["jquery",
              * @alias module:models-video.Video#defaults
              */
             defaults: {
-                access: ACCESS.PUBLIC,
+                access: ACCESS.PRIVATE,
                 annotations: new Annotations([],this)
             },
             
