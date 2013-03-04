@@ -141,6 +141,7 @@ div.timeline-navigation{
     right: 0px!important;
     top: 0px!important;
     bottom: 0px!important;
+    display: none;
   
     > [class^="timeline-navigation-"] {
     	.btn();
@@ -167,7 +168,21 @@ div.timeline-navigation{
                
 }
 
-div#reset-zoom{
+div#timeline-custom-navigation{
+    height: 22px; 
+    border: none;
+    border-top: 2px solid @grayDark;
+    border-bottom: 2px solid @grayDark;
+    border-radius: 0;
+    background-color: @grayLight;  
+    position: relative!important;
+    left: 0px!important;
+    right: 0px!important;
+    top: 0px!important;
+    bottom: 0px!important;
+}
+
+div#reset-zoom, div#move-left, div#move-right, div#zoom-in, div#zoom-out{
     float: left;
 }
 
