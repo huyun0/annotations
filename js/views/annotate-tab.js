@@ -310,8 +310,7 @@ define(["jquery",
           onAddCategory: function (event) {
               var attributes = {
                   name    : "NEW CATEGORY", 
-                  settings: {color: this.DEFAULT_CAT_COLOR}, 
-                  scale   : annotationsTool.video.get("scales").at(0)
+                  settings: {color: this.DEFAULT_CAT_COLOR}
               };
 
               this.categories.create(_.extend(attributes, this.defaultCategoryAttributes));
