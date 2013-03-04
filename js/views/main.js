@@ -256,6 +256,10 @@ define(["jquery",
               });
 
           });
+
+          if (annotationsTool.logoutUrl) {
+              document.location = annotationsTool.logoutUrl;
+          }
       },
 
       print: function () {
