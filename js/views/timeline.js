@@ -102,10 +102,14 @@ define(["jquery",
              * @type {Map}
              */
             events: {
-                "click #add-track"            : "initTrackCreation",
-                "click #reset-zoom"           : "onTimelineResetZoom",
-                "click #filter-none"          : "disableFilter",
-                "click .filter"               : "switchFilter"
+                "click #add-track"  : "initTrackCreation",
+                "click #reset-zoom" : "onTimelineResetZoom",
+                "click #zoom-in"    : "zoomIn",
+                "click #zoom-out"   : "zoomOut",
+                "click #move-right" : "moveRight",
+                "click #move-left"  : "moveLeft", 
+                "click #filter-none": "disableFilter",
+                "click .filter"     : "switchFilter"
             },
             
             /**
@@ -185,6 +189,10 @@ define(["jquery",
                                "updateFiltersRender",
                                "disableFilter",
                                "updateDraggingCtrl",
+                               "moveRight",
+                               "moveLeft",
+                               "zoomIn",
+                               "zoomOut",
                                "redraw",
                                "reset");
                 
@@ -214,9 +222,9 @@ define(["jquery",
                     end: this.endDate,
                     min: this.startDate,
                     max: this.endDate,
-                    intervalMin: 1000,
+                    intervalMin: 5000,
                     showCustomTime: true,
-                    showNavigation: true,
+                    showNavigation: false,
                     showMajorLabels: false,
                     snapEvents: false,
                     stackEvents: true,
@@ -228,7 +236,7 @@ define(["jquery",
                     // cluster: true,
                     eventMarginAxis: 0,
                     eventMargin: 0,
-                    dragAreaWidth: 5,
+                    dragAreaWidth: 3,
                     groupsChangeable: true
                 };
                 
@@ -315,6 +323,60 @@ define(["jquery",
                 if (annotationsTool.selectedTrack) {
                     this.onTrackSelected(null, annotationsTool.selectedTrack.id);
                 }
+            },
+
+            /**
+             * Move the current range to the left
+             * @alias module:views-timeline.Timeline#moveLeft
+             * @param  {Event} event Event object
+             */
+            moveLeft: function (event) {
+                console.log("MOVE LEFT");
+                links.Timeline.preventDefault(event);
+                links.Timeline.stopPropagation(event);
+                this.timeline.move(-0.2);
+                this.timeline.trigger("rangechange");
+                this.timeline.trigger("rangechanged");
+            },
+
+            /**
+             * [moveRight description]
+             * @alias module:views-timeline.Timeline#Right
+             * @param  {Event} event Event object
+             */
+            moveRight: function (event) {
+                console.log("MOVE RIGHT");
+                links.Timeline.preventDefault(event);
+                links.Timeline.stopPropagation(event);
+                this.timeline.move(0.2);
+                this.timeline.trigger("rangechange");
+                this.timeline.trigger("rangechanged");
+            },
+
+            /**
+             * Zoom in
+             * @alias module:views-timeline.Timeline#zoomIn
+             * @param  {Event} event Event object
+             */
+            zoomIn: function (event) {
+                links.Timeline.preventDefault(event);
+                links.Timeline.stopPropagation(event);
+                this.timeline.zoom(0.4, this.timeline.getCustomTime());
+                this.timeline.trigger("rangechange");
+                this.timeline.trigger("rangechanged");
+            },
+
+            /**
+             * Zoom out
+             * @alias module:views-timeline.Timeline#zoomOut
+             * @param  {Event} event Event object
+             */
+            zoomOut: function (event) {
+                links.Timeline.preventDefault(event);
+                links.Timeline.stopPropagation(event);
+                this.timeline.zoom(-0.4, this.timeline.getCustomTime());
+                this.timeline.trigger("rangechange");
+                this.timeline.trigger("rangechanged");
             },
 
             /**
@@ -462,6 +524,7 @@ define(["jquery",
                     trackId  : track.id,
                     isPublic : track.get("isPublic"),
                     isMine   : track.get("isMine"),
+                    editable : track.get("isMine"),
                     start    : start,
                     end      : end,
                     content  : this.itemTemplate(annotationJSON),

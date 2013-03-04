@@ -5044,6 +5044,7 @@
     right: 0px!important;
     top: 0px!important;
     bottom: 0px!important;
+    display: none;
     /* Todo: Should use Icons instead */
   
   }
@@ -5154,7 +5155,24 @@
   div.timeline-navigation .timeline-navigation-move-right:after {
     content: ">";
   }
-  div#reset-zoom {
+  div#timeline-custom-navigation {
+    height: 22px;
+    border: none;
+    border-top: 2px solid #303030;
+    border-bottom: 2px solid #303030;
+    border-radius: 0;
+    background-color: #c7c7c7;
+    position: relative!important;
+    left: 0px!important;
+    right: 0px!important;
+    top: 0px!important;
+    bottom: 0px!important;
+  }
+  div#reset-zoom,
+  div#move-left,
+  div#move-right,
+  div#zoom-in,
+  div#zoom-out {
     float: left;
   }
   div.timeline-frame {
