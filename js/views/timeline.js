@@ -68,28 +68,39 @@ define(["jquery",
          */
         var Timeline = Backbone.View.extend({
             
-            /** 
+            /**
              * Main container of the timeline
+             * @alias module:views-timeline.Timeline#el
              * @type {DOM Element}
              */
             el: $("div#timeline-container")[0],
             
-            /** 
-             * Group template 
-             * @type {Moustache template}
+            /**
+             * Group template
+             * @alias module:views-timeline.Timeline#groupTemplate
+             * @type {Handlebars template}
              */
             groupTemplate: Handlebars.compile(GroupTmpl),
             
-            /** 
-             * item template 
-             * @type {Moustache template}
+            /**
+             * Item template
+             * @alias module:views-timeline.Timeline#itemTemplate
+             * @type {Handlebars template}
              */
             itemTemplate: Handlebars.compile(ItemTmpl),
             
-            /** Modal template for group insertion */
+            /**
+             * Modal template for group insertion
+             * @alias module:views-timeline.Timeline#modalGroupTemplate
+             * @type {Handlebars template}
+             */
             modalGroupTemplate: Handlebars.compile(ModalGroupTmpl),
             
-            /** Events to handle by the timeline view */
+            /**
+             * Events to handle by the timeline view
+             * @alias module:views-timeline.Timeline#event
+             * @type {Map}
+             */
             events: {
                 "click #add-track"            : "initTrackCreation",
                 "click #reset-zoom"           : "onTimelineResetZoom",
@@ -97,15 +108,17 @@ define(["jquery",
                 "click .filter"               : "switchFilter"
             },
             
-            /** 
-             * Template for void item content 
+            /**
+             * Template for void item content
+             * @alias module:views-timeline.Timeline#VOID_ITEM
              * @type {String}
              * @constant
              */
             VOID_ITEM: "<div style=\"display:none\"></div>",
             
-            /** 
-             * Default duration for annotation 
+            /**
+             * Default duration for annotation
+             * @alias module:views-timeline.Timeline#DEFAULT_DURATION
              * @type {Integer}
              * @constant
              */
@@ -113,6 +126,7 @@ define(["jquery",
 
             /**
              * Class prefix for stack level
+             * @alias module:views-timeline.Timeline#PREFIX_STACKING_CLASS
              * @type {String}
              * @constant
              */
@@ -120,12 +134,14 @@ define(["jquery",
 
             /**
              * Map containing all the items
+             * @alias module:views-timeline.Timeline#allItems
              * @type {Map}
              */
             allItems: {},
 
             /**
              * Array containing only the items who passed the filters
+             * @alias module:views-timeline.Timeline#filteredItems
              * @type {Array}
              */
             filteredItems: [],
@@ -133,7 +149,7 @@ define(["jquery",
             /**
              * Constructor
              * @alias module:views-timeline.Timeline#initialize
-             * @param {Object} attr Object literal containing the model initialion attribute.
+             * @param {PlainObject} attr Object literal containing the view initialion attributes.
              */
             initialize: function (attr) {
 
@@ -239,7 +255,7 @@ define(["jquery",
                 
                 this.tracks = annotationsTool.video.get("tracks");
                 this.listenTo(this.tracks, "add", this.addTrack);
-                this.listenTo(this.tracks, "change", this.changeTrack); 
+                this.listenTo(this.tracks, "change", this.changeTrack);
                 
                 this.$el.show();
                 this.addTracksList(this.tracks);
@@ -261,21 +277,21 @@ define(["jquery",
 
 
             /**
-             * Search for the group/track with the given name in the timeline 
+             * Search for the group/track with the given name in the timeline
              * @alias module:views-timeline.Timeline#findGroup
              * @param {module:models-annotation.Annotation} groupName the name of the group/track to search
              * @return {Object} The search group/track as timeline-group if found, or undefined
              */
             findGroup: function (groupName) {
-                    var searchedGroup;
+                var searchedGroup;
 
-                    _.each(this.groups, function (group) {
-                        if ($(group.content).find("div.content").text().toUpperCase() === groupName.toUpperCase()) {
-                            searchedGroup = group;
-                        } 
-                    })
+                _.each(this.groups, function (group) {
+                    if ($(group.content).find("div.content").text().toUpperCase() === groupName.toUpperCase()) {
+                        searchedGroup = group;
+                    }
+                });
 
-                    return searchedGroup;
+                return searchedGroup;
             },
 
 
@@ -402,7 +418,7 @@ define(["jquery",
             /**
              * Get an timeline item from the given annotation
              * @alias module:views-timeline.Timeline#generateItem
-             * @param {Annotation}  
+             * @param {Annotation} annotation The source annotation for the item
              * @param {Track} track Track where the annotation is saved
              * @return {Object} the generated timeline item
              */
@@ -456,8 +472,8 @@ define(["jquery",
             
             /**
              * Add a track to the timeline
-             *
-             * @param {Object} JSON object compose of a name and description properties. Example: {name: "New track", description: "A test track as example"}
+             * @alias module:views-timeline.Timeline#createTrack
+             * @param {PlainObject} JSON object compose of a name and description properties. Example: {name: "New track", description: "A test track as example"}
              */
             createTrack: function (param) {
                 var track;
@@ -479,7 +495,8 @@ define(["jquery",
             },
             
             /**
-             * Load the modal window to add a new track
+             * Initialize the creation of a new track, load the modal window to add a new track.
+             * @alias module:views-timeline.Timeline#initTrackCreation
              */
             initTrackCreation: function () {
                 var self = this,
@@ -579,6 +596,11 @@ define(["jquery",
                 this.filtersManager.switchFilter(id, active);
             },
 
+            /**
+             * Update the DOM elements related to the filters on filters update.
+             * @alias module:views-timeline.Timeline#updateFilterRender
+             * @param  {PlainObject} attr The plain object representing the updated filter
+             */
             updateFiltersRender: function (attr) {
                 if (attr.active) {
                     this.$el.find("#filter-" + attr.id).addClass("checked");
@@ -596,16 +618,14 @@ define(["jquery",
              */
             disableFilter: function () {
                 this.$el.find(".filter").removeClass("checked");
-
                 this.filtersManager.disableFilters();
-
                 this.filterItems();
                 this.timeline.redraw();
             },
             
             /**
              * Check the position for the changed item
-             *
+             * @alias module:views-timeline.Timeline#changeItem
              * @param {Annotation} the annotation that has been changed
              */
             changeItem: function (annotation) {
@@ -617,6 +637,7 @@ define(["jquery",
             
             /**
              * Listener for the player timeupdate
+             * @alias module:views-timeline.Timeline#onPlayerTimeUpdate
              */
             onPlayerTimeUpdate: function () {
                 var newDate = this.getFormatedDate(this.playerAdapter.getCurrentTime()),
@@ -625,7 +646,6 @@ define(["jquery",
                 this.timeline.setCustomTime(newDate);
                 
                 // Select the good items
-                //data = this.timeline.getData();
                 data = this.filteredItems;
                 
                 if (!annotationsTool.currentSelection || !this.isAnnotationSelectedonTimeline(annotationsTool.currentSelection)) {
@@ -645,11 +665,11 @@ define(["jquery",
             
             /**
              * Listener for the timeline timeupdate
-             *
-             * @param {Event} Event object
+             * @alias module:views-timeline.Timeline#onTimelineMoved
+             * @param {Event} event Event object
              */
             onTimelineMoved: function (event) {
-                var newTime = this.getTimeInSeconds(event.time) ,
+                var newTime = this.getTimeInSeconds(event.time),
                     hasToPlay = (this.playerAdapter.getStatus() === PlayerAdapter.STATUS.PLAYING);
 
                 if (hasToPlay) {
@@ -665,6 +685,7 @@ define(["jquery",
             
             /**
              * Listener for item modification
+             * @alias module:views-timeline.Timeline#onTimelineItemChanged
              */
             onTimelineItemChanged: function () {
                 var hasToPlay = (this.playerAdapter.getStatus() === PlayerAdapter.STATUS.PLAYING),
@@ -695,10 +716,10 @@ define(["jquery",
 
                 // If the annotation is not owned by the current user or the annotation is moved outside the timeline,
                 // the update is canceled
-                if (!values.newTrack.get("isMine") || 
-                    !values.annotation.get("isMine") ||  
-                    this.getTimeInSeconds(values.item.end) > this.playerAdapter.getDuration() || 
-                    this.getTimeInSeconds(values.item.start) > this.playerAdapter.getDuration())  {
+                if (!values.newTrack.get("isMine") ||
+                    !values.annotation.get("isMine") ||
+                    this.getTimeInSeconds(values.item.end) > this.playerAdapter.getDuration() ||
+                    this.getTimeInSeconds(values.item.start) > this.playerAdapter.getDuration()) {
 
                     this.timeline.cancelChange();
                     
@@ -773,7 +794,7 @@ define(["jquery",
 
                 if (this.playerAdapter.getCurrentTime() !== annotationsTool.currentSelection.get("start")) {
                     this.playerAdapter.setCurrentTime(annotationsTool.currentSelection.get("start"));
-                } 
+                }
 
                 this.filterItems();
                 this.timeline.redraw();
@@ -786,6 +807,7 @@ define(["jquery",
             
             /**
              * Listener for timeline item deletion
+             * @alias module:views-timeline.Timeline#onTimelineItemDeleted
              */
             onTimelineItemDeleted: function () {
                 var annotation = this.getSelectedItemAndAnnotation().annotation;
@@ -795,13 +817,16 @@ define(["jquery",
             
             /**
              * Listener for item insertion on timeline
+             * @alias module:views-timeline.Timeline#onTimelineItemAdded
              */
             onTimelineItemAdded: function () {
+                // No possiblity to add annotation directly from the timeline
                 this.timeline.cancelAdd();
             },
             
             /**
              * Listener for timeline item selection
+             * @alias module:views-timeline.Timeline#onTimelineItemSelected
              */
             onTimelineItemSelected: function () {
                 var item = this.getSelectedItemAndAnnotation(),
@@ -809,7 +834,7 @@ define(["jquery",
 
                 if (!item || !item.annotation) {
                     return;
-                } 
+                }
 
                 annotation = item.annotation;
 
@@ -823,13 +848,18 @@ define(["jquery",
                 }
             },
 
+            /**
+             * Listener for timeline item unselection
+             * @alias module:views-timeline.Timeline#onTimelineItemUnselected
+             * @param  {Event} event Event object
+             */
             onTimelineItemUnselected: function (event) {
                 var itemAndannotation = this.getSelectedItemAndAnnotation(),
                     annotation;
 
                 if (itemAndannotation || itemAndannotation.annotation) {
                     return;
-                } 
+                }
 
                 $(event.target).unbind("click", this.onTimelineItemUnselected);
 
@@ -844,6 +874,7 @@ define(["jquery",
             
             /**
              * Listener for annotation suppression
+             * @alias module:views-timeline.Timeline#onAnnotationDestroyed
              */
             onAnnotationDestroyed: function (annotation) {
                 if (this.ignoreDelete === annotation.get("id")) {
@@ -859,6 +890,7 @@ define(["jquery",
             
             /**
              * Reset the timeline zoom to see the whole timeline
+             * @alias module:views-timeline.Timeline#onTimelineResetZoom
              */
             onTimelineResetZoom: function () {
                 this.timeline.setVisibleChartRange(this.startDate, this.endDate);
@@ -866,7 +898,7 @@ define(["jquery",
             
             /**
              * Listener for track deletion
-             *
+             * @alias module:views-timeline.Timeline#onDeleteTrack
              * @param {Event} event the action event
              * @param {Integer} trackId Id of the track to delete
              */
@@ -923,7 +955,8 @@ define(["jquery",
             },
 
             /**
-             * Update all the items placed on the given track.
+             * Update all the items placed on the given track
+             * @alias module:views-timeline.Timeline#changeTrack
              * @param  {Track} track The freshly updated track
              * @param  {PlainObject} [options] Options like silent: true to avoid a redraw (optionnal)
              */
@@ -945,13 +978,13 @@ define(["jquery",
 
                 if (!(options && options.silent) && redrawRequired) {
                     this.filterItems();
-                    this.timeline.redraw();             
+                    this.timeline.redraw();
                 }
             },
 
             /**
              * Update the track with the given id
-             *
+             * @alias module:views-timeline.Timeline#onUpdateTrack
              * @param {Event} event the action event
              * @param {Integer} trackId Id of the track to delete
              */
@@ -979,6 +1012,11 @@ define(["jquery",
                 track.save();
             },
 
+            /**
+             * Annotation through the "<-" key
+             * @alias module:views-timeline.Timeline#onDeletePressed
+             * @param  {Event} event Event object
+             */
             onDeletePressed: function (event) {
                 var values;
 
@@ -998,9 +1036,9 @@ define(["jquery",
             
             /**
              * Listener for track selection
-             *
-             * @param {Event} event the action event
-             * @param {Integer} trackId Id of the selected track
+             * @alias module:views-timeline.Timeline#onTrackSelected
+             * @param {Event} event Event object
+             * @param {Integer} The track Id of the selected track
              */
             onTrackSelected: function (event, trackId) {
                 var track;
@@ -1025,6 +1063,7 @@ define(["jquery",
             
             /**
              * Listener for window resizing
+             * @alias module:views-timeline.Timeline#onWindowsResize
              */
             onWindowResize: function () {
                 this.timeline.redraw();
@@ -1039,9 +1078,9 @@ define(["jquery",
             
             /**
              * Get the formated date for the timeline with the given seconds
-             *
-             * @param {Double} time in seconds
-             * @returns {Date} formated date for timeline
+             * @alias module:views-timeline.Timeline#getFormatedDate
+             * @param {Double} seconds The time in seconds to convert to Date
+             * @returns {Date} Formated date for the timeline
              */
             getFormatedDate: function (seconds) {
                 var newDate = new Date(seconds * 1000);
@@ -1051,9 +1090,9 @@ define(["jquery",
             
             /**
              * Transform the given date into a time in seconds
-             *
-             * @param {Date} formated date from timeline
-             * @returns {Double} time in seconds
+             * @alias module:views-timeline.Timeline#getTimeInSeconds
+             * @param {Date} date The formated date from timeline
+             * @returns {Double} Date converted to time in seconds
              */
             getTimeInSeconds: function (date) {
                 var time = date.getHours() * 3600 + date.getMinutes() * 60 + date.getSeconds() + date.getMilliseconds() / 1000;
@@ -1062,8 +1101,7 @@ define(["jquery",
             
             /**
              * Get the current selected annotion as object containing the timeline item and the annotation
-             *
-             * @param {Date}
+             * @alias module:views-timeline.Timeline#getSelectedItemAndAnnotation
              * @returns {Object} Object containing the annotation and the timeline item. "{item: "timeline-item", annotation: "annotation-object"}"
              */
             getSelectedItemAndAnnotation: function () {
@@ -1091,13 +1129,19 @@ define(["jquery",
                     annotation  : annotation,
                     item        : this.allItems[itemId],
                     index       : selection[0].row,
-                    annotationId: itemId, 
+                    annotationId: itemId,
                     trackId     : newTrackId,
                     newTrack    : newTrack,
                     oldTrack    : oldTrack
                 };
             },
 
+            /**
+             * Check if the given annotation is currently selected on the timeline
+             * @alias module:views-timeline.Timeline#isAnnotationSelectedonTimeline
+             * @param  {Annotation}  annotation The annotation to check
+             * @return {Boolean}            If the annotation is selected or not
+             */
             isAnnotationSelectedonTimeline: function (annotation) {
                 return this.$el.find("div.timeline-event-selected div.timeline-item div.annotation-id:contains(\"" + annotation.get("id") + "\")").length !== 0;
             },
@@ -1109,8 +1153,8 @@ define(["jquery",
             updateDraggingCtrl: function () {
                 var selectedElement =  this.$el.find(".timeline-event-selected"),
                     cssProperties = {
-                      "margin-top": parseInt(selectedElement.css("margin-top"))+parseInt(selectedElement.find(".timeline-item").css("margin-top")),
-                      "height"    : selectedElement.find(".timeline-item").outerHeight()+"px"
+                        "margin-top": parseInt(selectedElement.css("margin-top"), 10) + parseInt(selectedElement.find(".timeline-item").css("margin-top"), 10),
+                        "height"    : selectedElement.find(".timeline-item").outerHeight() + "px"
                     };
 
                 this.$el.find(".timeline-event-range-drag-right, .timeline-event-range-drag-left").css(cssProperties);
@@ -1118,8 +1162,8 @@ define(["jquery",
 
             /**
              * Get annotation from item
-             *
-             * @param {Object} item related to the target annotation
+             * @alias module:views-timeline.Timeline#getAnnotationFromItem
+             * @param {Object} item Item related to the target annotation
              */
             getAnnotationFromItem: function (item) {
                 var trackId = item.trackId,
@@ -1138,7 +1182,7 @@ define(["jquery",
             
             /**
              * Get the item related to the given annotation
-             *
+             * @alias module:views-timeline.Timeline#getTimelineItemFromAnnotation
              * @param {Annotation} the annotation
              * @returns {Object} an item object extend by an index parameter
              */
@@ -1166,6 +1210,7 @@ define(["jquery",
                     trackEl,
                     classesStr,
                     indexClass,
+                    i,
 
                     // Function to filter annotation
                     rangeForAnnotation = function (a) {
@@ -1180,7 +1225,7 @@ define(["jquery",
                         classesStr = a.get("level");
                         if (typeof classesStr !== "undefined") {
                             indexClass = classesStr.search(this.PREFIX_STACKING_CLASS) + this.PREFIX_STACKING_CLASS.length;
-                            elLevel = parseInt(classesStr.substr(indexClass, classesStr.length - indexClass)) || 0;
+                            elLevel = parseInt(classesStr.substr(indexClass, classesStr.length - indexClass), 10) || 0;
                         } else {
                             elLevel = 0;
                         }
@@ -1217,7 +1262,7 @@ define(["jquery",
                     _.filter(annotations, rangeForAnnotation, this);
                 }
 
-                for (var i = 0; i < levelUsed.length; i++) {
+                for (i = 0; i < levelUsed.length; i++) {
                     if (!levelUsed[i]) {
                         maxLevel = i;
                     }
@@ -1247,7 +1292,7 @@ define(["jquery",
             
             /**
              * Get track with the given track id. Fallback method include if issues with the standard one.
-             *
+             * @alias module:views-timeline.Timeline#getTrack
              * @param {int} trackId The id from the targeted track
              * @return {Track} a track if existing, or undefined.
              */
@@ -1267,7 +1312,7 @@ define(["jquery",
 
             /**
              * Get annotation with the given annotation id. Fallback method include if issues with the standard one.
-             *
+             * @alias module:views-timeline.Timeline#getAnnotation
              * @param {int} annotationId The id from the targeted annotation
              * @param {Track} track track containing the targeted annotation
              * @return {Annotation} a track if existing, or undefined.
@@ -1288,6 +1333,7 @@ define(["jquery",
             
             /**
              * Reset the view
+             * @alias module:views-timeline.Timeline#reset
              */
             reset: function () {
                 var annotations;

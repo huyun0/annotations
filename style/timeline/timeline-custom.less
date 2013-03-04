@@ -34,6 +34,10 @@ i.check{
     visibility: visible;
 }
 
+div.timeline-frame, div.timeline-groups-axis {
+    overflow: visible!important;
+}
+
  
 div.timeline-event {
     background-color: rgba(249, 103, 38, 0.6);
@@ -132,6 +136,11 @@ div.timeline-navigation{
     border-bottom: 2px solid @grayDark;
     border-radius: 0;
     background-color: @grayLight;  
+    position: relative!important;
+    left: 0px!important;
+    right: 0px!important;
+    top: 0px!important;
+    bottom: 0px!important;
   
     > [class^="timeline-navigation-"] {
     	.btn();
