@@ -291,11 +291,16 @@
     div.comments-container {
       background-color: @grayLight;
       color: @black;
+      width:100%;
+      
+      textarea { 
+				resize:vertical;  
+			}
       
       .comment-header {
 
-				padding: 2px; 
-				
+				padding: 2px;
+					
 				span.add-comment {
 					line-height: 16px;
 					min-height: 16px;
@@ -306,12 +311,12 @@
 						color: @grayDark;
 					}
 				}
-				textarea { 
-						resize:vertical;  
-				}
 				
-				button {
-					margin-bottom: 5px;
+				.button-bar {
+					text-align: right;
+					button {
+						margin-bottom: 5px;
+					}
 				}
 			}
 			
