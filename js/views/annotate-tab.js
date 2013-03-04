@@ -310,7 +310,10 @@ define(["jquery",
           onAddCategory: function (event) {
               var attributes = {
                   name    : "NEW CATEGORY", 
-                  settings: {color: this.DEFAULT_CAT_COLOR}
+                  settings: {
+                      color: this.DEFAULT_CAT_COLOR, 
+                      hasScale: false
+                  }
               };
 
               this.categories.create(_.extend(attributes, this.defaultCategoryAttributes));
