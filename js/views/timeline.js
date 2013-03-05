@@ -237,7 +237,7 @@ define(["jquery",
                     // cluster: true,
                     eventMarginAxis: 0,
                     eventMargin: 0,
-                    dragAreaWidth: 1,
+                    dragAreaWidth: 5,
                     groupsChangeable: true
                 };
                 
@@ -752,7 +752,6 @@ define(["jquery",
                     this.$el.find("div.timeline-event-selected div.timeline-event-content").one("click", this.onTimelineItemUnselected);
                 }
 
-
                 this.moveToCurrentTime();
             },
             
@@ -1245,12 +1244,19 @@ define(["jquery",
              */
             updateDraggingCtrl: function () {
                 var selectedElement =  this.$el.find(".timeline-event-selected"),
+                    item = this.getSelectedItemAndAnnotation(),
                     cssProperties = {
-                        "margin-top": parseInt(selectedElement.css("margin-top"), 10) + parseInt(selectedElement.find(".timeline-item").css("margin-top"), 10),
+                        "margin-top": parseInt(selectedElement.css("margin-top"), 10) + parseInt(selectedElement.find(".timeline-item").css("margin-top"), 10) + "px",
                         "height"    : selectedElement.find(".timeline-item").outerHeight() + "px"
                     };
 
-                this.$el.find(".timeline-event-range-drag-right, .timeline-event-range-drag-left").css(cssProperties);
+                this.$el.find(".timeline-event-range-drag-left").css(cssProperties);
+
+                if (item && item.annotation && item.annotation.get("duration") < 1) {
+                    cssProperties["margin-left"] = selectedElement.find(".timeline-item").outerWidth() + "px";
+                }
+
+                this.$el.find(".timeline-event-range-drag-right").css(cssProperties);
             },
 
             /**
