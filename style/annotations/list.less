@@ -34,7 +34,10 @@
     
     div.annotation{
         background-color: @white;
-				border-top: 2px solid @grayDark;
+        margin-top: 2px;
+        border-left: 1px solid @gray;      
+        border-right: 1px solid @gray;      
+
 				
 				&:first-child {
 					border-top: none;
@@ -43,15 +46,11 @@
         &:hover{
           cursor: pointer;   
         }
-        
+               
         &.selected {
-        
-					border-left: 1px solid @red;
-					border-right: 1px solid @red;
-					border-bottom: 1px solid @red;
+					border: 1px solid @red;      
 					
         	.header-container{
-						border-top: 1px solid @red;         
 						background-image: url("../img/annotation/pattern.png");
         		background-repeat: repeat-x;
         		background-position: top;
@@ -65,7 +64,6 @@
 				@headerSumHeight: @headerHeight+(2*@headerPadding);
       
 				.header-container {
-				
 					margin: 0;
 					height: @headerSumHeight;
 					//line-height: @headerSumHeight;
@@ -291,11 +289,17 @@
     div.comments-container {
       background-color: @grayLight;
       color: @black;
-      width:100%;
       
       textarea { 
 				resize:vertical;  
 			}
+			
+			.button-bar {
+					text-align: right;
+					button {
+						margin-bottom: 5px;
+					}
+				}
       
       .comment-header {
 
@@ -304,20 +308,15 @@
 				span.add-comment {
 					line-height: 16px;
 					min-height: 16px;
-					display: inline-block;
-					text-align:right;	
-					width:100%;				
+					display: block;
+					text-align:right;
+						
 					a.add-comment {		
 						color: @grayDark;
 					}
 				}
 				
-				.button-bar {
-					text-align: right;
-					button {
-						margin-bottom: 5px;
-					}
-				}
+
 			}
 			
 			.comment-list {
@@ -350,7 +349,6 @@
 						background-color: transparent;
 						margin: 0;
 					} 
- 
 				}	
 			}
     }
