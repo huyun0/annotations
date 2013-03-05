@@ -26,10 +26,10 @@ define(["jquery",
          *  View for comments
          */
         var CommentsContainer = Backbone.View.extend({
-        	
+          
           tagName: "div",
           
-          className: "in comments-container",
+          className: "comments-container collapse in",
           
           /** View template */
           template: Handlebars.compile(Template),
@@ -38,10 +38,10 @@ define(["jquery",
           
           /** Events to handle */
           events: {
-        	"click a.add-comment" : "onAddComment",
-            "click a.collapse-comment" : "onCollapse",
-            "click button[type=submit]" : "onSubmit",
-        	"click button[type=button]" : "onCancelComment"
+              "click a.add-comment"       : "onAddComment",
+              "click a.collapse-comment"  : "onCollapse",
+              "click button[type=submit]" : "onSubmit",
+              "click button[type=button]" : "onCancelComment"
           },
           
           /**
@@ -49,7 +49,7 @@ define(["jquery",
            */
           initialize: function(attr){
             this.annotationId = attr.id;
-            this.id = "comments-container"+attr.id;
+            this.id = "comments-container" + attr.id;
             this.el.id = this.id;
             
             this.comments = attr.comments;
@@ -60,11 +60,15 @@ define(["jquery",
             _.bindAll(this,"render","onCollapse", "onAddComment", "onSubmit", "onCancelComment");
             
             _.each(this.comments.toArray(), function (comment) {
-            	this.addComment(comment);
+              this.addComment(comment);
             }, this);
             
             // Add backbone events to the model
             _.extend(this.comments, Backbone.Events);
+
+            if (typeof attr.collapsed !== "undefined") {
+                this.collapsed = attr.collapsed;
+            } 
             
             this.listenTo(this.comments, "destroy", this.deleteView);
             
@@ -75,20 +79,23 @@ define(["jquery",
            * Render this view
            */
           render: function(){
-        	this.$el.html(this.template({id: this.annotationId, comments: this.comments.models}));
-        	var commentList = this.$el.find("div#comment-list"+this.annotationId);
-        	commentList.empty();
-            _.each(this.commentViews, function (commentView) {
-            	commentList.append(commentView.render().$el);
-            }, this);
-            
-        	if(!this.collapsed) {
-        		commentList.removeClass("collapse").addClass("in");
-        		this.$el.find(".collapse-comment > i").toggleClass("icon-chevron-right").toggleClass("icon-chevron-down");
-        	}
-            
-            this.delegateEvents(this.events);
-            return this;
+              var commentList;
+
+              this.$el.html(this.template({id: this.annotationId, comments: this.comments.models, collapsed: this.collapsed}));
+              commentList = this.$el.find("div#comment-list" + this.annotationId);
+              commentList.empty();
+                _.each(this.commentViews, function (commentView) {
+                  commentList.append(commentView.render().$el);
+                }, this);
+
+              if (this.collapsed) {
+                  this.$el.collapse("hide");
+              } else {
+                  this.$el.collapse("show");
+              }
+
+              this.delegateEvents(this.events);
+              return this;
           },
           
           /**
@@ -119,24 +126,24 @@ define(["jquery",
            * Submit a comment to the backend
            */
           onSubmit: function(event) {
-        	  var textValue = this.$el.find("textarea").val();
-        	  if(textValue == '')
-        		  return;
-        	  var commentModel = this.comments.create({text: textValue});
+            var textValue = this.$el.find("textarea").val();
+            if(textValue == '')
+              return;
+            var commentModel = this.comments.create({text: textValue});
               
-        	  this.cancel();
-        	  this.addComment(commentModel);
+            this.cancel();
+            this.addComment(commentModel);
           },
           
           addComment: function(comment) {
-        	  var commentModel = new CommentView({model: comment});
-        	  this.commentViews.push(commentModel);
-        	  this.$el.find("div#comment-list"+this.annotationId).append(commentModel.render().$el);
-        	  if(this.comments.length == 1) {
-        		  this.render();
-        	  } else {
-        		  this.$el.find("> span.comments").text(this.comments.length+" Comments");
-        	  }
+            var commentModel = new CommentView({model: comment});
+            this.commentViews.push(commentModel);
+            this.$el.find("div#comment-list"+this.annotationId).append(commentModel.render().$el);
+            if(this.comments.length == 1) {
+              this.render();
+            } else {
+              this.$el.find("> span.comments").text(this.comments.length+" Comments");
+            }
           },
           
           /**
@@ -149,29 +156,34 @@ define(["jquery",
           },
           
           onCancelComment: function(event) {
-        	event.stopImmediatePropagation();
-        	this.cancel();
+          event.stopImmediatePropagation();
+          this.cancel();
           },
           
           cancel: function() {
-        	  this.$el.find("textarea").hide().val('');
-        	  this.$el.find("button").addClass("hide");
+            this.$el.find("textarea").hide().val('');
+            this.$el.find("button").addClass("hide");
           },
           
           /**
            * Toggle the visibility of the comments container
            */
           onCollapse: function(event){
-            event.stopImmediatePropagation();
+              if (event) {
+                  event.stopImmediatePropagation();
+              }
 
-            this.collapsed = !this.collapsed;
-            
-            this.$el.find(".collapse-comment > i").toggleClass("icon-chevron-right").toggleClass("icon-chevron-down");
-            
-            if(this.collapsed)
-                this.$el.find("div.in").collapse("hide");
-            else
-                this.$el.find("div.collapse").collapse("show");
+              this.collapsed = !this.collapsed;
+              
+              this.$el.find(".collapse-comment > i").toggleClass("icon-chevron-right").toggleClass("icon-chevron-down");
+              
+              if (this.collapsed) {
+                  this.$el.collapse("hide");
+                  this.$el.find("div.in").collapse("hide");
+              } else {
+                  this.$el.collapse("show");
+                  this.$el.find("div.collapse").collapse("show");
+              }
           }
           
         });

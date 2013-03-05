@@ -86,33 +86,33 @@ function ($, _not, PlayerAdapter, Annotation, User, CommentsContainer, Template,
 
         deleted: false,
 
-        collapsed: false,
+        collapsed: true,
 
         /** Events to handle */
         events: {
-            "click": "onSelect",
-            "click .toggle-edit": "switchEditModus",
-            "click .proxy-anchor": "stopPropagation",
-            "click .freetext textarea": "stopPropagation",
-            "click .scaling select": "stopPropagation",
-            "click .end-value": "stopPropagation",
-            "click .start-value": "stopPropagation",
-            "click i.delete": "deleteFull",
-            "click .select": "onSelect",
-            "click button.in" : "setCurrentTimeAsStart",
-            "click button.out" : "setCurrentTimeAsEnd",
-            "click a.collapse": "onCollapse",
-            "dblclick .start": "startEdit",
-            "dblclick .end": "startEdit",
-            "dblclick .end-btn": "startEdit",
-            "dblclick .start-btn": "startEdit",
-            "keydown .start-value": "saveStart",
-            "keydown .end-value": "saveEnd",
-            "keydown .freetext textarea": "saveFreeText",
-            "focusout .start-value": "saveStart",
-            "focusout .end-value": "saveEnd",
+            "click"                      : "onSelect",
+            "click .toggle-edit"         : "switchEditModus",
+            "click .proxy-anchor"        : "stopPropagation",
+            "click .freetext textarea"   : "stopPropagation",
+            "click .scaling select"      : "stopPropagation",
+            "click .end-value"           : "stopPropagation",
+            "click .start-value"         : "stopPropagation",
+            "click i.delete"             : "deleteFull",
+            "click .select"              : "onSelect",
+            "click button.in"            : "setCurrentTimeAsStart",
+            "click button.out"           : "setCurrentTimeAsEnd",
+            "click a.collapse"           : "onCollapse",
+            "dblclick .start"            : "startEdit",
+            "dblclick .end"              : "startEdit",
+            "dblclick .end-btn"          : "startEdit",
+            "dblclick .start-btn"        : "startEdit",
+            "keydown .start-value"       : "saveStart",
+            "keydown .end-value"         : "saveEnd",
+            "keydown .freetext textarea" : "saveFreeText",
+            "focusout .start-value"      : "saveStart",
+            "focusout .end-value"        : "saveEnd",
             "focusout .freetext textarea": "saveFreeText",
-            "change .scaling select": "saveScaling"
+            "change .scaling select"     : "saveScaling"
         },
 
         /**
@@ -145,7 +145,7 @@ function ($, _not, PlayerAdapter, Annotation, User, CommentsContainer, Template,
 
             this.isEditEnable = false;
 
-            this.commentContainer = new CommentsContainer({id: this.id, comments: this.model.get("comments")});
+            this.commentContainer = new CommentsContainer({id: this.id, comments: this.model.get("comments"), collapsed: this.collapsed});
 
             if (this.model.get("label")) {
                 this.scale = annotationsTool.video.get("scales").get(this.model.get("label").category.scale_id);
@@ -497,8 +497,13 @@ function ($, _not, PlayerAdapter, Annotation, User, CommentsContainer, Template,
 
             this.$el.find("> .header-container > div > a.collapse > i").toggleClass("icon-chevron-right").toggleClass("icon-chevron-down");
 
-            if(this.collapsed) this.$el.find("> div.in").collapse("hide");
-            else this.$el.find("> div.collapse").collapse("show");
+            if (this.collapsed) {
+                this.$el.find("> div.text-container.in").collapse("hide");
+            } else {
+                this.$el.find("> div.text-container.collapse").collapse("show");
+            }
+
+            this.commentContainer.onCollapse();
         }
 
     });

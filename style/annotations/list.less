@@ -12,7 +12,7 @@
    	@min-height: 300px;
     
     &.expanded {
-    	min-height: @min-height;
+    	//min-height: @min-height;
     }
 
     #content-list{
@@ -292,6 +292,7 @@
       background-color: @grayLight;
       color: @black;
       width:100%;
+      overflow: hidden;
       
       textarea { 
 				resize:vertical;  
@@ -320,39 +321,39 @@
 				}
 			}
 			
-			.comment-list {
-			
+		.comment-list {
+		
 	      font-size: 0.92em;
 	      padding: 2px; 
 
-				> div[id^="comment"] {
-					padding: 5px;
+			> div[id^="comment"] {
+				padding: 5px;
 
-					&:nth-child(odd) {
-						background-color:@grayLighter;
-					}  
-					&:nth-child(even) {
-						background-color:@white;
-					}					    	
-					span.header {
-						display: block;
-						font-size: 1em;
-						
-						.username {
-							color: @black;
-							font-weight: bold;
-						}
-						.date {
-							color: #707070;
-						}
-					}			
-					span.text {
-						background-color: transparent;
-						margin: 0;
-					} 
- 
-				}	
-			}
+				&:nth-child(odd) {
+					background-color:@grayLighter;
+				}  
+				&:nth-child(even) {
+					background-color:@white;
+				}					    	
+				span.header {
+					display: block;
+					font-size: 1em;
+					
+					.username {
+						color: @black;
+						font-weight: bold;
+					}
+					.date {
+						color: #707070;
+					}
+				}			
+				span.text {
+					background-color: transparent;
+					margin: 0;
+				} 
+
+			}	
+		}
     }
 
     .comments-container.collapse {
@@ -375,5 +376,5 @@
   margin-right: 5px;
 }
 .collapse-comment {
-	.collapse();
+	//.collapse();
 }
