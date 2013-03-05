@@ -66,7 +66,7 @@
 				.header-container {
 					margin: 0;
 					height: @headerSumHeight;
-					//line-height: @headerSumHeight;
+					line-height: @headerSumHeight;
 					padding: 0 5px;
 		      background-color: @grayLighter;
 
@@ -83,21 +83,12 @@
 				    height: @headerSumHeight;
 					}				
 				    
-					& * {
-						vertical-align: top;
-					}
-					
-					i { //Center all icons
-						vertical-align: middle;			    	
-					}
 		      button {
-        		border:none;
 					  height: @headerSumHeight;
 					  border: 1px solid @btnBorder;
-					  border-top: none;
 					  .box-sizing(border-box);
 					  padding: @headerPadding;
-					  vertical-align: middle;
+					  vertical-align: top;
 					  line-height: headerHeight;    	
         	}			
 				}	
@@ -141,7 +132,8 @@
                 visibility: visible;
             }
 
-            .end {
+            .start,.end  {
+                background:@white;
                 &.no-duration {
                     display: inline-block;
                 }
@@ -165,12 +157,10 @@
 
 		.start,.end{
 			cursor: text;
-			background-color: fade(@white,60%);
-			height: @headerHeight;
-			padding: @headerPadding;
 			display: inline-block;
 			position: relative;
 			color: @black;
+			background-color: fade(@white,60%);
 
             &.no-duration {
                 display: none;
@@ -181,17 +171,18 @@
 				border: none;
 				position: relative;
 				z-index: 300;
-				padding: 0;
 				margin: 0;
+				padding: 0;				
 				box-shadow: none;
 				color: @black;
 				text-align: center;
 				font-family: monospace;
+				background:@white;
 
 				&[disabled] {
+					background:transparent;
 					z-index: 100;
 					border: none;
-					background: none;
 					cursor: text;
 				}
 
@@ -215,14 +206,15 @@
         span.scaling{
 
             select {
-							width: 50px;
+							width: 60px;
 							height: @headerSumHeight;
 							padding: @headerPadding;
 							margin: 0;
 							font-size: 0.85em;
 							color: @white;
 							background-color: @black;
-							border: none;                
+							border: none; 
+							vertical-align:top;							               
 					  }
 
             span {
@@ -238,19 +230,16 @@
 							font-size: 0.9em;
 							display: inline-block;
 							text-align: center;
+							vertical-align:top;
             }
         }				
 				
         span.category{
 					color: @gray;
-					vertical-align: middle;
 
 					span.abbreviation {
 						color: @black;
 						font-weight: bold;
-						display:inline-block;
-						height: @headerSumHeight;
-						vertical-align: middle;
 					}               
         }				
 

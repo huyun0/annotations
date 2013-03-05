@@ -5032,6 +5032,7 @@
     width: 1px;
   }
   div.timeline-navigation {
+    display: block;
     z-index: 4;
     height: 22px;
     border: none;
@@ -5259,6 +5260,7 @@
     padding: 2px;
     overflow: hidden;
     min-width: 20px;
+    z-index: 3;
   }
   div.timeline-item span {
     float: left;
@@ -5281,7 +5283,7 @@
   }
   div.timeline-event-selected {
     background: none;
-    z-index: 10;
+    z-index: 2;
   }
   div.timeline-event-selected div.timeline-item {
     border: 1px solid #da0000;
@@ -6044,6 +6046,7 @@
   #list-container div.annotation .header-container {
     margin: 0;
     height: 20px;
+    line-height: 20px;
     padding: 0 5px;
     background-color: #eaeaea;
   }
@@ -6058,23 +6061,15 @@
     white-space: nowrap;
     height: 20px;
   }
-  #list-container div.annotation .header-container * {
-    vertical-align: top;
-  }
-  #list-container div.annotation .header-container i {
-    vertical-align: middle;
-  }
   #list-container div.annotation .header-container button {
-    border: none;
     height: 20px;
     border: 1px solid #000000;
-    border-top: none;
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     -ms-box-sizing: border-box;
     box-sizing: border-box;
     padding: 2px;
-    vertical-align: middle;
+    vertical-align: top;
     line-height: headerHeight;
   }
   #list-container div.annotation .edit {
@@ -6104,6 +6099,11 @@
     display: inline-block;
     visibility: visible;
   }
+  #list-container div.annotation.edit-on .start,
+  #list-container div.annotation.edit-on .end {
+    background: #ffffff;
+  }
+  #list-container div.annotation.edit-on .start.no-duration,
   #list-container div.annotation.edit-on .end.no-duration {
     display: inline-block;
   }
@@ -6123,12 +6123,10 @@
   #list-container div.annotation .start,
   #list-container div.annotation .end {
     cursor: text;
-    background-color: rgba(255, 255, 255, 0.6);
-    height: 16px;
-    padding: 2px;
     display: inline-block;
     position: relative;
     color: #000000;
+    background-color: rgba(255, 255, 255, 0.6);
   }
   #list-container div.annotation .start.no-duration,
   #list-container div.annotation .end.no-duration {
@@ -6140,18 +6138,19 @@
     border: none;
     position: relative;
     z-index: 300;
-    padding: 0;
     margin: 0;
+    padding: 0;
     box-shadow: none;
     color: #000000;
     text-align: center;
     font-family: monospace;
+    background: #ffffff;
   }
   #list-container div.annotation .start input[disabled],
   #list-container div.annotation .end input[disabled] {
+    background: transparent;
     z-index: 100;
     border: none;
-    background: none;
     cursor: text;
   }
   #list-container div.annotation .start input.error,
@@ -6172,7 +6171,7 @@
     height: 16px;
   }
   #list-container div.annotation span.scaling select {
-    width: 50px;
+    width: 60px;
     height: 20px;
     padding: 2px;
     margin: 0;
@@ -6180,6 +6179,7 @@
     color: #ffffff;
     background-color: #000000;
     border: none;
+    vertical-align: top;
   }
   #list-container div.annotation span.scaling span {
     background-color: #000000;
@@ -6194,17 +6194,14 @@
     font-size: 0.9em;
     display: inline-block;
     text-align: center;
+    vertical-align: top;
   }
   #list-container div.annotation span.category {
     color: #4b4b4b;
-    vertical-align: middle;
   }
   #list-container div.annotation span.category span.abbreviation {
     color: #000000;
     font-weight: bold;
-    display: inline-block;
-    height: 20px;
-    vertical-align: middle;
   }
   #list-container div.annotation span.text {
     display: block;
