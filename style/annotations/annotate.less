@@ -113,9 +113,6 @@ i.check{
 
 	#label-tabs-contents
 	
-		.carousel-inner {
-		}
-		
 		div{
 			padding: 0px;
 			&.carousel{
@@ -354,12 +351,13 @@ i.check{
 		
 		div.controls {
 			text-align: right;
+			border-bottom: 1px solid @white;
 		}
 
 		div.pagination{
 		
-		 border-bottom: 2px solid @gray;
-			margin: 0px;
+			border-bottom: 2px solid @gray;
+			margin: 0 0 -1px 0; //Hide white border of div.controls
 			height: @controlsHeight;
 			text-align: right;
 			

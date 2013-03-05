@@ -1,14 +1,15 @@
 <a href="#{{id}}" class="proxy-anchor"></a>
 <div class="header-container" {{#if label.category}}style="background-color:{{label.category.settings.color}}"{{/if}}>
 	<div class="right">
-		<i class="icon-comment-amount"><span class="comment-amount">{{numberOfComments}}</span></i>
-		{{#if isMine}}
-		<i class="toggle-edit icon-pencil" title="Edit annotation."></i>
-		{{/if}}
+		<i class="icon-comment-amount" title="{{numberOfComments}} Comment(s)"><span class="comment-amount">{{numberOfComments}}</span></i>
 
 		{{#if created_by}}
 		<i class="icon-info-sign" title="added by {{#if created_by_nickname}}{{created_by_nickname}}{{else}}{{nickname created_by}}{{/if}} on {{track}}"></i>
     {{/if}}
+
+		{{#if isMine}}
+		<i class="toggle-edit icon-pencil" title="Edit annotation."></i>
+		{{/if}}
     
     {{#if isMine}}
 		<i class="delete icon-trash" title="Delete annotation."></i>
