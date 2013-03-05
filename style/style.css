@@ -5583,26 +5583,26 @@
   #annotate-container input.file {
     display: none;
   }
-  #annotate-container div {
+  #annotate-container #label-tabs-contents div {
     padding: 0px;
   }
-  #annotate-container div.carousel {
+  #annotate-container #label-tabs-contents div.carousel {
     height: 190px;
     overflow: auto;
     margin-bottom: 0;
   }
-  #annotate-container div.carousel .row-fluid > .span1 {
+  #annotate-container #label-tabs-contents div.carousel .row-fluid > .span1 {
     width: 8.33333%;
   }
-  #annotate-container div.carousel .row-fluid > [class*="span1"] {
+  #annotate-container #label-tabs-contents div.carousel .row-fluid > [class*="span1"] {
     margin-left: 0;
   }
-  #annotate-container div.carousel .category-item {
+  #annotate-container #label-tabs-contents div.carousel .category-item {
     height: 100%;
     /* Position 6 to 12 need to carry the scaling on the left side */
   
   }
-  #annotate-container div.carousel .category-item .catItem-header {
+  #annotate-container #label-tabs-contents div.carousel .category-item .catItem-header {
     text-align: left;
     height: 25px;
     padding: 1px 3px;
@@ -5612,10 +5612,10 @@
     border-right: 1px solid #ffffff;
     border-bottom: 1px solid #ffffff;
   }
-  #annotate-container div.carousel .category-item .catItem-header .edit {
+  #annotate-container #label-tabs-contents div.carousel .category-item .catItem-header .edit {
     display: none;
   }
-  #annotate-container div.carousel .category-item .catItem-header input {
+  #annotate-container #label-tabs-contents div.carousel .category-item .catItem-header input {
     width: 45px;
     margin: 0 0 3px 0;
     padding: 1px;
@@ -5623,7 +5623,7 @@
     text-overflow: clip;
     color: #000000;
   }
-  #annotate-container div.carousel .category-item .catItem-header input[disabled] {
+  #annotate-container #label-tabs-contents div.carousel .category-item .catItem-header input[disabled] {
     margin: 0;
     text-overflow: ellipsis;
     background: none;
@@ -5632,12 +5632,12 @@
     border: none;
     width: 100%;
   }
-  #annotate-container div.carousel .category-item .catItem-header .colorPicker-picker {
+  #annotate-container #label-tabs-contents div.carousel .category-item .catItem-header .colorPicker-picker {
     display: inline-block;
     background-image: url("../img/annotation/icons-grey.png");
     background-position: -384px -168px;
   }
-  #annotate-container div.carousel .category-item .label-item {
+  #annotate-container #label-tabs-contents div.carousel .category-item .label-item {
     padding: 3px;
     height: 22px;
     position: relative;
@@ -5650,20 +5650,20 @@
     -ms-box-sizing: border-box;
     box-sizing: border-box;
   }
-  #annotate-container div.carousel .category-item .label-item .edit {
+  #annotate-container #label-tabs-contents div.carousel .category-item .label-item .edit {
     display: none;
   }
-  #annotate-container div.carousel .category-item .label-item .item-abbreviation {
+  #annotate-container #label-tabs-contents div.carousel .category-item .label-item .item-abbreviation {
     width: 28px;
   }
-  #annotate-container div.carousel .category-item .label-item span.item-abbreviation:hover {
+  #annotate-container #label-tabs-contents div.carousel .category-item .label-item span.item-abbreviation:hover {
     cursor: pointer;
   }
-  #annotate-container div.carousel .category-item .label-item .item-value {
+  #annotate-container #label-tabs-contents div.carousel .category-item .label-item .item-value {
     width: 100%;
     margin-left: 4px;
   }
-  #annotate-container div.carousel .category-item .label-item .read-only {
+  #annotate-container #label-tabs-contents div.carousel .category-item .label-item .read-only {
     color: #000000;
     display: block;
     width: 100%;
@@ -5678,7 +5678,7 @@
     -ms-box-sizing: border-box;
     box-sizing: border-box;
   }
-  #annotate-container div.carousel .category-item .label-item input {
+  #annotate-container #label-tabs-contents div.carousel .category-item .label-item input {
     color: #000000;
     background-color: #ffffff;
     float: left;
@@ -5687,32 +5687,32 @@
     margin: 0px;
     display: inline-block;
   }
-  #annotate-container div.carousel .category-item .label-item input[disabled] {
+  #annotate-container #label-tabs-contents div.carousel .category-item .label-item input[disabled] {
     display: none;
   }
-  #annotate-container div.carousel .category-item .label-item .item-icon {
+  #annotate-container #label-tabs-contents div.carousel .category-item .label-item .item-icon {
     float: right;
   }
-  #annotate-container div.carousel .category-item .label-item:hover {
+  #annotate-container #label-tabs-contents div.carousel .category-item .label-item:hover {
     background-color: rgba(255, 255, 255, 0.4);
   }
-  #annotate-container div.carousel .category-item .label-item.scale-disabled {
+  #annotate-container #label-tabs-contents div.carousel .category-item .label-item.scale-disabled {
     cursor: pointer;
   }
-  #annotate-container div.carousel .category-item .label-item.scale-disabled:active {
+  #annotate-container #label-tabs-contents div.carousel .category-item .label-item.scale-disabled:active {
     background-color: transparent;
   }
-  #annotate-container div.carousel .category-item .label-item.scale-enabled {
+  #annotate-container #label-tabs-contents div.carousel .category-item .label-item.scale-enabled {
     /* Hover needs to be done twice to keep the overlay open when mouse enters the .scaling area */
   
   }
-  #annotate-container div.carousel .category-item .label-item.scale-enabled:hover .scaling {
+  #annotate-container #label-tabs-contents div.carousel .category-item .label-item.scale-enabled:hover .scaling {
     display: block;
   }
-  #annotate-container div.carousel .category-item .label-item.scale-enabled .scaling:hover {
+  #annotate-container #label-tabs-contents div.carousel .category-item .label-item.scale-enabled .scaling:hover {
     display: block;
   }
-  #annotate-container div.carousel .category-item .label-item.scale-enabled .scaling {
+  #annotate-container #label-tabs-contents div.carousel .category-item .label-item.scale-enabled .scaling {
     display: none;
     background-color: #4b4b4b;
     position: absolute;
@@ -5724,7 +5724,7 @@
     max-width: 250px;
     min-width: 145px;
   }
-  #annotate-container div.carousel .category-item .label-item.scale-enabled .scaling:before {
+  #annotate-container #label-tabs-contents div.carousel .category-item .label-item.scale-enabled .scaling:before {
     right: 100%;
     border: solid transparent;
     content: " ";
@@ -5737,7 +5737,7 @@
     border-width: 8px;
     margin-top: 2px;
   }
-  #annotate-container div.carousel .category-item .label-item.scale-enabled .scaling li {
+  #annotate-container #label-tabs-contents div.carousel .category-item .label-item.scale-enabled .scaling li {
     list-style: none;
     display: block;
     background-color: #000000;
@@ -5759,44 +5759,45 @@
     text-overflow: ellipsis;
     white-space: nowrap;
   }
-  #annotate-container div.carousel .category-item .label-item.scale-enabled .scaling li:hover {
+  #annotate-container #label-tabs-contents div.carousel .category-item .label-item.scale-enabled .scaling li:hover {
     cursor: pointer;
     background-color: #ffffff;
     color: #000000;
   }
-  #annotate-container div.carousel .category-item .label-item.scale-enabled .scaling li:active {
+  #annotate-container #label-tabs-contents div.carousel .category-item .label-item.scale-enabled .scaling li:active {
     background-color: #eaeaea;
     color: #303030;
   }
-  #annotate-container div.carousel .category-item:nth-child(1n+7) .scale-enabled .scaling {
+  #annotate-container #label-tabs-contents div.carousel .category-item:nth-child(1n+7) .scale-enabled .scaling {
     right: 100%;
     left: auto;
   }
-  #annotate-container div.carousel .category-item:nth-child(1n+7) .scale-enabled .scaling:before {
+  #annotate-container #label-tabs-contents div.carousel .category-item:nth-child(1n+7) .scale-enabled .scaling:before {
     left: 100%;
     right: auto;
     border-color: rgba(0, 0, 0, 0);
     border-right-color: rgba(0, 0, 0, 0);
     border-left-color: #000000;
   }
-  #annotate-container div div.controls {
+  #annotate-container #label-tabs-contents div div.controls {
     text-align: right;
+    border-bottom: 1px solid #ffffff;
   }
-  #annotate-container div div.pagination {
+  #annotate-container #label-tabs-contents div div.pagination {
     border-bottom: 2px solid #4b4b4b;
-    margin: 0px;
+    margin: 0 0 -1px 0;
     height: 22px;
     text-align: right;
   }
-  #annotate-container div div.pagination ul {
+  #annotate-container #label-tabs-contents div div.pagination ul {
     box-shadow: none;
     border-radius: 0;
   }
-  #annotate-container div div.pagination li.active a {
+  #annotate-container #label-tabs-contents div div.pagination li.active a {
     background-color: #eaeaea;
     background-image: none;
   }
-  #annotate-container div div.pagination a {
+  #annotate-container #label-tabs-contents div div.pagination a {
     display: inline-block;
     *display: inline;
     /* IE7 inline-block hack */
@@ -5854,35 +5855,35 @@
     height: 22px;
     line-height: 22px;
   }
-  #annotate-container div div.pagination a:hover,
-  #annotate-container div div.pagination a:active,
-  #annotate-container div div.pagination a.active,
-  #annotate-container div div.pagination a.disabled,
-  #annotate-container div div.pagination a[disabled] {
+  #annotate-container #label-tabs-contents div div.pagination a:hover,
+  #annotate-container #label-tabs-contents div div.pagination a:active,
+  #annotate-container #label-tabs-contents div div.pagination a.active,
+  #annotate-container #label-tabs-contents div div.pagination a.disabled,
+  #annotate-container #label-tabs-contents div div.pagination a[disabled] {
     background-color: #b0b0b0;
   }
-  #annotate-container div div.pagination a:active,
-  #annotate-container div div.pagination a.active {
+  #annotate-container #label-tabs-contents div div.pagination a:active,
+  #annotate-container #label-tabs-contents div div.pagination a.active {
     background-color: #979797 \9;
   }
-  #annotate-container div div.pagination a:hover,
-  #annotate-container div div.pagination a:active,
-  #annotate-container div div.pagination a.active,
-  #annotate-container div div.pagination a.disabled,
-  #annotate-container div div.pagination a[disabled] {
+  #annotate-container #label-tabs-contents div div.pagination a:hover,
+  #annotate-container #label-tabs-contents div div.pagination a:active,
+  #annotate-container #label-tabs-contents div div.pagination a.active,
+  #annotate-container #label-tabs-contents div div.pagination a.disabled,
+  #annotate-container #label-tabs-contents div div.pagination a[disabled] {
     background-color: #b0b0b0;
   }
-  #annotate-container div div.pagination a:active,
-  #annotate-container div div.pagination a.active {
+  #annotate-container #label-tabs-contents div div.pagination a:active,
+  #annotate-container #label-tabs-contents div div.pagination a.active {
     background-color: #979797 \9;
   }
-  #annotate-container div div.pagination a:first-child {
+  #annotate-container #label-tabs-contents div div.pagination a:first-child {
     *margin-left: 0;
   }
-  #annotate-container div div.pagination a:first-child {
+  #annotate-container #label-tabs-contents div div.pagination a:first-child {
     *margin-left: 0;
   }
-  #annotate-container div div.pagination a:hover {
+  #annotate-container #label-tabs-contents div div.pagination a:hover {
     background-color: #ffffff;
     background-image: none;
   }
