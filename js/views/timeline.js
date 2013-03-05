@@ -189,6 +189,7 @@ define(["jquery",
                                "updateFiltersRender",
                                "disableFilter",
                                "updateDraggingCtrl",
+                               "moveToCurrentTime",
                                "moveRight",
                                "moveLeft",
                                "zoomIn",
@@ -236,7 +237,7 @@ define(["jquery",
                     // cluster: true,
                     eventMarginAxis: 0,
                     eventMargin: 0,
-                    dragAreaWidth: 3,
+                    dragAreaWidth: 1,
                     groupsChangeable: true
                 };
                 
@@ -351,6 +352,32 @@ define(["jquery",
                 this.timeline.move(0.2);
                 this.timeline.trigger("rangechange");
                 this.timeline.trigger("rangechanged");
+            },
+
+            /**
+             * Move the current position of the player
+             * @alias module:views-timeline.Timeline#moveToCurrentTime
+             */
+            moveToCurrentTime: function () {
+                var currentChartRange = this.timeline.getVisibleChartRange(),
+                    start = this.getTimeInSeconds(currentChartRange.start),
+                    end = this.getTimeInSeconds(currentChartRange.end),
+                    size = end - start,
+                    currentTime = this.playerAdapter.getCurrentTime(),
+                    videoDuration = this.playerAdapter.getDuration();
+
+                if ((currentTime - size / 2) < 0) {
+                    start = this.getFormatedDate(0);
+                    end = this.getFormatedDate(size);
+                } else if ((currentTime + size / 2) > videoDuration){
+                    start = this.getFormatedDate(videoDuration - size);
+                    end = this.getFormatedDate(videoDuration);
+                } else {
+                  start = this.getFormatedDate(currentTime - size / 2);
+                  end = this.getFormatedDate(currentTime + size / 2);
+                }
+
+                this.timeline.setVisibleChartRange(start, end);
             },
 
             /**
@@ -724,6 +751,9 @@ define(["jquery",
                 } else if (annotationsTool.currentSelection) {
                     this.$el.find("div.timeline-event-selected div.timeline-event-content").one("click", this.onTimelineItemUnselected);
                 }
+
+
+                this.moveToCurrentTime();
             },
             
             /**
