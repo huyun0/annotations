@@ -491,7 +491,9 @@ function ($, _not, PlayerAdapter, Annotation, User, CommentsContainer, Template,
          * Toggle the visibility of the text container
          */
         onCollapse: function(event) {
-            event.stopImmediatePropagation();
+            if (event) {
+                event.stopImmediatePropagation();
+            }
 
             this.collapsed = !this.collapsed;
 

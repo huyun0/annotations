@@ -7,7 +7,8 @@
 
 #list-container{
 
-    overflow: auto;
+    overflow-y: scroll;
+    overflow-x: hidden;
     
    	@min-height: 300px;
     
@@ -17,7 +18,6 @@
 
     #content-list{
         overflow: auto;
-       	min-height: @min-height;
     }
     
     a.proxy-anchor{

@@ -86,7 +86,9 @@ define(["jquery",
             events: {
                 "click #filter-none"    : "disableFilter",
                 "click .filter"         : "switchFilter",
-                "click .toggle-collapse": "toggleVisibility"
+                "click .toggle-collapse": "toggleVisibility",
+                "click .collapse-all"   : "collapseAll",
+                "click .expand-all"     : "expandAll"
             },
           
             /**
@@ -108,7 +110,9 @@ define(["jquery",
                                "switchFilter",
                                "updateFiltersRender",
                                "toggleVisibility",
-                               "disableFilter");
+                               "disableFilter",
+                               "expandAll",
+                               "collapseAll");
                 
                 this.annotationViews = [];
 
@@ -331,6 +335,22 @@ define(["jquery",
                 this.filtersManager.disableFilters();
 
                 this.render();
+            },
+
+            expandAll: function (event) {
+                _.each(this.annotationViews, function (annView) {
+                    if (annView.collapsed) {
+                        annView.onCollapse();
+                    }
+                }, this);
+            },
+
+            collapseAll: function (event) {
+                _.each(this.annotationViews, function (annView) {
+                    if (!annView.collapsed) {
+                        annView.onCollapse();
+                    }
+                }, this);
             },
             
             /**
