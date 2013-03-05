@@ -149,9 +149,12 @@
                visibility: visible;
             }
             
-            &:hover{
-            	.iconHover();
-            }
+            //Highlight clickable icons on mouseover           
+            &.icon-chevron-down, &.icon-chevron-right, &.icon-trash, &.icon-pencil {
+	            &:hover {
+            		.iconHover();
+  	        	}
+  	        }
         }
         
 

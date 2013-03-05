@@ -6114,7 +6114,10 @@
   #list-container div.annotation i.toggle-edit {
     visibility: visible;
   }
-  #list-container div.annotation i:hover {
+  #list-container div.annotation i.icon-chevron-down:hover,
+  #list-container div.annotation i.icon-chevron-right:hover,
+  #list-container div.annotation i.icon-trash:hover,
+  #list-container div.annotation i.icon-pencil:hover {
     background-color: rgba(57, 163, 241, 0.3);
     box-shadow: 0 0 3px rgba(57, 163, 241, 0.7) inset;
     border-radius: 3px;
