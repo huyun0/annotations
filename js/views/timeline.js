@@ -194,6 +194,7 @@ define(["jquery",
                                "moveLeft",
                                "zoomIn",
                                "zoomOut",
+                               "stopZoomScrolling",
                                "redraw",
                                "reset");
                 
@@ -279,8 +280,12 @@ define(["jquery",
                     _.bindAll(this.timeline, "findGroup");
                 }
 
-                //this.timeline.setAutoScale(true);
                 $("div.timeline-group .content").popover({});
+
+                this.$el.find(".timeline-frame > div").first()[0].addEventListener("mousewheel", function (event) {
+                    event.stopPropagation();
+                }, true);
+
                 this.timeline.redraw();
             },
 
@@ -404,6 +409,16 @@ define(["jquery",
                 this.timeline.zoom(-0.4, this.timeline.getCustomTime());
                 this.timeline.trigger("rangechange");
                 this.timeline.trigger("rangechanged");
+            },
+
+            /**
+             * Stop the zoom through scrolling
+             * @alias module:views-timeline.Timeline#stopZoomScrolling
+             */
+            stopZoomScrolling: function () {
+                this.$el.find(".timeline-frame > div").first()[0].addEventListener("mousewheel", function (event) {
+                    event.stopPropagation();
+                }, true);
             },
 
             /**

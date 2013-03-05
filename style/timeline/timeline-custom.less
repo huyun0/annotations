@@ -49,10 +49,9 @@ div.timeline-event-selected {
 }
 
 div.timeline-groups-text{
-    font-weight: bold;
-    text-transform:capitalize;
+    text-transform: capitalize;
     font-size: 1.05em;
-    z-index:1;  
+    z-index: 1;  
     background-color: white;
     position: absolute;
     width: 2000px;
@@ -60,8 +59,8 @@ div.timeline-groups-text{
     padding: 0;
     
     div.content{
-        float: left;
         padding: 3px;
+        text-decoration: none;
     }
     
     div.timeline-group {
@@ -73,6 +72,10 @@ div.timeline-groups-text{
             cursor: pointer;
             background-color: fade(@yellow, 15%);
         }
+
+        a:hover{
+            text-decoration: none!important;
+        }
                
         div.content{
         	width: 105px;
@@ -81,6 +84,10 @@ div.timeline-groups-text{
             overflow: hidden;
             text-overflow: ellipsis;
             color: @gray; 
+
+            &:hover {
+                text-decoration: none!important;
+            }
         }
     }
 
@@ -97,11 +104,11 @@ div.timeline-groups-text{
     }
     
     i.delete, i.visibility {
-        
         z-index: 4;
-        float: left;
         margin-top: 5px;
         margin-right: 4px;
+        position: relative;
+        display: inline-block;
         
         &:hover {
           .iconHover();
@@ -111,12 +118,9 @@ div.timeline-groups-text{
     i.private {
         z-index: 4;
         float: left;
-        margin-top: 5px;
-        margin-right: 4px;
+        margin-top: 2px;
+        margin-right: 0px;
         position: relative;
-        top: 19px;
-        position: relative;
-        margin-left: -20px;
         border: 2px solid transparent;
     }
    
@@ -177,10 +181,15 @@ div#timeline-custom-navigation{
     border-radius: 0;
     background-color: @grayLight;  
     position: relative!important;
+    font-weight: normal!important;
     left: 0px!important;
     right: 0px!important;
     top: 0px!important;
     bottom: 0px!important;
+
+    .btn {
+        font-weight: normal!important;
+    }
 }
 
 div#reset-zoom, div#move-left, div#move-right, div#zoom-in, div#zoom-out{
@@ -307,6 +316,12 @@ div.timeline-event-range-drag-left, div.timeline-event-range-drag-left{
     height: 22px!important;
 }
 
+
+div#timeline {
+    padding-right: 20px;
+    overflow-x: hidden;
+    overflow-y: scroll!important;
+}
 
 
 

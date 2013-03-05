@@ -33,24 +33,6 @@
   So if you upgrade Bootstrap, don't forget to copy and paste this section!
   *****************************************************************************************/
   
-    /**
-   * Different style variable that can be use by all variables
-   */
-  
-    /* Light text */
-  
-    /* Titlebar and window border */
-  
-    /* Very light text, annotation bg */
-  
-    /* Likert bg */
-  
-    /* Buttons bg */
-  
-    /* Bright text on dark bg */
-  
-    /* Timeline BG, Odd even */
-  
     /* Overlapping version */
   
     /*
@@ -78,6 +60,24 @@
     /**
    * Style for annotations list
    */
+  
+    /**
+   * Different style variable that can be use by all variables
+   */
+  
+    /* Light text */
+  
+    /* Titlebar and window border */
+  
+    /* Very light text, annotation bg */
+  
+    /* Likert bg */
+  
+    /* Buttons bg */
+  
+    /* Bright text on dark bg */
+  
+    /* Timeline BG, Odd even */
   
   }
   article,
@@ -968,13 +968,13 @@
     border: initial;
     background-color: #ffffff;
     background-color: initial;
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
     background-size: 100% 100%;
     box-shadow: none 0 1px #000000;
     -moz-box-shadow: none 0 1px #000000;
     -webkit-box-shadow: none 0 1px #000000;
-    -webkit-box-shadow: none;
-    -moz-box-shadow: none;
-    box-shadow: none;
   }
   input[type="button"],
   input[type="reset"],
@@ -1004,13 +1004,13 @@
     height: auto;
   }
   input[type="image"] {
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
     background-size: 100% 100%;
     box-shadow: none 0 1px #000000;
     -moz-box-shadow: none 0 1px #000000;
     -webkit-box-shadow: none 0 1px #000000;
-    -webkit-box-shadow: none;
-    -moz-box-shadow: none;
-    box-shadow: none;
   }
   textarea {
     height: auto;
@@ -1044,13 +1044,13 @@
   }
   input,
   textarea {
+    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+    -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
     background-size: 100% 100%;
     box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075) 0 1px #000000;
     -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075) 0 1px #000000;
     -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075) 0 1px #000000;
-    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
-    -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
-    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
     -webkit-transition: border linear 0.2s, box-shadow linear 0.2s;
     -moz-transition: border linear 0.2s, box-shadow linear 0.2s;
     -ms-transition: border linear 0.2s, box-shadow linear 0.2s;
@@ -1060,13 +1060,13 @@
   input:focus,
   textarea:focus {
     border-color: rgba(82, 168, 236, 0.8);
+    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(82, 168, 236, 0.6);
+    -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(82, 168, 236, 0.6);
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(82, 168, 236, 0.6);
     background-size: 100% 100%;
     box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(82, 168, 236, 0.6) 0 1px #000000;
     -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(82, 168, 236, 0.6) 0 1px #000000;
     -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(82, 168, 236, 0.6) 0 1px #000000;
-    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(82, 168, 236, 0.6);
-    -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(82, 168, 236, 0.6);
-    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(82, 168, 236, 0.6);
     outline: 0;
     outline: thin dotted \9;
     /* IE6-9 */
@@ -1076,13 +1076,13 @@
   input[type="radio"]:focus,
   input[type="checkbox"]:focus,
   select:focus {
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
     background-size: 100% 100%;
     box-shadow: none 0 1px #000000;
     -moz-box-shadow: none 0 1px #000000;
     -webkit-box-shadow: none 0 1px #000000;
-    -webkit-box-shadow: none;
-    -moz-box-shadow: none;
-    box-shadow: none;
     outline: thin dotted #333;
     outline: 5px auto -webkit-focus-ring-color;
     outline-offset: -2px;
@@ -1219,13 +1219,13 @@
   .control-group.warning select:focus,
   .control-group.warning textarea:focus {
     border-color: #a47e3c;
+    -webkit-box-shadow: 0 0 6px #dbc59e;
+    -moz-box-shadow: 0 0 6px #dbc59e;
+    box-shadow: 0 0 6px #dbc59e;
     background-size: 100% 100%;
     box-shadow: 0 0 6px #dbc59e 0 1px #000000;
     -moz-box-shadow: 0 0 6px #dbc59e 0 1px #000000;
     -webkit-box-shadow: 0 0 6px #dbc59e 0 1px #000000;
-    -webkit-box-shadow: 0 0 6px #dbc59e;
-    -moz-box-shadow: 0 0 6px #dbc59e;
-    box-shadow: 0 0 6px #dbc59e;
   }
   .control-group.warning .input-prepend .add-on,
   .control-group.warning .input-append .add-on {
@@ -1248,13 +1248,13 @@
   .control-group.warning select:focus,
   .control-group.warning textarea:focus {
     border-color: #a47e3c;
+    -webkit-box-shadow: 0 0 6px #dbc59e;
+    -moz-box-shadow: 0 0 6px #dbc59e;
+    box-shadow: 0 0 6px #dbc59e;
     background-size: 100% 100%;
     box-shadow: 0 0 6px #dbc59e 0 1px #000000;
     -moz-box-shadow: 0 0 6px #dbc59e 0 1px #000000;
     -webkit-box-shadow: 0 0 6px #dbc59e 0 1px #000000;
-    -webkit-box-shadow: 0 0 6px #dbc59e;
-    -moz-box-shadow: 0 0 6px #dbc59e;
-    box-shadow: 0 0 6px #dbc59e;
   }
   .control-group.warning .input-prepend .add-on,
   .control-group.warning .input-append .add-on {
@@ -1277,13 +1277,13 @@
   .control-group.error select:focus,
   .control-group.error textarea:focus {
     border-color: #953b39;
+    -webkit-box-shadow: 0 0 6px #d59392;
+    -moz-box-shadow: 0 0 6px #d59392;
+    box-shadow: 0 0 6px #d59392;
     background-size: 100% 100%;
     box-shadow: 0 0 6px #d59392 0 1px #000000;
     -moz-box-shadow: 0 0 6px #d59392 0 1px #000000;
     -webkit-box-shadow: 0 0 6px #d59392 0 1px #000000;
-    -webkit-box-shadow: 0 0 6px #d59392;
-    -moz-box-shadow: 0 0 6px #d59392;
-    box-shadow: 0 0 6px #d59392;
   }
   .control-group.error .input-prepend .add-on,
   .control-group.error .input-append .add-on {
@@ -1306,13 +1306,13 @@
   .control-group.error select:focus,
   .control-group.error textarea:focus {
     border-color: #953b39;
+    -webkit-box-shadow: 0 0 6px #d59392;
+    -moz-box-shadow: 0 0 6px #d59392;
+    box-shadow: 0 0 6px #d59392;
     background-size: 100% 100%;
     box-shadow: 0 0 6px #d59392 0 1px #000000;
     -moz-box-shadow: 0 0 6px #d59392 0 1px #000000;
     -webkit-box-shadow: 0 0 6px #d59392 0 1px #000000;
-    -webkit-box-shadow: 0 0 6px #d59392;
-    -moz-box-shadow: 0 0 6px #d59392;
-    box-shadow: 0 0 6px #d59392;
   }
   .control-group.error .input-prepend .add-on,
   .control-group.error .input-append .add-on {
@@ -1335,13 +1335,13 @@
   .control-group.success select:focus,
   .control-group.success textarea:focus {
     border-color: #356635;
+    -webkit-box-shadow: 0 0 6px #7aba7b;
+    -moz-box-shadow: 0 0 6px #7aba7b;
+    box-shadow: 0 0 6px #7aba7b;
     background-size: 100% 100%;
     box-shadow: 0 0 6px #7aba7b 0 1px #000000;
     -moz-box-shadow: 0 0 6px #7aba7b 0 1px #000000;
     -webkit-box-shadow: 0 0 6px #7aba7b 0 1px #000000;
-    -webkit-box-shadow: 0 0 6px #7aba7b;
-    -moz-box-shadow: 0 0 6px #7aba7b;
-    box-shadow: 0 0 6px #7aba7b;
   }
   .control-group.success .input-prepend .add-on,
   .control-group.success .input-append .add-on {
@@ -1364,13 +1364,13 @@
   .control-group.success select:focus,
   .control-group.success textarea:focus {
     border-color: #356635;
+    -webkit-box-shadow: 0 0 6px #7aba7b;
+    -moz-box-shadow: 0 0 6px #7aba7b;
+    box-shadow: 0 0 6px #7aba7b;
     background-size: 100% 100%;
     box-shadow: 0 0 6px #7aba7b 0 1px #000000;
     -moz-box-shadow: 0 0 6px #7aba7b 0 1px #000000;
     -webkit-box-shadow: 0 0 6px #7aba7b 0 1px #000000;
-    -webkit-box-shadow: 0 0 6px #7aba7b;
-    -moz-box-shadow: 0 0 6px #7aba7b;
-    box-shadow: 0 0 6px #7aba7b;
   }
   .control-group.success .input-prepend .add-on,
   .control-group.success .input-append .add-on {
@@ -1388,13 +1388,13 @@
   textarea:focus:required:invalid:focus,
   select:focus:required:invalid:focus {
     border-color: #e9322d;
+    -webkit-box-shadow: 0 0 6px #f8b9b7;
+    -moz-box-shadow: 0 0 6px #f8b9b7;
+    box-shadow: 0 0 6px #f8b9b7;
     background-size: 100% 100%;
     box-shadow: 0 0 6px #f8b9b7 0 1px #000000;
     -moz-box-shadow: 0 0 6px #f8b9b7 0 1px #000000;
     -webkit-box-shadow: 0 0 6px #f8b9b7 0 1px #000000;
-    -webkit-box-shadow: 0 0 6px #f8b9b7;
-    -moz-box-shadow: 0 0 6px #f8b9b7;
-    box-shadow: 0 0 6px #f8b9b7;
   }
   .form-actions {
     padding: 15px 20px 16px;
@@ -1424,13 +1424,13 @@
     display: block;
     background-color: #ffffff;
     border-color: #eee;
+    -webkit-box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.025);
+    -moz-box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.025);
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.025);
     background-size: 100% 100%;
     box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.025) 0 1px #000000;
     -moz-box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.025) 0 1px #000000;
     -webkit-box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.025) 0 1px #000000;
-    -webkit-box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.025);
-    -moz-box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.025);
-    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.025);
     cursor: not-allowed;
   }
   :-moz-placeholder {
@@ -2353,13 +2353,13 @@
     -webkit-border-radius: 0px;
     -moz-border-radius: 0px;
     border-radius: 0px;
+    -webkit-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+    -moz-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
     background-size: 100% 100%;
     box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2) 0 1px #000000;
     -moz-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2) 0 1px #000000;
     -webkit-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2) 0 1px #000000;
-    -webkit-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
-    -moz-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
-    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
     -webkit-background-clip: padding-box;
     -moz-background-clip: padding;
     background-clip: padding-box;
@@ -2444,13 +2444,13 @@
     -webkit-border-radius: 0px;
     -moz-border-radius: 0px;
     border-radius: 0px;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
+    -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
     background-size: 100% 100%;
     box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05) 0 1px #000000;
     -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05) 0 1px #000000;
     -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05) 0 1px #000000;
-    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
-    -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
-    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
   }
   .well blockquote {
     border-color: #ddd;
@@ -2549,13 +2549,13 @@
     -webkit-border-radius: 0px;
     -moz-border-radius: 0px;
     border-radius: 0px;
+    -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
+    -moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
     background-size: 100% 100%;
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05) 0 1px #000000;
     -moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05) 0 1px #000000;
     -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05) 0 1px #000000;
-    -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
-    -moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
     cursor: pointer;
     *margin-left: .3em;
   }
@@ -2606,13 +2606,13 @@
   .btn.active,
   .btn:active {
     background-image: none;
+    -webkit-box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
+    -moz-box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
     background-size: 100% 100%;
     box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05) 0 1px #000000;
     -moz-box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05) 0 1px #000000;
     -webkit-box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05) 0 1px #000000;
-    -webkit-box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
-    -moz-box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
-    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
     background-color: #e6e6e6;
     background-color: #d9d9d9 \9;
     outline: 0;
@@ -2624,13 +2624,13 @@
     background-color: #e6e6e6;
     opacity: 0.65;
     filter: alpha(opacity=65);
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
     background-size: 100% 100%;
     box-shadow: none 0 1px #000000;
     -moz-box-shadow: none 0 1px #000000;
     -webkit-box-shadow: none 0 1px #000000;
-    -webkit-box-shadow: none;
-    -moz-box-shadow: none;
-    box-shadow: none;
   }
   .btn-large {
     padding: 9px 14px;
@@ -3024,13 +3024,13 @@
   .btn-group .dropdown-toggle {
     padding-left: 8px;
     padding-right: 8px;
+    -webkit-box-shadow: inset 1px 0 0 rgba(255, 255, 255, 0.125), inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
+    -moz-box-shadow: inset 1px 0 0 rgba(255, 255, 255, 0.125), inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
+    box-shadow: inset 1px 0 0 rgba(255, 255, 255, 0.125), inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
     background-size: 100% 100%;
     box-shadow: inset 1px 0 0 rgba(255, 255, 255, 0.125), inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05) 0 1px #000000;
     -moz-box-shadow: inset 1px 0 0 rgba(255, 255, 255, 0.125), inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05) 0 1px #000000;
     -webkit-box-shadow: inset 1px 0 0 rgba(255, 255, 255, 0.125), inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05) 0 1px #000000;
-    -webkit-box-shadow: inset 1px 0 0 rgba(255, 255, 255, 0.125), inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
-    -moz-box-shadow: inset 1px 0 0 rgba(255, 255, 255, 0.125), inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
-    box-shadow: inset 1px 0 0 rgba(255, 255, 255, 0.125), inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
     *padding-top: 3px;
     *padding-bottom: 3px;
   }
@@ -3063,13 +3063,13 @@
   }
   .btn-group.open .dropdown-toggle {
     background-image: none;
+    -webkit-box-shadow: inset 0 1px 6px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
+    -moz-box-shadow: inset 0 1px 6px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
+    box-shadow: inset 0 1px 6px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
     background-size: 100% 100%;
     box-shadow: inset 0 1px 6px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05) 0 1px #000000;
     -moz-box-shadow: inset 0 1px 6px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05) 0 1px #000000;
     -webkit-box-shadow: inset 0 1px 6px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05) 0 1px #000000;
-    -webkit-box-shadow: inset 0 1px 6px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
-    -moz-box-shadow: inset 0 1px 6px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
-    box-shadow: inset 0 1px 6px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
   }
   .btn .caret {
     margin-top: 7px;
@@ -3525,13 +3525,13 @@
     -webkit-border-radius: 0px;
     -moz-border-radius: 0px;
     border-radius: 0px;
+    -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25), inset 0 -1px 0 rgba(0, 0, 0, 0.1);
+    -moz-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25), inset 0 -1px 0 rgba(0, 0, 0, 0.1);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25), inset 0 -1px 0 rgba(0, 0, 0, 0.1);
     background-size: 100% 100%;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25), inset 0 -1px 0 rgba(0, 0, 0, 0.1) 0 1px #000000;
     -moz-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25), inset 0 -1px 0 rgba(0, 0, 0, 0.1) 0 1px #000000;
     -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25), inset 0 -1px 0 rgba(0, 0, 0, 0.1) 0 1px #000000;
-    -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25), inset 0 -1px 0 rgba(0, 0, 0, 0.1);
-    -moz-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25), inset 0 -1px 0 rgba(0, 0, 0, 0.1);
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25), inset 0 -1px 0 rgba(0, 0, 0, 0.1);
   }
   .navbar .container {
     width: auto;
@@ -3554,13 +3554,13 @@
     border-color: #222222 #222222 #000000;
     border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
     filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
+    -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 1px 0 rgba(255, 255, 255, 0.075);
+    -moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 1px 0 rgba(255, 255, 255, 0.075);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 1px 0 rgba(255, 255, 255, 0.075);
     background-size: 100% 100%;
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 1px 0 rgba(255, 255, 255, 0.075) 0 1px #000000;
     -moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 1px 0 rgba(255, 255, 255, 0.075) 0 1px #000000;
     -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 1px 0 rgba(255, 255, 255, 0.075) 0 1px #000000;
-    -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 1px 0 rgba(255, 255, 255, 0.075);
-    -moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 1px 0 rgba(255, 255, 255, 0.075);
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 1px 0 rgba(255, 255, 255, 0.075);
   }
   .btn-navbar:hover,
   .btn-navbar:active,
@@ -3595,13 +3595,13 @@
     -webkit-border-radius: 0px;
     -moz-border-radius: 0px;
     border-radius: 0px;
+    -webkit-box-shadow: 0 1px 0 rgba(0, 0, 0, 0.25);
+    -moz-box-shadow: 0 1px 0 rgba(0, 0, 0, 0.25);
+    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.25);
     background-size: 100% 100%;
     box-shadow: 0 1px 0 rgba(0, 0, 0, 0.25) 0 1px #000000;
     -moz-box-shadow: 0 1px 0 rgba(0, 0, 0, 0.25) 0 1px #000000;
     -webkit-box-shadow: 0 1px 0 rgba(0, 0, 0, 0.25) 0 1px #000000;
-    -webkit-box-shadow: 0 1px 0 rgba(0, 0, 0, 0.25);
-    -moz-box-shadow: 0 1px 0 rgba(0, 0, 0, 0.25);
-    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.25);
   }
   .btn-navbar .icon-bar + .icon-bar {
     margin-top: 3px;
@@ -3696,13 +3696,13 @@
     color: #ffffff;
     background-color: #626262;
     border: 1px solid #151515;
+    -webkit-box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1), 0 1px 0px rgba(255, 255, 255, 0.15);
+    -moz-box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1), 0 1px 0px rgba(255, 255, 255, 0.15);
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1), 0 1px 0px rgba(255, 255, 255, 0.15);
     background-size: 100% 100%;
     box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1), 0 1px 0px rgba(255, 255, 255, 0.15) 0 1px #000000;
     -moz-box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1), 0 1px 0px rgba(255, 255, 255, 0.15) 0 1px #000000;
     -webkit-box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1), 0 1px 0px rgba(255, 255, 255, 0.15) 0 1px #000000;
-    -webkit-box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1), 0 1px 0px rgba(255, 255, 255, 0.15);
-    -moz-box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1), 0 1px 0px rgba(255, 255, 255, 0.15);
-    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1), 0 1px 0px rgba(255, 255, 255, 0.15);
     -webkit-transition: none;
     -moz-transition: none;
     -ms-transition: none;
@@ -3722,13 +3722,13 @@
     text-shadow: 0 1px 0 #ffffff;
     background-color: #ffffff;
     border: 0;
+    -webkit-box-shadow: 0 0 3px rgba(0, 0, 0, 0.15);
+    -moz-box-shadow: 0 0 3px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 0 3px rgba(0, 0, 0, 0.15);
     background-size: 100% 100%;
     box-shadow: 0 0 3px rgba(0, 0, 0, 0.15) 0 1px #000000;
     -moz-box-shadow: 0 0 3px rgba(0, 0, 0, 0.15) 0 1px #000000;
     -webkit-box-shadow: 0 0 3px rgba(0, 0, 0, 0.15) 0 1px #000000;
-    -webkit-box-shadow: 0 0 3px rgba(0, 0, 0, 0.15);
-    -moz-box-shadow: 0 0 3px rgba(0, 0, 0, 0.15);
-    box-shadow: 0 0 3px rgba(0, 0, 0, 0.15);
     outline: 0;
   }
   .navbar-fixed-top,
@@ -3900,13 +3900,13 @@
     -webkit-border-radius: 0px;
     -moz-border-radius: 0px;
     border-radius: 0px;
+    -webkit-box-shadow: inset 0 1px 0 #ffffff;
+    -moz-box-shadow: inset 0 1px 0 #ffffff;
+    box-shadow: inset 0 1px 0 #ffffff;
     background-size: 100% 100%;
     box-shadow: inset 0 1px 0 #ffffff 0 1px #000000;
     -moz-box-shadow: inset 0 1px 0 #ffffff 0 1px #000000;
     -webkit-box-shadow: inset 0 1px 0 #ffffff 0 1px #000000;
-    -webkit-box-shadow: inset 0 1px 0 #ffffff;
-    -moz-box-shadow: inset 0 1px 0 #ffffff;
-    box-shadow: inset 0 1px 0 #ffffff;
   }
   .breadcrumb li {
     display: inline-block;
@@ -3941,13 +3941,13 @@
     -webkit-border-radius: 0px;
     -moz-border-radius: 0px;
     border-radius: 0px;
+    -webkit-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    -moz-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
     background-size: 100% 100%;
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05) 0 1px #000000;
     -moz-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05) 0 1px #000000;
     -webkit-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05) 0 1px #000000;
-    -webkit-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-    -moz-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
   }
   .pagination li {
     display: inline;
@@ -4101,13 +4101,13 @@
     -webkit-border-radius: 0px;
     -moz-border-radius: 0px;
     border-radius: 0px;
+    -webkit-box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);
+    -moz-box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);
     background-size: 100% 100%;
     box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3) 0 1px #000000;
     -moz-box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3) 0 1px #000000;
     -webkit-box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3) 0 1px #000000;
-    -webkit-box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);
-    -moz-box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);
-    box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);
     -webkit-background-clip: padding-box;
     -moz-background-clip: padding-box;
     background-clip: padding-box;
@@ -4150,13 +4150,13 @@
     -webkit-border-radius: 0px;
     -moz-border-radius: 0px;
     border-radius: 0px;
+    -webkit-box-shadow: inset 0 1px 0 #ffffff;
+    -moz-box-shadow: inset 0 1px 0 #ffffff;
+    box-shadow: inset 0 1px 0 #ffffff;
     background-size: 100% 100%;
     box-shadow: inset 0 1px 0 #ffffff 0 1px #000000;
     -moz-box-shadow: inset 0 1px 0 #ffffff 0 1px #000000;
     -webkit-box-shadow: inset 0 1px 0 #ffffff 0 1px #000000;
-    -webkit-box-shadow: inset 0 1px 0 #ffffff;
-    -moz-box-shadow: inset 0 1px 0 #ffffff;
-    box-shadow: inset 0 1px 0 #ffffff;
     *zoom: 1;
   }
   .modal-footer:before,
@@ -4328,13 +4328,13 @@
     -webkit-border-radius: 0px;
     -moz-border-radius: 0px;
     border-radius: 0px;
+    -webkit-box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);
+    -moz-box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);
     background-size: 100% 100%;
     box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3) 0 1px #000000;
     -moz-box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3) 0 1px #000000;
     -webkit-box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3) 0 1px #000000;
-    -webkit-box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);
-    -moz-box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);
-    box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);
   }
   .popover-title {
     padding: 9px 15px;
@@ -4402,23 +4402,23 @@
     -webkit-border-radius: 0px;
     -moz-border-radius: 0px;
     border-radius: 0px;
+    -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075);
+    -moz-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075);
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075);
     background-size: 100% 100%;
     box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) 0 1px #000000;
     -moz-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) 0 1px #000000;
     -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) 0 1px #000000;
-    -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075);
-    -moz-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075);
-    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075);
   }
   a.thumbnail:hover {
     border-color: #39a3f1;
+    -webkit-box-shadow: 0 1px 4px rgba(0, 105, 214, 0.25);
+    -moz-box-shadow: 0 1px 4px rgba(0, 105, 214, 0.25);
+    box-shadow: 0 1px 4px rgba(0, 105, 214, 0.25);
     background-size: 100% 100%;
     box-shadow: 0 1px 4px rgba(0, 105, 214, 0.25) 0 1px #000000;
     -moz-box-shadow: 0 1px 4px rgba(0, 105, 214, 0.25) 0 1px #000000;
     -webkit-box-shadow: 0 1px 4px rgba(0, 105, 214, 0.25) 0 1px #000000;
-    -webkit-box-shadow: 0 1px 4px rgba(0, 105, 214, 0.25);
-    -moz-box-shadow: 0 1px 4px rgba(0, 105, 214, 0.25);
-    box-shadow: 0 1px 4px rgba(0, 105, 214, 0.25);
   }
   .thumbnail > img {
     display: block;
@@ -4574,13 +4574,13 @@
     background-image: linear-gradient(top, #f5f5f5, #f9f9f9);
     background-repeat: repeat-x;
     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#f5f5f5', endColorstr='#f9f9f9', GradientType=0);
+    -webkit-box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
+    -moz-box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
     background-size: 100% 100%;
     box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1) 0 1px #000000;
     -moz-box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1) 0 1px #000000;
     -webkit-box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1) 0 1px #000000;
-    -webkit-box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
-    -moz-box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
-    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
     -webkit-border-radius: 4px;
     -moz-border-radius: 4px;
     border-radius: 4px;
@@ -4604,13 +4604,13 @@
     background-image: linear-gradient(top, #149bdf, #0480be);
     background-repeat: repeat-x;
     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#149bdf', endColorstr='#0480be', GradientType=0);
+    -webkit-box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.15);
+    -moz-box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.15);
+    box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.15);
     background-size: 100% 100%;
     box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.15) 0 1px #000000;
     -moz-box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.15) 0 1px #000000;
     -webkit-box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.15) 0 1px #000000;
-    -webkit-box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.15);
-    -moz-box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.15);
-    box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.15);
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     -ms-box-sizing: border-box;
@@ -4966,7 +4966,6 @@
     background-color: rgba(245, 215, 115, 0.75);
   }
   div.timeline-groups-text {
-    font-weight: bold;
     text-transform: capitalize;
     font-size: 1.05em;
     z-index: 1;
@@ -4977,8 +4976,8 @@
     padding: 0;
   }
   div.timeline-groups-text div.content {
-    float: left;
     padding: 3px;
+    text-decoration: none;
   }
   div.timeline-groups-text div.timeline-group {
     padding: 4px;
@@ -4989,12 +4988,18 @@
     cursor: pointer;
     background-color: rgba(255, 216, 0, 0.15);
   }
+  div.timeline-groups-text div.timeline-group a:hover {
+    text-decoration: none!important;
+  }
   div.timeline-groups-text div.timeline-group div.content {
     width: 105px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     color: #4b4b4b;
+  }
+  div.timeline-groups-text div.timeline-group div.content:hover {
+    text-decoration: none!important;
   }
   div.timeline-groups-text.selected {
     background-color: #eaeaea;
@@ -5005,9 +5010,10 @@
   div.timeline-groups-text i.delete,
   div.timeline-groups-text i.visibility {
     z-index: 4;
-    float: left;
     margin-top: 5px;
     margin-right: 4px;
+    position: relative;
+    display: inline-block;
   }
   div.timeline-groups-text i.delete:hover,
   div.timeline-groups-text i.visibility:hover {
@@ -5019,11 +5025,9 @@
   div.timeline-groups-text i.private {
     z-index: 4;
     float: left;
-    margin-top: 5px;
-    margin-right: 4px;
-    top: 19px;
+    margin-top: 2px;
+    margin-right: 0px;
     position: relative;
-    margin-left: -20px;
     border: 2px solid transparent;
   }
   div.timeline-customtime {
@@ -5083,13 +5087,13 @@
     -webkit-border-radius: 0px;
     -moz-border-radius: 0px;
     border-radius: 0px;
+    -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
+    -moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
     background-size: 100% 100%;
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05) 0 1px #000000;
     -moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05) 0 1px #000000;
     -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05) 0 1px #000000;
-    -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
-    -moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
     cursor: pointer;
     *margin-left: .3em;
     border-radius: 0px 0px 0px 0px;
@@ -5136,13 +5140,13 @@
     background-position: 0 0;
     text-shadow: none;
     opacity: 0.95;
+    -webkit-box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
+    -moz-box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
     background-size: 100% 100%;
     box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05) 0 1px #000000;
     -moz-box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05) 0 1px #000000;
     -webkit-box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05) 0 1px #000000;
-    -webkit-box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
-    -moz-box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
-    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
   }
   div.timeline-navigation .timeline-navigation-zoom-in:after {
     content: "+";
@@ -5164,10 +5168,14 @@
     border-radius: 0;
     background-color: #c7c7c7;
     position: relative!important;
+    font-weight: normal!important;
     left: 0px!important;
     right: 0px!important;
     top: 0px!important;
     bottom: 0px!important;
+  }
+  div#timeline-custom-navigation .btn {
+    font-weight: normal!important;
   }
   div#reset-zoom,
   div#move-left,
@@ -5293,9 +5301,18 @@
   div.timeline-event-range-drag-left {
     height: 22px!important;
   }
+  div#timeline {
+    padding-right: 20px;
+    overflow-x: hidden;
+    overflow-y: scroll!important;
+  }
+  .standard_border_radius {
+    border-radius: 0px 0px 0px 0px;
+  }
   body {
     padding-top: 35px;
     padding-bottom: 10px;
+    overflow: hidden;
   }
   .window {
     background-color: #4b4b4b;
@@ -5349,13 +5366,15 @@
     display: none;
   }
   #video-container {
-    height: 50%;
+    max-height: 50%;
     max-width: 100%;
+    text-align: center;
   }
   #video-container object,
   #video-container video,
   #video-container embed {
     width: 100%;
+    max-height: 500px;
     vertical-align: bottom;
   }
   body {
@@ -5460,13 +5479,13 @@
     background-position: 0 0;
     text-shadow: none;
     opacity: 0.95;
+    -webkit-box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
+    -moz-box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
     background-size: 100% 100%;
     box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05) 0 1px #000000;
     -moz-box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05) 0 1px #000000;
     -webkit-box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05) 0 1px #000000;
-    -webkit-box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
-    -moz-box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
-    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
   }
   .btn-inverse,
   .btn-inverse:hover {
@@ -5501,6 +5520,9 @@
   textarea,
   select,
   .uneditable-input {
+    border-radius: 0px 0px 0px 0px;
+  }
+  .standard_border_radius {
     border-radius: 0px 0px 0px 0px;
   }
   .edit {
@@ -5833,13 +5855,13 @@
     -webkit-border-radius: 0px;
     -moz-border-radius: 0px;
     border-radius: 0px;
+    -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
+    -moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
     background-size: 100% 100%;
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05) 0 1px #000000;
     -moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05) 0 1px #000000;
     -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05) 0 1px #000000;
-    -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
-    -moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
     cursor: pointer;
     *margin-left: .3em;
     border-radius: 0px 0px 0px 0px;
@@ -5998,15 +6020,15 @@
     color: red;
     font-weight: bold;
   }
-  #list-container {
-    overflow: auto;
+  .standard_border_radius {
+    border-radius: 0px 0px 0px 0px;
   }
-  #list-container.expanded {
-    min-height: 300px;
+  #list-container {
+    overflow-y: scroll;
+    overflow-x: hidden;
   }
   #list-container #content-list {
     overflow: auto;
-    min-height: 300px;
   }
   #list-container a.proxy-anchor {
     display: none;
@@ -6230,6 +6252,7 @@
   #list-container div.comments-container {
     background-color: #c7c7c7;
     color: #000000;
+    overflow: hidden;
   }
   #list-container div.comments-container textarea {
     resize: vertical;
@@ -6294,19 +6317,6 @@
   .collapse-comment i {
     float: left;
     margin-right: 5px;
-  }
-  .collapse-comment {
-    -webkit-transition: height 0.35s ease;
-    -moz-transition: height 0.35s ease;
-    -ms-transition: height 0.35s ease;
-    -o-transition: height 0.35s ease;
-    transition: height 0.35s ease;
-    position: relative;
-    overflow: hidden;
-    height: 0;
-  }
-  .collapse-comment.in {
-    height: auto;
   }
 }
 @media screen and (max-width: 767px) {
@@ -6921,13 +6931,13 @@
     -webkit-border-radius: 0px;
     -moz-border-radius: 0px;
     border-radius: 0px;
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
     background-size: 100% 100%;
     box-shadow: none 0 1px #000000;
     -moz-box-shadow: none 0 1px #000000;
     -webkit-box-shadow: none 0 1px #000000;
-    -webkit-box-shadow: none;
-    -moz-box-shadow: none;
-    box-shadow: none;
   }
   .navbar .dropdown-menu:before,
   .navbar .dropdown-menu:after {
@@ -6943,13 +6953,13 @@
     margin: 8px 0;
     border-top: 1px solid #222222;
     border-bottom: 1px solid #222222;
+    -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 1px 0 rgba(255, 255, 255, 0.1);
+    -moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 1px 0 rgba(255, 255, 255, 0.1);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 1px 0 rgba(255, 255, 255, 0.1);
     background-size: 100% 100%;
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 1px 0 rgba(255, 255, 255, 0.1) 0 1px #000000;
     -moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 1px 0 rgba(255, 255, 255, 0.1) 0 1px #000000;
     -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 1px 0 rgba(255, 255, 255, 0.1) 0 1px #000000;
-    -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 1px 0 rgba(255, 255, 255, 0.1);
-    -moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 1px 0 rgba(255, 255, 255, 0.1);
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 1px 0 rgba(255, 255, 255, 0.1);
   }
   .navbar .nav.pull-right {
     float: none;
