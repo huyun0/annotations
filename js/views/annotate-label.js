@@ -116,7 +116,7 @@ define(["jquery",
               
               if (this.scaleValues) {
                   this.scaleValues = this.scaleValues.get("scaleValues");
-              }
+              } 
 
               if (_.contains(this.roles, annotationsTool.user.get("role"))) {
                   this.listenTo(annotationsTool.video, 'switchEditModus', this.onSwitchEditModus);
@@ -162,7 +162,7 @@ define(["jquery",
           annotate: function(){
               event.stopImmediatePropagation();
 
-              if (this.editModus) {
+              if (this.editModus || this.isScaleEnable) {
                 return;
               }
 
@@ -217,7 +217,6 @@ define(["jquery",
           },
 
           changeCategory: function (category) {
-
               var scale;
 
               if (category.scale) {
