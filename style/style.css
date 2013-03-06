@@ -5916,6 +5916,7 @@
     border: none;
     margin-left: 5px;
     float: right;
+    display: inline-block !important;
   }
   #annotate-container.edit-on i.edit:hover {
     background-color: rgba(57, 163, 241, 0.3);
