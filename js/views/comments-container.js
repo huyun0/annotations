@@ -29,17 +29,16 @@ define(["jquery",
           
           tagName: "div",
           
-          className: "comments-container collapse in",
+          className: "comments-container collapse",
           
           /** View template */
           template: Handlebars.compile(Template),
           
-          collapsed: false, //Todo: Collapse function needs to be completely removed. 
+          collapsed: true, //Todo: Collapse function needs to be completely removed. 
           
           /** Events to handle */
           events: {
               "click a.add-comment"       : "onAddComment",
-              "click a.collapse-comment"  : "onCollapse",
               "click button[type=submit]" : "onSubmit",
               "click button[type=button]" : "onCancelComment"
           },
@@ -48,16 +47,28 @@ define(["jquery",
            * @constructor
            */
           initialize: function(attr){
+            if (typeof attr.collapsed !== "undefined") {
+                this.collapsed = attr.collapsed;
+            } 
+
             this.annotationId = attr.id;
-            this.id = "comments-container" + attr.id;
-            this.el.id = this.id;
+            this.id           = "comments-container" + attr.id;
+            this.el.id        = this.id;
             
             this.comments = attr.comments;
             
             this.commentViews = [];
             
             // Bind function to the good context 
-            _.bindAll(this,"render","onCollapse", "onAddComment", "onSubmit", "onCancelComment");
+            _.bindAll(this,"render", "onAddComment", "onSubmit", "onCancelComment");
+
+            this.$el.html(this.template({
+                id       : this.annotationId, 
+                comments : this.comments.models, 
+                collapsed: this.collapsed
+            }));
+
+            this.commentList = this.$el.find("div#comment-list" + this.annotationId);
             
             _.each(this.comments.toArray(), function (comment) {
               this.addComment(comment);
@@ -66,13 +77,10 @@ define(["jquery",
             // Add backbone events to the model
             _.extend(this.comments, Backbone.Events);
 
-            if (typeof attr.collapsed !== "undefined") {
-                this.collapsed = attr.collapsed;
-            } 
             
             this.listenTo(this.comments, "destroy", this.deleteView);
             
-            return this;
+            return this.render();
           },
           
           /**
@@ -82,17 +90,12 @@ define(["jquery",
               var commentList;
 
               this.$el.html(this.template({id: this.annotationId, comments: this.comments.models, collapsed: this.collapsed}));
-              commentList = this.$el.find("div#comment-list" + this.annotationId);
-              commentList.empty();
-                _.each(this.commentViews, function (commentView) {
-                  commentList.append(commentView.render().$el);
-                }, this);
-
-              if (this.collapsed) {
-                  this.$el.collapse("hide");
-              } else {
-                  this.$el.collapse("show");
-              }
+              this.commentList = this.$el.find("div#comment-list" + this.annotationId);
+              
+              this.commentList.empty();
+              _.each(this.commentViews, function (commentView) {
+                  this.commentList.append(commentView.render().$el);
+              }, this);
 
               this.delegateEvents(this.events);
               return this;
@@ -126,38 +129,38 @@ define(["jquery",
            * Submit a comment to the backend
            */
           onSubmit: function(event) {
-            var textValue = this.$el.find("textarea").val();
-            if(textValue == '')
-              return;
-            var commentModel = this.comments.create({text: textValue});
-              
-            this.cancel();
-            this.addComment(commentModel);
+              var textValue = this.$el.find("textarea").val();
+              if(textValue == '')
+                return;
+              var commentModel = this.comments.create({text: textValue});
+                
+              this.cancel();
+              this.addComment(commentModel);
           },
           
-          addComment: function(comment) {
-            var commentModel = new CommentView({model: comment});
-            this.commentViews.push(commentModel);
-            this.$el.find("div#comment-list"+this.annotationId).append(commentModel.render().$el);
-            if(this.comments.length == 1) {
-              this.render();
-            } else {
-              this.$el.find("> span.comments").text(this.comments.length+" Comments");
-            }
+          addComment: function (comment) {
+              var commentModel = new CommentView({model: comment});
+              this.commentViews.push(commentModel);
+              this.$el.find("div#comment-list"+this.annotationId).append(commentModel.render().$el);
+              if (this.comments.length == 1) {
+                  this.commentList.append(commentModel.render().$el);
+              } else {
+                  this.$el.find("> span.comments").text(this.comments.length + " Comments");
+              }
           },
           
           /**
            * Add a new comment
            */
           onAddComment: function(event){
-            event.stopImmediatePropagation();
-            this.$el.find("textarea").show();
-            this.$el.find("button").removeClass("hide");
+              event.stopImmediatePropagation();
+              this.$el.find("textarea").show();
+              this.$el.find("button").removeClass("hide");
           },
           
           onCancelComment: function(event) {
-          event.stopImmediatePropagation();
-          this.cancel();
+              event.stopImmediatePropagation();
+              this.cancel();
           },
           
           cancel: function() {
@@ -165,26 +168,6 @@ define(["jquery",
             this.$el.find("button").addClass("hide");
           },
           
-          /**
-           * Toggle the visibility of the comments container
-           */
-          onCollapse: function(event){
-              if (event) {
-                  event.stopImmediatePropagation();
-              }
-
-              this.collapsed = !this.collapsed;
-              
-              this.$el.find(".collapse-comment > i").toggleClass("icon-chevron-right").toggleClass("icon-chevron-down");
-              
-              if (this.collapsed) {
-                  this.$el.collapse("hide");
-                  this.$el.find("div.in").collapse("hide");
-              } else {
-                  this.$el.collapse("show");
-                  this.$el.find("div.collapse").collapse("show");
-              }
-          }
           
         });
             

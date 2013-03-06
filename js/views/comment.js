@@ -72,12 +72,12 @@ define(["jquery",
           },
           
           onSubmit: function() {
-        	var textValue = this.$el.find("textarea").val();
-        	if(textValue == '')
-        	  return;
-        	
-        	this.model.set("text", textValue);
-        	this.model.save();
+          	var textValue = this.$el.find("textarea").val();
+          	if(textValue == '')
+          	  return;
+          	
+          	this.model.set("text", textValue);
+          	this.model.save();
 
       	    this.cancel();
       	    this.render();
@@ -90,8 +90,8 @@ define(["jquery",
           
           cancel: function() {
             this.isEditEnable = false;
-        	this.$el.find("textarea").remove();
-        	this.$el.find("button").remove();
+          	this.$el.find("textarea").remove();
+          	this.$el.find("button").remove();
           },
           
           /**
