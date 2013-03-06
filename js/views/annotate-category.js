@@ -52,11 +52,11 @@ define(["jquery",
 
           /** Events to handle by the annotate view */
           events: {
-            "click .catItem-header i.delete"   : "onDeleteCategory",
-            "click .catItem-header i.scale"    : "editScale",
-            "focusout .catItem-header input"   : "onFocusOut",
-            "keydown .catItem-header input"    : "onKeyDown",
-            "click   .catItem-add"             : "onCreateLabel",
+              "click .catItem-header i.delete"   : "onDeleteCategory",
+              "click .catItem-header i.scale"    : "editScale",
+              "focusout .catItem-header input"   : "onFocusOut",
+              "keydown .catItem-header input"    : "onKeyDown",
+              "click   .catItem-add"             : "onCreateLabel",
           },
           
           /**

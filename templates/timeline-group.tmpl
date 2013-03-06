@@ -1,15 +1,17 @@
 <div class="timeline-group{{#if isMine}} mine{{/if}} track-max-level-{{#if timlineMaxLevel}}{{timelineMaxLevel}}{{else}}0{{/if}}" {{#if isMine}}onclick="$(window).trigger('selectTrack', ['{{id}}'])"{{/if}}>
     <div class="track-id">{{id}}</div>
     {{#if isMine}}
-    <i onclick="$(window).trigger('deleteTrack', ['{{id}}'])" class="delete icon-trash" title="Delete  track"></i>
-    <i onclick="$(window).trigger('updateTrack', ['{{id}}'])" class="visibility icon-eye-{{#if isPublic}}open{{else}}close{{/if}}" title="Change track visibility"></i>
     <i class="private icon-user" title="You own this track"></i>
-    {{/if}} 
-    {{#if isMine}}
     <a id="track{{id}}" onclick="$(window).trigger('selectTrack', ['{{id}}'])">
     {{/if}} 
-        <div class="content" title="{{secure name}}" rel="popover" data-content="{{#if description}}{{secure description}}{{else}}No description{{/if}}">{{secure name}}</div>
+        <div class="content" title="{{secure name}}" rel="popover" data-content="{{#if description}}{{secure description}}{{else}}No description{{/if}}">
+            {{secure name}}
+        </div>
     {{#if isMine}}
+        <div class="group-edit">
+            <i onclick="$(window).trigger('deleteTrack', ['{{id}}'])" class="delete icon-trash" title="Delete  track"></i>
+            <i onclick="$(window).trigger('updateTrack', ['{{id}}'])" class="visibility icon-eye-{{#if isPublic}}open{{else}}close{{/if}}" title="Change track visibility"></i>
+        </div>
     </a>
-    {{/if}} 
+    {{/if}}
 </div>

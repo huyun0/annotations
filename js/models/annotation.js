@@ -36,7 +36,7 @@ define(["jquery",
          * @constructor
          * @see {@link http://www.backbonejs.org/#Model}
          * @memberOf module:models-annotation
-         * @alias Annotation
+         * @alias module:models-annotation.Annotation
          */
         var Annotation = Backbone.Model.extend({
             

@@ -48,6 +48,13 @@ define(['domReady',
             restEndpointsUrl: "../../extended-annotations",
 
             /**
+             * Url for redirect after the logout
+             * @type {string}
+             * @readOnly
+             */
+            logoutUrl: undefined,
+
+            /**
              * Url from the export function for statistics usage
              * @type {string}
              * @readOnly

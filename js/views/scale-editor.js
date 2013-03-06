@@ -35,8 +35,6 @@ define(["jquery",
 
             "use strict";
 
-
-
             /**
              * @constructor
              * @see {@link http://www.backbonejs.org/#View}
@@ -46,15 +44,15 @@ define(["jquery",
             var ScaleEditor = Backbone.View.extend({
 
                 TITLES: {
-                    CATEGORY_EDIT: "Edit category scale",
+                    CATEGORY_EDIT  : "Edit category scale",
                     STANDALONE_EDIT: "Edit scales",
-                    SAVE_BUTTON: "Save",
-                    CREATE_BUTTON: "Create"
+                    SAVE_BUTTON    : "Save",
+                    CREATE_BUTTON  : "Create"
                 },
 
                 EMPTY_SCALE: {
                     name: "-- NO SCALE --",
-                    id: "NO"
+                    id  : "NO"
                 },
 
                 el: $("#scale-editor"),
@@ -71,14 +69,14 @@ define(["jquery",
                  * @type {object}
                  */
                 events: {
-                    "click #save-scale": "save",
-                    "click #cancel-scale": "cancel",
-                    "click a.edit-scale": "startEditScale",
-                    "click a.create-scale": "createScale",
-                    "click a.delete-scale": "deleteScale",
+                    "click #save-scale"         : "save",
+                    "click #cancel-scale"       : "cancel",
+                    "click a.edit-scale"        : "startEditScale",
+                    "click a.create-scale"      : "createScale",
+                    "click a.delete-scale"      : "deleteScale",
                     "click a.create-scale-value": "createScaleValue",
-                    "change select#scale-id": "changeScale",
-                    "keydown #save-scale": "saveOnInsert"
+                    "change select#scale-id"    : "changeScale",
+                    "keydown #save-scale"       : "saveOnInsert"
                 },
 
                 /**

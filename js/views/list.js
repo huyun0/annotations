@@ -86,7 +86,9 @@ define(["jquery",
             events: {
                 "click #filter-none"    : "disableFilter",
                 "click .filter"         : "switchFilter",
-                "click .toggle-collapse": "toggleVisibility"
+                "click .toggle-collapse": "toggleVisibility",
+                "click .collapse-all"   : "collapseAll",
+                "click .expand-all"     : "expandAll"
             },
           
             /**
@@ -108,7 +110,9 @@ define(["jquery",
                                "switchFilter",
                                "updateFiltersRender",
                                "toggleVisibility",
-                               "disableFilter");
+                               "disableFilter",
+                               "expandAll",
+                               "collapseAll");
                 
                 this.annotationViews = [];
 
@@ -214,9 +218,7 @@ define(["jquery",
                 
                 // If an annotation have been explicitely selected by an user
                 if (annotationsTool.currentSelection) {
-                    view = _.find(this.annotationViews, function (view) {
-                                    return view.model.get("id") === annotationsTool.currentSelection.get("id");
-                                }, this);
+                    view = this.getViewFromAnnotation(annotationsTool.currentSelection.get("id"));
 
                     // If the view is not visually selected
                     if (!view.isSelected) {
@@ -255,7 +257,25 @@ define(["jquery",
              * @alias module:views-list.List#unselect
              */
             unselect: function ()  {
+                var id = this.$el.find(".selected").attr("id"),
+                    view = this.getViewFromAnnotation(id);
+
                 this.$el.find(".selected").removeClass("selected");
+                
+                if (view) {
+                    view.isSelected = false;
+                }
+            },
+
+            /**
+             * Get the view representing the given annotation
+             * @param  {String} id The target annotation id
+             * @return {ListAnnotation}            The view representing the annotation
+             */
+            getViewFromAnnotation: function (id) {
+                return _.find(this.annotationViews, function (view) {
+                            return view.model.get("id") == id;
+                }, this);
             },
             
             /**
@@ -315,6 +335,22 @@ define(["jquery",
                 this.filtersManager.disableFilters();
 
                 this.render();
+            },
+
+            expandAll: function (event) {
+                _.each(this.annotationViews, function (annView) {
+                    if (annView.collapsed) {
+                        annView.onCollapse();
+                    }
+                }, this);
+            },
+
+            collapseAll: function (event) {
+                _.each(this.annotationViews, function (annView) {
+                    if (!annView.collapsed) {
+                        annView.onCollapse();
+                    }
+                }, this);
             },
             
             /**

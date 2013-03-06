@@ -29,7 +29,6 @@ define(["jquery",
        
     function ($, _, PlayerAdapter, Annotation, Annotations, Categories, AnnotateTab, TabTitleTemplate, ROLES, ACCESS, Handlebars, Backbone) {
 
-
         "use strict";
 
         var TAB_LINK_PREFIX = "#labelTab-",
@@ -70,7 +69,6 @@ define(["jquery",
             /** Events to handle by the annotate view */
             events: {
                 "keyup #new-annotation"             : "keydownOnAnnotate",
-               // "keyup #new-annotation"             : "keyupOnAnnotate",
                 "click #insert"                     : "insert",
                 "click #annotate-full"              : "setLayoutFull",
                 "click #annotate-text"              : "setLayoutText",
@@ -139,19 +137,19 @@ define(["jquery",
                 this.playerAdapter = attr.playerAdapter;
 
                 if (annotationsTool.isStructuredAnnotationEnabled()) {
-                  categories = annotationsTool.video.get("categories");
+                    categories = annotationsTool.video.get("categories");
 
-                  _.each(DEFAULT_TABS, function (params) {
-                    this.addTab(categories, params);
-                  }, this)
+                    _.each(DEFAULT_TABS, function (params) {
+                      this.addTab(categories, params);
+                    }, this)
                 } else {
-                  this.$el.find("#categories").hide();
-                  this.$el.find("#annotate-categories").parent().hide();
+                    this.$el.find("#categories").hide();
+                    this.$el.find("#annotate-categories").parent().hide();
                 }
 
                 if (!annotationsTool.isFreeTextEnabled()) {
-                  this.$el.find("#input-container").hide();
-                  this.$el.find("#annotate-text").parent().hide();
+                    this.$el.find("#input-container").hide();
+                    this.$el.find("#annotate-text").parent().hide();
                 }
 
                 this.$el.find("#annotate-full").addClass("checked");
@@ -197,7 +195,6 @@ define(["jquery",
                 };
 
                 annotationsTool.selectedTrack.get("annotations").create(params, {wait: true});
-
                 
                 if (this.continueVideo) {
                     this.playerAdapter.play();

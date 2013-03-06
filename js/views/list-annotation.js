@@ -86,33 +86,33 @@ function ($, _not, PlayerAdapter, Annotation, User, CommentsContainer, Template,
 
         deleted: false,
 
-        collapsed: false,
+        collapsed: true,
 
         /** Events to handle */
         events: {
-            "click": "onSelect",
-            "click .toggle-edit": "switchEditModus",
-            "click .proxy-anchor": "stopPropagation",
-            "click .freetext textarea": "stopPropagation",
-            "click .scaling select": "stopPropagation",
-            "click .end-value": "stopPropagation",
-            "click .start-value": "stopPropagation",
-            "click i.delete": "deleteFull",
-            "click .select": "onSelect",
-            "click button.in" : "setCurrentTimeAsStart",
-            "click button.out" : "setCurrentTimeAsEnd",
-            "click a.collapse": "onCollapse",
-            "dblclick .start": "startEdit",
-            "dblclick .end": "startEdit",
-            "dblclick .end-btn": "startEdit",
-            "dblclick .start-btn": "startEdit",
-            "keydown .start-value": "saveStart",
-            "keydown .end-value": "saveEnd",
-            "keydown .freetext textarea": "saveFreeText",
-            "focusout .start-value": "saveStart",
-            "focusout .end-value": "saveEnd",
+            "click"                      : "onSelect",
+            "click .toggle-edit"         : "switchEditModus",
+            "click .proxy-anchor"        : "stopPropagation",
+            "click .freetext textarea"   : "stopPropagation",
+            "click .scaling select"      : "stopPropagation",
+            "click .end-value"           : "stopPropagation",
+            "click .start-value"         : "stopPropagation",
+            "click i.delete"             : "deleteFull",
+            "click .select"              : "onSelect",
+            "click button.in"            : "setCurrentTimeAsStart",
+            "click button.out"           : "setCurrentTimeAsEnd",
+            "click a.collapse"           : "onCollapse",
+            "dblclick .start"            : "startEdit",
+            "dblclick .end"              : "startEdit",
+            "dblclick .end-btn"          : "startEdit",
+            "dblclick .start-btn"        : "startEdit",
+            "keydown .start-value"       : "saveStart",
+            "keydown .end-value"         : "saveEnd",
+            "keydown .freetext textarea" : "saveFreeText",
+            "focusout .start-value"      : "saveStart",
+            "focusout .end-value"        : "saveEnd",
             "focusout .freetext textarea": "saveFreeText",
-            "change .scaling select": "saveScaling"
+            "change .scaling select"     : "saveScaling"
         },
 
         /**
@@ -145,7 +145,7 @@ function ($, _not, PlayerAdapter, Annotation, User, CommentsContainer, Template,
 
             this.isEditEnable = false;
 
-            this.commentContainer = new CommentsContainer({id: this.id, comments: this.model.get("comments")});
+            this.commentContainer = new CommentsContainer({id: this.id, comments: this.model.get("comments"), collapsed: this.collapsed});
 
             if (this.model.get("label")) {
                 this.scale = annotationsTool.video.get("scales").get(this.model.get("label").category.scale_id);
@@ -209,8 +209,12 @@ function ($, _not, PlayerAdapter, Annotation, User, CommentsContainer, Template,
             this.$el.toggleClass("edit-on");
 
             if (this.isEditEnable) {
-                this.startEdit({currentTarget: this.$el.find(".start")});
-                this.startEdit({currentTarget: this.$el.find(".end")});
+                this.startEdit({currentTarget: this.$el.find(".start")[0]});
+                this.startEdit({currentTarget: this.$el.find(".end")[0]});
+
+                if (this.collapsed) {
+                    this.onCollapse();
+                }
             } else {
                 this.$el.find(".start input").attr("disabled", "disabled");
                 this.$el.find(".end input").attr("disabled", "disabled");
@@ -232,8 +236,8 @@ function ($, _not, PlayerAdapter, Annotation, User, CommentsContainer, Template,
 
             // Hack for Firefox, add an button over it
             if ($target.length == 0 && event.currentTarget.className.match(/-btn$/)) {
-                $target = $(event.currentTarget).parent().find("input");
-                $(event.currentTarget).parent().find("span").hide();
+                $target = $(event.currentTarget).parent().find(".input");
+                $(event.currentTarget).parent().find(".text-container span").hide();
             }
 
             if($target.attr("disabled")) {
@@ -309,7 +313,7 @@ function ($, _not, PlayerAdapter, Annotation, User, CommentsContainer, Template,
                     return;
                 } 
 
-                $target.parent().find("span").show();
+                $target.parent().find(".text-container span").show();
                 this.model.set("duration", seconds-this.model.get("start")); 
                 this.model.save();
             }
@@ -402,9 +406,6 @@ function ($, _not, PlayerAdapter, Annotation, User, CommentsContainer, Template,
             modelJSON.track = this.track.get("name");
             modelJSON.textReadOnly = _.escape(modelJSON.text).replace(/\n/g, "<br/>");
             modelJSON.duration = (modelJSON.duration || 0.0);
-
-
-
             
             if (modelJSON.isMine && this.scale && modelJSON.label.category.scale_id) {
                 category = annotationsTool.video.get("categories").get(this.model.get("label").category.id);
@@ -446,6 +447,7 @@ function ($, _not, PlayerAdapter, Annotation, User, CommentsContainer, Template,
             }
 
             this.$el.find('div#text-container'+this.id).after(this.commentContainer.render().$el);
+
             this.delegateEvents(this.events);
             return this;
         },
@@ -491,14 +493,21 @@ function ($, _not, PlayerAdapter, Annotation, User, CommentsContainer, Template,
          * Toggle the visibility of the text container
          */
         onCollapse: function(event) {
-            event.stopImmediatePropagation();
+            if (event) {
+                event.stopImmediatePropagation();
+            }
 
             this.collapsed = !this.collapsed;
 
             this.$el.find("> .header-container > div > a.collapse > i").toggleClass("icon-chevron-right").toggleClass("icon-chevron-down");
 
-            if(this.collapsed) this.$el.find("> div.in").collapse("hide");
-            else this.$el.find("> div.collapse").collapse("show");
+            if (this.collapsed) {
+                this.$el.find("> div.text-container.in").collapse("hide");
+                this.$el.find("> div.comments-container.in").collapse("hide");
+            } else {
+                this.$el.find("> div.text-container.collapse").collapse("show");
+                this.$el.find("> div.comments-container.collapse").collapse("show");
+            }
         }
 
     });

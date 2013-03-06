@@ -4756,7 +4756,7 @@ links.Timeline.prototype.stackCalculateFinal = function(items) {
         var item = items[i],
             top,
             bottom,
-            height = item.height*2,
+            height = item.height,
             width = item.getWidth(this),
             right = item.getRight(this),
             left = right - width;

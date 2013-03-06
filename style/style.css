@@ -4954,6 +4954,10 @@
   .checked i.check {
     visibility: visible;
   }
+  div.timeline-frame,
+  div.timeline-groups-axis {
+    overflow: visible!important;
+  }
   div.timeline-event {
     background-color: rgba(249, 103, 38, 0.6);
     z-index: 3;
@@ -4962,7 +4966,6 @@
     background-color: rgba(245, 215, 115, 0.75);
   }
   div.timeline-groups-text {
-    font-weight: bold;
     text-transform: capitalize;
     font-size: 1.05em;
     z-index: 1;
@@ -4973,8 +4976,8 @@
     padding: 0;
   }
   div.timeline-groups-text div.content {
-    float: left;
     padding: 3px;
+    text-decoration: none;
   }
   div.timeline-groups-text div.timeline-group {
     padding: 4px;
@@ -4985,12 +4988,18 @@
     cursor: pointer;
     background-color: rgba(255, 216, 0, 0.15);
   }
+  div.timeline-groups-text div.timeline-group a:hover {
+    text-decoration: none!important;
+  }
   div.timeline-groups-text div.timeline-group div.content {
     width: 105px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     color: #4b4b4b;
+  }
+  div.timeline-groups-text div.timeline-group div.content:hover {
+    text-decoration: none!important;
   }
   div.timeline-groups-text.selected {
     background-color: #eaeaea;
@@ -5001,9 +5010,10 @@
   div.timeline-groups-text i.delete,
   div.timeline-groups-text i.visibility {
     z-index: 4;
-    float: left;
     margin-top: 5px;
     margin-right: 4px;
+    position: relative;
+    display: inline-block;
   }
   div.timeline-groups-text i.delete:hover,
   div.timeline-groups-text i.visibility:hover {
@@ -5015,11 +5025,9 @@
   div.timeline-groups-text i.private {
     z-index: 4;
     float: left;
-    margin-top: 5px;
-    margin-right: 4px;
-    top: 19px;
+    margin-top: 2px;
+    margin-right: 0px;
     position: relative;
-    margin-left: -20px;
     border: 2px solid transparent;
   }
   div.timeline-customtime {
@@ -5028,6 +5036,7 @@
     width: 1px;
   }
   div.timeline-navigation {
+    display: block;
     z-index: 4;
     height: 22px;
     border: none;
@@ -5035,6 +5044,12 @@
     border-bottom: 2px solid #303030;
     border-radius: 0;
     background-color: #c7c7c7;
+    position: relative!important;
+    left: 0px!important;
+    right: 0px!important;
+    top: 0px!important;
+    bottom: 0px!important;
+    display: none;
     /* Todo: Should use Icons instead */
   
   }
@@ -5145,7 +5160,28 @@
   div.timeline-navigation .timeline-navigation-move-right:after {
     content: ">";
   }
-  div#reset-zoom {
+  div#timeline-custom-navigation {
+    height: 22px;
+    border: none;
+    border-top: 2px solid #303030;
+    border-bottom: 2px solid #303030;
+    border-radius: 0;
+    background-color: #c7c7c7;
+    position: relative!important;
+    font-weight: normal!important;
+    left: 0px!important;
+    right: 0px!important;
+    top: 0px!important;
+    bottom: 0px!important;
+  }
+  div#timeline-custom-navigation .btn {
+    font-weight: normal!important;
+  }
+  div#reset-zoom,
+  div#move-left,
+  div#move-right,
+  div#zoom-in,
+  div#zoom-out {
     float: left;
   }
   div.timeline-frame {
@@ -5232,6 +5268,7 @@
     padding: 2px;
     overflow: hidden;
     min-width: 20px;
+    z-index: 3;
   }
   div.timeline-item span {
     float: left;
@@ -5254,7 +5291,7 @@
   }
   div.timeline-event-selected {
     background: none;
-    z-index: 10;
+    z-index: 2;
   }
   div.timeline-event-selected div.timeline-item {
     border: 1px solid #da0000;
@@ -5264,12 +5301,18 @@
   div.timeline-event-range-drag-left {
     height: 22px!important;
   }
+  div#timeline {
+    padding-right: 20px;
+    overflow-x: hidden;
+    overflow-y: scroll!important;
+  }
   .standard_border_radius {
     border-radius: 0px 0px 0px 0px;
   }
   body {
     padding-top: 35px;
     padding-bottom: 10px;
+    overflow: hidden;
   }
   .window {
     background-color: #4b4b4b;
@@ -5323,13 +5366,15 @@
     display: none;
   }
   #video-container {
-    height: 50%;
+    max-height: 50%;
     max-width: 100%;
+    text-align: center;
   }
   #video-container object,
   #video-container video,
   #video-container embed {
     width: 100%;
+    max-height: 500px;
     vertical-align: bottom;
   }
   body {
@@ -5562,26 +5607,26 @@
   #annotate-container input.file {
     display: none;
   }
-  #annotate-container div {
+  #annotate-container #label-tabs-contents div {
     padding: 0px;
   }
-  #annotate-container div.carousel {
+  #annotate-container #label-tabs-contents div.carousel {
     height: 190px;
     overflow: auto;
     margin-bottom: 0;
   }
-  #annotate-container div.carousel .row-fluid > .span1 {
+  #annotate-container #label-tabs-contents div.carousel .row-fluid > .span1 {
     width: 8.33333%;
   }
-  #annotate-container div.carousel .row-fluid > [class*="span1"] {
+  #annotate-container #label-tabs-contents div.carousel .row-fluid > [class*="span1"] {
     margin-left: 0;
   }
-  #annotate-container div.carousel .category-item {
+  #annotate-container #label-tabs-contents div.carousel .category-item {
     height: 100%;
     /* Position 6 to 12 need to carry the scaling on the left side */
   
   }
-  #annotate-container div.carousel .category-item .catItem-header {
+  #annotate-container #label-tabs-contents div.carousel .category-item .catItem-header {
     text-align: left;
     height: 25px;
     padding: 1px 3px;
@@ -5591,10 +5636,10 @@
     border-right: 1px solid #ffffff;
     border-bottom: 1px solid #ffffff;
   }
-  #annotate-container div.carousel .category-item .catItem-header .edit {
+  #annotate-container #label-tabs-contents div.carousel .category-item .catItem-header .edit {
     display: none;
   }
-  #annotate-container div.carousel .category-item .catItem-header input {
+  #annotate-container #label-tabs-contents div.carousel .category-item .catItem-header input {
     width: 45px;
     margin: 0 0 3px 0;
     padding: 1px;
@@ -5602,7 +5647,7 @@
     text-overflow: clip;
     color: #000000;
   }
-  #annotate-container div.carousel .category-item .catItem-header input[disabled] {
+  #annotate-container #label-tabs-contents div.carousel .category-item .catItem-header input[disabled] {
     margin: 0;
     text-overflow: ellipsis;
     background: none;
@@ -5611,12 +5656,12 @@
     border: none;
     width: 100%;
   }
-  #annotate-container div.carousel .category-item .catItem-header .colorPicker-picker {
+  #annotate-container #label-tabs-contents div.carousel .category-item .catItem-header .colorPicker-picker {
     display: inline-block;
     background-image: url("../img/annotation/icons-grey.png");
     background-position: -384px -168px;
   }
-  #annotate-container div.carousel .category-item .label-item {
+  #annotate-container #label-tabs-contents div.carousel .category-item .label-item {
     padding: 3px;
     height: 22px;
     position: relative;
@@ -5629,20 +5674,20 @@
     -ms-box-sizing: border-box;
     box-sizing: border-box;
   }
-  #annotate-container div.carousel .category-item .label-item .edit {
+  #annotate-container #label-tabs-contents div.carousel .category-item .label-item .edit {
     display: none;
   }
-  #annotate-container div.carousel .category-item .label-item .item-abbreviation {
+  #annotate-container #label-tabs-contents div.carousel .category-item .label-item .item-abbreviation {
     width: 28px;
   }
-  #annotate-container div.carousel .category-item .label-item span.item-abbreviation:hover {
+  #annotate-container #label-tabs-contents div.carousel .category-item .label-item span.item-abbreviation:hover {
     cursor: pointer;
   }
-  #annotate-container div.carousel .category-item .label-item .item-value {
+  #annotate-container #label-tabs-contents div.carousel .category-item .label-item .item-value {
     width: 100%;
     margin-left: 4px;
   }
-  #annotate-container div.carousel .category-item .label-item .read-only {
+  #annotate-container #label-tabs-contents div.carousel .category-item .label-item .read-only {
     color: #000000;
     display: block;
     width: 100%;
@@ -5657,7 +5702,7 @@
     -ms-box-sizing: border-box;
     box-sizing: border-box;
   }
-  #annotate-container div.carousel .category-item .label-item input {
+  #annotate-container #label-tabs-contents div.carousel .category-item .label-item input {
     color: #000000;
     background-color: #ffffff;
     float: left;
@@ -5666,32 +5711,32 @@
     margin: 0px;
     display: inline-block;
   }
-  #annotate-container div.carousel .category-item .label-item input[disabled] {
+  #annotate-container #label-tabs-contents div.carousel .category-item .label-item input[disabled] {
     display: none;
   }
-  #annotate-container div.carousel .category-item .label-item .item-icon {
+  #annotate-container #label-tabs-contents div.carousel .category-item .label-item .item-icon {
     float: right;
   }
-  #annotate-container div.carousel .category-item .label-item:hover {
+  #annotate-container #label-tabs-contents div.carousel .category-item .label-item:hover {
     background-color: rgba(255, 255, 255, 0.4);
   }
-  #annotate-container div.carousel .category-item .label-item.scale-disabled {
+  #annotate-container #label-tabs-contents div.carousel .category-item .label-item.scale-disabled {
     cursor: pointer;
   }
-  #annotate-container div.carousel .category-item .label-item.scale-disabled:active {
+  #annotate-container #label-tabs-contents div.carousel .category-item .label-item.scale-disabled:active {
     background-color: transparent;
   }
-  #annotate-container div.carousel .category-item .label-item.scale-enabled {
+  #annotate-container #label-tabs-contents div.carousel .category-item .label-item.scale-enabled {
     /* Hover needs to be done twice to keep the overlay open when mouse enters the .scaling area */
   
   }
-  #annotate-container div.carousel .category-item .label-item.scale-enabled:hover .scaling {
+  #annotate-container #label-tabs-contents div.carousel .category-item .label-item.scale-enabled:hover .scaling {
     display: block;
   }
-  #annotate-container div.carousel .category-item .label-item.scale-enabled .scaling:hover {
+  #annotate-container #label-tabs-contents div.carousel .category-item .label-item.scale-enabled .scaling:hover {
     display: block;
   }
-  #annotate-container div.carousel .category-item .label-item.scale-enabled .scaling {
+  #annotate-container #label-tabs-contents div.carousel .category-item .label-item.scale-enabled .scaling {
     display: none;
     background-color: #4b4b4b;
     position: absolute;
@@ -5703,7 +5748,7 @@
     max-width: 250px;
     min-width: 145px;
   }
-  #annotate-container div.carousel .category-item .label-item.scale-enabled .scaling:before {
+  #annotate-container #label-tabs-contents div.carousel .category-item .label-item.scale-enabled .scaling:before {
     right: 100%;
     border: solid transparent;
     content: " ";
@@ -5716,7 +5761,7 @@
     border-width: 8px;
     margin-top: 2px;
   }
-  #annotate-container div.carousel .category-item .label-item.scale-enabled .scaling li {
+  #annotate-container #label-tabs-contents div.carousel .category-item .label-item.scale-enabled .scaling li {
     list-style: none;
     display: block;
     background-color: #000000;
@@ -5738,44 +5783,45 @@
     text-overflow: ellipsis;
     white-space: nowrap;
   }
-  #annotate-container div.carousel .category-item .label-item.scale-enabled .scaling li:hover {
+  #annotate-container #label-tabs-contents div.carousel .category-item .label-item.scale-enabled .scaling li:hover {
     cursor: pointer;
     background-color: #ffffff;
     color: #000000;
   }
-  #annotate-container div.carousel .category-item .label-item.scale-enabled .scaling li:active {
+  #annotate-container #label-tabs-contents div.carousel .category-item .label-item.scale-enabled .scaling li:active {
     background-color: #eaeaea;
     color: #303030;
   }
-  #annotate-container div.carousel .category-item:nth-child(1n+7) .scale-enabled .scaling {
+  #annotate-container #label-tabs-contents div.carousel .category-item:nth-child(1n+7) .scale-enabled .scaling {
     right: 100%;
     left: auto;
   }
-  #annotate-container div.carousel .category-item:nth-child(1n+7) .scale-enabled .scaling:before {
+  #annotate-container #label-tabs-contents div.carousel .category-item:nth-child(1n+7) .scale-enabled .scaling:before {
     left: 100%;
     right: auto;
     border-color: rgba(0, 0, 0, 0);
     border-right-color: rgba(0, 0, 0, 0);
     border-left-color: #000000;
   }
-  #annotate-container div div.controls {
+  #annotate-container #label-tabs-contents div div.controls {
     text-align: right;
+    border-bottom: 1px solid #ffffff;
   }
-  #annotate-container div div.pagination {
+  #annotate-container #label-tabs-contents div div.pagination {
     border-bottom: 2px solid #4b4b4b;
-    margin: 0px;
+    margin: 0 0 -1px 0;
     height: 22px;
     text-align: right;
   }
-  #annotate-container div div.pagination ul {
+  #annotate-container #label-tabs-contents div div.pagination ul {
     box-shadow: none;
     border-radius: 0;
   }
-  #annotate-container div div.pagination li.active a {
+  #annotate-container #label-tabs-contents div div.pagination li.active a {
     background-color: #eaeaea;
     background-image: none;
   }
-  #annotate-container div div.pagination a {
+  #annotate-container #label-tabs-contents div div.pagination a {
     display: inline-block;
     *display: inline;
     /* IE7 inline-block hack */
@@ -5833,35 +5879,35 @@
     height: 22px;
     line-height: 22px;
   }
-  #annotate-container div div.pagination a:hover,
-  #annotate-container div div.pagination a:active,
-  #annotate-container div div.pagination a.active,
-  #annotate-container div div.pagination a.disabled,
-  #annotate-container div div.pagination a[disabled] {
+  #annotate-container #label-tabs-contents div div.pagination a:hover,
+  #annotate-container #label-tabs-contents div div.pagination a:active,
+  #annotate-container #label-tabs-contents div div.pagination a.active,
+  #annotate-container #label-tabs-contents div div.pagination a.disabled,
+  #annotate-container #label-tabs-contents div div.pagination a[disabled] {
     background-color: #b0b0b0;
   }
-  #annotate-container div div.pagination a:active,
-  #annotate-container div div.pagination a.active {
+  #annotate-container #label-tabs-contents div div.pagination a:active,
+  #annotate-container #label-tabs-contents div div.pagination a.active {
     background-color: #979797 \9;
   }
-  #annotate-container div div.pagination a:hover,
-  #annotate-container div div.pagination a:active,
-  #annotate-container div div.pagination a.active,
-  #annotate-container div div.pagination a.disabled,
-  #annotate-container div div.pagination a[disabled] {
+  #annotate-container #label-tabs-contents div div.pagination a:hover,
+  #annotate-container #label-tabs-contents div div.pagination a:active,
+  #annotate-container #label-tabs-contents div div.pagination a.active,
+  #annotate-container #label-tabs-contents div div.pagination a.disabled,
+  #annotate-container #label-tabs-contents div div.pagination a[disabled] {
     background-color: #b0b0b0;
   }
-  #annotate-container div div.pagination a:active,
-  #annotate-container div div.pagination a.active {
+  #annotate-container #label-tabs-contents div div.pagination a:active,
+  #annotate-container #label-tabs-contents div div.pagination a.active {
     background-color: #979797 \9;
   }
-  #annotate-container div div.pagination a:first-child {
+  #annotate-container #label-tabs-contents div div.pagination a:first-child {
     *margin-left: 0;
   }
-  #annotate-container div div.pagination a:first-child {
+  #annotate-container #label-tabs-contents div div.pagination a:first-child {
     *margin-left: 0;
   }
-  #annotate-container div div.pagination a:hover {
+  #annotate-container #label-tabs-contents div div.pagination a:hover {
     background-color: #ffffff;
     background-image: none;
   }
@@ -5978,14 +6024,11 @@
     border-radius: 0px 0px 0px 0px;
   }
   #list-container {
-    overflow: auto;
-  }
-  #list-container.expanded {
-    min-height: 300px;
+    overflow-y: scroll;
+    overflow-x: hidden;
   }
   #list-container #content-list {
     overflow: auto;
-    min-height: 300px;
   }
   #list-container a.proxy-anchor {
     display: none;
@@ -5998,7 +6041,9 @@
   }
   #list-container div.annotation {
     background-color: #ffffff;
-    border-top: 2px solid #303030;
+    margin-top: 2px;
+    border-left: 1px solid #4b4b4b;
+    border-right: 1px solid #4b4b4b;
     /* Layout of headerbar*/
   
     /* Content Elements in headerbar*/
@@ -6013,12 +6058,9 @@
     cursor: pointer;
   }
   #list-container div.annotation.selected {
-    border-left: 1px solid #da0000;
-    border-right: 1px solid #da0000;
-    border-bottom: 1px solid #da0000;
+    border: 1px solid #da0000;
   }
   #list-container div.annotation.selected .header-container {
-    border-top: 1px solid #da0000;
     background-image: url("../img/annotation/pattern.png");
     background-repeat: repeat-x;
     background-position: top;
@@ -6026,6 +6068,7 @@
   #list-container div.annotation .header-container {
     margin: 0;
     height: 20px;
+    line-height: 20px;
     padding: 0 5px;
     background-color: #eaeaea;
   }
@@ -6040,23 +6083,15 @@
     white-space: nowrap;
     height: 20px;
   }
-  #list-container div.annotation .header-container * {
-    vertical-align: top;
-  }
-  #list-container div.annotation .header-container i {
-    vertical-align: middle;
-  }
   #list-container div.annotation .header-container button {
-    border: none;
     height: 20px;
     border: 1px solid #000000;
-    border-top: none;
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     -ms-box-sizing: border-box;
     box-sizing: border-box;
     padding: 2px;
-    vertical-align: middle;
+    vertical-align: top;
     line-height: headerHeight;
   }
   #list-container div.annotation .edit {
@@ -6086,6 +6121,11 @@
     display: inline-block;
     visibility: visible;
   }
+  #list-container div.annotation.edit-on .start,
+  #list-container div.annotation.edit-on .end {
+    background: #ffffff;
+  }
+  #list-container div.annotation.edit-on .start.no-duration,
   #list-container div.annotation.edit-on .end.no-duration {
     display: inline-block;
   }
@@ -6096,7 +6136,10 @@
   #list-container div.annotation i.toggle-edit {
     visibility: visible;
   }
-  #list-container div.annotation i:hover {
+  #list-container div.annotation i.icon-chevron-down:hover,
+  #list-container div.annotation i.icon-chevron-right:hover,
+  #list-container div.annotation i.icon-trash:hover,
+  #list-container div.annotation i.icon-pencil:hover {
     background-color: rgba(57, 163, 241, 0.3);
     box-shadow: 0 0 3px rgba(57, 163, 241, 0.7) inset;
     border-radius: 3px;
@@ -6105,12 +6148,10 @@
   #list-container div.annotation .start,
   #list-container div.annotation .end {
     cursor: text;
-    background-color: rgba(255, 255, 255, 0.6);
-    height: 16px;
-    padding: 2px;
     display: inline-block;
     position: relative;
     color: #000000;
+    background-color: rgba(255, 255, 255, 0.6);
   }
   #list-container div.annotation .start.no-duration,
   #list-container div.annotation .end.no-duration {
@@ -6122,18 +6163,19 @@
     border: none;
     position: relative;
     z-index: 300;
-    padding: 0;
     margin: 0;
+    padding: 0;
     box-shadow: none;
     color: #000000;
     text-align: center;
     font-family: monospace;
+    background: #ffffff;
   }
   #list-container div.annotation .start input[disabled],
   #list-container div.annotation .end input[disabled] {
+    background: transparent;
     z-index: 100;
     border: none;
-    background: none;
     cursor: text;
   }
   #list-container div.annotation .start input.error,
@@ -6154,7 +6196,7 @@
     height: 16px;
   }
   #list-container div.annotation span.scaling select {
-    width: 50px;
+    width: 60px;
     height: 20px;
     padding: 2px;
     margin: 0;
@@ -6162,6 +6204,7 @@
     color: #ffffff;
     background-color: #000000;
     border: none;
+    vertical-align: top;
   }
   #list-container div.annotation span.scaling span {
     background-color: #000000;
@@ -6176,17 +6219,14 @@
     font-size: 0.9em;
     display: inline-block;
     text-align: center;
+    vertical-align: top;
   }
   #list-container div.annotation span.category {
     color: #4b4b4b;
-    vertical-align: middle;
   }
   #list-container div.annotation span.category span.abbreviation {
     color: #000000;
     font-weight: bold;
-    display: inline-block;
-    height: 20px;
-    vertical-align: middle;
   }
   #list-container div.annotation span.text {
     display: block;
@@ -6212,6 +6252,16 @@
   #list-container div.comments-container {
     background-color: #c7c7c7;
     color: #000000;
+    overflow: hidden;
+  }
+  #list-container div.comments-container textarea {
+    resize: vertical;
+  }
+  #list-container div.comments-container .button-bar {
+    text-align: right;
+  }
+  #list-container div.comments-container .button-bar button {
+    margin-bottom: 5px;
   }
   #list-container div.comments-container .comment-header {
     padding: 2px;
@@ -6219,18 +6269,11 @@
   #list-container div.comments-container .comment-header span.add-comment {
     line-height: 16px;
     min-height: 16px;
-    display: inline-block;
+    display: block;
     text-align: right;
-    width: 100%;
   }
   #list-container div.comments-container .comment-header span.add-comment a.add-comment {
     color: #303030;
-  }
-  #list-container div.comments-container .comment-header textarea {
-    resize: vertical;
-  }
-  #list-container div.comments-container .comment-header button {
-    margin-bottom: 5px;
   }
   #list-container div.comments-container .comment-list {
     font-size: 0.92em;
@@ -6274,19 +6317,6 @@
   .collapse-comment i {
     float: left;
     margin-right: 5px;
-  }
-  .collapse-comment {
-    -webkit-transition: height 0.35s ease;
-    -moz-transition: height 0.35s ease;
-    -ms-transition: height 0.35s ease;
-    -o-transition: height 0.35s ease;
-    transition: height 0.35s ease;
-    position: relative;
-    overflow: hidden;
-    height: 0;
-  }
-  .collapse-comment.in {
-    height: auto;
   }
 }
 @media screen and (max-width: 767px) {

@@ -2,7 +2,7 @@
 require.config({
   baseUrl: "js",
   paths: {
-    'timeline': 'libs/timeline-2.4',
+    'timeline': 'libs/timeline-min',
     'scrollspy': 'libs/bootstrap/scrollspy',
     'tab': 'libs/bootstrap/tab',
     'carousel': 'libs/bootstrap/carousel2.2',
