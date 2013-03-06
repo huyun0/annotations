@@ -102,7 +102,7 @@ define(["jquery",
             var data = {
             	creator: modelJSON.created_by_nickname, 
             	creationdate: new Date(modelJSON.created_at).toLocaleString(), 
-              text: modelJSON.text,
+              text: _.escape(modelJSON.text).replace(/\n/g, "<br/>"),
               canEdit: annotationsTool.user.get("id") == modelJSON.created_by
 
             };
