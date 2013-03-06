@@ -247,7 +247,7 @@ function ($, _not, PlayerAdapter, Annotation, User, CommentsContainer, Template,
         },
 
         saveFreeText: function (event) {
-            var newValue = _.escape(this.$el.find(".freetext textarea").val());
+            var newValue = this.$el.find(".freetext textarea").val();
 
             // If keydown event but not enter, value must not be saved
             if (event.type === "keydown" && !(event.keyCode === 13 && !event.shiftKey)) {
@@ -256,7 +256,6 @@ function ($, _not, PlayerAdapter, Annotation, User, CommentsContainer, Template,
 
             this.model.set({text: newValue});
             this.model.save();
-            this.$el.find(".freetext span").html(newValue.replace(/\n/g, "<br/>"));
 
             if (event.type === "keydown") {
                 $(event.currentTarget).blur();
