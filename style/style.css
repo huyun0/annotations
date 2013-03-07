@@ -5680,9 +5680,6 @@
   #annotate-container #label-tabs-contents div.carousel .category-item .label-item .item-abbreviation {
     width: 28px;
   }
-  #annotate-container #label-tabs-contents div.carousel .category-item .label-item span.item-abbreviation:hover {
-    cursor: pointer;
-  }
   #annotate-container #label-tabs-contents div.carousel .category-item .label-item .item-value {
     width: 100%;
     margin-left: 4px;
@@ -5729,6 +5726,9 @@
   #annotate-container #label-tabs-contents div.carousel .category-item .label-item.scale-enabled {
     /* Hover needs to be done twice to keep the overlay open when mouse enters the .scaling area */
   
+  }
+  #annotate-container #label-tabs-contents div.carousel .category-item .label-item.scale-enabled:hover {
+    cursor: default;
   }
   #annotate-container #label-tabs-contents div.carousel .category-item .label-item.scale-enabled:hover .scaling {
     display: block;
