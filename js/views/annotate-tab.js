@@ -489,7 +489,7 @@ define(["jquery",
           onImport: function (evt) {
 
               var reader = new FileReader(),
-                  file = evt.target.files[0];
+                  file = evt.target.files[0],
                   defaultCategoryAttributes = this.defaultCategoryAttributes;
 
               reader.onload = (function (addedFile) {
