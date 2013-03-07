@@ -48,10 +48,11 @@ define(["jquery",
         "default_scale_set",
         "handlebars",
         "backbone",
+        "access",
         "libs/FileSaver",
         "jquery.FileReader"],
        
-    function($, _, Category, Label, Scale, ScaleValue, Categories, Labels, ScaleValues, CategoryView, Template, categoriesSet, scalesSet, Handlebars, Backbone) {
+    function($, _, Category, Label, Scale, ScaleValue, Categories, Labels, ScaleValues, CategoryView, Template, categoriesSet, scalesSet, Handlebars, Backbone, ACCESS) {
 
         "use strict";
 
@@ -405,20 +406,28 @@ define(["jquery",
               var scale,
                   scalevalues,
                   findByNameScale = function(scale){
-                    return scalesSet[0].name == scale.get('name');
+                    return scalesSet[0].name === scale.get('name');
                   }, 
                   options = {wait:true};
 
               // Generate scales
-              if(!annotationsTool.video.get("scales").find(findByNameScale)){
-                scale = annotationsTool.video.get("scales").create({name: scalesSet[0].name},options);
-                scalevalues = scale.get("scaleValues");
-   
-                _.each(scalesSet[0].values,function(scalevalue){
-                  scalevalues.create({name: scalevalue.name, value: scalevalue.value, order: scalevalue.order, scale: scale},options);
-                });
-              } else{
-                scale = annotationsTool.video.get("scales").first();
+              if (!annotationsTool.video.get("scales").find(findByNameScale)) {
+
+                  scale = annotationsTool.video.get("scales").create({
+                      name  : scalesSet[0].name,
+                      access: ACCESS.PRIVATE
+                  }, options);
+
+                  scalevalues = scale.get("scaleValues");
+     
+                  _.each(scalesSet[0].values, function (scalevalue) {
+                      scalevalues.create({
+                        name: scalevalue.name, 
+                        value: scalevalue.value, 
+                        order: scalevalue.order, 
+                        scale: scale
+                      }, options);
+                  });
               }
           },
 

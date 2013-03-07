@@ -30,12 +30,11 @@ define(["jquery",
         "text!templates/scale-editor.tmpl",
         "text!templates/scale-editor-select.tmpl",
         "text!templates/scale-editor-content.tmpl",
+        "access",
         "handlebars"],
-        function ($, Backbone, Scale, Scales, ScaleValueEditorView, ScaleEditorTmpl, ScaleEditorSelectTmpl, ScaleEditorContentTmpl, Handlebars) {
+        function ($, Backbone, Scale, Scales, ScaleValueEditorView, ScaleEditorTmpl, ScaleEditorSelectTmpl, ScaleEditorContentTmpl, ACCESS, Handlebars) {
 
             "use strict";
-
-
 
             /**
              * @constructor
@@ -46,15 +45,15 @@ define(["jquery",
             var ScaleEditor = Backbone.View.extend({
 
                 TITLES: {
-                    CATEGORY_EDIT: "Edit category scale",
+                    CATEGORY_EDIT  : "Edit category scale",
                     STANDALONE_EDIT: "Edit scales",
-                    SAVE_BUTTON: "Save",
-                    CREATE_BUTTON: "Create"
+                    SAVE_BUTTON    : "Save",
+                    CREATE_BUTTON  : "Create"
                 },
 
                 EMPTY_SCALE: {
                     name: "-- NO SCALE --",
-                    id: "NO"
+                    id  : "NO"
                 },
 
                 el: $("#scale-editor"),
@@ -71,14 +70,14 @@ define(["jquery",
                  * @type {object}
                  */
                 events: {
-                    "click #save-scale": "save",
-                    "click #cancel-scale": "cancel",
-                    "click a.edit-scale": "startEditScale",
-                    "click a.create-scale": "createScale",
-                    "click a.delete-scale": "deleteScale",
+                    "click #save-scale"         : "save",
+                    "click #cancel-scale"       : "cancel",
+                    "click a.edit-scale"        : "startEditScale",
+                    "click a.create-scale"      : "createScale",
+                    "click a.delete-scale"      : "deleteScale",
                     "click a.create-scale-value": "createScaleValue",
-                    "change select#scale-id": "changeScale",
-                    "keydown #save-scale": "saveOnInsert"
+                    "change select#scale-id"    : "changeScale",
+                    "keydown #save-scale"       : "saveOnInsert"
                 },
 
                 /**
@@ -120,7 +119,6 @@ define(["jquery",
                     this.EMPTY_SCALE.isSelected = false;
 
                     if (category) {
-
                         this.currentCategory = category;
 
                         if (category.get("settings").hasScale) {
@@ -140,6 +138,9 @@ define(["jquery",
                 generateScalesForTemplate: function () {
                     var scales = annotationsTool.video.get("scales").toJSON(),
                         selectedScale;
+
+                    // Filter by access values
+                    scales = _.where(scales, {access: this.currentCategory.get("access")});
 
                     scales.push(this.EMPTY_SCALE);
 
@@ -264,16 +265,22 @@ define(["jquery",
                 createScale: function () {
                     this.isInEditMode = true;
                     this.$el.find("a#save-scale").text(this.TITLES.CREATE_BUTTON);
-                    this.currentScale = new Scale({name: "New scale"});
+                    this.currentScale = new Scale({
+                            name  : "New scale",
+                            access: this.currentCategory.get("access")
+                    });
                     this.renderEditContent(this.currentScale);
                     this.$el.find("select#scale-id").attr("disabled","disabled");
                     this.$el.find(".modal-body").show();
                 },
 
                 createScaleValue: function () {
-                    this.currentScale.get("scaleValues").create({order: this.$el.find(".scale-value").length, 
-                                                                name:"New scale value", 
-                                                                value: 0});
+                    this.currentScale.get("scaleValues").create({
+                            order: this.$el.find(".scale-value").length,
+                            name :"New scale value",
+                            value: 0,
+                            access: this.currentCategory.get("access")
+                    });
                 },
 
                 deleteScale: function (event) {
