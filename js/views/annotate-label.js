@@ -244,11 +244,37 @@ define(["jquery",
            * Listener for key down event on name field
            */
           onKeyDown: function(e){
-            if(e.keyCode == 13){ // If "return" key
-              var attributeName = e.target.className.replace("item-","").replace(" edit","");
-              this.model.set(attributeName,_.escape(e.target.value));
-              this.model.save();
-            }
+              e.stopImmediatePropagation();
+
+              e.stopPropagation();
+
+              if(e.keyCode == 13){ // If "return" key
+                  var attributeName = e.target.className.replace("item-","").replace(" edit","");
+                  this.model.set(attributeName,_.escape(e.target.value));
+                  this.model.save();
+              } else if (e.keyCode === 39 && this.getCaretPosition(e.target) === e.target.value.length ||
+                         e.keyCode === 37 && this.getCaretPosition(e.target) === 0) {
+                  // Avoid scrolling through arrows keys
+                  e.preventDefault();
+              }
+          },
+
+          getCaretPosition: function (inputElement) {
+              var CaretPos = 0;
+              // IE Support
+              if (document.selection) {
+                  inputElement.focus ();
+                  var Sel = document.selection.createRange ();
+
+                  Sel.moveStart ('character', -inputElement.value.length);
+
+                  CaretPos = Sel.text.length;
+              }
+              // Firefox support
+              else if (inputElement.selectionStart || inputElement.selectionStart == '0')
+                  CaretPos = inputElement.selectionStart;
+
+              return (CaretPos);
           },
 
           /**

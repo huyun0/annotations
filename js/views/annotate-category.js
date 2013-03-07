@@ -52,11 +52,11 @@ define(["jquery",
 
           /** Events to handle by the annotate view */
           events: {
-            "click .catItem-header i.delete"   : "onDeleteCategory",
-            "click .catItem-header i.scale"    : "editScale",
-            "focusout .catItem-header input"   : "onFocusOut",
-            "keydown .catItem-header input"    : "onKeyDown",
-            "click   .catItem-add"             : "onCreateLabel",
+              "click .catItem-header i.delete"   : "onDeleteCategory",
+              "click .catItem-header i.scale"    : "editScale",
+              "focusout .catItem-header input"   : "onFocusOut",
+              "keydown .catItem-header input"    : "onKeyDown",
+              "click   .catItem-add"             : "onCreateLabel",
           },
           
           /**
@@ -230,10 +230,32 @@ define(["jquery",
            * Listener for key down event on name field
            */
           onKeyDown: function(e){
-            if(e.keyCode == 13){ // If "return" key
-              this.model.set('name',_.escape(this.nameInput.val()))
-              this.model.save();
-            }
+              if(e.keyCode == 13){ // If "return" key
+                  this.model.set('name',_.escape(this.nameInput.val()))
+                  this.model.save();
+              } else if (e.keyCode === 39 && this.getCaretPosition(e.target) === e.target.value.length ||
+                         e.keyCode === 37 && this.getCaretPosition(e.target) === 0) {
+                  // Avoid scrolling through arrows keys
+                  e.preventDefault();
+              }
+          },
+
+          getCaretPosition: function (inputElement) {
+              var CaretPos = 0;
+              // IE Support
+              if (document.selection) {
+                  inputElement.focus ();
+                  var Sel = document.selection.createRange ();
+
+                  Sel.moveStart ('character', -inputElement.value.length);
+
+                  CaretPos = Sel.text.length;
+              }
+              // Firefox support
+              else if (inputElement.selectionStart || inputElement.selectionStart == '0')
+                  CaretPos = inputElement.selectionStart;
+
+              return (CaretPos);
           },
 
           onColorChange: function (id, newValue) {
