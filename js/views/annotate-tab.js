@@ -161,8 +161,10 @@ define(["jquery",
               
               this.categoryViews = new Array();
 
-              if(attr.edit)this.edit=true;
-              
+              if (attr.edit) {
+                  this.edit=true;
+              }
+
               this.el.id = this.idPrefix+attr.id;
 
               this.$el.append(this.template({id:attr.id}));
@@ -204,9 +206,9 @@ define(["jquery",
               this.listenTo(this.categories, 'remove', this.removeOne);
               this.listenTo(this.categories, 'destroy', this.removeOne);
 
-              if (_.contains(this.roles, annotationsTool.user.get("role"))) {
-                this.listenTo(annotationsTool.video, 'switchEditModus', this.onSwitchEditModus);
-              }
+              this.listenTo(annotationsTool.video, 'switchEditModus', this.onSwitchEditModus);
+
+              this.hasEditMode = _.contains(this.roles, annotationsTool.user.get("role"));
 
               this.delegateEvents(this.events);
 
@@ -516,7 +518,13 @@ define(["jquery",
            * @param {Event} event Event related to this action
            */
           onSwitchEditModus: function(status){
-              this.switchEditModus(status);
+              if (this.hasEditMode) {
+                  this.switchEditModus(status);
+              } else if (status) {
+                  this.titleLink.css("visibility", "hidden");
+              } else {
+                  this.titleLink.css("visibility", "visible");
+              }
           },
 
           chooseFile: function () {
