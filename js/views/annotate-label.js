@@ -159,7 +159,7 @@ define(["jquery",
           /**
            * Annotate the video with this label
            */
-          annotate: function(){
+          annotate: function(event) {
               event.stopImmediatePropagation();
 
               if (this.editModus || this.isScaleEnable) {
@@ -245,8 +245,6 @@ define(["jquery",
            */
           onKeyDown: function(e){
               e.stopImmediatePropagation();
-
-              e.stopPropagation();
 
               if(e.keyCode == 13){ // If "return" key
                   var attributeName = e.target.className.replace("item-","").replace(" edit","");
