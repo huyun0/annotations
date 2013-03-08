@@ -39,7 +39,8 @@ define(["jquery",
           /** Events to handle */
           events: {
               "click a.add-comment"       : "onAddComment",
-              "click button[type=submit]" : "onSubmit",
+              "keyup textarea"           : "keyupInsertProxy",
+              "click button[type=submit]" : "insert",
               "click button[type=button]" : "onCancelComment"
           },
           
@@ -60,7 +61,12 @@ define(["jquery",
             this.commentViews = [];
             
             // Bind function to the good context 
-            _.bindAll(this,"render", "onAddComment", "onSubmit", "onCancelComment");
+            _.bindAll(this,
+                      "render",
+                      "onAddComment",
+                      "insert",
+                      "onCancelComment",
+                      "keyupInsertProxy");
 
             this.$el.html(this.template({
                 id       : this.annotationId, 
@@ -124,15 +130,26 @@ define(["jquery",
               });
               this.render();
           },
+
+          keyupInsertProxy: function (event) {
+                  // If enter is pressed and shit not, we insert a new annotation
+                if (event.keyCode === 13 && !event.shiftKey) {
+                    this.insert();
+                }
+          },
           
           /**
            * Submit a comment to the backend
            */
-          onSubmit: function(event) {
-              var textValue = this.$el.find("textarea").val();
-              if(textValue == '')
+          insert: function () {
+              var textValue = this.$el.find("textarea").val(),
+                  commentModel;
+
+              if (textValue === "") {
                 return;
-              var commentModel = this.comments.create({text: textValue});
+              }
+              
+              commentModel = this.comments.create({text: textValue});
                 
               this.cancel();
               this.addComment(commentModel);
@@ -142,11 +159,14 @@ define(["jquery",
               var commentModel = new CommentView({model: comment});
               this.commentViews.push(commentModel);
               this.$el.find("div#comment-list"+this.annotationId).append(commentModel.render().$el);
+
               if (this.comments.length == 1) {
                   this.commentList.append(commentModel.render().$el);
               } else {
                   this.$el.find("> span.comments").text(this.comments.length + " Comments");
               }
+
+              this.$el.find("textarea").focus();
           },
           
           /**
@@ -156,6 +176,7 @@ define(["jquery",
               event.stopImmediatePropagation();
               this.$el.find("textarea").show();
               this.$el.find("button").removeClass("hide");
+              this.$el.find("textarea").focus();
           },
           
           onCancelComment: function(event) {
