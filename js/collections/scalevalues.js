@@ -46,6 +46,10 @@ define(["jquery",
                     return null;
             },
 
+            comparator: function (scaleValue) {
+                return scaleValue.get("order");
+            },
+
 
             toExportJSON: function () {
                 var valueForExport = [];

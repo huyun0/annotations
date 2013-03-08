@@ -226,6 +226,7 @@ define(["jquery",
 
                         this.currentCategory.set("settings", settings);
                         this.currentCategory.save();
+                        this.changeScale();
                         this.hide();
                     }
                 },

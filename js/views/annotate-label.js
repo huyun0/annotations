@@ -219,15 +219,15 @@ define(["jquery",
           changeCategory: function (category) {
               var scale;
 
-              if (category.scale) {
-                scale = annotationsTool.video.get("scales").get(category.scale.id);
+              if (category.scale_id) {
+                scale = annotationsTool.video.get("scales").get(category.scale_id);
                 if (scale) {
                   this.scaleValues = scale.get("scaleValues");
                 }
               }
 
               this.isScaleEnable = (category.settings && category.settings.hasScale);
-              this.model.set("category",category);
+              this.model.set("category", category);
               this.model.save();
           },
 
@@ -279,9 +279,9 @@ define(["jquery",
            * Delete only this category view
            */
           deleteView: function(){
-            this.remove();
-            this.undelegateEvents();
-            this.deleted = true;
+              this.remove();
+              this.undelegateEvents();
+              this.deleted = true;
           },
 
           /**
@@ -289,7 +289,7 @@ define(["jquery",
            * @param  {Event} event
            */
           onDeleteLabel: function(event){
-            annotationsTool.deleteOperation.start(this.model,this.typeForDelete);
+              annotationsTool.deleteOperation.start(this.model,this.typeForDelete);
           },  
 
           /**
@@ -297,32 +297,30 @@ define(["jquery",
            * @return {LabelView} this label view
            */
           render: function(){
-            var modelJSON = this.model.toJSON();
+              var modelJSON = this.model.toJSON();
 
-            modelJSON.notEdit = !this.editModus;
-            if (!this.isScaleEnable) {
-                if (modelJSON.scale_id) {
-                  delete modelJSON.scale_id;
-                }
-            } else if (this.scaleValues) {
-              modelJSON.scaleValues = _.sortBy(this.scaleValues.toJSON(), function (scaleValue) {
-                      return scaleValue.order;
-              });
-            }
+              modelJSON.notEdit = !this.editModus;
+              if (!this.isScaleEnable) {
+                  if (modelJSON.scale_id) {
+                    delete modelJSON.scale_id;
+                  }
+              } else if (this.scaleValues) {
+                modelJSON.scaleValues = this.scaleValues.sort().toJSON();
+              }
 
-            this.$el.html(this.template(modelJSON));
+              this.$el.html(this.template(modelJSON));
 
-            // Add CSS class to label about scale usage 
-            if (this.isScaleEnable) {
-                this.$el.removeClass(this.CLASS_SCALE.DISABLED);
-                this.$el.addClass(this.CLASS_SCALE.ENABLED);
-            } else {
-                this.$el.removeClass(this.CLASS_SCALE.ENABLED);
-                this.$el.addClass(this.CLASS_SCALE.DISABLED);
-            }
+              // Add CSS class to label about scale usage 
+              if (this.isScaleEnable) {
+                  this.$el.removeClass(this.CLASS_SCALE.DISABLED);
+                  this.$el.addClass(this.CLASS_SCALE.ENABLED);
+              } else {
+                  this.$el.removeClass(this.CLASS_SCALE.ENABLED);
+                  this.$el.addClass(this.CLASS_SCALE.DISABLED);
+              }
 
-            this.delegateEvents(this.events);
-            return this;
+              this.delegateEvents(this.events);
+              return this;
           }
 
         });
