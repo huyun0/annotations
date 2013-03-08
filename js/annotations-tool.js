@@ -24,6 +24,23 @@ define(['jquery',
         function($, Backbone, MainView, DeleteModalTmpl,DeleteContentTmpl, Handlebars) {
             
             var self = this;
+
+            /**
+             * Transform time in seconds (i.e. 12.344) into a well formated time (01:12:04)
+             *
+             * @param {number} the time in seconds
+             */
+            annotationsTool.getWellFormatedTime = function (time) {
+                    var twoDigit = function(number) {
+                            return(number < 10 ? "0" : "") + number;
+                        },
+                        base    = Math.round(time),
+                        seconds = base % 60,
+                        minutes = ((base - seconds) / 60) % 60,
+                        hours   = (base - seconds - minutes * 60) / 3600;
+
+                    return twoDigit(hours) + ":" + twoDigit(minutes) + ":" + twoDigit(seconds);
+            };
             
             /**
              * Type of target that can be deleted using the delete warning modal

@@ -160,6 +160,7 @@ define(["jquery",
                 _.bindAll(this, "addTrack",
                                "addTracksList",
                                "createTrack",
+                               "changeTitleFromCustomPlayhead",
                                "onDeleteTrack",
                                "onTrackSelected",
                                "onPlayerTimeUpdate",
@@ -195,6 +196,7 @@ define(["jquery",
                                "zoomIn",
                                "zoomOut",
                                "stopZoomScrolling",
+                               "repaintCustomTime",
                                "redraw",
                                "reset");
                 
@@ -273,6 +275,7 @@ define(["jquery",
 
                 // Overwrite the redraw method
                 this.timeline.redraw = this.redraw;
+                this.timeline.repaintCustomTime = this.repaintCustomTime;
 
                 // Add findGroup method to the timeline if missing
                 if (!this.timeline.findGroup) {
@@ -329,6 +332,23 @@ define(["jquery",
                 if (annotationsTool.selectedTrack) {
                     this.onTrackSelected(null, annotationsTool.selectedTrack.id);
                 }
+            },
+
+            /**
+             * Repaint the custom playhead
+             * @alias module:views-timeline.TimelineView#repaintCustomTime
+             */
+            repaintCustomTime: function () {
+                links.Timeline.prototype.repaintCustomTime.call(this.timeline);
+                this.changeTitleFromCustomPlayhead();
+            },
+
+            /**
+             * Change the title from the custome Playhead with a better time format
+             * @alias module:views-timeline.TimelineView#changeTitleFromCustomPlayhead
+             */
+            changeTitleFromCustomPlayhead: function () {
+                this.$el.find(".timeline-customtime").attr("title", annotationsTool.getWellFormatedTime(this.playerAdapter.getCurrentTime()));
             },
 
             /**
