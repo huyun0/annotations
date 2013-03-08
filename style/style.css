@@ -6073,6 +6073,7 @@
     float: right;
     padding: 0;
     height: 20px;
+    margin-right: 10px;
   }
   #list-container div.annotation .header-container .left {
     overflow: hidden;
@@ -6268,6 +6269,7 @@
     min-height: 16px;
     display: block;
     text-align: right;
+    margin-right: 10px;
   }
   #list-container div.comments-container .comment-header span.add-comment a.add-comment {
     color: #303030;
