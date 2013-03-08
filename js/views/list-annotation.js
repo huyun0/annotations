@@ -423,9 +423,6 @@ function ($, _not, PlayerAdapter, Annotation, User, CommentsContainer, Template,
 
                     if (selectedScaleValue.length > 0) {
                         selectedScaleValue[0].isSelected = true;
-                        scaleValues.push({id:"OFF",name:"- No scale value"});
-                    } else {
-                        scaleValues.push({id:"OFF",name:"- No scale value",isSelected:true});
                     }
                 }
                 modelJSON.scalevalues = scaleValues;
