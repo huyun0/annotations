@@ -182,10 +182,14 @@ define(["jquery",
             /**
              * Insert a new annotation
              */
-            insert: function () {
+            insert: function (event) {
+                event.stopImmediatePropagation();
+
                 var value = this.input.val(),
-                    time = this.playerAdapter.getCurrentTime(),
-                    params;
+                    time = Math.round(this.playerAdapter.getCurrentTime()),
+                    options = {},
+                    params,
+                    annotation;
                 
                 if (!value || (!_.isNumber(time) || time < 0)) {
                     return;
@@ -196,7 +200,16 @@ define(["jquery",
                     start: time
                 };
 
-                annotationsTool.selectedTrack.get("annotations").create(params, {wait: true});
+                if (annotationsTool.user) {
+                    params.created_by = annotationsTool.user.id;
+                }
+
+                if (!annotationsTool.localStorage) {
+                    options.wait = true;
+                }
+
+                annotation = annotationsTool.selectedTrack.get("annotations").create(params, options);
+                annotationsTool.currentSelection = annotation;
                 
                 if (this.continueVideo) {
                     this.playerAdapter.play();

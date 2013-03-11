@@ -172,7 +172,6 @@ define(["jquery",
                                "isAnnotationSelectedonTimeline",
                                "onTimelineItemAdded",
                                "onAnnotationDestroyed",
-                               "onDeletePressed",
                                "generateVoidItem",
                                "generateItem",
                                "changeItem",
@@ -254,7 +253,6 @@ define(["jquery",
                 $(window).bind("selectTrack", $.proxy(this.onTrackSelected, this));
                 $(window).bind("deleteTrack", $.proxy(this.onDeleteTrack, this));
                 $(window).bind("updateTrack", $.proxy(this.onUpdateTrack, this));
-                $(window).bind("keydown", $.proxy(this.onDeletePressed, this));
                 
                 $(this.playerAdapter).bind("pa_timeupdate", this.onPlayerTimeUpdate);
 
@@ -310,7 +308,6 @@ define(["jquery",
 
                 return searchedGroup;
             },
-
 
             /**
              * Add an annotation to the timeline
@@ -1007,6 +1004,8 @@ define(["jquery",
                 if (this.ignoreDelete === annotation.get("id")) {
                     return;
                 }
+
+                this.timeline.setSelection([]);
                 
                 if (this.allItems[annotation.id]) {
                     delete this.allItems[annotation.id];
@@ -1138,28 +1137,6 @@ define(["jquery",
                 track.set({access: newTrackVisibility});
                 track.save();
             },
-
-            /**
-             * Annotation through the "<-" key
-             * @alias module:views-timeline.TimelineView#onDeletePressed
-             * @param  {Event} event Event object
-             */
-            onDeletePressed: function (event) {
-                var values;
-
-                if (event.keyCode !== 8 ||
-                    document.activeElement.tagName.toUpperCase() === "TEXTAREA" ||
-                    document.activeElement.tagName.toUpperCase() === "INPUT") {
-                    return;
-                } else {
-                    event.preventDefault();
-
-                    values = this.getSelectedItemAndAnnotation();
-                    if (values && values.annotationId) {
-                        annotationsTool.dispatcher.trigger("deleteAnnotation", values.annotationId, values.trackId);
-                    }
-                }
-            },
             
             /**
              * Listener for track selection
@@ -1223,7 +1200,7 @@ define(["jquery",
              */
             getTimeInSeconds: function (date) {
                 var time = date.getHours() * 3600 + date.getMinutes() * 60 + date.getSeconds() + date.getMilliseconds() / 1000;
-                return Number(time); // Ensue that is really a number
+                return Math.round(Number(time)); // Ensue that is really a number
             },
             
             /**

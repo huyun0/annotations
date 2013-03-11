@@ -313,7 +313,7 @@ function ($, _not, PlayerAdapter, Annotation, User, CommentsContainer, Template,
                 } 
 
                 $target.parent().find(".text-container span").show();
-                this.model.set("duration", seconds-this.model.get("start")); 
+                this.model.set("duration", Math.round(seconds - this.model.get("start"))); 
                 this.model.save();
             }
 
@@ -355,7 +355,10 @@ function ($, _not, PlayerAdapter, Annotation, User, CommentsContainer, Template,
                 } 
 
                 $target.parent().find("span").show();
-                this.model.set({start: seconds, duration: this.model.get("duration")+this.model.get("start")-seconds}); 
+                this.model.set({
+                    start   : seconds, 
+                    duration: Math.round(this.model.get("duration") + this.model.get("start") - seconds)
+                }); 
                 this.model.save();
             }
 
@@ -365,7 +368,7 @@ function ($, _not, PlayerAdapter, Annotation, User, CommentsContainer, Template,
         },
 
         setCurrentTimeAsStart: function (event) {
-            var currentTime = annotationsTool.playerAdapter.getCurrentTime(),
+            var currentTime = Math.round(annotationsTool.playerAdapter.getCurrentTime()),
                 end = this.model.get("start")+this.model.get("duration");
             event.stopImmediatePropagation();
 
@@ -377,7 +380,7 @@ function ($, _not, PlayerAdapter, Annotation, User, CommentsContainer, Template,
         },
 
         setCurrentTimeAsEnd: function (event) {
-            var currentTime = annotationsTool.playerAdapter.getCurrentTime();
+            var currentTime = Math.round(annotationsTool.playerAdapter.getCurrentTime());
             event.stopImmediatePropagation();
             if (currentTime > this.model.get("start")) {
                 this.model.set({duration: currentTime - this.model.get("start")});

@@ -130,7 +130,7 @@ define(["jquery",
 
               var id = event.target.getAttribute("value"),
                   scalevalue = this.scaleValues.get(id),
-                  time = annotationsTool.playerAdapter.getCurrentTime(),
+                  time = Math.round(annotationsTool.playerAdapter.getCurrentTime()),
                   annotation,
                   options = {},
                   params = {
@@ -152,7 +152,7 @@ define(["jquery",
                 options.wait = true;
 
 
-              annotation = annotationsTool.selectedTrack.get("annotations").create(params,options);
+              annotation = annotationsTool.selectedTrack.get("annotations").create(params, options);
               annotationsTool.currentSelection = annotation;
           },
 
@@ -166,7 +166,7 @@ define(["jquery",
                 return;
               }
 
-              var time = annotationsTool.playerAdapter.getCurrentTime(),
+              var time = Math.round(annotationsTool.playerAdapter.getCurrentTime()),
                   options = {},
                   params,
                   annotation;

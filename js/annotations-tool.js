@@ -328,7 +328,8 @@ define(['jquery',
                         self.initDeleteModal();
                         self.loadVideo();  
                     
-                        var playerAdapter = annotationsTool.playerAdapter;
+                        var playerAdapter = annotationsTool.playerAdapter,
+                            confirmWithEnter;
                         
                         /**
                          * Function to delete element with warning
@@ -352,15 +353,15 @@ define(['jquery',
                                 self.deleteModal.modal("toggle");
                             });
 
-                            var confirmWithEnter = function(e){                                
+                            confirmWithEnter = function(e){                                
                                 if(e.keyCode == 13){
                                     type.destroy(target,callback);
                                     self.deleteModal.modal("toggle");
                                 }
-                            }
+                            };
 
                             // Add possiblity to confirm with return key
-                            $(window).bind('keypress',confirmWithEnter);
+                            $(window).bind('keypress', confirmWithEnter);
                             
                             // Unbind the listeners when the modal is hidden
                             self.deleteModal.one("hide",function(){
