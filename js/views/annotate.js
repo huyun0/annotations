@@ -116,6 +116,7 @@ define(["jquery",
                           "changeTrack",
                           "addTab",
                           "onSwitchEditModus",
+                          "checkToContinueVideo",
                           "switchEditModus",
                           "keyupOnAnnotate",
                           "keydownOnAnnotate",
@@ -183,7 +184,9 @@ define(["jquery",
              * Insert a new annotation
              */
             insert: function (event) {
-                event.stopImmediatePropagation();
+                if (event) {
+                    event.stopImmediatePropagation();
+                }
 
                 var value = this.input.val(),
                     time = Math.round(this.playerAdapter.getCurrentTime()),
@@ -254,8 +257,12 @@ define(["jquery",
             /**
              * Listener for when we leave the annotation input
              */
-            onFocusOut: function () {
-                if (this.continueVideo) {
+            onFocusOut: function (event) {
+                setTimeout(this.checkToContinueVideo, 200);
+            },
+
+            checkToContinueVideo: function () {
+                if (this.playerAdapter.getStatus() === PlayerAdapter.STATUS.PAUSED && this.continueVideo) {
                     this.continueVideo = false;
                     this.playerAdapter.play();
                 }
