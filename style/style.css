@@ -6020,6 +6020,12 @@
     color: red;
     font-weight: bold;
   }
+  #scale-editor .header-name {
+    float: left;
+    margin-left: 65px;
+    width: 100px;
+    margin-right: 3px;
+  }
   .standard_border_radius {
     border-radius: 0px 0px 0px 0px;
   }
