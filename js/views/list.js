@@ -173,7 +173,6 @@ define(["jquery",
                 if (!isPartofList) {
                     this.sortViewsbyTime();
                     annotationsTool.setSelection([addAnnotation], false);
-                    this.updateSelection(); 
                 }
             },
             

@@ -323,12 +323,10 @@ define(["jquery",
              * @alias module:views-timeline.TimelineView#redraw
              */
             redraw: function () {
-                var selection;
-                selection = this.timeline.getSelection(selection);
                 this.timeline.draw(this.filteredItems, this.option);
 
-                if (selection.length > 0) {
-                    this.timeline.selectItem(selection[0].row);
+                if (annotationsTool.hasSelection()) {
+                    this.onSelectionUpdate(annotationsTool.getSelection());
                 }
 
                 $("div.timeline-group .content").popover({});
