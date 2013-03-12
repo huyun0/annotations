@@ -95,7 +95,18 @@ i.check{
 				font-weight: bold;
 			}
 		}
+
+		.dropdown {
+	        visibility: hidden;
+	    }
 	}
+
+    
+    &.expanded {
+        .navbar .dropdown {
+            visibility: visible;
+        }
+    }
 	
 	.control-group {
 		margin: 0;

@@ -47,12 +47,14 @@ define(["jquery",
                      * @param {TargetsType} type Type of the target to be deleted
                      */
                     start: function (target, type, callback) {
-                        var confirmWithEnter = function(e){                                
-                            if(e.keyCode == 13){
+                        var confirmWithEnter = function (event) {                                
+                            if(event.keyCode === 13){
                                 type.destroy(target,callback);
                                 this.deleteModal.modal("toggle");
                             }
                         };
+
+                        confirmWithEnter = _.bind(confirmWithEnter, this);
 
                         // Change modal title
                         this.deleteModalHeader.text('Delete '+type.name);
@@ -73,7 +75,7 @@ define(["jquery",
                         $(window).bind('keypress', confirmWithEnter);
                         
                         // Unbind the listeners when the modal is hidden
-                        this.deleteModal.one("hide",function(){
+                        this.deleteModal.one("hide", function () {
                             $('#confirm-delete').unbind('click');
                             $(window).unbind('keypress', confirmWithEnter);
                         });
@@ -88,6 +90,8 @@ define(["jquery",
                                     "setSelection",
                                     "getSelection",
                                     "hasSelection");
+
+                    this.deleteOperation.start = _.bind(this.deleteOperation.start, this);
 
                     this.initDeleteModal();
                     this.loadVideo();  

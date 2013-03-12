@@ -5304,6 +5304,7 @@
   div#timeline {
     overflow-x: hidden;
     overflow-y: auto!important;
+    min-height: 55px!important;
   }
   .standard_border_radius {
     border-radius: 0px 0px 0px 0px;
@@ -5594,6 +5595,12 @@
   }
   #annotate-container .navbar .currentTrack .content {
     font-weight: bold;
+  }
+  #annotate-container .navbar .dropdown {
+    visibility: hidden;
+  }
+  #annotate-container.expanded .navbar .dropdown {
+    visibility: visible;
   }
   #annotate-container .control-group {
     margin: 0;
@@ -6029,9 +6036,16 @@
   .standard_border_radius {
     border-radius: 0px 0px 0px 0px;
   }
+  #list-container .navbar .dropdown {
+    visibility: hidden;
+  }
+  #list-container.expanded .navbar .dropdown {
+    visibility: visible;
+  }
   #list-container #content-list {
     overflow-y: auto;
     overflow-x: hidden;
+    min-height: 55px;
   }
   #list-container a.proxy-anchor {
     display: none;

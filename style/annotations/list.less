@@ -8,14 +8,22 @@
 #list-container{
     
     @min-height: 300px;
+
+    .navbar .dropdown {
+        visibility: hidden;
+    }
     
     &.expanded {
         //min-height: @min-height;
+        .navbar .dropdown {
+            visibility: visible;
+        }
     }
 
     #content-list{
         overflow-y: auto;
         overflow-x: hidden;
+        min-height: 55px;
     }
     
     a.proxy-anchor{

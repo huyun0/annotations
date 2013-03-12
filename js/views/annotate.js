@@ -382,9 +382,11 @@ define(["jquery",
 
               if (mainContainer.css("display") === "none") {
                 mainContainer.show();
+                $("div#annotate-container").toggleClass("expanded");
                 $(event.target).html("Collapse");
               } else {
                 mainContainer.hide();
+                $("div#annotate-container").toggleClass("expanded");
                 $(event.target).html("Expand");
               }
               this.trigger("change-layout");

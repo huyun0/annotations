@@ -483,13 +483,14 @@ define(["jquery",
 
                 if (event.keyCode !== 8 ||
                     document.activeElement.tagName.toUpperCase() === "TEXTAREA" ||
-                    document.activeElement.tagName.toUpperCase() === "INPUT") {
+                    document.activeElement.tagName.toUpperCase() === "INPUT" ||
+                    !annotationsTool.hasSelection()) {
                     return;
                 } else {
                     event.preventDefault();
 
-                    annotation = annotationsTool.currentSelection;
-                    if (annotation && annotation.get("id")) {
+                    annotation = annotationsTool.getSelection()[0];
+                    if (annotation) {
                         annotationsTool.dispatcher.trigger("deleteAnnotation", annotation.get("id"), annotation.trackId);
                     }
                 }
