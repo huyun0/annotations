@@ -153,7 +153,7 @@ define(["jquery",
 
 
               annotation = annotationsTool.selectedTrack.get("annotations").create(params, options);
-              annotationsTool.currentSelection = annotation;
+              annotationsTool.setSelection([annotation], true);
           },
 
           /**
@@ -192,7 +192,7 @@ define(["jquery",
 
 
               annotation = annotationsTool.selectedTrack.get("annotations").create(params,options);
-              annotationsTool.currentSelection = annotation;
+              annotationsTool.setSelection([annotation], true);
           },
 
           /**

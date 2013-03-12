@@ -107,7 +107,7 @@ define(["jquery",
                 "click #zoom-in"    : "zoomIn",
                 "click #zoom-out"   : "zoomOut",
                 "click #move-right" : "moveRight",
-                "click #move-left"  : "moveLeft", 
+                "click #move-left"  : "moveLeft",
                 "click #filter-none": "disableFilter",
                 "click .filter"     : "switchFilter"
             },
@@ -137,6 +137,14 @@ define(["jquery",
             PREFIX_STACKING_CLASS: "stack-level-",
 
             /**
+             * Class for item selected on timeline
+             * @alias module:views-timeline.TimelineView#ITEM_SELECTED_CLASS
+             * @type {String}
+             * @constant
+             */
+            ITEM_SELECTED_CLASS: "timeline-event-selected",
+
+            /**
              * Map containing all the items
              * @alias module:views-timeline.TimelineView#allItems
              * @type {Map}
@@ -163,12 +171,13 @@ define(["jquery",
                                "changeTitleFromCustomPlayhead",
                                "onDeleteTrack",
                                "onTrackSelected",
+                               "onSelectionUpdate",
+                               "updateUnselectListener",
                                "onPlayerTimeUpdate",
                                "onTimelineMoved",
                                "onTimelineItemChanged",
                                "onTimelineItemDeleted",
                                "onTimelineItemSelected",
-                               "onTimelineItemUnselected",
                                "isAnnotationSelectedonTimeline",
                                "onTimelineItemAdded",
                                "onAnnotationDestroyed",
@@ -246,7 +255,6 @@ define(["jquery",
                 // Create the timeline
                 this.timeline = new links.Timeline(this.$el.find("#timeline")[0]);
                 this.timeline.draw(this.filteredItems, this.options);
-                this.listenTo(annotationsTool.dispatcher, "unselect-annotation", this.timeline.unselectItem);
                 
                 // Ensure that the timeline is redraw on window resize
                 $(window).bind("resize", this.onWindowResize);
@@ -266,6 +274,7 @@ define(["jquery",
                 this.tracks = annotationsTool.video.get("tracks");
                 this.listenTo(this.tracks, "add", this.addTrack);
                 this.listenTo(this.tracks, "change", this.changeTrack);
+                this.listenTo(annotationsTool, annotationsTool.EVENTS.ANNOTATION_SELECTION, this.onSelectionUpdate);
                 
                 this.$el.show();
                 this.addTracksList(this.tracks);
@@ -329,6 +338,8 @@ define(["jquery",
                 if (annotationsTool.selectedTrack) {
                     this.onTrackSelected(null, annotationsTool.selectedTrack.id);
                 }
+
+                this.updateUnselectListener();
             },
 
             /**
@@ -354,7 +365,6 @@ define(["jquery",
              * @param  {Event} event Event object
              */
             moveLeft: function (event) {
-                console.log("MOVE LEFT");
                 links.Timeline.preventDefault(event);
                 links.Timeline.stopPropagation(event);
                 this.timeline.move(-0.2);
@@ -368,7 +378,6 @@ define(["jquery",
              * @param  {Event} event Event object
              */
             moveRight: function (event) {
-                console.log("MOVE RIGHT");
                 links.Timeline.preventDefault(event);
                 links.Timeline.stopPropagation(event);
                 this.timeline.move(0.2);
@@ -391,12 +400,12 @@ define(["jquery",
                 if ((currentTime - size / 2) < 0) {
                     start = this.getFormatedDate(0);
                     end = this.getFormatedDate(size);
-                } else if ((currentTime + size / 2) > videoDuration){
+                } else if ((currentTime + size / 2) > videoDuration) {
                     start = this.getFormatedDate(videoDuration - size);
                     end = this.getFormatedDate(videoDuration);
                 } else {
-                  start = this.getFormatedDate(currentTime - size / 2);
-                  end = this.getFormatedDate(currentTime + size / 2);
+                    start = this.getFormatedDate(currentTime - size / 2);
+                    end = this.getFormatedDate(currentTime + size / 2);
                 }
 
                 this.timeline.setVisibleChartRange(start, end);
@@ -461,7 +470,7 @@ define(["jquery",
                 if (!isList) {
                     this.filterItems();
                     this.timeline.redraw();
-                    annotationsTool.currentSelection = annotation;
+                    annotationsTool.setSelection([annotation], false);
                     this.onPlayerTimeUpdate();
                 }
                   
@@ -762,29 +771,47 @@ define(["jquery",
              * @alias module:views-timeline.TimelineView#onPlayerTimeUpdate
              */
             onPlayerTimeUpdate: function () {
-                var newDate = this.getFormatedDate(this.playerAdapter.getCurrentTime()),
-                    data;
+                var newDate = this.getFormatedDate(this.playerAdapter.getCurrentTime());
 
                 this.timeline.setCustomTime(newDate);
-                
-                // Select the good items
-                data = this.filteredItems;
-                
-                if (!annotationsTool.currentSelection || !this.isAnnotationSelectedonTimeline(annotationsTool.currentSelection)) {
-                    this.timeline.unselectItem();
 
+                this.moveToCurrentTime();
+            },
+
+            /**
+             * Listener for the selection update event
+             * @alias module:views-timeline.TimelineView#onSelectionUpdate
+             * @param  {Array} selection The new array of selected item(s)
+             */
+            onSelectionUpdate: function (selection) {
+                var data = this.filteredItems;
+
+                // If no selection, we unselected elements currently selected and return
+                if (!annotationsTool.hasSelection()) {
+                    this.timeline.unselectItem();
+                    return;
+                }
+
+                if (!this.isAnnotationSelectedonTimeline(selection[0])) {
                     _.each(data, function (item, index) {
-                        if (annotationsTool.currentSelection && annotationsTool.currentSelection.get("id") === item.id) {
-                            this.timeline.selectItem(index);
-                        } else if (!annotationsTool.currentSelection && (item.start <= newDate) && (item.end >= newDate)) {
+                        if (selection[0].get("id") === item.id) {
                             this.timeline.selectItem(index);
                         }
                     }, this);
-                } else if (annotationsTool.currentSelection) {
-                    this.$el.find("div.timeline-event-selected div.timeline-event-content").one("click", this.onTimelineItemUnselected);
                 }
 
-                this.moveToCurrentTime();
+                this.updateUnselectListener();
+            },
+
+            updateUnselectListener: function () {
+                var className = this.ITEM_SELECTED_CLASS;
+
+                this.$el.find("." + this.ITEM_SELECTED_CLASS + " .timeline-item").one("dblclick", function (event) {
+                    if ($(this).parent().parent().hasClass(className)) {
+                        event.stopImmediatePropagation();
+                        annotationsTool.setSelection();
+                    }
+                });
             },
             
             /**
@@ -884,7 +911,6 @@ define(["jquery",
 
                     values.annotation.destroy();
                     newAnnotation = values.newTrack.get("annotations").create(annJSON, {wait: true});
-                    annotationsTool.currentSelection = newAnnotation;
                     newAnnotation.set("level", this.PREFIX_STACKING_CLASS + this.getStackLevel(newAnnotation), {silent: true});
                     annJSON.id    = newAnnotation.get("id");
                     annJSON.track = values.newTrack.id;
@@ -910,15 +936,12 @@ define(["jquery",
                     };
                 } else {
                     this.allItems[values.annotation.id] = values.item;
-                    annotationsTool.currentSelection = values.annotation;
                     values.annotation.set({start: start, duration: duration});
                     values.annotation.save();
+                    newAnnotation = values.annotation;
                 }
 
-
-                if (this.playerAdapter.getCurrentTime() !== annotationsTool.currentSelection.get("start")) {
-                    this.playerAdapter.setCurrentTime(annotationsTool.currentSelection.get("start"));
-                }
+                annotationsTool.setSelection([newAnnotation], true);
 
                 this.filterItems();
                 this.timeline.redraw();
@@ -967,32 +990,7 @@ define(["jquery",
                 if (this.playerAdapter.getStatus() !== PlayerAdapter.STATUS.PLAYING ||
                       Math.abs(this.playerAdapter.getCurrentTime() - this.getTimeInSeconds(item.item.start)) > 1) {
                     this.playerAdapter.pause();
-                    annotationsTool.currentSelection = annotation;
-                    annotation.trigger("jumpto", annotation.get("start"));
-                }
-            },
-
-            /**
-             * Listener for timeline item unselection
-             * @alias module:views-timeline.TimelineView#onTimelineItemUnselected
-             * @param  {Event} event Event object
-             */
-            onTimelineItemUnselected: function (event) {
-                var itemAndannotation = this.getSelectedItemAndAnnotation(),
-                    annotation;
-
-                if (itemAndannotation || itemAndannotation.annotation) {
-                    return;
-                }
-
-                $(event.target).unbind("click", this.onTimelineItemUnselected);
-
-                if (annotationsTool.currentSelection &&
-                    annotationsTool.currentSelection.get("id") === annotation.get("id") &&
-                    this.isAnnotationSelectedonTimeline(annotation)) {
-                    delete annotationsTool.currentSelection;
-                    annotationsTool.dispatcher.trigger("unselect-annotation");
-                    this.timeline.unselectItem();
+                    annotationsTool.setSelection([annotation], true);
                 }
             },
             
@@ -1209,7 +1207,7 @@ define(["jquery",
              * @returns {Object} Object containing the annotation and the timeline item. "{item: "timeline-item", annotation: "annotation-object"}"
              */
             getSelectedItemAndAnnotation: function () {
-                var itemId = $(".timeline-event-selected .annotation-id").text(),
+                var itemId = $("." + this.ITEM_SELECTED_CLASS + " .annotation-id").text(),
                     selection = this.timeline.getSelection(),
                     item,
                     newTrackId,
@@ -1247,7 +1245,7 @@ define(["jquery",
              * @return {Boolean}            If the annotation is selected or not
              */
             isAnnotationSelectedonTimeline: function (annotation) {
-                return this.$el.find("div.timeline-event-selected div.timeline-item div.annotation-id:contains(\"" + annotation.get("id") + "\")").length !== 0;
+                return this.$el.find("div." + this.ITEM_SELECTED_CLASS + " div.timeline-item div.annotation-id:contains(\"" + annotation.get("id") + "\")").length !== 0;
             },
             
             /**
@@ -1255,7 +1253,7 @@ define(["jquery",
              * @alias module:views-timeline.TimelineView#updateDraggingCtrl
              */
             updateDraggingCtrl: function () {
-                var selectedElement =  this.$el.find(".timeline-event-selected"),
+                var selectedElement =  this.$el.find("." + this.ITEM_SELECTED_CLASS),
                     item = this.getSelectedItemAndAnnotation(),
                     cssProperties = {
                         "margin-top": parseInt(selectedElement.css("margin-top"), 10) + parseInt(selectedElement.find(".timeline-item").css("margin-top"), 10) + "px",
@@ -1320,7 +1318,7 @@ define(["jquery",
                     elLevel = 0, // stack level for the element in context
                     levelUsed = [],
                     annotations,
-                    trackEl,
+                    //trackEl,
                     classesStr,
                     indexClass,
                     i,

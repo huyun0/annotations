@@ -212,7 +212,7 @@ define(["jquery",
                 }
 
                 annotation = annotationsTool.selectedTrack.get("annotations").create(params, options);
-                annotationsTool.currentSelection = annotation;
+                annotationsTool.setSelection([annotation], true);
                 
                 if (this.continueVideo) {
                     this.playerAdapter.play();

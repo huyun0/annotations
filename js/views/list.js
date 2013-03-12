@@ -104,8 +104,7 @@ define(["jquery",
                                "addList",
                                "sortViewsbyTime",
                                "reset",
-                               "updateSelection",
-                               "selectView",
+                               "select",
                                "unselect",
                                "switchFilter",
                                "updateFiltersRender",
@@ -115,19 +114,17 @@ define(["jquery",
                                "collapseAll");
                 
                 this.annotationViews = [];
-
-                this.filtersManager = new FiltersManager(annotationsTool.filtersManager);
+                this.filtersManager  = new FiltersManager(annotationsTool.filtersManager);
+                this.categories      = annotationsTool.video.get("categories");
+                this.tracks          = annotationsTool.video.get("tracks");
+                this.playerAdapter   = annotationsTool.playerAdapter;
+                
                 this.listenTo(this.filtersManager, "switch", this.updateFiltersRender);
-
-                this.categories = annotationsTool.video.get("categories");
-                this.tracks = annotationsTool.video.get("tracks");
                 this.listenTo(this.categories, "change", this.render);
                 this.listenTo(this.tracks, "add", this.addTrack);
-                this.listenTo(annotationsTool.dispatcher, "unselect-annotation", this.unselect);
+                this.listenTo(annotationsTool, annotationsTool.EVENTS.ANNOTATION_SELECTION, this.select);
+
                 this.tracks.each(this.addTrack, this);
-                
-                this.playerAdapter = annotationsTool.playerAdapter;
-                $(this.playerAdapter).bind(PlayerAdapter.EVENTS.TIMEUPDATE, this.updateSelection);
 
                 // Add backbone events to the model 
                 _.extend(this, Backbone.Events);
@@ -175,7 +172,7 @@ define(["jquery",
 
                 if (!isPartofList) {
                     this.sortViewsbyTime();
-                    annotationsTool.currentSelection = addAnnotation;
+                    annotationsTool.setSelection([addAnnotation], false);
                     this.updateSelection(); 
                 }
             },
@@ -196,60 +193,24 @@ define(["jquery",
                 }
             },
 
-            selectView: function (viewToSelect) {
-                viewToSelect.selectVisually();
-                location.hash = "#" + viewToSelect.id;
-                viewToSelect.isSelected = true;
-            },
-            
-            /**
-             * Update the annotations selection
-             * @alias module:views-list.List#updateSelection
-             */
-            updateSelection: function () {
-                //if(this.playerAdapter.getStatus() != PlayerAdapter.STATUS.PLAYING)
-                //  return;
-                var currentTime = this.playerAdapter.getCurrentTime(),
-                    firstSelection = true, // Tag for element selection
-                    view,
-                    start,
-                    duration,
-                    end;
-                
-                // If an annotation have been explicitely selected by an user
-                if (annotationsTool.currentSelection) {
-                    view = this.getViewFromAnnotation(annotationsTool.currentSelection.get("id"));
+            select: function (annotations) {
+                var view;
 
-                    // If the view is not visually selected
-                    if (!view.isSelected) {
-                        this.unselect();
-                        this.selectView(view);
-                    }
-                } else {
-                    this.unselect();
-                    
-                    _.each(this.annotationViews, function (view) {
-                      
-                        start = view.model.get("start");
-                        duration = view.model.get("duration");
-                        end = start + duration;
-                        
-                        if (_.isNumber(duration) && start <= currentTime && end >= currentTime) {
-                          
-                            if (firstSelection && !view.isSelected) {
-                                this.selectView(view);
-                                firstSelection = false;
-                            } else {
-                                view.selectVisually();
-                            }
-                          
-                        } else {
-                            view.isSelected = false;
+                this.unselect();
+
+                _.each(annotations, function (annotation, index) {
+                    view = this.getViewFromAnnotation(annotation.get("id"));
+
+                    if (view) {
+                        view.selectVisually();
+                        view.isSelected = true;
+
+                        // Only scroll the list to the first item of the selection
+                        if (index === 0) {
+                            location.hash = "#" + view.id;
                         }
-
-                    }, this);
-                }
-                
+                    }
+                }, this);
             },
             
             /**
@@ -257,14 +218,19 @@ define(["jquery",
              * @alias module:views-list.List#unselect
              */
             unselect: function ()  {
-                var id = this.$el.find(".selected").attr("id"),
-                    view = this.getViewFromAnnotation(id);
+                var id, 
+                    view,
+                    self = this;
 
-                this.$el.find(".selected").removeClass("selected");
-                
-                if (view) {
-                    view.isSelected = false;
-                }
+                this.$el.find(".selected").each(function () {
+                        id = $(this).attr("id"),
+                        view = self.getViewFromAnnotation(id);
+                        $(this).removeClass("selected");
+
+                        if (view) {
+                            view.isSelected = false;
+                        }
+                });
             },
 
             /**

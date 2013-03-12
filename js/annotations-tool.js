@@ -14,33 +14,224 @@
  *
  */
 
-define(['jquery',
-        'backbone',
-        'views/main',
-        'text!templates/delete-modal.tmpl',
-        'text!templates/delete-warning-content.tmpl',
-        'handlebars'],
+define(["jquery",
+        "backbone",
+        "views/main",
+        "text!templates/delete-modal.tmpl",
+        "text!templates/delete-warning-content.tmpl",
+        "prototypes/player_adapter",
+        "handlebars"],
        
-        function($, Backbone, MainView, DeleteModalTmpl,DeleteContentTmpl, Handlebars) {
+        function ($, Backbone, MainView, DeleteModalTmpl, DeleteContentTmpl, PlayerAdapter, Handlebars) {
             
             var self = this;
 
-            /**
-             * Transform time in seconds (i.e. 12.344) into a well formated time (01:12:04)
-             *
-             * @param {number} the time in seconds
-             */
-            annotationsTool.getWellFormatedTime = function (time) {
-                    var twoDigit = function(number) {
-                            return(number < 10 ? "0" : "") + number;
-                        },
-                        base    = Math.round(time),
-                        seconds = base % 60,
-                        minutes = ((base - seconds) / 60) % 60,
-                        hours   = (base - seconds - minutes * 60) / 3600;
 
-                    return twoDigit(hours) + ":" + twoDigit(minutes) + ":" + twoDigit(seconds);
-            };
+            annotationsTool = _.extend({
+
+                EVENTS: {
+                    ANNOTATION_SELECTION: "annotation-selection"
+                },
+
+                views: {},
+
+                deleteModalTmpl: Handlebars.compile(DeleteModalTmpl),
+
+                deleteContentTmpl: Handlebars.compile(DeleteContentTmpl),
+
+                deleteOperation: {
+                    /**
+                     * Function to delete element with warning
+                     *
+                     * @param {Object} target Element to be delete
+                     * @param {TargetsType} type Type of the target to be deleted
+                     */
+                    start: function (target, type, callback) {
+                        var confirmWithEnter = function(e){                                
+                            if(e.keyCode == 13){
+                                type.destroy(target,callback);
+                                this.deleteModal.modal("toggle");
+                            }
+                        };
+
+                        // Change modal title
+                        this.deleteModalHeader.text('Delete '+type.name);
+                        
+                        // Change warning content
+                        this.deleteModalContent.html(this.deleteContentTmpl({
+                           type: type.name,
+                           content: type.getContent(target)
+                        }));
+                        
+                        // Listener for delete confirmation
+                        this.deleteModal.find('#confirm-delete').one('click',function(){
+                            type.destroy(target,callback);
+                            this.deleteModal.modal("toggle");
+                        });
+
+                        // Add possiblity to confirm with return key
+                        $(window).bind('keypress', confirmWithEnter);
+                        
+                        // Unbind the listeners when the modal is hidden
+                        this.deleteModal.one("hide",function(){
+                            $('#confirm-delete').unbind('click');
+                            $(window).unbind('keypress', confirmWithEnter);
+                        });
+                        
+                        // Show the modal
+                        this.deleteModal.modal("show");
+                    }
+                },
+
+                start: function () {
+                    _.bindAll(this, "updateSelectionOnTimeUpdate",
+                                    "setSelection",
+                                    "getSelection",
+                                    "hasSelection");
+
+                    this.initDeleteModal();
+                    this.loadVideo();  
+
+                    $(this.playerAdapter).bind(PlayerAdapter.EVENTS.TIMEUPDATE, this.updateSelectionOnTimeUpdate);
+                    
+                    this.views.main = new MainView(this.playerAdapter);
+                },
+
+                /**
+                 * Function to load the video file
+                 *
+                 * This part is specific to each integration of the annotation tool
+                 */
+                loadVideo: function () {
+                    // Add your loading code here!
+                },
+
+                /**
+                 * Function to init the delete warning modal
+                 */
+                initDeleteModal: function () {
+                        $('#dialogs').append(this.deleteModalTmpl({type:"annotation"}));
+                        this.deleteModal = $('#modal-delete').modal({show: true, backdrop: false, keyboard: true });
+                        this.deleteModal.modal("toggle");
+                        this.deleteModalHeader  = this.deleteModal.find(".modal-header h3");
+                        this.deleteModalContent = this.deleteModal.find(".modal-body");
+                },
+
+                /**
+                 * Transform time in seconds (i.e. 12.344) into a well formated time (01:12:04)
+                 *
+                 * @param {number} the time in seconds
+                 */
+                getWellFormatedTime: function (time) {
+                        var twoDigit = function(number) {
+                                return(number < 10 ? "0" : "") + number;
+                            },
+                            base    = Math.round(time),
+                            seconds = base % 60,
+                            minutes = ((base - seconds) / 60) % 60,
+                            hours   = (base - seconds - minutes * 60) / 3600;
+
+                        return twoDigit(hours) + ":" + twoDigit(minutes) + ":" + twoDigit(seconds);
+                },
+
+                ///////////////////////////////////////////////
+                // Function related to annotation selection  //
+                ///////////////////////////////////////////////
+
+                /**
+                 * Set the given annotation as current selection
+                 * @param {Array} selection The new selection
+                 * @param {Boolean} moveTo define if the video should be move to the start point of the selection
+                 */
+                setSelection: function (selection, moveTo) {
+                    this.currentSelection = selection;
+                    
+                    // if the selection is not empty, we move the playhead to it
+                    if (_.isArray(selection) && selection.length > 0 && moveTo) {
+                        this.playerAdapter.setCurrentTime(selection[0].get("start"));
+                        this.isManualSelected = true;
+                    } else {
+                        this.isManualSelected = false;
+                    }
+
+                    // Trigger the seleciton event
+                    this.trigger(this.EVENTS.ANNOTATION_SELECTION, this.currentSelection);
+                },
+
+                /**
+                 * Returns the current selection of the tool
+                 * @return {Annotation} The current selection or undefined if no selection.
+                 */
+                getSelection: function () {
+                    return this.currentSelection;
+                },
+
+                /**
+                 * Informs if there is or not some items selected
+                 * @return {Boolean} true if an annotation is selected or false.
+                 */
+                hasSelection: function () {
+                    return (typeof this.currentSelection !== "undefined" && (_.isArray(this.currentSelection) && this.currentSelection.length > 0));
+                },
+
+                updateSelectionOnTimeUpdate: function () {
+                    var currentTime = this.playerAdapter.getCurrentTime(),
+                        selection = [],
+                        annotations = [],
+                        start,
+                        duration,
+                        end;
+
+                    if (typeof this.video === "undefined" || this.isManualSelected) {
+                        return;
+                    }
+
+                    this.video.get("tracks").each(function (track) {
+                        annotations = annotations.concat(track.get("annotations").models);
+                    }, this);
+                        
+                    _.each(annotations, function (annotation) {
+                      
+                        start    = annotation.get("start");
+                        duration = annotation.get("duration");
+                        end      = start + duration;
+                        
+                        if (_.isNumber(duration) && start <= currentTime && end >= currentTime) {
+                            selection.push(annotation);
+                        }
+
+                    }, this);
+
+                    this.setSelection(selection, false);
+                },
+
+                /**
+                 * Delete the annotation with the given id with the track with the given track id
+                 * @alias module:views-main.MainView#deleteAnnotation
+                 * @param {Integer} annotationId The id of the annotation to delete
+                 * @param {Integer} trackId Id of the track containing the annotation
+                 */
+                deleteAnnotation: function (annotationId, trackId) {
+                    var annotation;
+
+                    if (typeof trackId === "undefined") {
+                        annotationsTool.video.get("tracks").each(function (track) {
+                            if (track.get("annotations").get(annotationId)) {
+                                trackId = track.get("id");
+                            }
+                        });
+                    }
+
+                    annotation = annotationsTool.video.getAnnotation(annotationId, trackId);
+                    
+                    if (annotation) {
+                        this.deleteOperation.start(annotation, this.deleteOperation.targetTypes.ANNOTATION);
+                    } else {
+                        console.warn("Not able to find annotation %i on track %i", annotationId, trackId);
+                    }
+                }
+
+            }, annotationsTool, _.clone(Backbone.Events));
             
             /**
              * Type of target that can be deleted using the delete warning modal
@@ -57,7 +248,7 @@ define(['jquery',
              *   }
              * }
              */
-            deleteTargetTypes = {
+            annotationsTool.deleteOperation.targetTypes  = {
                 
                 ANNOTATION: {
                     name: "annotation",
@@ -295,86 +486,7 @@ define(['jquery',
                 }
             };
             
-            self.deleteModalTmpl = Handlebars.compile(DeleteModalTmpl);
-            self.deleteContentTmpl = Handlebars.compile(DeleteContentTmpl);
             
-            /**
-             * Function to init the delete warning modal
-             */
-            self.initDeleteModal = function(){
-                    annotationsTool.deleteOperation = {};
-                    annotationsTool.deleteOperation.targetTypes = deleteTargetTypes;
-                
-                    $('#dialogs').append(deleteModalTmpl({type:"annotation"}));
-                    self.deleteModal = $('#modal-delete').modal({show: true, backdrop: false, keyboard: true });
-                    self.deleteModal.modal("toggle");
-                    self.deleteModalHeader  = self.deleteModal.find(".modal-header h3");
-                    self.deleteModalContent = self.deleteModal.find(".modal-body");
-            };
-            
-            /**
-             * Function to load the video file
-             *
-             * This part is specific to each integration of the annotation tool
-             */
-            self.loadVideo = function(){
-                // Add your loading code here!
-            }
-            
-            
-            return {            
-                
-                start: function() {
-                        self.initDeleteModal();
-                        self.loadVideo();  
-                    
-                        var playerAdapter = annotationsTool.playerAdapter,
-                            confirmWithEnter;
-                        
-                        /**
-                         * Function to delete element with warning
-                         *
-                         * @param {Object} target Element to be delete
-                         * @param {TargetsType} type Type of the target to be deleted
-                         */
-                        annotationsTool.deleteOperation.start = function(target,type,callback){
-                            // Change modal title
-                            self.deleteModalHeader.text('Delete '+type.name);
-                            
-                            // Change warning content
-                            self.deleteModalContent.html(self.deleteContentTmpl({
-                               type: type.name,
-                               content: type.getContent(target)
-                            }));
-                            
-                            // Listener for delete confirmation
-                            self.deleteModal.find('#confirm-delete').one('click',function(){
-                                type.destroy(target,callback);
-                                self.deleteModal.modal("toggle");
-                            });
-
-                            confirmWithEnter = function(e){                                
-                                if(e.keyCode == 13){
-                                    type.destroy(target,callback);
-                                    self.deleteModal.modal("toggle");
-                                }
-                            };
-
-                            // Add possiblity to confirm with return key
-                            $(window).bind('keypress', confirmWithEnter);
-                            
-                            // Unbind the listeners when the modal is hidden
-                            self.deleteModal.one("hide",function(){
-                                $('#confirm-delete').unbind('click');
-                                $(window).unbind('keypress',confirmWithEnter);
-                            });
-                            
-                            // Show the modal
-                            self.deleteModal.modal("show");
-                        };
-                        
-                        var mainView = new MainView(playerAdapter);
-                }
-            };
+            return annotationsTool;
         }
 );

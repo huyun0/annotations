@@ -163,7 +163,6 @@ function ($, _not, PlayerAdapter, Annotation, User, CommentsContainer, Template,
             this.listenTo(this.model.get("comments"), "remove", this.render);
             this.listenTo(this.model, "destroy", this.deleteView);
             this.listenTo(this.model, "remove", this.deleteView);
-            this.listenTo(this.model, "selected", this.onSelected);
 
             // Type use for delete operation
             this.typeForDelete = annotationsTool.deleteOperation.targetTypes.ANNOTATION;
@@ -199,7 +198,7 @@ function ($, _not, PlayerAdapter, Annotation, User, CommentsContainer, Template,
          * Move the video current time to this annotation
          */
         jumpTo: function() {
-            this.model.trigger("jumpto", this.model.get("start"));
+            annotationsTool.setSelection([this.model], true);
         },
 
         switchEditModus: function (event) {
@@ -456,12 +455,12 @@ function ($, _not, PlayerAdapter, Annotation, User, CommentsContainer, Template,
          */
         onSelect: function(event) {
             // If annotation already selected
-            if (annotationsTool.currentSelection && annotationsTool.currentSelection.get("id") === this.model.get("id")) {
-                delete annotationsTool.currentSelection;
+            if (annotationsTool.hasSelection() && annotationsTool.getSelection()[0].get("id") === this.model.get("id")) {
+                annotationsTool.setSelection();
                 annotationsTool.dispatcher.trigger("unselect-annotation");
                 this.isSelected = false;
             } else {
-                annotationsTool.currentSelection = this.model;
+                annotationsTool.setSelection([this.model], true);
                 this.model.trigger("selected", {model: this.model});
             }
         },
@@ -473,7 +472,7 @@ function ($, _not, PlayerAdapter, Annotation, User, CommentsContainer, Template,
             if (!this.$el.hasClass("selected")) {
                 this.$el.parent().find(".selected").removeClass("selected");
                 this.selectVisually();
-                this.jumpTo();
+                //this.jumpTo();
             }
         },
 
