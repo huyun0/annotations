@@ -471,10 +471,16 @@ define(["jquery",
           onExport: function () {
               var  json = {
                      categories: [],
-                     scales: []
+                     scales    : []
                    },
                    tmpScales = {},
                    tmpScaleId;
+
+              // If the used browser is Safari, we display a warning message
+              if (navigator.appVersion.search("Version/6") > 0 && navigator.appVersion.search("Safari") > 0) {
+                  annotationsTool.alertWarning("This version of Safari does not currently support the export function. Try it on another browser.");
+                  return;
+              }
 
               _.each(this.categories.where(this.filter), function (category) {
                   tmpScaleId = category.attributes.scale_id;

@@ -5377,6 +5377,12 @@
     max-height: 500px;
     vertical-align: bottom;
   }
+  #alert {
+    overflow: visible!important;
+  }
+  #alert h4 {
+    margin-bottom: 10px;
+  }
   body {
     background: url("../img/annotation/background.png") #636363 repeat;
   }

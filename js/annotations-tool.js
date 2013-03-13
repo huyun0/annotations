@@ -17,12 +17,13 @@
 define(["jquery",
         "backbone",
         "views/main",
+        "views/alert",
         "text!templates/delete-modal.tmpl",
         "text!templates/delete-warning-content.tmpl",
         "prototypes/player_adapter",
         "handlebars"],
        
-        function ($, Backbone, MainView, DeleteModalTmpl, DeleteContentTmpl, PlayerAdapter, Handlebars) {
+        function ($, Backbone, MainView, AlertView, DeleteModalTmpl, DeleteContentTmpl, PlayerAdapter, Handlebars) {
             
             var self = this;
 
@@ -85,6 +86,8 @@ define(["jquery",
                     }
                 },
 
+                alertModal: new AlertView(),
+
                 start: function () {
                     _.bindAll(this, "updateSelectionOnTimeUpdate",
                                     "setSelection",
@@ -100,6 +103,30 @@ define(["jquery",
                     
                     this.views.main = new MainView(this.playerAdapter);
                 },
+
+                /**
+                 * Display an alert modal
+                 * @param  {String} message The message to display
+                 */
+                alertError: function (message) {
+                    this.alertModal.show(message, this.alertModal.TYPES.ERROR);
+                },
+
+                /**
+                 * Display an warning modal
+                 * @param  {String} message The message to display
+                 */
+                alertWarning: function (message) {
+                    this.alertModal.show(message, this.alertModal.TYPES.WARNING);     
+                },
+
+                  /**
+                 * Display an information modal
+                 * @param  {String} message The message to display
+                 */
+                alertInfo: function (message) {
+                    this.alertModal.show(message, this.alertModal.TYPES.INFO);     
+                },       
 
                 /**
                  * Function to load the video file
