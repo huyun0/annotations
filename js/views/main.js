@@ -110,7 +110,7 @@ define(["jquery",
              */
             initialize: function (playerAdapter) {
                 if ((annotationsTool.isBrowserIE9() && !(playerAdapter.__proto__ instanceof PlayerAdapter)) ||
-                    !(playerAdapter instanceof PlayerAdapter)) {
+                    (!annotationsTool.isBrowserIE9() && !(playerAdapter instanceof PlayerAdapter))) {
                     throw "The player adapter is not valid! It must has PlayerAdapter as prototype.";
                 }
                 

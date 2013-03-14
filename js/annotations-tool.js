@@ -178,7 +178,7 @@ define(["jquery",
                  * @return {boolean} true if the browser is IE9, otherwise false
                  */
                 isBrowserIE9: function () {
-                   return (navigator.appVersion.search("MSI 9") > 0);
+                   return (navigator.appVersion.search("MSIE 9") > 0);
                 },
 
                 ///////////////////////////////////////////////
