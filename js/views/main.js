@@ -109,7 +109,8 @@ define(["jquery",
              * @param {playerAdapter} playerAdapter Object literal containing the view initialion attributes.
              */
             initialize: function (playerAdapter) {
-                if (!(playerAdapter instanceof PlayerAdapter)) {
+                if ((annotationsTool.isBrowserIE9() && !(playerAdapter.__proto__ instanceof PlayerAdapter)) ||
+                    !(playerAdapter instanceof PlayerAdapter)) {
                     throw "The player adapter is not valid! It must has PlayerAdapter as prototype.";
                 }
                 

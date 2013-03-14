@@ -49,6 +49,9 @@ define(["jquery",
         "handlebars",
         "backbone",
         "access",
+        "libs/Blob",
+        "libs/BlobBuilder",
+        "libs/swfobject",
         "libs/FileSaver",
         "jquery.FileReader"],
        
@@ -477,8 +480,11 @@ define(["jquery",
                    tmpScaleId;
 
               // If the used browser is Safari, we display a warning message
-              if (navigator.appVersion.search("Version/6") > 0 && navigator.appVersion.search("Safari") > 0) {
+              if (annotationsTool.isBrowserSafari6()) {
                   annotationsTool.alertWarning("This version of Safari does not currently support the export function. Try it on another browser.");
+                  return;
+              } else if (annotationsTool.isBrowserIE9()) {
+                  annotationsTool.alertWarning("This version of Internet Explorer does not support the export function. Try it on another browser.");
                   return;
               }
 

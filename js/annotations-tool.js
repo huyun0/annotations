@@ -117,7 +117,7 @@ define(["jquery",
                  * @param  {String} message The message to display
                  */
                 alertWarning: function (message) {
-                    this.alertModal.show(message, this.alertModal.TYPES.WARNING);     
+                    this.alertModal.show(message, this.alertModal.TYPES.WARNING);
                 },
 
                   /**
@@ -125,8 +125,8 @@ define(["jquery",
                  * @param  {String} message The message to display
                  */
                 alertInfo: function (message) {
-                    this.alertModal.show(message, this.alertModal.TYPES.INFO);     
-                },       
+                    this.alertModal.show(message, this.alertModal.TYPES.INFO);
+                },
 
                 /**
                  * Function to load the video file
@@ -165,6 +165,22 @@ define(["jquery",
                         return twoDigit(hours) + ":" + twoDigit(minutes) + ":" + twoDigit(seconds);
                 },
 
+                /**
+                 * Check if the current browser is Safari 6
+                 * @return {boolean} true if the browser is safari 6, otherwise false
+                 */
+                isBrowserSafari6: function () {
+                    return (navigator.appVersion.search("Version/6") > 0 && navigator.appVersion.search("Safari") > 0);
+                },
+
+                /**
+                 * Check if the current browser is Microsoft Internet Explorer 9
+                 * @return {boolean} true if the browser is IE9, otherwise false
+                 */
+                isBrowserIE9: function () {
+                   return (navigator.appVersion.search("MSI 9") > 0);
+                },
+
                 ///////////////////////////////////////////////
                 // Function related to annotation selection  //
                 ///////////////////////////////////////////////
@@ -176,7 +192,7 @@ define(["jquery",
                  */
                 setSelection: function (selection, moveTo) {
                     this.currentSelection = selection;
-                    
+
                     // if the selection is not empty, we move the playhead to it
                     if (_.isArray(selection) && selection.length > 0 && moveTo) {
                         this.playerAdapter.setCurrentTime(selection[0].get("start"));
@@ -204,6 +220,7 @@ define(["jquery",
                 hasSelection: function () {
                     return (typeof this.currentSelection !== "undefined" && (_.isArray(this.currentSelection) && this.currentSelection.length > 0));
                 },
+
 
                 updateSelectionOnTimeUpdate: function () {
                     var currentTime = this.playerAdapter.getCurrentTime(),
