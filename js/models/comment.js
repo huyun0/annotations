@@ -15,44 +15,61 @@
  */
 
 /**
- * A module representing the label model
- * @module Label
+ * A module representing the comment model
+ * @module models-comment
+ * @requires jQuery
+ * @requires ACCESS
+ * @requires backbone
  */
 define(["jquery",
         "access",
         "backbone"],
-       
+
     function($, ACCESS, Backbone){
-    
+
+
+        "use strict";
+
         /**
          * @constructor
-         * @alias module:Comment
+         * @see {@link http://www.backbonejs.org/#Model}
+         * @memberOf module:models-comment
+         * @type {map}
+         * @alias Comment
          */
         var Comment = Backbone.Model.extend({
-            
+
+            /**
+             * Default models value
+             * @alias module:models-comment.Comment#defaults
+             * @type {map}
+             * @static
+             */
             defaults: {
                 access: ACCESS.PUBLIC
             },
-            
+
             /**
              * Constructor
-             * @param {Object} attr Object literal containing the model initialion attribute. 
-             *                      Must contain at least the following attribute: text and annotation.
+             * @alias module:models-comment.Comment#initialize
+             * @param {object} attr Object literal containing the model initialion attribute.
              */
-            initialize: function(attr){
-                if(!attr || _.isUndefined(attr.text))
+            initialize: function (attr) {
+                if (!attr || _.isUndefined(attr.text)) {
                     throw "'text' attribute is required";
-                
-                // Check if the comment has been initialized 
-                if(!attr.id){
+                }
+
+                // Check if the comment has been initialized
+                if (!attr.id) {
                     // If local storage, we set the cid as id
-                    if(window.annotationsTool.localStorage)
-                        attr['id'] = this.cid;
-                        
+                    if (window.annotationsTool.localStorage) {
+                        attr.id = this.cid;
+                    }
+
                     this.toCreate = true;
                 }
 
-                if (window.annotationsTool.localStorage){
+                if (window.annotationsTool.localStorage) {
                     if (!attr.created_by) {
                         attr.created_by = annotationsTool.user.get("id");
                     }
@@ -61,21 +78,27 @@ define(["jquery",
                         attr.created_by_nickname = annotationsTool.user.get("nickname");
                     }
                 }
-                
+
                 if (attr.tags) {
                     attr.tags = this.parseJSONString(attr.tags);
                 }
 
                 this.set(attr);
             },
-            
-            parse: function(data) {                 
+
+            /**
+             * Parse the attribute list passed to the model
+             * @alias module:models-comment.Comment#parse
+             * @param  {object} data Object literal containing the model attribute to parse.
+             * @return {object}  The object literal with the list of parsed model attribute.
+             */
+            parse: function (data) {
                 var attr = data.attributes ? data.attributes : data;
 
                 attr.created_at = attr.created_at != null ? Date.parse(attr.created_at): null;
                 attr.updated_at = attr.updated_at != null ? Date.parse(attr.updated_at): null;
                 attr.deleted_at = attr.deleted_at != null ? Date.parse(attr.deleted_at): null;
-                
+
                 // Parse tags if present
                 if (attr.tags) {
                     attr.tags = this.parseJSONString(attr.tags);
@@ -88,58 +111,63 @@ define(["jquery",
 
                 return data;
             },
-            
-            validate: function(attr){
+
+            /**
+             * Validate the attribute list passed to the model
+             * @alias module:models-comment.Comment#validate
+             * @param  {object} data Object literal containing the model attribute to validate.
+             * @return {string}  If the validation failed, an error message will be returned.
+             */
+            validate: function (attr) {
                 var tmpCreated;
-                
-                if(attr.id){
-                    if(this.get('id') != attr.id){
+
+                if (attr.id) {
+                    if (this.get('id') != attr.id) {
                         this.id = attr.id;
                         this.attributes.id = attr.id;
                         this.toCreate = false;
                     }
                 }
-                
-                if(attr.text &&  !_.isString(attr.text))
-                    return "'text' attribute must be a string!";
-                
+
+                if (attr.text &&  !_.isString(attr.text)) {
+                    return "\"text\" attribute must be a string!";
+                }
+
                 if (attr.tags && _.isUndefined(this.parseJSONString(attr.tags))) {
-                    return "'tags' attribute must be a string or a JSON object";
+                    return "\"tags\" attribute must be a string or a JSON object";
                 }
-                
+
                 if(attr.access && !_.include(ACCESS,attr.access))
-                    return "'access' attribute is not valid.";
-                
+                    return "\"access\" attribute is not valid.";
+
                 if(attr.created_at){
-                    if((tmpCreated=this.get('created_at')) && tmpCreated!==attr.created_at)
-                        return "'created_at' attribute can not be modified after initialization!";
+                    if((tmpCreated=this.get("created_at")) && tmpCreated!==attr.created_at)
+                        return "\"created_at\" attribute can not be modified after initialization!";
                     if(!_.isNumber(attr.created_at))
-                        return "'created_at' attribute must be a number!";
+                        return "\"created_at\" attribute must be a number!";
                 }
-        
+
                 if(attr.updated_at){
                     if(!_.isNumber(attr.updated_at))
-                        return "'updated_at' attribute must be a number!";
+                        return "\"updated_at\" attribute must be a number!";
                 }
 
                 if(attr.deleted_at){
                     if(!_.isNumber(attr.deleted_at))
-                        return "'deleted_at' attribute must be a number!";
+                        return "\"deleted_at\" attribute must be a number!";
                 }
-                
             },
-            
+
             /**
              * Parse the given parameter to JSON if given as String
-             * @alias module:models-video.Video#parseJSONString
-             * @param  {String} parameter the parameter as String
+             * @alias module:models-comment.Comment#parseJSONString
+             * @param  {string} parameter the parameter as String
              * @return {JSON} parameter as JSON object
              */
-            parseJSONString: function(parameter) {
+            parseJSONString: function (parameter) {
                 if (parameter && _.isString(parameter)) {
                     try {
                         parameter = JSON.parse(parameter);
-                        
                     } catch (e) {
                         console.warn("Can not parse parameter '"+parameter+"': "+e);
                         return undefined; 
@@ -150,22 +178,21 @@ define(["jquery",
 
                 return parameter;
             },
-            
+
             /**
              * Override the default toJSON function to ensure complete JSONing.
-             * @alias module:models-track.Track#toJSON
-             * @return {JSON} JSON representation of the instane
+             * @alias module:models-comment.Comment#toJSON
+             * @return {JSON} JSON representation of the instance
              */
-            toJSON: function(){
+            toJSON: function () {
                 var json = $.proxy(Backbone.Model.prototype.toJSON,this)();
                 if (json.tags) {
                     json.tags = JSON.stringify(json.tags);
                 }
                 return json;
             }
-            
+
         });
-        
         return Comment;
-        
-}); 
+    }
+);

@@ -29,7 +29,7 @@ define(["jquery",
         "access",
         "backbone"],
     
-    function($,Annotations,ACCESS, Backbone){
+    function ($, Annotations,ACCESS, Backbone) {
 
         "use strict";
         
@@ -46,8 +46,8 @@ define(["jquery",
              * @alias module:models-video.Video#defaults
              */
             defaults: {
-                access: ACCESS.PRIVATE,
-                annotations: new Annotations([],this)
+                access     : ACCESS.PRIVATE,
+                annotations: new Annotations([], this)
             },
             
             /**
@@ -55,7 +55,7 @@ define(["jquery",
              * @alias module:models-track.Track#initialize
              * @param {Object} attr Object literal containing the model initialion attribute. 
              */
-            initialize: function(attr){
+            initialize: function (attr) {
 
                 _.bindAll(this, "getAnnotation");
                 
@@ -115,7 +115,7 @@ define(["jquery",
              * @param  {Object} data Object literal containing the model attribute to parse.
              * @return {Object}  The object literal with the list of parsed model attribute.
              */
-            parse: function(data) {
+            parse: function (data) {
                 var attr = data.attributes ? data.attributes : data;
 
                 attr.created_at = attr.created_at !== null ? Date.parse(attr.created_at): null;
@@ -155,12 +155,12 @@ define(["jquery",
              * @param  {Object} data Object literal containing the model attribute to validate.
              * @return {String}  If the validation failed, an error message will be returned.
              */
-            validate: function(attr){
+            validate: function (attr) {
 
                 var tmpCreated;
                 
-                if(attr.id){
-                    if(this.get('id') != attr.id){
+                if (attr.id) {
+                    if (this.get('id') != attr.id) {
                         this.id = attr.id;
                         this.attributes['id'] = attr.id;
                         this.toCreate = false;
@@ -170,7 +170,7 @@ define(["jquery",
 
                         var annotations = this.get("annotations");
 
-                        if (annotations && (annotations.length) == 0) {
+                        if (annotations && (annotations.length) === 0) {
                             annotations.fetch({async:false, add: true});
                         }
                     }
@@ -201,7 +201,7 @@ define(["jquery",
                 }
                 
                 if (attr.created_at){
-                    if ((tmpCreated=this.get('created_at')) && tmpCreated!==attr.created_at) {
+                    if ((tmpCreated = this.get('created_at')) && tmpCreated !== attr.created_at) {
                         return "'created_at' attribute can not be modified after initialization!";
                     } else if (!_.isNumber(attr.created_at)) {
                         return "'created_at' attribute must be a number!";
@@ -221,7 +221,7 @@ define(["jquery",
              * Modify the current url for the tracks collection
              * @alias module:models-track.Track#setUrl
              */
-            setUrl: function() {
+            setUrl: function () {
                 if (this.attributes.annotations) {
                     this.attributes.annotations.setUrl(this);
                 }
@@ -243,7 +243,7 @@ define(["jquery",
              * @alias module:models-track.Track#toJSON
              * @return {JSON} JSON representation of the instane
              */
-            toJSON: function() {
+            toJSON: function () {
                 var json = Backbone.Model.prototype.toJSON.call(this);
                 if (json.tags) {
                     json.tags = JSON.stringify(json.tags);
@@ -259,13 +259,13 @@ define(["jquery",
              * @param  {String} parameter the parameter as String
              * @return {JSON} parameter as JSON object
              */
-            parseJSONString: function(parameter) {
+            parseJSONString: function (parameter) {
                 if (parameter && _.isString(parameter)) {
                     try {
                         parameter = JSON.parse(parameter);
                         
                     } catch (e) {
-                        console.warn("Can not parse parameter '"+parameter+"': "+e);
+                        console.warn("Can not parse parameter '" + parameter + "': " + e);
                         return undefined; 
                     }
                 } else if (!_.isObject(parameter) || _.isFunction(parameter)) {

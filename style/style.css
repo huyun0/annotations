@@ -5958,7 +5958,7 @@
     visibility: hidden;
   }
   #annotate-container #label-tabs-contents div.tab-pane .carousel-inner {
-    width: 300%;
+    width: 320%;
   }
   #annotate-container #label-tabs-contents div.tab-pane.edit-on .edit {
     visibility: visible;
