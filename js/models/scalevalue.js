@@ -13,19 +13,37 @@
  *  permissions and limitations under the License.
  *
  */
-    
+
+/**
+ * A module representing the scalevalue model
+ * @module models-scalevalue
+ * @requires jQuery
+ * @requires ACCESS
+ * @requires backbone
+ */
 define(["jquery",
         "access",
         "backbone"],
-       
-    function($, ACCESS, Backbone){
-    
+
+    function ($, ACCESS, Backbone) {
+
+        "use strict";
+
         /**
-         * scale value model
-         * @class
+         * @constructor
+         * @see {@link http://www.backbonejs.org/#Model}
+         * @augments module:Backbone.Model
+         * @memberOf module:models-scalevalue
+         * @alias module:models-scalevalue.Scalevalue
          */
         var ScaleValue = Backbone.Model.extend({
-            
+
+            /**
+             * Default models value
+             * @alias module:models-scalevalue.Scalevalue#defaults
+             * @type {map}
+             * @static
+             */
             defaults: {
                 access: ACCESS.PRIVATE,
                 created_at: null,
@@ -35,94 +53,120 @@ define(["jquery",
                 deleted_at: null,
                 deleted_by: null
             },
-            
-            initialize: function(attr){
-                
-                if(!attr  || _.isUndefined(attr.name) || attr.name == "" ||
+
+            /**
+             * Constructor
+             * @alias module:models-scalevalue.Scalevalue#initialize
+             * @param {object} attr Object literal containing the model initialion attributes.
+             */
+            initialize: function (attr) {
+                if (!attr  || _.isUndefined(attr.name) || attr.name === "" ||
                    _.isUndefined(attr.value) || !_.isNumber(attr.value) ||
-                   _.isUndefined(attr.order) || !_.isNumber(attr.order))
+                   _.isUndefined(attr.order) || !_.isNumber(attr.order)) {
                     throw "'name, value, order' attributes are required";
+                }
 
-                if(!attr.id){
+                if (!attr.id) {
                     this.toCreate = true;
                 }
-                
-                // Check if the track has been initialized 
-                if(!attr.id){
+
+                // Check if the track has been initialized
+                if (!attr.id) {
                     // If local storage, we set the cid as id
-                    if(window.annotationsTool.localStorage)
-                        this.set({id:this.cid});
-                        
+                    if (window.annotationsTool.localStorage) {
+                        this.set({id: this.cid});
+                    }
                     this.toCreate = true;
                 }
-                
                 this.set(attr);
-            },
-            
-            parse: function(attr) {
-                attr.created_at = attr.created_at != null ? Date.parse(attr.created_at): null;
-                attr.updated_at = attr.updated_at != null ? Date.parse(attr.updated_at): null;
-                attr.deleted_at = attr.deleted_at != null ? Date.parse(attr.deleted_at): null;
-                return attr;
-            },
-            
-            validate: function(attr){
-                var tmpCreated;
-                
-                if(attr.id){
-                    if(this.get('id') != attr.id){
-                        attr['id'] = this.cid;
-                    }
-                }
-                
-                if(attr.name && !_.isString(attr.name))
-                    return "'name' attribute must be a string";
-                
-                if(attr.value && !_.isNumber(attr.value))
-                    return "'value' attribute must be a number";
-                
-                if(attr.order && !_.isNumber(attr.order))
-                    return "'order' attribute must be a number";
-                
-                if(attr.access && !_.include(ACCESS,attr.access))
-                    return "'access' attribute is not valid.";
-                
-                if(attr.created_at){
-                    if((tmpCreated=this.get('created_at')) && tmpCreated!==attr.created_at)
-                        return "'created_at' attribute can not be modified after initialization!";
-                    if(!_.isNumber(attr.created_at))
-                        return "'created_at' attribute must be a number!";
-                }
-        
-                if(attr.updated_at && !_.isNumber(attr.updated_at))
-                    return "'updated_at' attribute must be a number!";
-
-                if(attr.deleted_at && !_.isNumber(attr.deleted_at))
-                    return "'deleted_at' attribute must be a number!";
             },
 
             /**
-             * @override
-             * 
-             * Override the default toJSON function to ensure complete JSONing.
-             *
-             * @return {JSON} JSON representation of the instane
+             * Parse the attribute list passed to the model
+             * @alias module:models-scalevalue.Scalevalue#parse
+             * @param  {object} data Object literal containing the model attribute to parse.
+             * @return {object}  The object literal with the list of parsed model attribute.
              */
-            toJSON: function(){
-                var json = $.proxy(Backbone.Model.prototype.toJSON,this)();
+            parse: function (attr) {
+                attr.created_at = attr.created_at !== null ? Date.parse(attr.created_at): null;
+                attr.updated_at = attr.updated_at !== null ? Date.parse(attr.updated_at): null;
+                attr.deleted_at = attr.deleted_at !== null ? Date.parse(attr.deleted_at): null;
+                return attr;
+            },
+
+            /**
+             * Validate the attribute list passed to the model
+             * @alias module:models-scalevalue.Scalevalue#validate
+             * @param  {object} data Object literal containing the model attribute to validate.
+             * @return {string}  If the validation failed, an error message will be returned.
+             */
+            validate: function (attr) {
+                var tmpCreated;
+
+                if (attr.id) {
+                    if (this.get("id") !== attr.id) {
+                        attr.id = this.cid;
+                    }
+                }
+
+                if (attr.name && !_.isString(attr.name)) {
+                    return "'name' attribute must be a string";
+                }
+
+                if (attr.value && !_.isNumber(attr.value)) {
+                    return "'value' attribute must be a number";
+                }
+
+                if (attr.order && !_.isNumber(attr.order)) {
+                    return "'order' attribute must be a number";
+                }
+
+                if (attr.access && !_.include(ACCESS, attr.access)) {
+                    return "'access' attribute is not valid.";
+                }
+
+                if (attr.created_at) {
+                    if ((tmpCreated = this.get("created_at")) && tmpCreated !== attr.created_at) {
+                        return "'created_at' attribute can not be modified after initialization!";
+                    } else if (!_.isNumber(attr.created_at)) {
+                        return "'created_at' attribute must be a number!";
+                    }
+                }
+
+                if (attr.updated_at && !_.isNumber(attr.updated_at)) {
+                    return "'updated_at' attribute must be a number!";
+                }
+
+                if (attr.deleted_at && !_.isNumber(attr.deleted_at)) {
+                    return "'deleted_at' attribute must be a number!";
+                }
+            },
+
+            /**
+             * Override the default toJSON function to ensure complete JSONing.
+             * @alias module:models-scalevalue.Scalevalue#toJSON
+             * @return {JSON} JSON representation of the instance
+             */
+            toJSON: function () {
+                var json = $.proxy(Backbone.Model.prototype.toJSON, this)();
+
                 if (json.scale && json.scale.attributes) {
                     json.scale = this.attributes.scale.toJSON();
                 }
                 return json;
             },
 
-
+            /**
+             * Prepare the model as JSON to export and return it
+             * @alias module:models-scalevalue.Scalevalue#toExportJSON
+             * @return {JSON} JSON representation of the model for export
+             */
             toExportJSON: function () {
                 var json = {
                     name: this.attributes.name,
-                    value: this.attributes.value,  
-                    order: this.attributes.order               
-                }
+                    value: this.attributes.value,
+                    order: this.attributes.order
+                };
 
                 if (json.scale && json.scale.attributes) {
                     json.scale = this.attributes.scale.toJSON();
@@ -131,7 +175,6 @@ define(["jquery",
                 return json;
             }
         });
-        
         return ScaleValue;
-    
-});
+    }
+);

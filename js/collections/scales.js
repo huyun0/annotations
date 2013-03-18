@@ -13,53 +13,81 @@
  *  permissions and limitations under the License.
  *
  */
-    
+
+/**
+ * A module representing a scales collection
+ * @module collections-scales
+ * @requires jQuery
+ * @requires models-scale
+ * @requires backbone
+ * @requires localstorage
+ */
 define(["jquery",
         "models/scale",
         "backbone",
         "localstorage"],
-       
-    function($,Scale, Backbone){
-    
+
+    function ($, Scale, Backbone) {
+
+        "use strict";
+
         /**
-         * Scales collection
-         * @class
+         * @constructor
+         * @see {@link http://www.backbonejs.org/#Collection}
+         * @augments module:Backbone.Collection
+         * @memberOf module:collections-scales
+         * @alias module:collections-scales.Scales
          */
         var Scales = Backbone.Collection.extend({
+
+            /**
+             * Model of the instances contained in this collection
+             * @alias module:collections-scales.Scales#initialize
+             */
             model: Scale,
+
+            /**
+             * Localstorage container for the collection
+             * @alias module:collections-scales.Scales#localStorage
+             * @type {Backbone.LocalStorgage}
+             */
             localStorage: new Backbone.LocalStorage("Scales"),
 
             /**
-             * @constructor
-             * 
-             * @param  {Array} models List of scales to add to the collection
-             * @param  {Video} video  Video supporting the scales collection
+             * constructor
+             * @alias module:collections-scales.Scales#initialize
              */
-            initialize: function(models, video){
+            initialize: function (models, video) {
                 _.bindAll(this, "setUrl", "addCopyFromTemplate", "toExportJSON");
-                
                 this.setUrl(video);
             },
-            
-            parse: function(resp, xhr) {
-                if(resp.scales && _.isArray(resp.scales))
-                    return resp.scales;
-                else if(_.isArray(resp))
-                    return resp;
-                else
+
+            /**
+             * Parse the given data
+             * @alias module:collections-scales.Scales#parse
+             * @param  {object} data Object or array containing the data to parse.
+             * @return {object}      the part of the given data related to the scales
+             */
+            parse: function (data) {
+                if (data.scales && _.isArray(data.scales)) {
+                    return data.scales;
+                } else if (_.isArray(data)) {
+                    return data;
+                } else {
                     return null;
+                }
             },
-            
+
             /**
              * Define the url from the collection with the given video
-             *
-             * @param {Video} video containing the scale
+             * @alias module:collections-scales.Scales#setUrl
+             * @param {Video} Video containing the scales
              */
-            setUrl: function(video){
+            setUrl: function (video) {
                 if (!video || !video.collection) { // If a template
                     this.url = window.annotationsTool.restEndpointsUrl + "/scales";
                     this.isTemplate = true;
-                } else {  // If not a template, we add video url      
+                } else {  // If not a template, we add video url
                     this.url = video.url() + "/scales";
                     this.isTemplate = false;
 
@@ -67,13 +95,17 @@ define(["jquery",
                         this.localStorage = new Backbone.LocalStorage(this.url);
                     }
                 }
-                
-                this.each(function(scale){
+
+                this.each(function (scale) {
                     scale.setUrl();
                 });
             },
 
-
+            /**
+             * Get the collection as array with the model in JSON, ready to be exported
+             * @alias module:collections-scales.Scales#toExportJSON
+             * @return {array} Array of json models
+             */
             toExportJSON: function () {
                 var scalesForExport = [];
 
@@ -83,18 +115,17 @@ define(["jquery",
 
                 return scalesForExport;
             },
-            
+
             /**
              * Add a copy from the given template to this collection
-             *
-             * @param {Scale} template to copy 
+             * @alias module:collections-scales.Scales#addCopyFromTemplate
+             * @param {Scale} element template to copy
+             * @return {Scale} A copy of the given scale
              */
-            addCopyFromTemplate: function(element){
-                
+            addCopyFromTemplate: function (element) {
                 // Test if the given scale is really a template
-                if(!this.isTemplate && !_.isArray(element) && element.id){
-                    
-                    // Copy the element and remove useless parameters 
+                if (!this.isTemplate && !_.isArray(element) && element.id) {
+                    // Copy the element and remove useless parameters
                     var copyJSON = element.toJSON();
                     delete copyJSON.id;
                     delete copyJSON.created_at;
@@ -104,22 +135,14 @@ define(["jquery",
                     delete copyJSON.deleted_by;
                     delete copyJSON.deleted_at;
                     delete copyJSON.labels;
-                    
+
                     // add the copy url parameter for the backend
-                    copyJSON['copyUrl'] = "?scale_id="+element.id;
-                    
+                    copyJSON.copyUrl = "?scale_id=" + element.id;
                     return this.create(copyJSON);
-                    
-                    // TODO add localStorage version
                 }
-                
                 return null;
             }
-            
         });
-        
         return Scales;
-
-});
-    
-    
+    }
+);

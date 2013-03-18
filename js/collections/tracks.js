@@ -14,77 +14,109 @@
  *
  */
 
+/**
+ * A module representing a tracks collection
+ * @module collections-tracks
+ * @requires jQuery
+ * @requires models-scale
+ * @requires backbone
+ * @requires localstorage
+ */
 define(["jquery",
         "models/track",
         "backbone",
         "localstorage"],
-       
-    function($, Track, Backbone){
-    
+
+    function ($, Track, Backbone) {
+
+        "use strict";
+
         /**
-         * Tracks collection
-         * @class
+         * @constructor
+         * @see {@link http://www.backbonejs.org/#Collection}
+         * @augments module:Backbone.Collection
+         * @memberOf module:collections-tracks
+         * @alias module:collections-tracks.Tracks
          */
         var Tracks = Backbone.Collection.extend({
-            model: Track,
-            localStorage: new Backbone.LocalStorage("Tracks"),
-            
+
             /**
-             * @constructor
+             * Model of the instances contained in this collection
+             * @alias module:collections-tracks.Tracks#initialize
              */
-            initialize: function(models,video){
-        
-                    _.bindAll(this,"setUrl");
-                    
-                    this.setUrl(video);
+            model: Track,
+
+            /**
+             * Localstorage container for the collection
+             * @alias module:collections-tracks.Tracks#localStorage
+             * @type {Backbone.LocalStorgage}
+             */
+            localStorage: new Backbone.LocalStorage("Tracks"),
+
+            /**
+             * constructor
+             * @alias module:collections-tracks.Tracks#initialize
+             */
+            initialize: function (models, video) {
+                _.bindAll(this, "setUrl");
+                this.setUrl(video);
             },
-            
-            parse: function(resp, xhr) {
-                if(resp.tracks && _.isArray(resp.tracks))
-                    return resp.tracks;
-                else if(_.isArray(resp))
-                    return resp;
-                else
+
+            /**
+             * Parse the given data
+             * @alias module:collections-tracks.Tracks#parse
+             * @param  {object} data Object or array containing the data to parse.
+             * @return {object}      the part of the given data related to the tracks
+             */
+            parse: function (data) {
+                if (data.tracks && _.isArray(data.tracks)) {
+                    return data.tracks;
+                } else if (_.isArray(data)) {
+                    return data;
+                } else {
                     return null;
+                }
             },
 
-            getMine: function(){
+            /**
+             * Get the tracks created by the current user
+             * @alias module:collections-tracks.Tracks#getMine
+             * @return {array} Array containing the list of tracks created by the current user
+             */
+            getMine: function () {
                 return this.where({isMine: true});
-            }, 
+            },
 
-
-            getMyTracks: function(){
-                return this.where({isMine: true});
-            }, 
-
-
-            // Simulate access to limited track for localStorage prototype.
+            /**
+             * Simulate access to limited track for localStorage prototype.
+             * @alias module:collections-tracks.Tracks#getVisibleTracks
+             * @return {array} Array containing the list of the visible tracks
+             */
             getVisibleTracks: function () {
                 return this.remove(this.where({isMine: false, access: 0}));
-            },   
-            
+            },
+
             /**
              * Define the url from the collection with the given video
-             *
-             * @param {Video} video containing the tracks
+             * @alias module:collections-tracks.Tracks#setUrl
+             * @param {Video} Video containing the tracks
              */
-            setUrl: function(video){
-                if(!video || !video.collection)
-                     throw "Parent video must be given!";
-                
+            setUrl: function (video) {
+                if (!video || !video.collection) {
+                    throw "Parent video must be given!";
+                }
+
                 this.url = video.url() + "/tracks";
 
-                if(annotationsTool.localStorage)
+                if (annotationsTool.localStorage) {
                     this.localStorage = new Backbone.LocalStorage(this.url);
+                }
 
-                this.each(function(track){
+                this.each(function (track) {
                     track.setUrl();
                 });
             }
         });
-        
         return Tracks;
-
-});
-    
-    
+    }
+);

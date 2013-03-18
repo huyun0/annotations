@@ -25,17 +25,16 @@ define(["jquery",
         "access",
         "backbone"],
 
-    function($, ACCESS, Backbone){
-
+    function ($, ACCESS, Backbone) {
 
         "use strict";
 
         /**
          * @constructor
          * @see {@link http://www.backbonejs.org/#Model}
+         * @augments module:Backbone.Model
          * @memberOf module:models-comment
-         * @type {map}
-         * @alias Comment
+         * @alias module:models-comment.Comment
          */
         var Comment = Backbone.Model.extend({
 
@@ -46,13 +45,19 @@ define(["jquery",
              * @static
              */
             defaults: {
+                created_at: null,
+                created_by: null,
+                updated_at: null,
+                updated_by: null,
+                deleted_at: null,
+                deleted_by: null,
                 access: ACCESS.PUBLIC
             },
 
             /**
              * Constructor
              * @alias module:models-comment.Comment#initialize
-             * @param {object} attr Object literal containing the model initialion attribute.
+             * @param {object} attr Object literal containing the model initialion attributes.
              */
             initialize: function (attr) {
                 if (!attr || _.isUndefined(attr.text)) {
@@ -95,19 +100,20 @@ define(["jquery",
             parse: function (data) {
                 var attr = data.attributes ? data.attributes : data;
 
-                attr.created_at = attr.created_at != null ? Date.parse(attr.created_at): null;
-                attr.updated_at = attr.updated_at != null ? Date.parse(attr.updated_at): null;
-                attr.deleted_at = attr.deleted_at != null ? Date.parse(attr.deleted_at): null;
+                attr.created_at = attr.created_at !== null ? Date.parse(attr.created_at): null;
+                attr.updated_at = attr.updated_at !== null ? Date.parse(attr.updated_at): null;
+                attr.deleted_at = attr.deleted_at !== null ? Date.parse(attr.deleted_at): null;
 
                 // Parse tags if present
                 if (attr.tags) {
                     attr.tags = this.parseJSONString(attr.tags);
                 }
 
-                if(data.attributes)
+                if (data.attributes) {
                     data.attributes = attr;
-                else
+                } else {
                     data = attr;
+                }
 
                 return data;
             },
@@ -122,7 +128,7 @@ define(["jquery",
                 var tmpCreated;
 
                 if (attr.id) {
-                    if (this.get('id') != attr.id) {
+                    if (this.get("id") !== attr.id) {
                         this.id = attr.id;
                         this.attributes.id = attr.id;
                         this.toCreate = false;
@@ -137,24 +143,28 @@ define(["jquery",
                     return "\"tags\" attribute must be a string or a JSON object";
                 }
 
-                if(attr.access && !_.include(ACCESS,attr.access))
+                if (attr.access && !_.include(ACCESS, attr.access)) {
                     return "\"access\" attribute is not valid.";
+                }
 
-                if(attr.created_at){
-                    if((tmpCreated=this.get("created_at")) && tmpCreated!==attr.created_at)
+                if (attr.created_at) {
+                    if ((tmpCreated = this.get("created_at")) && tmpCreated !== attr.created_at) {
                         return "\"created_at\" attribute can not be modified after initialization!";
-                    if(!_.isNumber(attr.created_at))
+                    } else if (!_.isNumber(attr.created_at)) {
                         return "\"created_at\" attribute must be a number!";
+                    }
                 }
 
-                if(attr.updated_at){
-                    if(!_.isNumber(attr.updated_at))
+                if (attr.updated_at) {
+                    if (!_.isNumber(attr.updated_at)) {
                         return "\"updated_at\" attribute must be a number!";
+                    }
                 }
 
-                if(attr.deleted_at){
-                    if(!_.isNumber(attr.deleted_at))
+                if (attr.deleted_at) {
+                    if (!_.isNumber(attr.deleted_at)) {
                         return "\"deleted_at\" attribute must be a number!";
+                    }
                 }
             },
 
@@ -169,8 +179,8 @@ define(["jquery",
                     try {
                         parameter = JSON.parse(parameter);
                     } catch (e) {
-                        console.warn("Can not parse parameter '"+parameter+"': "+e);
-                        return undefined; 
+                        console.warn("Can not parse parameter '" + parameter + "': " + e);
+                        return undefined;
                     }
                 } else if (!_.isObject(parameter) || _.isFunction(parameter)) {
                     return undefined;
@@ -185,13 +195,12 @@ define(["jquery",
              * @return {JSON} JSON representation of the instance
              */
             toJSON: function () {
-                var json = $.proxy(Backbone.Model.prototype.toJSON,this)();
+                var json = $.proxy(Backbone.Model.prototype.toJSON, this)();
                 if (json.tags) {
                     json.tags = JSON.stringify(json.tags);
                 }
                 return json;
             }
-
         });
         return Comment;
     }

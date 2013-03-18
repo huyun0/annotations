@@ -35,8 +35,9 @@ define(["jquery",
         /**
          * @constructor
          * @see {@link http://www.backbonejs.org/#Model}
+         * @augments module:Backbone.Model
          * @memberOf module:models-annotation
-         * @alias Annotation
+         * @alias module:models-annotation.Annotation
          */
         var Annotation = Backbone.Model.extend({
 
@@ -55,7 +56,7 @@ define(["jquery",
             /**
              * Constructor
              * @alias module:models-annotation.Annotation#initialize
-             * @param {object} attr Object literal containing the model initialion attribute.
+             * @param {object} attr Object literal containing the model initialion attributes.
              */
             initialize: function (attr) {
                 var saveChange;

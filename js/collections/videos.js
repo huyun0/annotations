@@ -14,28 +14,53 @@
  *
  */
 
+/**
+ * A module representing a videos collection
+ * @module collections-videos
+ * @requires jQuery
+ * @requires models-video
+ * @requires backbone
+ * @requires localstorage
+ */
 define(["jquery",
         "models/video",
         "backbone",
         "localstorage"],
-       
-    function($, Video, Backbone){
-    
+
+    function ($, Video, Backbone) {
+
+        "use strict";
+
         /**
-         * Videos collection
-         * @class
+         * @constructor
+         * @see {@link http://www.backbonejs.org/#Collection}
+         * @augments module:Backbone.Collection
+         * @memberOf module:collections-videos
+         * @alias module:collections-videos.Videos
          */
         var Videos = Backbone.Collection.extend({
+
+            /**
+             * Model of the instances contained in this collection
+             * @alias module:collections-videos.Videos#initialize
+             */
             model: Video,
+
+            /**
+             * Localstorage container for the collection
+             * @alias module:collections-videos.Videos#localStorage
+             * @type {Backbone.LocalStorgage}
+             */
             localStorage: new Backbone.LocalStorage("Videos"),
-            
-            initialize: function(){
+
+            /**
+             * constructor
+             * @alias module:collections-videos.Videos#initialize
+             */
+            initialize: function () {
                 this.url = window.annotationsTool.restEndpointsUrl + "/videos";
             }
         });
-        
         return Videos;
-
-});
-    
-    
+    }
+);

@@ -58,7 +58,7 @@ define(["jquery",
         "bootstrap",
         "carousel",
         "tab"],
-       
+
     function ($, PlayerAdapter, AnnotateView, ListView, TimelineView, LoginView, ScaleEditorView,
               Annotations, Users, Videos, User, Track, Video, AnnotationSync, ROLES, FiltersManager, Backbone) {
 
@@ -67,32 +67,33 @@ define(["jquery",
         /**
          * @constructor
          * @see {@link http://www.backbonejs.org/#View}
+         * @augments module:Backbone.View
          * @memberOf module:views-main
          * @alias module:views-main.MainView
          */
         var MainView = Backbone.View.extend({
-          
+
             /**
              * Main container of the appplication
              * @alias module:views-main.MainView#el
              * @type {Dom Element}
              */
             el: $("body"),
-            
+
             /**
              * The player adapter passed during initialization part
              * @alias module:views-main.MainView#playerAdapter
              * @type {playerAdapter}
              */
             playerAdapter: null,
-            
+
             /**
              * jQuery element for the loading box
              * @alias module:views-main.MainView#loadingBox
              * @type {jQuery Object}
              */
             loadingBox: $("div#loading"),
-            
+
             /**
              * Events to handle by the main view
              * @alias module:views-main.MainView#event
@@ -102,7 +103,7 @@ define(["jquery",
                 "click #logout": "logout",
                 "click #print" : "print"
             },
-            
+
             /**
              * Constructor
              * @alias module:views-main.MainView#initialize
@@ -113,7 +114,7 @@ define(["jquery",
                     (!annotationsTool.isBrowserIE9() && !(playerAdapter instanceof PlayerAdapter))) {
                     throw "The player adapter is not valid! It must has PlayerAdapter as prototype.";
                 }
-                
+
                 _.bindAll(this, "logout",
                                 "checkUserAndLogin",
                                 "initModels",
@@ -122,7 +123,7 @@ define(["jquery",
                                 "onDeletePressed",
                                 "onWindowResize",
                                 "print");
-                
+
                 this.setLoadingProgress(10, "Starting tool.");
 
                 // Load the good storage module
@@ -137,11 +138,11 @@ define(["jquery",
                     // REST annotations storage module
                     Backbone.sync = AnnotationSync;
                 }
-                
+
                 this.playerAdapter = playerAdapter;
-                
+
                 this.setLoadingProgress(20, "Get users saved locally.");
-                
+
                 // Create a new users collection and get exciting local user
                 annotationsTool.users = new Users();
 
@@ -153,7 +154,7 @@ define(["jquery",
                         console.warn(error);
                     }
                 });
-                
+
                 this.loginView              = new LoginView();
                 annotationsTool.scaleEditor = new ScaleEditorView();
 
@@ -172,18 +173,18 @@ define(["jquery",
 
                 this.onWindowResize();
             },
-              
+
             /**
              * Create the views for the annotations
              * @alias module:views-main.MainView#createViews
              */
             createViews: function () {
                 this.setLoadingProgress(40, "Start creating views.");
-                
+
                 $("#video-container").show();
-                
+
                 this.setLoadingProgress(45, "Start loading video.");
-                
+
                 this.initModels($.proxy(function () {
 
                     /**
@@ -191,16 +192,16 @@ define(["jquery",
                      */
                     var loadVideoDependantView = $.proxy(function () {
                         $(this.playerAdapter).off(PlayerAdapter.EVENTS.READY + " " + PlayerAdapter.EVENTS.PAUSE, loadVideoDependantView);
-           
+
                         this.setLoadingProgress(60, "Start creating views.");
-                        
+
 
                         if (annotationsTool.getLayoutConfiguration().timeline) {
                             // Create views with Timeline
                             this.setLoadingProgress(70, "Creating timeline.");
                             this.timelineView = new TimelineView({playerAdapter: this.playerAdapter});
                         }
-                        
+
                         if (annotationsTool.getLayoutConfiguration().annotate) {
                             // Create view to annotate
                             this.setLoadingProgress(80, "Creating annotate view.");
@@ -208,7 +209,7 @@ define(["jquery",
                             this.listenTo(this.annotateView, "change-layout", this.onWindowResize);
                             this.annotateView.$el.show();
                         }
-                        
+
                         if (annotationsTool.getLayoutConfiguration().list) {
                             // Create annotations list view
                             this.setLoadingProgress(90, "Creating list view.");
@@ -216,38 +217,38 @@ define(["jquery",
                             this.listenTo(this.listView, "change-layout", this.onWindowResize);
                             this.listView.$el.show();
                         }
-                        
+
                         this.setLoadingProgress(100, "Ready.");
                         this.loadingBox.hide();
 
                         this.onWindowResize();
-                        
+
                         // Show logout button
                         $("a#logout").css("display", "block");
                         this.timelineView.redraw();
                     }, this);
-                    
+
                     this.playerAdapter.load();
-                    
+
                     // Initialize the player
                     this.loadingBox.find(".info").text("Initializing the player.");
-                    
+
                     if (this.playerAdapter.getStatus() === PlayerAdapter.STATUS.PAUSED) {
                         loadVideoDependantView();
                     } else {
                         $(this.playerAdapter).on(PlayerAdapter.EVENTS.READY + " " + PlayerAdapter.EVENTS.PAUSE, loadVideoDependantView);
                     }
-                  
+
                 }, this));
             },
-            
+
             /**
              * Check if an user are logged into the tool, otherwise display the login modal
              * @alias module:views-main.MainView#checkUserAndLogin
              */
             checkUserAndLogin: function () {
                 this.setLoadingProgress(30, "Get current user.");
-                
+
                 // If a user has been saved locally, we take it as current user
                 if (annotationsTool.users.length > 0) {
                     annotationsTool.user = annotationsTool.users.at(0);
@@ -256,7 +257,7 @@ define(["jquery",
                     this.loginView.show();
                 }
             },
-            
+
             /**
              * Logout from the tool
              * @alias module:views-main.MainView#logout
@@ -264,15 +265,15 @@ define(["jquery",
             logout: function () {
                 // Stop the video
                 this.playerAdapter.pause();
-                
+
                  // Hide logout button
                 $("a#logout").hide();
-                
+
                 // Hide/remove the views
                 annotationsTool.playerAdapter.pause();
                 annotationsTool.playerAdapter.setCurrentTime(0);
                 $("#video-container").hide();
-                
+
                 if (annotationsTool.getLayoutConfiguration().timeline) {
                     this.timelineView.reset();
                 }
@@ -286,12 +287,12 @@ define(["jquery",
                 }
 
                 this.loginView.reset();
-                
+
                 // Delete the different objects
                 delete annotationsTool.tracks;
                 delete annotationsTool.video;
                 delete annotationsTool.user;
-                
+
                 this.loadingBox.find(".bar").width("0%");
                 this.loadingBox.show();
                 this.loginView.show();
@@ -331,7 +332,7 @@ define(["jquery",
                     setTimeout(this.print, 1000);
                 }
             },
-            
+
             /**
              * Get all the annotations for the current user
              * @alias module:views-main.MainView#initModels
@@ -348,10 +349,10 @@ define(["jquery",
                      * @function to conclude the retrive of annotations
                      */
                     concludeInitialization = $.proxy(function () {
-                    
+
                         // At least one private track should exist, we select the first one
-                        selectedTrack = tracks.getMyTracks()[0];
-                        
+                        selectedTrack = tracks.getMine()[0];
+
                         if (!selectedTrack.get("id")) {
                             selectedTrack.bind("ready", function () {
                                 concludeInitialization();
@@ -360,10 +361,10 @@ define(["jquery",
                         } else {
                             annotationsTool.selectedTrack = selectedTrack;
                         }
-                        
+
                         // Use to know if all the tracks have been fetched
                         remindingFetchingTrack = tracks.length;
-                      
+
                         // Function to add the different listener to the annotations
                         tracks.each(function (track) {
                             annotations = track.get("annotations");
@@ -372,7 +373,7 @@ define(["jquery",
                                 callback();
                             }
                         }, this);
-                    
+
                     }, this),
 
                     /**
@@ -386,7 +387,7 @@ define(["jquery",
                             tracks = tracks.getVisibleTracks();
                         }
 
-                        if (tracks.getMyTracks().length === 0) {
+                        if (tracks.getMine().length === 0) {
                             tracks.create({name: "Default " + annotationsTool.user.get("nickname"), description: "Default track for user " + annotationsTool.user.get("name")}, {
                                 wait: true,
                                 success: concludeInitialization
@@ -399,7 +400,7 @@ define(["jquery",
                 // If we are using the localstorage
                 if (window.annotationsTool.localStorage) {
                     videos.fetch();
-                    
+
                     if (videos.length === 0) {
                         video = videos.create({video_extid: annotationsTool.getVideoExtId()}, {wait: true});
                     } else {
@@ -462,7 +463,6 @@ define(["jquery",
                     labelsToAdd = category.labels;
                     category.scale_id = scalesIdMap[category.scale_id];
                     delete category.labels;
-                    
                     newCat = videoCategories.create(_.extend(category, defaultCategoryAttributes));
 
                     if (labelsToAdd) {
@@ -500,8 +500,8 @@ define(["jquery",
             /**
              * Delete the annotation with the given id with the track with the given track id
              * @alias module:views-main.MainView#deleteAnnotation
-             * @param {Integer} annotationId The id of the annotation to delete
-             * @param {Integer} trackId Id of the track containing the annotation
+             * @param {integer} annotationId The id of the annotation to delete
+             * @param {integer} trackId Id of the track containing the annotation
              */
             deleteAnnotation: function (annotationId, trackId) {
                 var annotation;
@@ -515,7 +515,7 @@ define(["jquery",
                 }
 
                 annotation = annotationsTool.video.getAnnotation(annotationId, trackId);
-                
+
                 if (annotation) {
                     annotationsTool.deleteOperation.start(annotation, annotationsTool.deleteOperation.targetTypes.ANNOTATION);
                 } else {
@@ -538,20 +538,17 @@ define(["jquery",
                     this.timelineView.$el.find("#timeline").css("max-height", windowHeight - ($("#video-container").height() + 130));
                 }
             },
-            
             /**
              * Update loading box with given percent & message
              * @alias module:views-main.MainView#setLoadingProgress
-             * @param {Integer} percent loaded of the tool
-             * @param {String} current loading operation message
+             * @param {integer} percent loaded of the tool
+             * @param {string} current loading operation message
              */
             setLoadingProgress: function (percent, message) {
                 this.loadingBox.find(".bar").width(percent + "%");
                 this.loadingBox.find(".info").text(message);
             }
         });
-            
-            
         return MainView;
     }
 );

@@ -36,8 +36,9 @@ define(["jquery",
         /**
          * @constructor
          * @see {@link http://www.backbonejs.org/#Model}
+         * @augments module:Backbone.Model
          * @memberOf module:models-category
-         * @alias Category
+         * @alias module:models-category.Category
          */
         var Category = Backbone.Model.extend({
 
@@ -61,7 +62,7 @@ define(["jquery",
             /**
              * Constructor
              * @alias module:models-category.Category#initialize
-             * @param {object} attr Object literal containing the model initialion attribute.
+             * @param {object} attr Object literal containing the model initialion attributes.
              */
             initialize: function (attr) {
 
