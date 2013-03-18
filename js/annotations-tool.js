@@ -22,9 +22,9 @@ define(["jquery",
         "text!templates/delete-warning-content.tmpl",
         "prototypes/player_adapter",
         "handlebars"],
-       
+
         function ($, Backbone, MainView, AlertView, DeleteModalTmpl, DeleteContentTmpl, PlayerAdapter, Handlebars) {
-            
+
             var self = this;
 
 
@@ -48,39 +48,40 @@ define(["jquery",
                      * @param {TargetsType} type Type of the target to be deleted
                      */
                     start: function (target, type, callback) {
-                        var confirmWithEnter = function (event) {                                
-                            if(event.keyCode === 13){
+                        var confirm = function (event) {
                                 type.destroy(target,callback);
                                 this.deleteModal.modal("toggle");
-                            }
-                        };
+                            },
+                            confirmWithEnter = function (event) {
+                                if(event.keyCode === 13){
+                                    confirm();
+                                }
+                            };
 
                         confirmWithEnter = _.bind(confirmWithEnter, this);
+                        confirm = _.bind(confirm, this);
 
                         // Change modal title
                         this.deleteModalHeader.text('Delete '+type.name);
-                        
+
                         // Change warning content
                         this.deleteModalContent.html(this.deleteContentTmpl({
                            type: type.name,
                            content: type.getContent(target)
                         }));
-                        
+
                         // Listener for delete confirmation
-                        this.deleteModal.find('#confirm-delete').one('click',function(){
-                            type.destroy(target,callback);
-                            this.deleteModal.modal("toggle");
-                        });
+                        this.deleteModal.find('#confirm-delete').one('click', confirm);
 
                         // Add possiblity to confirm with return key
                         $(window).bind('keypress', confirmWithEnter);
-                        
+
                         // Unbind the listeners when the modal is hidden
                         this.deleteModal.one("hide", function () {
                             $('#confirm-delete').unbind('click');
                             $(window).unbind('keypress', confirmWithEnter);
                         });
-                        
+
                         // Show the modal
                         this.deleteModal.modal("show");
                     }
@@ -97,10 +98,10 @@ define(["jquery",
                     this.deleteOperation.start = _.bind(this.deleteOperation.start, this);
 
                     this.initDeleteModal();
-                    this.loadVideo();  
+                    this.loadVideo();
 
                     $(this.playerAdapter).bind(PlayerAdapter.EVENTS.TIMEUPDATE, this.updateSelectionOnTimeUpdate);
-                    
+
                     this.views.main = new MainView(this.playerAdapter);
                 },
 
@@ -237,13 +238,13 @@ define(["jquery",
                     this.video.get("tracks").each(function (track) {
                         annotations = annotations.concat(track.get("annotations").models);
                     }, this);
-                        
+
                     _.each(annotations, function (annotation) {
-                      
+
                         start    = annotation.get("start");
                         duration = annotation.get("duration");
                         end      = start + duration;
-                        
+
                         if (_.isNumber(duration) && start <= currentTime && end >= currentTime) {
                             selection.push(annotation);
                         }

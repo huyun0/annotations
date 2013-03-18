@@ -54,7 +54,7 @@ define(["jquery",
         "libs/swfobject",
         "libs/FileSaver",
         "jquery.FileReader"],
-       
+
     function($, _, Category, Label, Scale, ScaleValue, Categories, Labels, ScaleValues, CategoryView, Template, categoriesSet, scalesSet, Handlebars, Backbone, ACCESS) {
 
         "use strict";
@@ -70,7 +70,7 @@ define(["jquery",
         var AnnotateTab = Backbone.View.extend({
 
           tagName: "div",
-          
+
           className: 'tab-pane',
 
           idPrefix: "labelTab-",
@@ -128,7 +128,7 @@ define(["jquery",
            * @type {String}
            */
           DEFAULT_CAT_COLOR: "#61ae24",
-          
+
           /**
            * @constructor
            */
@@ -136,7 +136,7 @@ define(["jquery",
               if (!attr.id || !attr.name || !attr.categories) {
                   throw "Tab id,name and categories must be given as constuctor attributes!";
               }
-                
+
               // Set the current context for all these functions
               _.bindAll(this,
                 'addCategories',
@@ -162,7 +162,7 @@ define(["jquery",
               this.filter = attr.filter;
               this.roles = attr.roles;
               this.defaultCategoryAttributes = attr.attributes;
-              
+
               this.categoryViews = new Array();
 
               if (attr.edit) {
@@ -195,9 +195,7 @@ define(["jquery",
                   filereader: "js/libs/filereader.swf",
                   expressInstall: "js/libs/expressInstall.swf",
                   debugMode: false,
-                  callback: function () {
-                      console.log("File Reader ready!");
-                  },
+                  callback: function () {},
                   multiple: false,
                   //accept: "text/javascript",
                   label: "JSON files",
@@ -289,11 +287,11 @@ define(["jquery",
               if (isPresent) {
                 return;
               }
-              
+
             }
-            // Save new category    
+            // Save new category
             newCategory.save();
-            
+
             if(annotationsTool.localStorage) {
                 annotationsTool.video.save();
             }
