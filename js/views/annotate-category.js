@@ -16,9 +16,9 @@
 
 /**
  * A module representing the category view in the annotate part
- * @module views-annotate_category
+ * @module views-annotate-category
  * @requires jQuery
- * @requires views-annotate_label
+ * @requires views-annotate-label
  * @requires templates/annotate-category.tmpl
  * @requires handlebars
  * @requires jquery.colorPicker
@@ -31,46 +31,65 @@ define(["jquery",
         "jquery.colorPicker",
         "backbone"],
 
-    /**
-     * @constructor
-     * @see {@link http://www.backbonejs.org/#View}
-     * @memberOf module:views-annotate_category
-     * @augments module:Backbone.View
-     * @alias module:views-annotate-category.CategoryView
-     */
+
     function ($, LabelView, Template, Handlebars) {
 
         "use strict";
 
         /**
-         * @class label view for each item contained in annotate window
+         * @constructor
+         * @see {@link http://www.backbonejs.org/#View}
+         * @memberOf module:views-annotate-category
+         * @augments module:Backbone.View
+         * @alias module:views-annotate-category.CategoryView
          */
         var CategoryView = Backbone.View.extend({
 
+            /**
+             * Tag name from the view element
+             * @alias module:views-annotate-category.Category#tagName
+             * @type {string}
+             */
             tagName: "div",
 
+            /**
+             * Class name from the view element
+             * @alias module:views-annotate-category.Category#className
+             * @type {string}
+             */
             className: "span1 category-item",
 
+            /**
+             * Prefix for the item id
+             * @alias module:views-annotate-category.Category#ID_PREFIX
+             * @type {string}
+             */
             ID_PREFIX: "catItem-",
 
-            /** Define if the view has been or not deleted */
+            /**
+             * Define if the view has been or not deleted
+             * @alias module:views-annotate-category.Category#deleted
+             * @type {boolean}
+             */
             deleted: false,
 
-            /** Define if the view is or not in edit modus. */
+            /**
+             * Define if the view is or not in edit modus.
+             * @alias module:views-annotate-category.Category#editModus
+             * @type {boolean}
+             */
             editModus: false,
 
-            /** Array of labels view in this tab */
-            labels: undefined,
-
-             /** Tab template */
+            /**
+             * View template
+             * @alias module:views-annotate-category.Category#template
+             * @type {Handlebars template}
+             */
             template: Handlebars.compile(Template),
 
-            /** Element containing the "carousel" */
-            carouselElement: undefined,
-
             /**
-             * Events to handle by the annotate_category view
-             * @alias module:views-annotate-category.CategoryView#event
+             * Events to handle by the annotate-category view
+             * @alias module:views-annotate-category.CategoryView#events
              * @type {map}
              */
             events: {
@@ -84,7 +103,7 @@ define(["jquery",
             /**
              * Constructor
              * @alias module:views-annotate-category.CategoryView#initialize
-             * @param {PlainObject} attr Object literal containing the view initialion attributes.
+             * @param {PlainObject} attr Object literal containing the view initialization attributes.
              */
             initialize: function (attr) {
                 var labels;

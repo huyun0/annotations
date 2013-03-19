@@ -54,7 +54,7 @@ define(["jquery",
 
         /**
          * Handlebars helper to secure the text field
-         * @alias module:Handlebars#registerHelplers
+         * @alias module:Handlebars#secure
          * @param  {string} text The text to secure
          * @return {string}      The securized text
          */
@@ -165,7 +165,7 @@ define(["jquery",
             /**
              * Constructor
              * @alias module:views-timeline.TimelineView#initialize
-             * @param {PlainObject} attr Object literal containing the view initialion attributes.
+             * @param {PlainObject} attr Object literal containing the view initialization attributes.
              */
             initialize: function (attr) {
 

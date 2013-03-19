@@ -96,7 +96,7 @@ define(["jquery",
             /**
              * Constructor
              * @alias module:views-list.List#initialize
-             * @param {Object} attr Object literal containing the model initialion attribute.
+             * @param {PlainObject} attr Object literal containing the view initialization attributes.
              */
             initialize: function () {
                 // Bind functions to the good context

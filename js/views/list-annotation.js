@@ -14,81 +14,114 @@
  *
  */
 
-define(["jquery", 
-        "underscore", 
-        "prototypes/player_adapter", 
-        "models/annotation", 
-        "models/user", 
+/**
+ * A module representing the view for an item of the annotations list
+ * @module views-list-annotation
+ * @requires jQuery
+ * @requires prototype-player_adapter
+ * @requires models-annotation
+ * @requires models-user
+ * @requires views-comments-container
+ * @requires templates/list-annotation.tmpl
+ * @requires backbone
+ * @requires handlebars
+ */
+define(["jquery",
+        "prototypes/player_adapter",
+        "models/annotation",
+        "models/user",
         "views/comments-container",
-        "text!templates/list-annotation.tmpl", 
+        "text!templates/list-annotation.tmpl",
         "backbone",
         "handlebars"],
 
-function ($, _not, PlayerAdapter, Annotation, User, CommentsContainer, Template, Backbone, Handlebars) {
+function ($, PlayerAdapter, Annotation, User, CommentsContainer, Template, Backbone, Handlebars) {
 
     "use strict";
 
     /**
-     * Transform time in seconds (i.e. 12.344) into a well formated time (01:12:04)
-     *
-     * @param {number} the time in seconds
+     * Handlebars helper to secure the text field
+     * @alias module:Handlebars#time
+     * @param  {double} start The start time
+     * @return {string}      The formated time
      */
-    var getWellFormatedTime = function (time) {
-            var twoDigit = function(number) {
-                    return(number < 10 ? "0" : "") + number;
-                },
-                base    = time.toFixed(),
-                seconds = base % 60,
-                minutes = ((base - seconds) / 60) % 60,
-                hours   = (base - seconds - minutes * 60) / 3600;
-
-            return twoDigit(hours) + ":" + twoDigit(minutes) + ":" + twoDigit(seconds);
-    };
-
-    /**
-     * Function to display time for handlebars
-     */
-    Handlebars.registerHelper("time", getWellFormatedTime);
-
-    /**
-     * Function to display the duration
-     */
-    Handlebars.registerHelper("end", function(start, duration) {
-
-        return getWellFormatedTime(start + (duration || 0.0));
-
+    Handlebars.registerHelper("time", function (start) {
+        return annotationsTool.getWellFormatedTime(start);
     });
 
     /**
-     * Get nickname from user to display
+     * Handlebars helper to display the annotation duration
+     * @alias module:Handlebars#end
+     * @param  {double} start The start time
+     * @param  {double} duration The annotation duration
+     * @return {string}      The formated time
      */
-    Handlebars.registerHelper("nickname", function(user) {
-        if(!_.isObject(user)) return window.annotationsTool.users.get(user).get("nickname");
-        else return user.nickname;
+    Handlebars.registerHelper("end", function (start, duration) {
+        return annotationsTool.getWellFormatedTime(start + (duration || 0.0));
     });
 
+    /**
+     * Handlebars helper to get user nickname
+     * @alias module:Handlebars#nickname
+     * @param  {User | integer} user The user object of its id
+     * @return {string}      The user nickname
+     */
+    Handlebars.registerHelper("nickname", function (user) {
+        if (!_.isObject(user)) {
+            return annotationsTool.users.get(user).get("nickname");
+        } else {
+            return user.nickname;
+        }
+    });
 
     /**
-     *  View for each annotation in the annotations list view
+     * @constructor
+     * @see {@link http://www.backbonejs.org/#View}
+     * @augments module:Backbone.View
+     * @memberOf module:views-list-annotation
+     * @alias module:views-list-annotation.ListAnnotation
      */
-
     var ListAnnotation = Backbone.View.extend({
 
+        /**
+         * Tag name from the view element
+         * @alias module:views-list-annotation.ListAnnotation#tagName
+         * @type {string}
+         */
         tagName: "div",
 
+        /**
+         * Class name from the view element
+         * @alias module:views-list-annotation.ListAnnotation#className
+         * @type {String}
+         */
         className: "annotation",
 
-        /** View template */
+        /**
+         * View template
+         * @alias module:views-list-annotation.ListAnnotation#template
+         * @type {Handlebars template}
+         */
         template: Handlebars.compile(Template),
 
-        /** Annotation views list */
-        annotationViews: {},
-
+        /**
+         * Define if the view has been or not deleted
+         * @alias module:views-list-annotation.ListAnnotation#deleted
+         * @type {boolean}
+         */
         deleted: false,
 
+        /**
+         * Define if the view is or not collapsed
+         * @alias module:views-list-annotation.ListAnnotation#collapsed
+         * @type {boolean}
+         */
         collapsed: true,
 
-        /** Events to handle */
+        /** Events to handle
+         * @alias module:views-list-annotation.ListAnnotation#events
+         * @type {object}
+         */
         events: {
             "click"                      : "onSelect",
             "click .toggle-edit"         : "switchEditModus",
@@ -116,22 +149,25 @@ function ($, _not, PlayerAdapter, Annotation, User, CommentsContainer, Template,
         },
 
         /**
-         * @constructor
+         * constructor
+         * @alias module:views-comments-container.CommentsContainer#initialize
          */
-        initialize: function(attr) {
-            if(!attr.annotation) throw "The annotations have to be given to the annotate view.";
+        initialize: function (attr) {
+            if (!attr.annotation) {
+                throw "The annotations have to be given to the annotate view.";
+            }
 
-            // Bind function to the good context 
-            _.bindAll(this, "render", 
-                            "deleteFull", 
-                            "deleteView", 
-                            "onSelect", 
-                            "onSelected", 
-                            "selectVisually", 
-                            "onCollapse", 
-                            "startEdit", 
-                            "saveStart", 
-                            "saveEnd", 
+            // Bind function to the good context
+            _.bindAll(this, "render",
+                            "deleteFull",
+                            "deleteView",
+                            "onSelect",
+                            "onSelected",
+                            "selectVisually",
+                            "onCollapse",
+                            "startEdit",
+                            "saveStart",
+                            "saveEnd",
                             "saveFreeText",
                             "saveScaling",
                             "stopPropagation",
@@ -155,7 +191,7 @@ function ($, _not, PlayerAdapter, Annotation, User, CommentsContainer, Template,
                 this.scaleValues = this.scale.get("scaleValues");
             }
 
-            // Add backbone events to the model 
+            // Add backbone events to the model
             _.extend(this.model, Backbone.Events);
 
             this.listenTo(this.model, "change", this.render);
@@ -166,7 +202,7 @@ function ($, _not, PlayerAdapter, Annotation, User, CommentsContainer, Template,
 
             // Type use for delete operation
             this.typeForDelete = annotationsTool.deleteOperation.targetTypes.ANNOTATION;
-            
+
             if (attr.track) {
                 this.track = attr.track;
             } else {
@@ -176,19 +212,23 @@ function ($, _not, PlayerAdapter, Annotation, User, CommentsContainer, Template,
             return this.render();
         },
 
-        /** 
+        /**
          * Delete completely the annotation
+         * @alias module:views-list-annotation.ListAnnotation#deleteFull
+         * @param {event} event Event object
          */
-        deleteFull: function(event) {
-            if(event) event.stopImmediatePropagation();
-
+        deleteFull: function (event) {
+            if (event) {
+                event.stopImmediatePropagation();
+            }
             annotationsTool.deleteOperation.start(this.model, this.typeForDelete);
         },
 
         /**
          * Delete only this annotation view
+         * @alias module:views-list-annotation.ListAnnotation#deleteView
          */
-        deleteView: function() {
+        deleteView: function () {
             this.remove();
             this.undelegateEvents();
             this.deleted = true;
@@ -196,11 +236,17 @@ function ($, _not, PlayerAdapter, Annotation, User, CommentsContainer, Template,
 
         /**
          * Move the video current time to this annotation
+         * @alias module:views-list-annotation.ListAnnotation#jumpTo
          */
-        jumpTo: function() {
+        jumpTo: function () {
             annotationsTool.setSelection([this.model], true);
         },
 
+        /**
+         * Switch in/out edit modus
+         * @alias module:views-list-annotation.ListAnnotation#switchEditModus
+         * @param  {event} event Event object
+         */
         switchEditModus: function (event) {
             event.stopImmediatePropagation();
 
@@ -221,8 +267,12 @@ function ($, _not, PlayerAdapter, Annotation, User, CommentsContainer, Template,
             }
         },
 
-
-        startEdit: function(event) {
+        /**
+         * Enter in edit modus
+         * @alias module:views-list-annotation.ListAnnotation#startEdit
+         * @param  {event} event Event object
+         */
+        startEdit: function (event) {
             var $target = $(event.currentTarget).find("input");
 
             if (event.stopImmediatePropagation) {
@@ -234,17 +284,22 @@ function ($, _not, PlayerAdapter, Annotation, User, CommentsContainer, Template,
             }
 
             // Hack for Firefox, add an button over it
-            if ($target.length == 0 && event.currentTarget.className.match(/-btn$/)) {
+            if ($target.length === 0 && event.currentTarget.className.match(/-btn$/)) {
                 $target = $(event.currentTarget).parent().find(".input");
                 $(event.currentTarget).parent().find(".text-container span").hide();
             }
 
-            if($target.attr("disabled")) {
+            if ($target.attr("disabled")) {
                 $target.removeAttr("disabled");
                 $target.focus();
             }
         },
 
+        /**
+         * Save the modification done in the free text field
+         * @alias module:views-list-annotation.ListAnnotation#saveFreeText
+         * @param  {event} event Event object
+         */
         saveFreeText: function (event) {
             var newValue = this.$el.find(".freetext textarea").val();
 
@@ -261,6 +316,11 @@ function ($, _not, PlayerAdapter, Annotation, User, CommentsContainer, Template,
             }
         },
 
+        /**
+         * Save the scaling value
+         * @alias module:views-list-annotation.ListAnnotation#saveScaling
+         * @param  {event} event Event object
+         */
         saveScaling: function (event) {
             var newValue = _.escape(this.$el.find(".scaling select").val());
 
@@ -279,9 +339,15 @@ function ($, _not, PlayerAdapter, Annotation, User, CommentsContainer, Template,
             this.model.save();
         },
 
-        saveEnd: function(event) {
+        /**
+         * Save the end time
+         * @alias module:views-list-annotation.ListAnnotation#saveEnd
+         * @param  {event} event Event object
+         */
+        saveEnd: function (event) {
             var $target = $(event.currentTarget),
                 value = $target.val(),
+                radix = 10, // Radix is 10 for decimal
                 values,
                 seconds;
 
@@ -299,20 +365,20 @@ function ($, _not, PlayerAdapter, Annotation, User, CommentsContainer, Template,
                 values = value.split(":");
 
                 if (values.length === 3) {
-                    seconds = parseInt(values[0])*3600+parseInt(values[1])*60+parseInt(values[2]);
+                    seconds = parseInt(values[0], radix) * 3600 + parseInt(values[1], radix) * 60 + parseInt(values[2], radix);
                 } else if (values.length === 2) {
-                    seconds = parseInt(values[0])*60+parseInt(values[1]);
+                    seconds = parseInt(values[0], radix) * 60 + parseInt(values[1], radix);
                 } else {
-                    seconds = parseInt(values[0]);
+                    seconds = parseInt(values[0], radix);
                 }
 
                 if (annotationsTool.playerAdapter.getDuration() < seconds || this.model.get("start") > seconds) {
                     $target.addClass("error");
                     return;
-                } 
+                }
 
                 $target.parent().find(".text-container span").show();
-                this.model.set("duration", Math.round(seconds - this.model.get("start"))); 
+                this.model.set("duration", Math.round(seconds - this.model.get("start")));
                 this.model.save();
             }
 
@@ -321,9 +387,15 @@ function ($, _not, PlayerAdapter, Annotation, User, CommentsContainer, Template,
             }
         },
 
-        saveStart: function(event) {
+        /**
+         * Save the start time
+         * @alias module:views-list-annotation.ListAnnotation#saveStart
+         * @param  {event} event Event object
+         */
+        saveStart: function (event) {
             var $target = $(event.currentTarget),
                 value = $target.val(),
+                radix = 10, // Radix is 10 for decimal
                 values,
                 seconds;
 
@@ -341,23 +413,23 @@ function ($, _not, PlayerAdapter, Annotation, User, CommentsContainer, Template,
                 values = value.split(":");
 
                 if (values.length === 3) {
-                    seconds = parseInt(values[0])*3600+parseInt(values[1])*60+parseInt(values[2]);
+                    seconds = parseInt(values[0], radix) * 3600 + parseInt(values[1], radix) * 60 + parseInt(values[2], radix);
                 } else if (values.length === 2) {
-                    seconds = parseInt(values[0])*60+parseInt(values[1]);
+                    seconds = parseInt(values[0], radix) * 60 + parseInt(values[1], radix);
                 } else {
-                    seconds = parseInt(values[0]);
+                    seconds = parseInt(values[0], radix);
                 }
 
-                if ((this.model.get("duration")+this.model.get("start")) < seconds) {
+                if ((this.model.get("duration") + this.model.get("start")) < seconds) {
                     $target.addClass("error");
                     return;
-                } 
+                }
 
                 $target.parent().find("span").show();
                 this.model.set({
-                    start   : seconds, 
+                    start   : seconds,
                     duration: Math.round(this.model.get("duration") + this.model.get("start") - seconds)
-                }); 
+                });
                 this.model.save();
             }
 
@@ -366,39 +438,48 @@ function ($, _not, PlayerAdapter, Annotation, User, CommentsContainer, Template,
             }
         },
 
+        /**
+         * Save the current playhead time as start time
+         * @alias module:views-list-annotation.ListAnnotation#setCurrentTimeAsStart
+         * @param  {event} event Event object
+         */
         setCurrentTimeAsStart: function (event) {
             var currentTime = Math.round(annotationsTool.playerAdapter.getCurrentTime()),
-                end = this.model.get("start")+this.model.get("duration");
+                end = this.model.get("start") + this.model.get("duration");
+
             event.stopImmediatePropagation();
 
             if (currentTime < end) {
                 this.model.set({start: currentTime, duration: this.model.get("duration") + this.model.get("start") - currentTime});
                 this.model.save();
-                console.log("Set "+currentTime+" as start");   
             }
         },
 
+        /**
+         * Save the current playhead time as end time
+         * @alias module:views-list-annotation.ListAnnotation#setCurrentTimeAsEd
+         * @param  {event} event Event object
+         */
         setCurrentTimeAsEnd: function (event) {
             var currentTime = Math.round(annotationsTool.playerAdapter.getCurrentTime());
             event.stopImmediatePropagation();
             if (currentTime > this.model.get("start")) {
                 this.model.set({duration: currentTime - this.model.get("start")});
                 this.model.save();
-                console.log("Set "+currentTime+" as end");
             }
         },
 
         /**
          * Render this view
+         * @alias module:views-list-annotation.ListAnnotation#render
          */
-        render: function() {
+        render: function () {
             var modelJSON,
-                scale,
                 scaleValues,
                 category,
                 selectedScaleValue;
 
-            if(this.deleted) {
+            if (this.deleted) {
                 return "";
             }
 
@@ -407,7 +488,7 @@ function ($, _not, PlayerAdapter, Annotation, User, CommentsContainer, Template,
             modelJSON.track = this.track.get("name");
             modelJSON.textReadOnly = _.escape(modelJSON.text).replace(/\n/g, "<br/>");
             modelJSON.duration = (modelJSON.duration || 0.0);
-            
+
             if (modelJSON.isMine && this.scale && modelJSON.label.category.scale_id) {
                 category = annotationsTool.video.get("categories").get(this.model.get("label").category.id);
 
@@ -444,7 +525,7 @@ function ($, _not, PlayerAdapter, Annotation, User, CommentsContainer, Template,
                 this.$el.find(".start").append("<span class=\"start-btn\" title=\"Double click to edit\">&nbsp;</span>");
             }
 
-            this.$el.find('div#text-container'+this.id).after(this.commentContainer.render().$el);
+            this.$el.find("div#text-container" + this.id).after(this.commentContainer.render().$el);
 
             this.delegateEvents(this.events);
             return this;
@@ -452,8 +533,9 @@ function ($, _not, PlayerAdapter, Annotation, User, CommentsContainer, Template,
 
         /**
          * Listener for click on this annotation
+         * @alias module:views-list-annotation.ListAnnotation#onSelect
          */
-        onSelect: function(event) {
+        onSelect: function () {
             // If annotation already selected
             if (annotationsTool.hasSelection() && annotationsTool.getSelection()[0].get("id") === this.model.get("id")) {
                 annotationsTool.setSelection();
@@ -467,30 +549,38 @@ function ($, _not, PlayerAdapter, Annotation, User, CommentsContainer, Template,
 
         /**
          * Listener for selection done on this annotation
+         * @alias module:views-list-annotation.ListAnnotation#onSelected
          */
-        onSelected: function(event, args) {
+        onSelected: function () {
             if (!this.$el.hasClass("selected")) {
                 this.$el.parent().find(".selected").removeClass("selected");
                 this.selectVisually();
-                //this.jumpTo();
             }
         },
 
+        /**
+         * Stop the propagation of the given event
+         * @alias module:views-list-annotation.ListAnnotation#stopPropagation
+         * @param  {event} event Event object
+         */
         stopPropagation: function (event) {
             event.stopImmediatePropagation();
         },
 
         /**
-         * Show the selection on the annotation presentation
+         * Display the annotation selection on its presentation
+         * @alias module:views-list-annotation.ListAnnotation#selectVisually
          */
-        selectVisually: function() {
+        selectVisually: function () {
             this.$el.addClass("selected");
         },
 
         /**
          * Toggle the visibility of the text container
+         * @alias module:views-list-annotation.ListAnnotation#onCollapse
+         * @param  {event} event Event object
          */
-        onCollapse: function(event) {
+        onCollapse: function (event) {
             if (event) {
                 event.stopImmediatePropagation();
             }
@@ -507,11 +597,6 @@ function ($, _not, PlayerAdapter, Annotation, User, CommentsContainer, Template,
                 this.$el.find("> div.comments-container.collapse").collapse("show");
             }
         }
-
     });
-
-
     return ListAnnotation;
-
-
 });

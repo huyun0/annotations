@@ -73,7 +73,7 @@ define(["jquery",
                 /**
                  * Constructor
                  * @alias module:views-scalevalue-editor.ScaleValueEditor#initialize
-                 * @param {PlainObject} attr Object literal containing the view initialion attributes.
+                 * @param {PlainObject} attr Object literal containing the view initialization attributes.
                  */
                 initialize: function (attr) {
 

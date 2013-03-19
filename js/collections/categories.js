@@ -23,7 +23,7 @@
  * @requires localstorage
  */
 define(["jquery",
-        "models-category",
+        "models/category",
         "backbone",
         "localstorage"],
 

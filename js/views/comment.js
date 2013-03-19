@@ -13,110 +13,169 @@
  *  permissions and limitations under the License.
  *
  */
+
+/**
+ * A module representing the view for a comments container
+ * @module views-comment
+ * @requires jQuery
+ * @requires underscore
+ * @requires templates/comment.tmpl
+ * @requires templates/edit-comment.tmpl
+ * @requires handlebars
+ * @requires backbone
+ */
 define(["jquery",
         "underscore",
         "text!templates/comment.tmpl",
         "text!templates/edit-comment.tmpl",
         "handlebars",
         "backbone"],
-       
-    function($, _, Template, EditTemplate, Handlebars, Backbone){
-        
+
+    function ($, _, Template, EditTemplate, Handlebars, Backbone) {
+
+        "use strict";
+
         /**
-         *  View for comments
+         * @constructor
+         * @see {@link http://www.backbonejs.org/#View}
+         * @augments module:Backbone.View
+         * @memberOf module:views-comment
+         * @alias module:views-comment.Comment
          */
         var CommentView = Backbone.View.extend({
-        	
-          tagName: "div",
-          
-          /** View template */
-          template: Handlebars.compile(Template),
-          
-          /** Edit template */
-          editTemplate: Handlebars.compile(EditTemplate),
-          
-          /** Events to handle */
-          events: {
-        	"click i.delete-comment" : "onDeleteComment",
-            "click i.edit-comment" : "onEditComment",
-            "click button[type=submit]" : "onSubmit",
-        	"click button[type=button]" : "onCancel"
-          },
-          
-          /**
-           * @constructor
-           */
-          initialize: function(attr){
-            this.model = attr.model;
-        	 
-            this.commentId = attr.model.get("id");
-            this.id = "comment"+this.commentId;
-            this.el.id = this.id;
-        	
-            // Bind function to the good context 
-            _.bindAll(this,"render","onDeleteComment","onEditComment","onSubmit","onCancel");
-            
-            return this;
-          },
-          
-          onDeleteComment: function() {
-            this.model.destroy();
-            this.remove();
-          },
-          
-          onEditComment: function() {
-              if (!this.isEditEnable) {
-        	       this.$el.append(this.editTemplate({text: this.model.get("text")}));
-                   this.isEditEnable = true;
-              } 
-          },
-          
-          onSubmit: function() {
-          	var textValue = this.$el.find("textarea").val();
-          	if(textValue == '')
-          	  return;
-          	
-          	this.model.set("text", textValue);
-          	this.model.save();
 
-      	    this.cancel();
-      	    this.render();
-          },
-          
-          onCancel: function() {
-            event.stopImmediatePropagation();
-            this.cancel();
-          },
-          
-          cancel: function() {
-            this.isEditEnable = false;
-          	this.$el.find("textarea").remove();
-          	this.$el.find("button").remove();
-          },
-          
-          /**
-           * Render this view
-           */
-          render: function(){
-            var modelJSON = this.model.toJSON();
-            var data = {
-            	creator: modelJSON.created_by_nickname, 
-            	creationdate: new Date(modelJSON.created_at).toLocaleString(), 
-              text: _.escape(modelJSON.text).replace(/\n/g, "<br/>"),
-              canEdit: annotationsTool.user.get("id") == modelJSON.created_by
+            /**
+             * Tag name from the view element
+             * @alias module:views-comment.Comment#tagName
+             * @type {string}
+             */
+            tagName: "div",
 
-            };
-            if(modelJSON.created_at != modelJSON.updated_at) {
-            	data.updator = modelJSON.updated_by_nickname;
-            	data.updateddate = new Date(modelJSON.updated_at).toLocaleString();
+            /**
+             * View template for read-only modus
+             * @alias module:views-comment.Comment#template
+             * @type {Handlebars template}
+             */
+            template: Handlebars.compile(Template),
+
+            /**
+             * View template for edit modus
+             * @alias module:views-comment.Comment#template
+             * @type {Handlebars template}
+             */
+            editTemplate: Handlebars.compile(EditTemplate),
+
+            /**
+             * Events to handle
+             * @alias module:views-comment.Comment#events
+             * @type {object}
+             */
+            events: {
+                "click i.delete-comment"    : "onDeleteComment",
+                "click i.edit-comment"      : "onEditComment",
+                "click button[type=submit]" : "onSubmit",
+                "click button[type=button]" : "onCancel"
+            },
+
+            /**
+             * constructor
+             * @alias module:views-comment.Comment#initialize
+             * @param {PlainObject} attr Object literal containing the view initialization attributes.
+             */
+            initialize: function (attr) {
+                this.model     = attr.model;
+                this.commentId = attr.model.get("id");
+                this.id        = "comment" + this.commentId;
+                this.el.id     = this.id;
+                // Bind function to the good context
+                _.bindAll(this,
+                          "render",
+                          "onDeleteComment",
+                          "onEditComment",
+                          "onSubmit",
+                          "onCancel");
+
+                return this;
+            },
+
+            /**
+             * Delete the comment related to this view
+             * @alias module:views-comment.Comment#onDeleteComment
+             */
+            onDeleteComment: function () {
+                this.model.destroy();
+                this.remove();
+            },
+
+            /**
+             * Switch in edit modus
+             * @alias module:views-comment.Comment#onEditComment
+             */
+            onEditComment: function () {
+                if (!this.isEditEnable) {
+                    this.$el.append(this.editTemplate({text: this.model.get("text")}));
+                    this.isEditEnable = true;
+                }
+            },
+
+            /**
+             * Submit the modifications on the comment
+             * @alias module:views-comment.Comment#onSubmit
+             */
+            onSubmit: function () {
+                var textValue = this.$el.find("textarea").val();
+
+                if (textValue === "") {
+                    return;
+                }
+
+                this.model.set("text", textValue);
+                this.model.save();
+
+                this.cancel();
+                this.render();
+            },
+
+            /**
+             * Listener for the click on the cancel button
+             * @alias module:views-comment.Comment#onCancel
+             */
+            onCancel: function () {
+                event.stopImmediatePropagation();
+                this.cancel();
+            },
+
+            /**
+             * Cancel the modifications
+             * @alias module:views-comment.Comment#cancel
+             */
+            cancel: function () {
+                this.isEditEnable = false;
+                this.$el.find("textarea").remove();
+                this.$el.find("button").remove();
+            },
+
+            /**
+             * Render this view
+             * @alias module:views-comment.Comment#render
+             */
+            render: function () {
+                var modelJSON = this.model.toJSON(),
+                    data = {
+                        creator     : modelJSON.created_by_nickname,
+                        creationdate: new Date(modelJSON.created_at).toLocaleString(),
+                        text        : _.escape(modelJSON.text).replace(/\n/g, "<br/>"),
+                        canEdit     : annotationsTool.user.get("id") === modelJSON.created_by
+                    };
+                if (modelJSON.created_at !== modelJSON.updated_at) {
+                    data.updator = modelJSON.updated_by_nickname;
+                    data.updateddate = new Date(modelJSON.updated_at).toLocaleString();
+                }
+                this.$el.html(this.template(data));
+                this.delegateEvents(this.events);
+                return this;
             }
-            this.$el.html(this.template(data));
-            this.delegateEvents(this.events);
-            return this;
-          }
-          
         });
-            
         return CommentView;
-    
-});
+    }
+);

@@ -107,7 +107,7 @@ define(["jquery",
             /**
              * Constructor
              * @alias module:views-main.MainView#initialize
-             * @param {playerAdapter} playerAdapter Object literal containing the view initialion attributes.
+             * @param {PlainObject} attr Object literal containing the view initialization attributes.
              */
             initialize: function (playerAdapter) {
                 if ((annotationsTool.isBrowserIE9() && !(playerAdapter.__proto__ instanceof PlayerAdapter)) ||
