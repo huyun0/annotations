@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: views/list-annotation.js</title>
+    
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+    
+    <h1 class="page-title">Source: views/list-annotation.js</h1>
+    
+    
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source"><code>/**
+ *  Copyright 2012, Entwine GmbH, Switzerland
+ *  Licensed under the Educational Community License, Version 2.0
+ *  (the "License"); you may not use this file except in compliance
+ *  with the License. You may obtain a copy of the License at
+ *
+ *  http://www.osedu.org/licenses/ECL-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing,
+ *  software distributed under the License is distributed on an "AS IS"
+ *  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ *  or implied. See the License for the specific language governing
+ *  permissions and limitations under the License.
+ *
+ */
+
+/**
+ * A module representing the view for an item of the annotations list
+ * @module views-list-annotation
+ * @requires jQuery
+ * @requires player-adapter
+ * @requires models-annotation
+ * @requires models-user
+ * @requires views-comments-container
+ * @requires templates/list-annotation.tmpl
+ * @requires backbone
+ * @requires handlebars
+ */
+define(["jquery",
+        "prototypes/player_adapter",
+        "models/annotation",
+        "models/user",
+        "views/comments-container",
+        "text!templates/list-annotation.tmpl",
+        "backbone",
+        "handlebars"],
+
+function ($, PlayerAdapter, Annotation, User, CommentsContainer, Template, Backbone, Handlebars) {
+
+    "use strict";
+
+    /**
+     * Handlebars helper to secure the text field
+     * @alias module:Handlebars#time
+     * @param  {double} start The start time
+     * @return {string}      The formated time
+     */
+    Handlebars.registerHelper("time", function (start) {
+        return annotationsTool.getWellFormatedTime(start);
+    });
+
+    /**
+     * Handlebars helper to display the annotation duration
+     * @alias module:Handlebars#end
+     * @param  {double} start The start time
+     * @param  {double} duration The annotation duration
+     * @return {string}      The formated time
+     */
+    Handlebars.registerHelper("end", function (start, duration) {
+        return annotationsTool.getWellFormatedTime(start + (duration || 0.0));
+    });
+
+    /**
+     * Handlebars helper to get user nickname
+     * @alias module:Handlebars#nickname
+     * @param  {User | integer} user The user object of its id
+     * @return {string}      The user nickname
+     */
+    Handlebars.registerHelper("nickname", function (user) {
+        if (!_.isObject(user)) {
+            return annotationsTool.users.get(user).get("nickname");
+        } else {
+            return user.nickname;
+        }
+    });
+
+    /**
+     * @constructor
+     * @see {@link http://www.backbonejs.org/#View}
+     * @augments module:Backbone.View
+     * @memberOf module:views-list-annotation
+     * @alias module:views-list-annotation.ListAnnotation
+     */
+    var ListAnnotation = Backbone.View.extend({
+
+        /**
+         * Tag name from the view element
+         * @alias module:views-list-annotation.ListAnnotation#tagName
+         * @type {string}
+         */
+        tagName: "div",
+
+        /**
+         * Class name from the view element
+         * @alias module:views-list-annotation.ListAnnotation#className
+         * @type {String}
+         */
+        className: "annotation",
+
+        /**
+         * View template
+         * @alias module:views-list-annotation.ListAnnotation#template
+         * @type {Handlebars template}
+         */
+        template: Handlebars.compile(Template),
+
+        /**
+         * Define if the view has been or not deleted
+         * @alias module:views-list-annotation.ListAnnotation#deleted
+         * @type {boolean}
+         */
+        deleted: false,
+
+        /**
+         * Define if the view is or not collapsed
+         * @alias module:views-list-annotation.ListAnnotation#collapsed
+         * @type {boolean}
+         */
+        collapsed: true,
+
+        /** Events to handle
+         * @alias module:views-list-annotation.ListAnnotation#events
+         * @type {object}
+         */
+        events: {
+            "click"                      : "onSelect",
+            "click .toggle-edit"         : "switchEditModus",
+            "click .proxy-anchor"        : "stopPropagation",
+            "click .freetext textarea"   : "stopPropagation",
+            "click .scaling select"      : "stopPropagation",
+            "click .end-value"           : "stopPropagation",
+            "click .start-value"         : "stopPropagation",
+            "click i.delete"             : "deleteFull",
+            "click .select"              : "onSelect",
+            "click button.in"            : "setCurrentTimeAsStart",
+            "click button.out"           : "setCurrentTimeAsEnd",
+            "click a.collapse"           : "onCollapse",
+            "dblclick .start"            : "startEdit",
+            "dblclick .end"              : "startEdit",
+            "dblclick .end-btn"          : "startEdit",
+            "dblclick .start-btn"        : "startEdit",
+            "keydown .start-value"       : "saveStart",
+            "keydown .end-value"         : "saveEnd",
+            "keydown .freetext textarea" : "saveFreeText",
+            "focusout .start-value"      : "saveStart",
+            "focusout .end-value"        : "saveEnd",
+            "focusout .freetext textarea": "saveFreeText",
+            "change .scaling select"     : "saveScaling"
+        },
+
+        /**
+         * constructor
+         * @alias module:views-comments-container.CommentsContainer#initialize
+         */
+        initialize: function (attr) {
+            if (!attr.annotation) {
+                throw "The annotations have to be given to the annotate view.";
+            }
+
+            // Bind function to the good context
+            _.bindAll(this, "render",
+                            "deleteFull",
+                            "deleteView",
+                            "onSelect",
+                            "onSelected",
+                            "selectVisually",
+                            "onCollapse",
+                            "startEdit",
+                            "saveStart",
+                            "saveEnd",
+                            "saveFreeText",
+                            "saveScaling",
+                            "stopPropagation",
+                            "switchEditModus",
+                            "setCurrentTimeAsStart",
+                            "setCurrentTimeAsEnd");
+
+            this.model = attr.annotation;
+
+            this.id = this.model.get("id");
+
+            this.isEditEnable = false;
+
+            this.commentContainer = new CommentsContainer({id: this.id, comments: this.model.get("comments"), collapsed: this.collapsed});
+
+            if (this.model.get("label")) {
+                this.scale = annotationsTool.video.get("scales").get(this.model.get("label").category.scale_id);
+            }
+
+            if (this.scale) {
+                this.scaleValues = this.scale.get("scaleValues");
+            }
+
+            // Add backbone events to the model
+            _.extend(this.model, Backbone.Events);
+
+            this.listenTo(this.model, "change", this.render);
+            this.listenTo(this.model.get("comments"), "change", this.render);
+            this.listenTo(this.model.get("comments"), "remove", this.render);
+            this.listenTo(this.model, "destroy", this.deleteView);
+            this.listenTo(this.model, "remove", this.deleteView);
+
+            // Type use for delete operation
+            this.typeForDelete = annotationsTool.deleteOperation.targetTypes.ANNOTATION;
+
+            if (attr.track) {
+                this.track = attr.track;
+            } else {
+                this.track = annotationsTool.selectedTrack;
+            }
+
+            return this.render();
+        },
+
+        /**
+         * Delete completely the annotation
+         * @alias module:views-list-annotation.ListAnnotation#deleteFull
+         * @param {event} event Event object
+         */
+        deleteFull: function (event) {
+            if (event) {
+                event.stopImmediatePropagation();
+            }
+            annotationsTool.deleteOperation.start(this.model, this.typeForDelete);
+        },
+
+        /**
+         * Delete only this annotation view
+         * @alias module:views-list-annotation.ListAnnotation#deleteView
+         */
+        deleteView: function () {
+            this.remove();
+            this.undelegateEvents();
+            this.deleted = true;
+        },
+
+        /**
+         * Move the video current time to this annotation
+         * @alias module:views-list-annotation.ListAnnotation#jumpTo
+         */
+        jumpTo: function () {
+            annotationsTool.setSelection([this.model], true);
+        },
+
+        /**
+         * Switch in/out edit modus
+         * @alias module:views-list-annotation.ListAnnotation#switchEditModus
+         * @param  {event} event Event object
+         */
+        switchEditModus: function (event) {
+            event.stopImmediatePropagation();
+
+            this.isEditEnable = !this.isEditEnable;
+            this.$el.toggleClass("edit-on");
+
+            if (this.isEditEnable) {
+                this.startEdit({currentTarget: this.$el.find(".start")[0]});
+                this.startEdit({currentTarget: this.$el.find(".end")[0]});
+
+                if (this.collapsed) {
+                    this.onCollapse();
+                }
+            } else {
+                this.$el.find(".start input").attr("disabled", "disabled");
+                this.$el.find(".end input").attr("disabled", "disabled");
+                this.render();
+            }
+        },
+
+        /**
+         * Enter in edit modus
+         * @alias module:views-list-annotation.ListAnnotation#startEdit
+         * @param  {event} event Event object
+         */
+        startEdit: function (event) {
+            var $target = $(event.currentTarget).find("input");
+
+            if (event.stopImmediatePropagation) {
+                event.stopImmediatePropagation();
+            }
+
+            if (!this.model.get("isMine")) {
+                return;
+            }
+
+            // Hack for Firefox, add an button over it
+            if ($target.length === 0 && event.currentTarget.className.match(/-btn$/)) {
+                $target = $(event.currentTarget).parent().find(".input");
+                $(event.currentTarget).parent().find(".text-container span").hide();
+            }
+
+            if ($target.attr("disabled")) {
+                $target.removeAttr("disabled");
+                $target.focus();
+            }
+        },
+
+        /**
+         * Save the modification done in the free text field
+         * @alias module:views-list-annotation.ListAnnotation#saveFreeText
+         * @param  {event} event Event object
+         */
+        saveFreeText: function (event) {
+            var newValue = this.$el.find(".freetext textarea").val();
+
+            // If keydown event but not enter, value must not be saved
+            if (event.type === "keydown" && !(event.keyCode === 13 && !event.shiftKey)) {
+                return;
+            }
+
+            this.model.set({text: newValue});
+            this.model.save();
+
+            if (event.type === "keydown") {
+                $(event.currentTarget).blur();
+            }
+        },
+
+        /**
+         * Save the scaling value
+         * @alias module:views-list-annotation.ListAnnotation#saveScaling
+         * @param  {event} event Event object
+         */
+        saveScaling: function (event) {
+            var newValue = _.escape(this.$el.find(".scaling select").val());
+
+            // If keydown event but not enter, value must not be saved
+            if (event.type === "keydown" && event.keyCode !== 13) {
+                return;
+            }
+
+            if (newValue === "OFF") {
+                this.model.unset("scalevalue");
+            } else {
+                this.model.set({scalevalue: this.scaleValues.get(newValue).toJSON()});
+                this.$el.find(".scaling span").html(this.scaleValues.get(newValue).get("name"));
+            }
+
+            this.model.save();
+        },
+
+        /**
+         * Save the end time
+         * @alias module:views-list-annotation.ListAnnotation#saveEnd
+         * @param  {event} event Event object
+         */
+        saveEnd: function (event) {
+            var $target = $(event.currentTarget),
+                value = $target.val(),
+                radix = 10, // Radix is 10 for decimal
+                values,
+                seconds;
+
+            // If keydown event but not enter, value must not be saved
+            if (event.type === "keydown" && event.keyCode !== 13) {
+                return;
+            }
+
+            $target.removeClass("error");
+
+            if (!value.match(/^(?:(?:([01]?\d|2[0-3]):)?([0-5]?\d):)?([0-5]?\d)$/)) {
+                $target.addClass("error");
+                return;
+            } else {
+                values = value.split(":");
+
+                if (values.length === 3) {
+                    seconds = parseInt(values[0], radix) * 3600 + parseInt(values[1], radix) * 60 + parseInt(values[2], radix);
+                } else if (values.length === 2) {
+                    seconds = parseInt(values[0], radix) * 60 + parseInt(values[1], radix);
+                } else {
+                    seconds = parseInt(values[0], radix);
+                }
+
+                if (annotationsTool.playerAdapter.getDuration() &lt; seconds || this.model.get("start") > seconds) {
+                    $target.addClass("error");
+                    return;
+                }
+
+                $target.parent().find(".text-container span").show();
+                this.model.set("duration", Math.round(seconds - this.model.get("start")));
+                this.model.save();
+            }
+
+            if (!this.isEditEnable) {
+                $target.attr("disabled", "disabled");
+            }
+        },
+
+        /**
+         * Save the start time
+         * @alias module:views-list-annotation.ListAnnotation#saveStart
+         * @param  {event} event Event object
+         */
+        saveStart: function (event) {
+            var $target = $(event.currentTarget),
+                value = $target.val(),
+                radix = 10, // Radix is 10 for decimal
+                values,
+                seconds;
+
+            // If keydown event but not enter, value must not be saved
+            if (event.type === "keydown" && event.keyCode !== 13) {
+                return;
+            }
+
+            $target.removeClass("error");
+
+            if (!value.match(/^(?:(?:([01]?\d|2[0-3]):)?([0-5]?\d):)?([0-5]?\d)$/)) {
+                $target.addClass("error");
+                return;
+            } else {
+                values = value.split(":");
+
+                if (values.length === 3) {
+                    seconds = parseInt(values[0], radix) * 3600 + parseInt(values[1], radix) * 60 + parseInt(values[2], radix);
+                } else if (values.length === 2) {
+                    seconds = parseInt(values[0], radix) * 60 + parseInt(values[1], radix);
+                } else {
+                    seconds = parseInt(values[0], radix);
+                }
+
+                if ((this.model.get("duration") + this.model.get("start")) &lt; seconds) {
+                    $target.addClass("error");
+                    return;
+                }
+
+                $target.parent().find("span").show();
+                this.model.set({
+                    start   : seconds,
+                    duration: Math.round(this.model.get("duration") + this.model.get("start") - seconds)
+                });
+                this.model.save();
+            }
+
+            if (!this.isEditEnable) {
+                $target.attr("disabled", "disabled");
+            }
+        },
+
+        /**
+         * Save the current playhead time as start time
+         * @alias module:views-list-annotation.ListAnnotation#setCurrentTimeAsStart
+         * @param  {event} event Event object
+         */
+        setCurrentTimeAsStart: function (event) {
+            var currentTime = Math.round(annotationsTool.playerAdapter.getCurrentTime()),
+                end = this.model.get("start") + this.model.get("duration");
+
+            event.stopImmediatePropagation();
+
+            if (currentTime &lt; end) {
+                this.model.set({start: currentTime, duration: this.model.get("duration") + this.model.get("start") - currentTime});
+                this.model.save();
+            }
+        },
+
+        /**
+         * Save the current playhead time as end time
+         * @alias module:views-list-annotation.ListAnnotation#setCurrentTimeAsEd
+         * @param  {event} event Event object
+         */
+        setCurrentTimeAsEnd: function (event) {
+            var currentTime = Math.round(annotationsTool.playerAdapter.getCurrentTime());
+            event.stopImmediatePropagation();
+            if (currentTime > this.model.get("start")) {
+                this.model.set({duration: currentTime - this.model.get("start")});
+                this.model.save();
+            }
+        },
+
+        /**
+         * Render this view
+         * @alias module:views-list-annotation.ListAnnotation#render
+         */
+        render: function () {
+            var modelJSON,
+                scaleValues,
+                category,
+                selectedScaleValue;
+
+            if (this.deleted) {
+                return "";
+            }
+
+            this.model.set({collapsed: this.collapsed}, {silent: true});
+            modelJSON = this.model.toJSON();
+            modelJSON.track = this.track.get("name");
+            modelJSON.textReadOnly = _.escape(modelJSON.text).replace(/\n/g, "&lt;br/>");
+            modelJSON.duration = (modelJSON.duration || 0.0);
+
+            if (modelJSON.isMine && this.scale && modelJSON.label.category.scale_id) {
+                category = annotationsTool.video.get("categories").get(this.model.get("label").category.id);
+
+                // Check if the category is still linked to the video to get the current version
+                if (category) {
+                    modelJSON.hasScale = category.get("settings").hasScale;
+                } else {
+                    // Othervise use the json copy
+                    modelJSON.hasScale = this.model.get("label").category.settings.hasScale;
+                }
+
+                if (modelJSON.hasScale && this.scale) {
+                    scaleValues = this.scaleValues.toJSON();
+                    selectedScaleValue = _.where(scaleValues, {id: modelJSON.scale_value_id});
+
+                    if (selectedScaleValue.length > 0) {
+                        selectedScaleValue[0].isSelected = true;
+                    }
+                }
+                modelJSON.scalevalues = scaleValues;
+            }
+
+            modelJSON.isEditEnable = this.isEditEnable;
+            modelJSON.numberOfComments = this.model.get("comments").length;
+
+            this.$el.html(this.template(modelJSON));
+            this.$el.attr("id", this.id);
+
+            // Hack for Firefox, add an button over it
+            if ($.browser.mozilla) {
+                if (modelJSON.duration > 0) {
+                    this.$el.find(".end").append("&lt;span class=\"end-btn\" title=\"Double click to edit\">&nbsp;&lt;/span>");
+                }
+                this.$el.find(".start").append("&lt;span class=\"start-btn\" title=\"Double click to edit\">&nbsp;&lt;/span>");
+            }
+
+            this.$el.find("div#text-container" + this.id).after(this.commentContainer.render().$el);
+
+            this.delegateEvents(this.events);
+            return this;
+        },
+
+        /**
+         * Listener for click on this annotation
+         * @alias module:views-list-annotation.ListAnnotation#onSelect
+         */
+        onSelect: function () {
+            // If annotation already selected
+            if (annotationsTool.hasSelection() && annotationsTool.getSelection()[0].get("id") === this.model.get("id")) {
+                annotationsTool.setSelection();
+                annotationsTool.dispatcher.trigger("unselect-annotation");
+                this.isSelected = false;
+            } else {
+                annotationsTool.setSelection([this.model], true);
+                this.model.trigger("selected", {model: this.model});
+            }
+        },
+
+        /**
+         * Listener for selection done on this annotation
+         * @alias module:views-list-annotation.ListAnnotation#onSelected
+         */
+        onSelected: function () {
+            if (!this.$el.hasClass("selected")) {
+                this.$el.parent().find(".selected").removeClass("selected");
+                this.selectVisually();
+            }
+        },
+
+        /**
+         * Stop the propagation of the given event
+         * @alias module:views-list-annotation.ListAnnotation#stopPropagation
+         * @param  {event} event Event object
+         */
+        stopPropagation: function (event) {
+            event.stopImmediatePropagation();
+        },
+
+        /**
+         * Display the annotation selection on its presentation
+         * @alias module:views-list-annotation.ListAnnotation#selectVisually
+         */
+        selectVisually: function () {
+            this.$el.addClass("selected");
+        },
+
+        /**
+         * Toggle the visibility of the text container
+         * @alias module:views-list-annotation.ListAnnotation#onCollapse
+         * @param  {event} event Event object
+         */
+        onCollapse: function (event) {
+            if (event) {
+                event.stopImmediatePropagation();
+            }
+
+            this.collapsed = !this.collapsed;
+
+            this.$el.find("> .header-container > div > a.collapse > i").toggleClass("icon-chevron-right").toggleClass("icon-chevron-down");
+
+            if (this.collapsed) {
+                this.$el.find("> div.text-container.in").collapse("hide");
+                this.$el.find("> div.comments-container.in").collapse("hide");
+            } else {
+                this.$el.find("> div.text-container.collapse").collapse("show");
+                this.$el.find("> div.comments-container.collapse").collapse("show");
+            }
+        }
+    });
+    return ListAnnotation;
+});</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Index</a></h2><h3>Modules</h3><ul><li><a href="module-ACCESS.html">ACCESS</a></li><li><a href="module-annotations-tool.html">annotations-tool</a></li><li><a href="module-annotations-tool-configuration.html">annotations-tool-configuration</a></li><li><a href="module-backbone-annotations-sync.html">backbone-annotations-sync</a></li><li><a href="module-collections-annotations.html">collections-annotations</a></li><li><a href="module-collections-categories.html">collections-categories</a></li><li><a href="module-collections-comments.html">collections-comments</a></li><li><a href="module-collections-labels.html">collections-labels</a></li><li><a href="module-collections-scales.html">collections-scales</a></li><li><a href="module-collections-scalevalues.html">collections-scalevalues</a></li><li><a href="module-collections-tracks.html">collections-tracks</a></li><li><a href="module-collections-users.html">collections-users</a></li><li><a href="module-collections-videos.html">collections-videos</a></li><li><a href="module-filters-manager.html">filters-manager</a></li><li><a href="module-models-annotation.html">models-annotation</a></li><li><a href="module-models-category.html">models-category</a></li><li><a href="module-models-comment.html">models-comment</a></li><li><a href="module-models-label.html">models-label</a></li><li><a href="module-models-scale.html">models-scale</a></li><li><a href="module-models-scalevalue.html">models-scalevalue</a></li><li><a href="module-models-track.html">models-track</a></li><li><a href="module-models-user.html">models-user</a></li><li><a href="module-models-video.html">models-video</a></li><li><a href="module-player-adapter.html">player-adapter</a></li><li><a href="module-player-adapter-HTML5.html">player-adapter-HTML5</a></li><li><a href="module-ROLES.html">ROLES</a></li><li><a href="module-views-alert.html">views-alert</a></li><li><a href="module-views-annotate.html">views-annotate</a></li><li><a href="module-views-annotate-category.html">views-annotate-category</a></li><li><a href="module-views-annotate-label.html">views-annotate-label</a></li><li><a href="module-views-annotate-tab.html">views-annotate-tab</a></li><li><a href="module-views-comment.html">views-comment</a></li><li><a href="module-views-comments-container.html">views-comments-container</a></li><li><a href="module-views-list.html">views-list</a></li><li><a href="module-views-list-annotation.html">views-list-annotation</a></li><li><a href="module-views-login.html">views-login</a></li><li><a href="module-views-main.html">views-main</a></li><li><a href="module-views-scale-editor.html">views-scale-editor</a></li><li><a href="module-views-scalevalue-editor.html">views-scalevalue-editor</a></li><li><a href="module-views-timeline.html">views-timeline</a></li></ul><h3>Classes</h3><ul><li><a href="module-backbone-annotations-sync.AnnotationsSync.html">AnnotationsSync</a></li><li><a href="module-collections-annotations.Annotations.html">Annotations</a></li><li><a href="module-collections-categories.Categories.html">Categories</a></li><li><a href="module-collections-comments.Comments.html">Comments</a></li><li><a href="module-collections-labels.Labels.html">Labels</a></li><li><a href="module-collections-scales.Scales.html">Scales</a></li><li><a href="module-collections-scalevalues.ScaleValues.html">ScaleValues</a></li><li><a href="module-collections-tracks.Tracks.html">Tracks</a></li><li><a href="module-collections-users.User.html">User</a></li><li><a href="module-collections-videos.Videos.html">Videos</a></li><li><a href="module-filters-manager.FiltersManager.html">FiltersManager</a></li><li><a href="module-models-annotation.Annotation.html">Annotation</a></li><li><a href="module-models-category.Category.html">Category</a></li><li><a href="module-models-comment.Comment.html">Comment</a></li><li><a href="module-models-label.Label.html">Label</a></li><li><a href="module-models-scale.Scale.html">Scale</a></li><li><a href="module-models-scalevalue.Scalevalue.html">Scalevalue</a></li><li><a href="module-models-track.Track.html">Track</a></li><li><a href="module-models-user.User.html">User</a></li><li><a href="module-models-video.Video.html">Video</a></li><li><a href="module-player-adapter.PlayerAdapter.html">PlayerAdapter</a></li><li><a href="module-player-adapter-HTML5.PlayerAdapterHTML5.html">PlayerAdapterHTML5</a></li><li><a href="module-views-alert.Alert.html">Alert</a></li><li><a href="module-views-annotate.Annotate.html">Annotate</a></li><li><a href="module-views-annotate-category.CategoryView.html">CategoryView</a></li><li><a href="module-views-annotate-label.LabelView.html">LabelView</a></li><li><a href="module-views-annotate-tab.AnnotateTab.html">AnnotateTab</a></li><li><a href="module-views-comment.Comment.html">Comment</a></li><li><a href="module-views-comments-container.CommentsContainer.html">CommentsContainer</a></li><li><a href="module-views-list.List.html">List</a></li><li><a href="module-views-list-annotation.ListAnnotation.html">ListAnnotation</a></li><li><a href="module-views-login.Login.html">Login</a></li><li><a href="module-views-main.MainView.html">MainView</a></li><li><a href="module-views-scale-editor.ScaleEditor.html">ScaleEditor</a></li><li><a href="module-views-scalevalue-editor.ScaleValueEditor.html">ScaleValueEditor</a></li><li><a href="module-views-timeline.TimelineView.html">TimelineView</a></li></ul><h3>Namespaces</h3><ul><li><a href="annotationsTool.html">annotationsTool</a></li></ul>
+</nav>
+
+<br clear="both">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.0-dev</a> on Wed Mar 20 2013 11:15:04 GMT+0100 (CET)
+</footer>
+
+<script> prettyPrint(); </script>
+</body>
+</html>

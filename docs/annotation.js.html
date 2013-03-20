@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: models/annotation.js</title>
+    
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+    
+    <h1 class="page-title">Source: models/annotation.js</h1>
+    
+    
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source"><code>/**
+ *  Copyright 2012, Entwine GmbH, Switzerland
+ *  Licensed under the Educational Community License, Version 2.0
+ *  (the "License"); you may not use this file except in compliance
+ *  with the License. You may obtain a copy of the License at
+ *
+ *  http://www.osedu.org/licenses/ECL-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing,
+ *  software distributed under the License is distributed on an "AS IS"
+ *  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ *  or implied. See the License for the specific language governing
+ *  permissions and limitations under the License.
+ */
+
+/**
+ * A module representing the annotation model
+ * @module models-annotation
+ * @requires jQuery
+ * @requires underscore
+ * @requires ACCESS
+ * @requires backbone
+ * @requires localstorage
+ */
+define(["jquery",
+        "collections/comments",
+        "access",
+        "backbone",
+        "localstorage"],
+
+    function ($, Comments, ACCESS, Backbone) {
+
+        "use strict";
+
+        /**
+         * @constructor
+         * @see {@link http://www.backbonejs.org/#Model}
+         * @augments module:Backbone.Model
+         * @memberOf module:models-annotation
+         * @alias module:models-annotation.Annotation
+         */
+        var Annotation = Backbone.Model.extend({
+
+            /**
+             * Default models value
+             * @alias module:models-annotation.Annotation#defaults
+             * @type {map}
+             * @static
+             */
+            defaults: {
+                access  : ACCESS.PRIVATE,
+                start   : 0,
+                duration: 0
+            },
+
+            /**
+             * Constructor
+             * @alias module:models-annotation.Annotation#initialize
+             * @param {object} attr Object literal containing the model initialion attributes.
+             */
+            initialize: function (attr) {
+                var saveChange;
+
+                if (!attr || _.isUndefined(attr.start)) {
+                    throw "\"start\" attribute is required";
+                }
+
+                // Check if the category has been initialized
+                if (!attr.id) {
+                    // If local storage, we set the cid as id
+                    if (window.annotationsTool.localStorage) {
+                        attr.id = this.cid;
+                    }
+                    this.toCreate = true;
+                }
+
+                if (attr.comments && _.isArray(attr.comments)) {
+                    this.attributes.comments = new Comments(attr.comments, this);
+                    delete attr.comments;
+                } else if (!attr.comments) {
+                    this.attributes.comments  = new Comments([], this);
+                } else {
+                    this.attributes.comments = attr.comments;
+                    delete attr.comments;
+                }
+
+                if (attr.id) {
+                    this.attributes.comments.fetch({async: false});
+                }
+
+                // If localStorage used, we have to save the video at each change on the children
+                if (window.annotationsTool.localStorage) {
+                    if (!attr.created_by) {
+                        attr.created_by = annotationsTool.user.get("id");
+                    }
+
+                    if (!attr.created_by_nickname) {
+                        attr.created_by_nickname = annotationsTool.user.get("nickname");
+                    }
+
+                    saveChange = function () {
+                        this.save();
+                    };
+
+                    this.attributes.comments.bind("change", saveChange, this);
+                    this.attributes.comments.bind("remove", saveChange, this);
+                }
+
+                if (attr.tags) {
+                    attr.tags = this.parseJSONString(attr.tags);
+                }
+
+                // Add backbone events to the model
+                _.extend(this, Backbone.Events);
+
+                this.set(attr);
+            },
+
+            /**
+             * Parse the attribute list passed to the model
+             * @alias module:models-annotation.Annotation#parse
+             * @param  {object} data Object literal containing the model attribute to parse.
+             * @return {object}  The object literal with the list of parsed model attribute.
+             */
+            parse: function (data) {
+                var attr = data.attributes ? data.attributes : data,
+                    tempSettings,
+                    categories,
+                    tempLabel,
+                    label;
+
+                attr.created_at = attr.created_at !== null ? Date.parse(attr.created_at): null;
+                attr.updated_at = attr.updated_at !== null ? Date.parse(attr.updated_at): null;
+                attr.deleted_at = attr.deleted_at !== null ? Date.parse(attr.deleted_at): null;
+
+                // Parse tags if present
+                if (attr.tags) {
+                    attr.tags = this.parseJSONString(attr.tags);
+                }
+
+                if (attr.scaleValue) {
+                    attr.scalevalue = attr.scaleValue;
+                    delete attr.scaleValue;
+                }
+
+                if (annotationsTool.user.get("id") === attr.created_by) {
+                    attr.isMine = true;
+                } else {
+                    attr.isMine = false;
+                }
+
+                if (attr.label) {
+                    if (attr.label.category && (tempSettings = this.parseJSONString(attr.label.category.settings))) {
+                        attr.label.category.settings = tempSettings;
+                    }
+
+                    if ((tempSettings = this.parseJSONString(attr.label.settings))) {
+                        attr.label.settings = tempSettings;
+                    }
+                }
+
+                if (annotationsTool.localStorage && _.isArray(attr.comments)) {
+                    attr.comments = new Comments(attr.comments, this);
+                }
+
+                if (!annotationsTool.localStorage &&  attr.label_id && (_.isNumber(attr.label_id) || _.isString(attr.label_id))) {
+                    categories = annotationsTool.video.get("categories");
+
+                    categories.each(function (cat) {
+
+                        if ((tempLabel = cat.attributes.labels.get(attr.label_id))) {
+                            label = tempLabel;
+                            return true;
+                        }
+
+                    }, this);
+
+                    attr.label = label;
+                }
+
+                if (!annotationsTool.localStorage &&  attr.scalevalue) {
+                    attr.scaleValue = attr.scalevalue;
+                }
+
+                if (data.attributes) {
+                    data.attributes = attr;
+                } else {
+                    data = attr;
+                }
+
+                return data;
+            },
+
+            /**
+             * Validate the attribute list passed to the model
+             * @alias module:models-annotation.Annotation#validate
+             * @param  {object} data Object literal containing the model attribute to validate.
+             * @return {string}  If the validation failed, an error message will be returned.
+             */
+            validate: function (attr) {
+                var tmpCreated, comments;
+
+                if (attr.id) {
+                    if (this.get("id") !== attr.id) {
+                        this.id = attr.id;
+                        this.attributes.id = attr.id;
+                        this.toCreate = false;
+                        this.trigger("ready", this);
+                        this.setUrl();
+
+                        comments = this.attributes.comments;
+
+                        if (comments && (comments.length) === 0) {
+                            comments.fetch({async: false});
+                        }
+                    }
+                }
+
+                if (!annotationsTool.localStorage && attr.label) {
+                    if (attr.label.id) {
+                        this.attributes.label_id = attr.label.id;
+                    } else if (attr.label.attributes) {
+                        this.attributes.label_id = attr.label.get("id");
+                    }
+                }
+
+                if (attr.start &&  !_.isNumber(attr.start)) {
+                    return "\"start\" attribute must be a number!";
+                }
+
+                if (attr.tags && _.isUndefined(this.parseJSONString(attr.tags))) {
+                    return "\"tags\" attribute must be a string or a JSON object";
+                }
+
+                if (attr.text &&  !_.isString(attr.text)) {
+                    return "\"text\" attribute must be a string!";
+                }
+
+                if (attr.duration &&  (!_.isNumber(attr.duration) || (_.isNumber(attr.duration) && attr.duration &lt; 0))) {
+                    return "\"duration\" attribute must be a positive number";
+                }
+
+                if (attr.access && !_.include(ACCESS, attr.access)) {
+                    return "\"access\" attribute is not valid.";
+                }
+
+                if (attr.created_at) {
+                    if ((tmpCreated = this.get("created_at")) && tmpCreated !== attr.created_at) {
+                        return "\"created_at\" attribute can not be modified after initialization!";
+                    } else if (!_.isNumber(attr.created_at)) {
+                        return "\"created_at\" attribute must be a number!";
+                    }
+                }
+
+                if (attr.updated_at && !_.isNumber(attr.updated_at)) {
+                    return "\"updated_at\" attribute must be a number!";
+                }
+
+                if (attr.deleted_at && !_.isNumber(attr.deleted_at)) {
+                    return "\"deleted_at\" attribute must be a number!";
+                }
+
+            },
+
+            /**
+             * Modify the current url for the annotations collection
+             * @alias module:models-annotation.Annotation#setUrl
+             */
+            setUrl: function () {
+                if (this.get("comments")) {
+                    this.get("comments").setUrl(this);
+                }
+            },
+
+
+            /**
+             * Parse the given parameter to JSON if given as string
+             * @alias module:models-annotation.Annotation#parseJSONString
+             * @param  {string} parameter the parameter as string
+             * @return {JSON} parameter as JSON object
+             */
+            parseJSONString: function (parameter) {
+                if (parameter && _.isString(parameter)) {
+                    try {
+                        parameter = JSON.parse(parameter);
+
+                    } catch (e) {
+                        console.warn("Can not parse parameter \"" + parameter + "\": " + e);
+                        return undefined;
+                    }
+                } else if (!_.isObject(parameter) || _.isFunction(parameter)) {
+                    return undefined;
+                }
+
+                return parameter;
+            },
+
+            /**
+             * Override the default toJSON function to ensure complete JSONing.
+             * @alias module:models-annotation.Annotation#toJSON
+             * @return {JSON} JSON representation of the instance
+             */
+            toJSON: function () {
+                var json = $.proxy(Backbone.Model.prototype.toJSON, this)();
+                delete json.comments;
+
+                if (json.tags) {
+                    json.tags = JSON.stringify(json.tags);
+                }
+
+                if (json.label && json.label.toJSON) {
+                    json.label = json.label.toJSON();
+                }
+
+                if (json.scalevalue) {
+                    if (json.scalevalue.attributes) {
+                        json.scale_value_id = json.scalevalue.attributes.id;
+                    } else if (json.scalevalue.id) {
+                        json.scale_value_id = json.scalevalue.id;
+                    }
+                }
+                delete json.annotations;
+                return json;
+            }
+        });
+        return Annotation;
+    }
+);</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Index</a></h2><h3>Modules</h3><ul><li><a href="module-ACCESS.html">ACCESS</a></li><li><a href="module-annotations-tool.html">annotations-tool</a></li><li><a href="module-annotations-tool-configuration.html">annotations-tool-configuration</a></li><li><a href="module-backbone-annotations-sync.html">backbone-annotations-sync</a></li><li><a href="module-collections-annotations.html">collections-annotations</a></li><li><a href="module-collections-categories.html">collections-categories</a></li><li><a href="module-collections-comments.html">collections-comments</a></li><li><a href="module-collections-labels.html">collections-labels</a></li><li><a href="module-collections-scales.html">collections-scales</a></li><li><a href="module-collections-scalevalues.html">collections-scalevalues</a></li><li><a href="module-collections-tracks.html">collections-tracks</a></li><li><a href="module-collections-users.html">collections-users</a></li><li><a href="module-collections-videos.html">collections-videos</a></li><li><a href="module-filters-manager.html">filters-manager</a></li><li><a href="module-models-annotation.html">models-annotation</a></li><li><a href="module-models-category.html">models-category</a></li><li><a href="module-models-comment.html">models-comment</a></li><li><a href="module-models-label.html">models-label</a></li><li><a href="module-models-scale.html">models-scale</a></li><li><a href="module-models-scalevalue.html">models-scalevalue</a></li><li><a href="module-models-track.html">models-track</a></li><li><a href="module-models-user.html">models-user</a></li><li><a href="module-models-video.html">models-video</a></li><li><a href="module-player-adapter.html">player-adapter</a></li><li><a href="module-player-adapter-HTML5.html">player-adapter-HTML5</a></li><li><a href="module-ROLES.html">ROLES</a></li><li><a href="module-views-alert.html">views-alert</a></li><li><a href="module-views-annotate.html">views-annotate</a></li><li><a href="module-views-annotate-category.html">views-annotate-category</a></li><li><a href="module-views-annotate-label.html">views-annotate-label</a></li><li><a href="module-views-annotate-tab.html">views-annotate-tab</a></li><li><a href="module-views-comment.html">views-comment</a></li><li><a href="module-views-comments-container.html">views-comments-container</a></li><li><a href="module-views-list.html">views-list</a></li><li><a href="module-views-list-annotation.html">views-list-annotation</a></li><li><a href="module-views-login.html">views-login</a></li><li><a href="module-views-main.html">views-main</a></li><li><a href="module-views-scale-editor.html">views-scale-editor</a></li><li><a href="module-views-scalevalue-editor.html">views-scalevalue-editor</a></li><li><a href="module-views-timeline.html">views-timeline</a></li></ul><h3>Classes</h3><ul><li><a href="module-backbone-annotations-sync.AnnotationsSync.html">AnnotationsSync</a></li><li><a href="module-collections-annotations.Annotations.html">Annotations</a></li><li><a href="module-collections-categories.Categories.html">Categories</a></li><li><a href="module-collections-comments.Comments.html">Comments</a></li><li><a href="module-collections-labels.Labels.html">Labels</a></li><li><a href="module-collections-scales.Scales.html">Scales</a></li><li><a href="module-collections-scalevalues.ScaleValues.html">ScaleValues</a></li><li><a href="module-collections-tracks.Tracks.html">Tracks</a></li><li><a href="module-collections-users.User.html">User</a></li><li><a href="module-collections-videos.Videos.html">Videos</a></li><li><a href="module-filters-manager.FiltersManager.html">FiltersManager</a></li><li><a href="module-models-annotation.Annotation.html">Annotation</a></li><li><a href="module-models-category.Category.html">Category</a></li><li><a href="module-models-comment.Comment.html">Comment</a></li><li><a href="module-models-label.Label.html">Label</a></li><li><a href="module-models-scale.Scale.html">Scale</a></li><li><a href="module-models-scalevalue.Scalevalue.html">Scalevalue</a></li><li><a href="module-models-track.Track.html">Track</a></li><li><a href="module-models-user.User.html">User</a></li><li><a href="module-models-video.Video.html">Video</a></li><li><a href="module-player-adapter.PlayerAdapter.html">PlayerAdapter</a></li><li><a href="module-player-adapter-HTML5.PlayerAdapterHTML5.html">PlayerAdapterHTML5</a></li><li><a href="module-views-alert.Alert.html">Alert</a></li><li><a href="module-views-annotate.Annotate.html">Annotate</a></li><li><a href="module-views-annotate-category.CategoryView.html">CategoryView</a></li><li><a href="module-views-annotate-label.LabelView.html">LabelView</a></li><li><a href="module-views-annotate-tab.AnnotateTab.html">AnnotateTab</a></li><li><a href="module-views-comment.Comment.html">Comment</a></li><li><a href="module-views-comments-container.CommentsContainer.html">CommentsContainer</a></li><li><a href="module-views-list.List.html">List</a></li><li><a href="module-views-list-annotation.ListAnnotation.html">ListAnnotation</a></li><li><a href="module-views-login.Login.html">Login</a></li><li><a href="module-views-main.MainView.html">MainView</a></li><li><a href="module-views-scale-editor.ScaleEditor.html">ScaleEditor</a></li><li><a href="module-views-scalevalue-editor.ScaleValueEditor.html">ScaleValueEditor</a></li><li><a href="module-views-timeline.TimelineView.html">TimelineView</a></li></ul><h3>Namespaces</h3><ul><li><a href="annotationsTool.html">annotationsTool</a></li></ul>
+</nav>
+
+<br clear="both">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.0-dev</a> on Wed Mar 20 2013 11:15:04 GMT+0100 (CET)
+</footer>
+
+<script> prettyPrint(); </script>
+</body>
+</html>
