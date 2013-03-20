@@ -25,7 +25,7 @@
  * @requires templates/timeline-modal-group.tmpl
  * @requires ACCESS
  * @requires ROLES
- * @requires FiltersManager
+ * @requires filters-manager
  * @requires backbone
  * @requires handlebars
  * @requires timeline

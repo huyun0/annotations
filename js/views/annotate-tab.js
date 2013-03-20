@@ -28,9 +28,9 @@
  * @requires collections-categories
  * @requires collections-labels
  * @requires collections-scalevalues
- * @requires views/annotate-category
+ * @requires views-annotate-category
  * @requires templates/annotate-tab.tmpl
- * @requires default_categories_set
+ * @requires default_scales_set
  * @requires handlebars
  * @requires backbone
  * @requires ACCESS
@@ -51,7 +51,6 @@ define(["jquery",
         "collections/scalevalues",
         "views/annotate-category",
         "text!templates/annotate-tab.tmpl",
-        "default_categories_set",
         "default_scale_set",
         "handlebars",
         "backbone",
@@ -62,7 +61,7 @@ define(["jquery",
         "libs/FileSaver",
         "jquery.FileReader"],
 
-    function ($, _, Category, Label, Scale, ScaleValue, Categories, Labels, ScaleValues, CategoryView, Template, categoriesSet, scalesSet, Handlebars, Backbone, ACCESS) {
+    function ($, _, Category, Label, Scale, ScaleValue, Categories, Labels, ScaleValues, CategoryView, Template, scalesSet, Handlebars, Backbone, ACCESS) {
 
         "use strict";
 

@@ -18,11 +18,12 @@
  * A module containing the ROLES values enum.
  * @module ROLES
  */
-define([],function(){
-    
+define([], function () {
+
+    "use strict";
+
     /**
      * Enum for the possible tool roles
-     * 
      * @readonly
      * @enum {String}
      */
@@ -32,5 +33,4 @@ define([],function(){
         /** STUDENT = "user"*/
         USER: "user"
     };
-
-})
+});

@@ -30,7 +30,7 @@
  * @requires models-video
  * @requires backbone-annotations-sync
  * @requires roles
- * @requires filtersManager
+ * @requires filters-manager
  * @requires backbone
  * @requires localstorage
  * @requires bootstrap
@@ -345,9 +345,8 @@ define(["jquery",
                     annotations,
                     selectedTrack,
                     remindingFetchingTrack,
-                    /**
-                     * @function to conclude the retrive of annotations
-                     */
+
+                    // function to conclude the retrive of annotations
                     concludeInitialization = $.proxy(function () {
 
                         // At least one private track should exist, we select the first one

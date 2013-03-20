@@ -19,7 +19,7 @@
  * @module models-scale
  * @requires jQuery
  * @requires ACCESS
- * @requires collections-scalesvalues
+ * @requires collections-scalevalues
  * @requires backbone
  */
 define(["jquery",

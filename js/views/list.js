@@ -23,7 +23,7 @@
  * @requires models-annotation
  * @requires views-list-annotation
  * @requires backbone
- * @requires FiltersManager
+ * @requires filters-manager
  * @requires bootsrap.scrollspy
  */
 define(["jquery",

@@ -14,131 +14,177 @@
  *
  */
 
+/*global Element */
+
 /**
  * A module representing the player adapter implementation for the HTML5 native player
- * @module PlayerAdapterHTML5
+ * @module player-adapter-HTML5
+ * @requires jQuery
+ * @requires player-adapter
  */
-define(['domReady','jquery','prototypes/player_adapter'],function(domReady,$,PlayerAdapter){
-    
+define(["jquery",
+        "prototypes/player_adapter"],
 
-    /**
-     * Implementation of the player adapter for the HTML5 native player
-     * @constructor
-     * @param {HTMLElement} Player
-     */
-    PlayerAdapterHTML5 = function(targetElement){
-        
-        // Allow to use HTMLElement with MS IE < 9
-        if(!HTMLElement)
-            var HTMLElement = Element;
-        
-        // Check if the given target Element is valid 
-        if(typeof targetElement == "undefined" || targetElement == null || !(targetElement instanceof HTMLElement))
-            throw "The given target element must not be null and have to be a vaild HTMLElement!";
-        
-        var self = this;
-        
-        /** Id of the player adapter */
-        this.id = "PlayerAdapter"+targetElement.id;
-        
-        /** The HTML representation of the adapter, mainly used to thriggered event */
-        this.htmlElement = null;
-        
-        /** The current player status */
-        this.status = PlayerAdapter.STATUS.INITIALIZING;
-        
-        /** Define if a play request has be done when the player was not ready */
-        this.waitToPlay = false;
-        
-        this.initialized = false;
-        
-        this.init = function(){
-        
-            // Create the HTML representation of the adapter
-            $(targetElement).wrap(self.getHTMLTemplate(self.id));
-            if($('#'+self.id).length == 0)
-                throw 'Cannot create HTML representation of the adapter';
-            
-            self.htmlElement = document.getElementById(self.id);
-            
-            // Extend the current object with the HTML representation
-            $.extend(true,this,self.htmlElement);
-            
-            // Add PlayerAdapter the prototype 
-            this.__proto__ = new PlayerAdapter();
-            
-            // ...and ensure that its methods are used for the Events management 
-            this.dispatchEvent = this.__proto__.dispatchEvent;
-            this.triggerEvent = this.__proto__.triggerEvent;
-            this.addEventListener = this.__proto__.addEventListener;
-            this.removeEventListener = this.__proto__.removeEventListener;
-            this._getListeners = this.__proto__._getListeners;
-            
+    function ($, PlayerAdapter) {
+
+        "use strict";
+
+        /**
+         * Implementation of the player adapter for the HTML5 native player
+         * @constructor
+         * @alias module:player-adapter-HTML5.PlayerAdapterHTML5
+         * @augments {module:player-adapter.PlayerAdapter}
+         * @param {DOM Element} targetElement DOM Element representing the player
+         */
+        var PlayerAdapterHTML5 = function (targetElement) {
+            var HTMLElement,
+                self = this;
+
+            // Allow to use HTMLElement with MS IE < 9
+            if (!HTMLElement) {
+                HTMLElement = Element;
+            }
+
+            // Check if the given target Element is valid
+            if (typeof targetElement === "undefined" || targetElement === null || !(targetElement instanceof HTMLElement)) {
+                throw "The given target element must not be null and have to be a vaild HTMLElement!";
+            }
+
             /**
-             * Listen the events from the native player
+             * Id of the player adapter
+             * @inner
+             * @type {String}
              */
-            $(targetElement).bind("canplay durationchange",function(){
-                // If duration is still not valid
-                if(isNaN(self.getDuration()) || targetElement.readyState < 1)
-                    return;
-                
-                if(!self.initialized)
-                    self.initialized = true;
-                
-                // If duration is valid, we chanded status
-                self.status =  PlayerAdapter.STATUS.PAUSED;
-                self.triggerEvent(PlayerAdapter.EVENTS.READY);
-                
-                if(self.waitToPlay)
-                    self.play();    
-            });
-            
-            $(targetElement).bind("play",function(){
-                if(!self.initialized)
-                    return;
-                
-               self.status =  PlayerAdapter.STATUS.PLAYING;
-               self.triggerEvent(PlayerAdapter.EVENTS.PLAY);
-            });
-            
-            $(targetElement).bind("pause",function(){
-                if(!self.initialized)
-                    return;
-                
-               self.status =  PlayerAdapter.STATUS.PAUSED;
-               self.triggerEvent(PlayerAdapter.EVENTS.PAUSE);
-            });
-            
-            $(targetElement).bind("ended",function(){
-               self.status =  PlayerAdapter.STATUS.ENDED;
-               self.triggerEvent(PlayerAdapter.EVENTS.ENDED);
-            });
-            
-            $(targetElement).bind("seeking",function(){
-               self.status =  PlayerAdapter.STATUS.SEEKING;
-               self.triggerEvent(PlayerAdapter.EVENTS.SEEKING);
-            });
-            
-            $(targetElement).bind("timeupdate",function(){
-               self.triggerEvent(PlayerAdapter.EVENTS.TIMEUPDATE);
-            });
-            
-            $(targetElement).bind("error",function(){
-               self.status =  PlayerAdapter.STATUS.ERROR_NETWORK;
-               self.triggerEvent(PlayerAdapter.EVENTS.ERROR);
-            });
-            
-            return this;
-        }
-        
-        
-        /** =================
-         * REQUIRED FUNCTIONS
-         * =================*/
-        
-        this.play = function(){
-            // Can the player start now?
-            switch(self.status){
+            this.id = "PlayerAdapter" + targetElement.id;
+
+            /**
+             * The HTML representation of the adapter, mainly used to thriggered event
+             * @inner
+             * @type {DOM Element}
+             */
+            this.htmlElement = null;
+
+            /**
+             * The current player status
+             * @inner
+             * @type {module:player-adapter.PlayerAdapter.STATUS}
+             */
+            this.status = PlayerAdapter.STATUS.INITIALIZING;
+
+            /**
+             * Define if a play request has be done when the player was not ready
+             * @inner
+             * @type {Boolean}
+             */
+            this.waitToPlay = false;
+
+            /**
+             * Define if a the player has been initialized
+             * @inner
+             * @type {Boolean}
+             */
+            this.initialized = false;
+
+            /**
+             * Initilize the player adapter
+             * @inner
+             */
+            this.init = function () {
+
+                // Create the HTML representation of the adapter
+                $(targetElement).wrap(self.getHTMLTemplate(self.id));
+                if ($("#" + self.id).length === 0) {
+                    throw "Cannot create HTML representation of the adapter";
+                }
+
+                self.htmlElement = document.getElementById(self.id);
+
+                // Extend the current object with the HTML representation
+                $.extend(true, this, self.htmlElement);
+
+                // Add PlayerAdapter the prototype
+                this.__proto__ = new PlayerAdapter();
+
+                // ...and ensure that its methods are used for the Events management
+                this.dispatchEvent       = this.__proto__.dispatchEvent;
+                this.triggerEvent        = this.__proto__.triggerEvent;
+                this.addEventListener    = this.__proto__.addEventListener;
+                this.removeEventListener = this.__proto__.removeEventListener;
+                this._getListeners       = this.__proto__._getListeners;
+
+                /**
+                 * Listen the events from the native player
+                 */
+                $(targetElement).bind("canplay durationchange", function () {
+                    // If duration is still not valid
+                    if (isNaN(self.getDuration()) || targetElement.readyState < 1) {
+                        return;
+                    }
+
+                    if (!self.initialized) {
+                        self.initialized = true;
+                    }
+
+                    // If duration is valid, we chanded status
+                    self.status =  PlayerAdapter.STATUS.PAUSED;
+                    self.triggerEvent(PlayerAdapter.EVENTS.READY);
+
+                    if (self.waitToPlay) {
+                        self.play();
+                    }
+                });
+
+                $(targetElement).bind("play", function () {
+                    if (!self.initialized) {
+                        return;
+                    }
+
+                    self.status =  PlayerAdapter.STATUS.PLAYING;
+                    self.triggerEvent(PlayerAdapter.EVENTS.PLAY);
+                });
+
+                $(targetElement).bind("pause", function () {
+                    if (!self.initialized) {
+                        return;
+                    }
+
+                    self.status =  PlayerAdapter.STATUS.PAUSED;
+                    self.triggerEvent(PlayerAdapter.EVENTS.PAUSE);
+                });
+
+                $(targetElement).bind("ended", function () {
+                    self.status =  PlayerAdapter.STATUS.ENDED;
+                    self.triggerEvent(PlayerAdapter.EVENTS.ENDED);
+                });
+
+                $(targetElement).bind("seeking", function () {
+                    self.status =  PlayerAdapter.STATUS.SEEKING;
+                    self.triggerEvent(PlayerAdapter.EVENTS.SEEKING);
+                });
+
+                $(targetElement).bind("timeupdate", function () {
+                    self.triggerEvent(PlayerAdapter.EVENTS.TIMEUPDATE);
+                });
+
+                $(targetElement).bind("error", function () {
+                    self.status =  PlayerAdapter.STATUS.ERROR_NETWORK;
+                    self.triggerEvent(PlayerAdapter.EVENTS.ERROR);
+                });
+
+                return this;
+            };
+
+
+            // =================
+            // REQUIRED FUNCTIONS
+            // =================
+
+            /**
+             * Play the video
+             */
+            this.play = function () {
+                // Can the player start now?
+                switch (self.status) {
                 case PlayerAdapter.STATUS.INITIALIZING:
                 case PlayerAdapter.STATUS.LOADING:
                     self.waitToPlay = true;
@@ -147,59 +193,73 @@ define(['domReady','jquery','prototypes/player_adapter'],function(domReady,$,Pla
                 case PlayerAdapter.STATUS.PAUSED:
                 case PlayerAdapter.STATUS.PLAYING:
                 case PlayerAdapter.STATUS.ENDED:
-                    // If yes, we play it  
+                    // If yes, we play it
                     targetElement.play();
                     self.waitToPlay = false;
                     break;
-            }
+                }
+            };
+
+            /**
+             * Pause the video
+             */
+            this.pause = function () {
+                targetElement.pause();
+            };
+
+            /**
+             * Load the video
+             */
+            this.load = function () {
+                self.initialized = false;
+                self.status = PlayerAdapter.STATUS.INITIALIZING;
+                targetElement.load();
+                targetElement.load();
+            };
+
+            /**
+             * Set the current time of the video
+             * @param {double} time The time to set in seconds
+             */
+            this.setCurrentTime = function (time) {
+                targetElement.currentTime = time;
+            };
+
+            /**
+             * Get the current time of the video
+             */
+            this.getCurrentTime = function () {
+                return targetElement.currentTime;
+            };
+
+            /**
+             * Get the video duration
+             */
+            this.getDuration = function () {
+                return targetElement.duration;
+            };
+
+            /**
+             * Get the player status
+             */
+            this.getStatus = function () {
+                return self.status;
+            };
+
+            // =================================
+            // IMPLEMENTATION SPECIFIC FUNCTIONS
+            // ==================================
+
+            /**
+             * Get the HTML template for the html representation of the adapter
+             */
+            this.getHTMLTemplate = function (id) {
+                return  "<div id=\"" + id + "\"></div>";
+            };
+
+            return self.init();
         };
 
-        this.pause = function(){
-            targetElement.pause();
-        };
-        
-        this.load = function(){
-            self.initialized = false;
-            self.status = PlayerAdapter.STATUS.INITIALIZING;
-            targetElement.load();
-            targetElement.load();
-        };
-        
-        this.setCurrentTime = function(time){
-            targetElement.currentTime = time;
-        };
-        
-        this.getCurrentTime = function(){
-            return targetElement.currentTime;
-        };
-        
-        this.getDuration = function(){
-            return targetElement.duration;  
-        };
-        
-        this.getStatus = function(){
-            return self.status;
-        }
-        
-        
-        /** =================================
-         * IMPLEMENTATION SPECIFIC FUNCTIONS
-         * ==================================*/
-        
-        /**
-         * Get the HTML template for the html representation of the adapter
-         */
-        this.getHTMLTemplate = function(id){
-            return  '<div id="'+id+'"></div>';
-        } 
-
-        return self.init();
+        return PlayerAdapterHTML5;
     }
-    
-    // Set the player adapter interface as prototype 
-    //PlayerAdapterHTML5.prototype = new PlayerAdapter();
-    
-    return PlayerAdapterHTML5;
-    
-    
-})
+);

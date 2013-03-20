@@ -117,7 +117,6 @@
                   <mapper type="glob" from="*.less" to="${style.dir}/*.css"/>
                   <targetfile/>
               </apply>
-
         </target>
 
     <!-- JS Doc -->
@@ -127,14 +126,13 @@
             <delete dir="./${docs.dir}/"/>
 
             <echo message="Building documentation"/>
-            <apply executable="./jsdoc" dir="${jsdoc.dir}">
-                <!-- Include our JS directory, but exclude libs -->
-                <dirset dir="${src.dir}" excludes="libs"></dirset>
-                <arg line="-d" />
-                <arg value="../../../${docs.dir}" />
+            <exec executable="./jsdoc" dir="${jsdoc.dir}">
+                <arg line="-c" />
+                <arg value="${docs.config}" />
                 <arg line="-t" />
                 <arg value="templates/default" />
-            </apply>
+                <arg value="${docs.readme}" />
+            </exec>
 
         </target>
 
