@@ -14,71 +14,104 @@
  *
  */
 
+/**
+ * A module representing a labels collection
+ * @module collections-labels
+ * @requires jQuery
+ * @requires models-label
+ * @requires backbone
+ * @requires localstorage
+ */
 define(["jquery",
         "models/label",
         "backbone",
         "localstorage"],
-    
-    function($,Label,Backbone){
-    
+
+    function ($, Label, Backbone) {
+
+        "use strict";
+
         /**
-         * Labels collection
-         * @class
+         * @constructor
+         * @see {@link http://www.backbonejs.org/#Collection}
+         * @augments module:Backbone.Collection
+         * @memberOf module:collections-labels
+         * @alias module:collections-labels.Labels
          */
-        var Label = Backbone.Collection.extend({
-            model: Label,
-            localStorage: new Backbone.LocalStorage("Labels"),
-            
+        var Labels = Backbone.Collection.extend({
+
             /**
-             * @constructor
+             * Model of the instances contained in this collection
+             * @alias module:collections-labels.Labels#initialize
              */
-            initialize: function(models,category){
+            model: Label,
+
+            /**
+             * Localstorage container for the collection
+             * @alias module:collections-labels.Labels#localStorage
+             * @type {Backbone.LocalStorgage}
+             */
+            localStorage: new Backbone.LocalStorage("Labels"),
+
+            /**
+             * constructor
+             * @alias module:collections-labels.Labels#initialize
+             */
+            initialize: function (models, category) {
                 _.bindAll(this,
                         "setUrl",
                         "toExportJSON");
-                
                 this.setUrl(category);
             },
-            
-            parse: function(resp, xhr) {
-              if(resp.labels && _.isArray(resp.labels))
-                return resp.labels;
-              else if(_.isArray(resp))
-                return resp;
-              else
-                return null;
+
+            /**
+             * Parse the given data
+             * @alias module:collections-labels.Labels#parse
+             * @param  {object} data Object or array containing the data to parse.
+             * @return {object}      the part of the given data related to the labels
+             */
+            parse: function (resp) {
+                if (resp.labels && _.isArray(resp.labels)) {
+                    return resp.labels;
+                } else if (_.isArray(resp)) {
+                    return resp;
+                } else {
+                    return null;
+                }
             },
 
+            /**
+             * Get the collection as array with the model in JSON, ready to be exported
+             * @alias module:collections-labels.Labels#toExportJSON
+             * @return {array} Array of json models
+             */
             toExportJSON: function () {
                 var labelsForExport = [];
 
                 this.each(function (label) {
                     labelsForExport.push(label.toExportJSON());
                 });
-
                 return labelsForExport;
             },
-            
+
             /**
-             * Define the url from the collection with the given category
-             *
-             * @param {Category} category containing the labels
+             * Define the url from the collection with the given video
+             * @alias module:collections-labels.Labels#setUrl
+             * @param {Category} Category containing the labels
              */
-            setUrl: function(category){
-                if(!category){
+            setUrl: function (category) {
+                if (!category) {
                     throw "The parent category of the labels must be given!";
-                }
-                else if(category.collection){
-                    this.url = category.url() + "/labels";  
+                } else if (category.collection) {
+                    this.url = category.url() + "/labels";
                 }
 
-                if(window.annotationsTool && annotationsTool.localStorage)
-                      this.localStorage = new Backbone.LocalStorage(this.url);
+                if (window.annotationsTool && annotationsTool.localStorage) {
+                    this.localStorage = new Backbone.LocalStorage(this.url);
+                }
             }
         });
-        
-        return Label;
 
-});
-    
-    
+        return Labels;
+    }
+);

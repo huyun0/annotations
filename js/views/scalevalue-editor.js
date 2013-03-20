@@ -13,14 +13,13 @@
  *  permissions and limitations under the License.
  *
  */
-    
+
 /**
  * A module representing the scale value editor
  * @module views-scalevalue-editor
  * @requires jQuery
  * @requires backbone
  * @requires views-scalevalue
- * @requires models-annotation
  * @requires templates/scale-value-editor.tmpl
  * @requires handlebars
  */
@@ -32,10 +31,11 @@ define(["jquery",
         function ($, Backbone, ScaleValue, ScaleValueEditorTmpl, Handlebars) {
 
             "use strict";
-            
+
             /**
              * @constructor
              * @see {@link http://www.backbonejs.org/#View}
+             * @augments module:Backbone.View
              * @memberOf module:views-scalevalue-editor
              * @alias module:views-scalevalue-editor.ScaleValueEditor
              */
@@ -63,7 +63,7 @@ define(["jquery",
                 events: {
                     "click .order-up"            : "up",
                     "click .order-down"          : "down",
-                    "click a.delete-scale-value" : "delete",
+                    "click a.delete-scale-value" : "deleteScaleValue",
                     "keydown .scale-value-name"  : "saveOnInsert",
                     "keydown .scale-value-value" : "saveOnInsert",
                     "focusout .scale-value-value": "save",
@@ -73,7 +73,7 @@ define(["jquery",
                 /**
                  * Constructor
                  * @alias module:views-scalevalue-editor.ScaleValueEditor#initialize
-                 * @param {PlainObject} attr Object literal containing the view initialion attributes.
+                 * @param {PlainObject} attr Object literal containing the view initialization attributes.
                  */
                 initialize: function (attr) {
 
@@ -83,7 +83,7 @@ define(["jquery",
                               "down",
                               "saveOnInsert",
                               "getSortedCollection",
-                              "delete");
+                              "deleteScaleValue");
 
                     _.extend(this, Backbone.Events);
 
@@ -186,17 +186,16 @@ define(["jquery",
 
                 /**
                  * Delete the scale value
-                 * @alias module:views-scalevalue-editor.ScaleValueEditor#delete
+                 * @alias module:views-scalevalue-editor.ScaleValueEditor#deleteScaleValue
                  * @param  {Event} event Event object
                  */
-                delete: function (event) {
+                deleteScaleValue: function (event) {
                     var self = this,
                         sortedCollection = self.getSortedCollection();
 
                     event.stopImmediatePropagation();
                     annotationsTool.deleteOperation.start(this.model, this.scaleValueDeleteType, function () {
                         var currentOrder = self.model.get("order"),
-                            next,
                             i;
 
                         // Update order for following item

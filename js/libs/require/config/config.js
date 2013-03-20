@@ -8,9 +8,9 @@ require.config({
     'carousel': 'libs/bootstrap/carousel2.2',
     'tooltip': 'libs/bootstrap/tooltip',
     'popover': 'libs/bootstrap/popover',
-    'backbone': 'libs/backbone/backbone-0.9.9',
+    'backbone': 'libs/backbone/backbone-min-0.9.9',
     'jquery.colorPicker': 'libs/jquery.colorPicker.min',
-    'jquery.FileReader': 'libs/jquery.FileReader',
+    'jquery.FileReader': 'libs/jquery.FileReader.min',
     'localstorage': 'libs/backbone/backbone.localStorage-1.0',
     'handlebars': "libs/handlebars",
     'jquery': 'libs/jquery-1.7.2.min',
@@ -63,8 +63,8 @@ require.config({
 // Bootstrap function for main app
 require(['domReady', 'annotations-tool-configuration', 'annotations-tool'],
 
-function(domReady, config, app) {
-  domReady(function() {
-    app.start();
-  });
+function (domReady, config, app) {
+    domReady(function () {
+        app.start(config);
+    });
 });

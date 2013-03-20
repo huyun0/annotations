@@ -19,11 +19,12 @@
  * A module representing the annotations list view
  * @module views-list
  * @requires jQuery
- * @requires underscore
  * @requires prototype-player_adapter
  * @requires models-annotation
  * @requires views-list-annotation
  * @requires backbone
+ * @requires filters-manager
+ * @requires bootsrap.scrollspy
  */
 define(["jquery",
         "prototypes/player_adapter",
@@ -33,7 +34,7 @@ define(["jquery",
         "backbone",
         "FiltersManager",
         "scrollspy"],
-       
+
     function ($, PlayerAdapter, Annotation, Annotations, AnnotationView, Backbone, FiltersManager) {
 
         "use strict";
@@ -41,18 +42,19 @@ define(["jquery",
         /**
          * @constructor
          * @see {@link http://www.backbonejs.org/#View}
+         * @augments module:Backbone.View
          * @memberOf module:views-list
-         * @alias List
+         * @alias module:views-list.List
          */
         var List = Backbone.View.extend({
-          
+
             /**
              * Annotations list container of the appplication
              * @alias module:views-list.List#el
              * @type {DOM element}
              */
             el: $("div#list-container"),
-          
+
             /**
              * Annotation views list
              * @alias module:views-list.List#annotationViews
@@ -90,11 +92,11 @@ define(["jquery",
                 "click .collapse-all"   : "collapseAll",
                 "click .expand-all"     : "expandAll"
             },
-          
+
             /**
              * Constructor
              * @alias module:views-list.List#initialize
-             * @param {Object} attr Object literal containing the model initialion attribute.
+             * @param {PlainObject} attr Object literal containing the view initialization attributes.
              */
             initialize: function () {
                 // Bind functions to the good context
@@ -104,8 +106,7 @@ define(["jquery",
                                "addList",
                                "sortViewsbyTime",
                                "reset",
-                               "updateSelection",
-                               "selectView",
+                               "select",
                                "unselect",
                                "switchFilter",
                                "updateFiltersRender",
@@ -113,28 +114,26 @@ define(["jquery",
                                "disableFilter",
                                "expandAll",
                                "collapseAll");
-                
+
                 this.annotationViews = [];
+                this.filtersManager  = new FiltersManager(annotationsTool.filtersManager);
+                this.categories      = annotationsTool.video.get("categories");
+                this.tracks          = annotationsTool.video.get("tracks");
+                this.playerAdapter   = annotationsTool.playerAdapter;
 
-                this.filtersManager = new FiltersManager(annotationsTool.filtersManager);
                 this.listenTo(this.filtersManager, "switch", this.updateFiltersRender);
-
-                this.categories = annotationsTool.video.get("categories");
-                this.tracks = annotationsTool.video.get("tracks");
                 this.listenTo(this.categories, "change", this.render);
                 this.listenTo(this.tracks, "add", this.addTrack);
-                this.listenTo(annotationsTool.dispatcher, "unselect-annotation", this.unselect);
-                this.tracks.each(this.addTrack, this);
-                
-                this.playerAdapter = annotationsTool.playerAdapter;
-                $(this.playerAdapter).bind(PlayerAdapter.EVENTS.TIMEUPDATE, this.updateSelection);
+                this.listenTo(annotationsTool, annotationsTool.EVENTS.ANNOTATION_SELECTION, this.select);
 
-                // Add backbone events to the model 
+                this.tracks.each(this.addTrack, this);
+
+                // Add backbone events to the model
                 _.extend(this, Backbone.Events);
 
                 return this.render();
             },
-            
+
             /**
              * Add one track
              * @alias module:views-list.List#initialize
@@ -163,24 +162,22 @@ define(["jquery",
              */
             addAnnotation: function (addAnnotation, track, isPartofList) {
                 var view;
-              
+
                 // If annotation has not id, we save it to have an id
                 if (!addAnnotation.id) {
                     this.listenTo(addAnnotation, "ready", this.addAnnotation);
                     return;
                 }
-                
+
                 view = new AnnotationView({annotation: addAnnotation, track: track});
                 this.annotationViews.push(view);
 
                 if (!isPartofList) {
                     this.sortViewsbyTime();
-                    annotationsTool.currentSelection = addAnnotation;
-                    this.updateSelection(); 
+                    annotationsTool.setSelection([addAnnotation], false);
                 }
             },
-            
-            
+
             /**
              * Add a list of annotation, creating a view for each of them
              * @alias module:views-list.List#addList
@@ -190,94 +187,69 @@ define(["jquery",
                 _.each(annotationsList, function (annotation) {
                     this.addAnnotation(annotation, track, true);
                 }, this);
-                
+
                 if (annotationsList.length > 0) {
                     this.sortViewsbyTime();
                 }
             },
 
-            selectView: function (viewToSelect) {
-                viewToSelect.selectVisually();
-                location.hash = "#" + viewToSelect.id;
-                viewToSelect.isSelected = true;
-            },
-            
             /**
-             * Update the annotations selection
-             * @alias module:views-list.List#updateSelection
+             * Select the given annotation
+             * @alias module:views-list.List#select
+             * @param  {Annotation} annotations The annotation to select
              */
-            updateSelection: function () {
-                //if(this.playerAdapter.getStatus() != PlayerAdapter.STATUS.PLAYING)
-                //  return;
-                var currentTime = this.playerAdapter.getCurrentTime(),
-                    firstSelection = true, // Tag for element selection
-                    view,
-                    start,
-                    duration,
-                    end;
-                
-                // If an annotation have been explicitely selected by an user
-                if (annotationsTool.currentSelection) {
-                    view = this.getViewFromAnnotation(annotationsTool.currentSelection.get("id"));
+            select: function (annotations) {
+                var view;
 
-                    // If the view is not visually selected
-                    if (!view.isSelected) {
-                        this.unselect();
-                        this.selectView(view);
-                    }
-                } else {
-                    this.unselect();
-                    
-                    _.each(this.annotationViews, function (view) {
-                      
-                        start = view.model.get("start");
-                        duration = view.model.get("duration");
-                        end = start + duration;
-                        
-                        if (_.isNumber(duration) && start <= currentTime && end >= currentTime) {
-                          
-                            if (firstSelection && !view.isSelected) {
-                                this.selectView(view);
-                                firstSelection = false;
-                            } else {
-                                view.selectVisually();
-                            }
-                          
-                        } else {
-                            view.isSelected = false;
+                this.unselect();
+
+                _.each(annotations, function (annotation, index) {
+                    view = this.getViewFromAnnotation(annotation.get("id"));
+
+                    if (view) {
+                        view.selectVisually();
+                        view.isSelected = true;
+
+                        // Only scroll the list to the first item of the selection
+                        if (index === 0) {
+                            location.hash = "#" + view.id;
                         }
-
-                    }, this);
-                }
-                
+                    }
+                }, this);
             },
-            
+
             /**
              * Unselect all annotation views
              * @alias module:views-list.List#unselect
              */
             unselect: function ()  {
-                var id = this.$el.find(".selected").attr("id"),
-                    view = this.getViewFromAnnotation(id);
+                var id,
+                    view,
+                    self = this;
 
-                this.$el.find(".selected").removeClass("selected");
-                
-                if (view) {
-                    view.isSelected = false;
-                }
+                this.$el.find(".selected").each(function () {
+                        id = $(this).attr("id"),
+                        view = self.getViewFromAnnotation(id);
+                        $(this).removeClass("selected");
+
+                        if (view) {
+                            view.isSelected = false;
+                        }
+                    });
             },
 
             /**
              * Get the view representing the given annotation
+             * @alias module:views-list.List#getViewFromAnnotation
              * @param  {String} id The target annotation id
              * @return {ListAnnotation}            The view representing the annotation
              */
             getViewFromAnnotation: function (id) {
                 return _.find(this.annotationViews, function (view) {
                             return view.model.get("id") == id;
-                }, this);
+                        }, this);
             },
-            
+
             /**
              * Remove the given annotation from the views list
              * @alias module:views-list.List#removeOne
@@ -292,7 +264,7 @@ define(["jquery",
                     }
                 }, this);
             },
-            
+
             /**
              * Sort all the annotations in the list by start time
              * @alias module:views-list.List#sortViewsByTime
@@ -313,14 +285,14 @@ define(["jquery",
                 var active = !$(event.target).hasClass("checked"),
                     id = event.target.id.replace("filter-", "");
 
-                this.filtersManager.switchFilter(id, active);                
+                this.filtersManager.switchFilter(id, active);
             },
 
-            updateFiltersRender: function(attr){
+            updateFiltersRender: function (attr) {
                 if (attr.active) {
-                    this.$el.find("#filter-"+attr.id).addClass("checked");
+                    this.$el.find("#filter-" + attr.id).addClass("checked");
                 } else {
-                    this.$el.find("#filter-"+attr.id).removeClass("checked");
+                    this.$el.find("#filter-" + attr.id).removeClass("checked");
                 }
                 this.render();
             },
@@ -337,7 +309,11 @@ define(["jquery",
                 this.render();
             },
 
-            expandAll: function (event) {
+            /**
+             * Expand all annotations in the list
+             * @alias module:views-list.List#expandAll
+             */
+            expandAll: function () {
                 _.each(this.annotationViews, function (annView) {
                     if (annView.collapsed) {
                         annView.onCollapse();
@@ -345,14 +321,18 @@ define(["jquery",
                 }, this);
             },
 
-            collapseAll: function (event) {
+            /**
+             * Collapse all annotations in the list
+             * @alias module:views-list.List#collapseAll
+             */
+            collapseAll: function () {
                 _.each(this.annotationViews, function (annView) {
                     if (!annView.collapsed) {
                         annView.onCollapse();
                     }
                 }, this);
             },
-            
+
             /**
              * Display the list
              * @alias module:views-list.List#render
@@ -367,15 +347,14 @@ define(["jquery",
                         list = filter.filter(list);
                     }
                 });
-                
+
                 _.each(list, function (annView) {
                     this.$el.find("#content-list").append(annView.render().$el);
                 }, this);
-                
+
                 return this;
             },
 
-            
             /**
              * Reset the view
              * @alias module:views-list.List#reset
@@ -387,7 +366,7 @@ define(["jquery",
                     annView.undelegateEvents();
                     annView.stopListening();
                 }, this);
-                
+
                 this.stopListening();
 
                 this.annotationViews = [];
@@ -399,22 +378,21 @@ define(["jquery",
             },
 
             toggleVisibility: function (event) {
-              var mainContainer = this.$el.find("#content-list");
+                var mainContainer = this.$el.find("#content-list");
 
-              if (mainContainer.css("display") === "none") {
-                mainContainer.show();
-                $("div#list-container").toggleClass("expanded");
-                $(event.target).html("Collapse");
-              } else {
-                mainContainer.hide();
-                $("div#list-container").toggleClass("expanded");
-                $(event.target).html("Expand");
-              }
-              this.trigger("change-layout");
+                if (mainContainer.css("display") === "none") {
+                    mainContainer.show();
+                    $("div#list-container").toggleClass("expanded");
+                    $(event.target).html("Collapse");
+                } else {
+                    mainContainer.hide();
+                    $("div#list-container").toggleClass("expanded");
+                    $(event.target).html("Expand");
+                }
+                this.trigger("change-layout");
             }
-            
+
         });
-                
         return List;
-    
+
     });

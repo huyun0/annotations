@@ -14,58 +14,87 @@
  *
  */
 
+/**
+ * A module representing a comments collection
+ * @module collections-comments
+ * @requires jQuery
+ * @requires models-comment
+ * @requires backbone
+ * @requires localstorage
+ */
 define(["jquery",
         "models/comment",
         "backbone",
         "localstorage"],
-    
-    function($,Comment,Backbone){
-    
+
+        function ($, Comment, Backbone) {
+
+        "use strict";
+
         /**
-         * Comments collection
-         * @class
+         * @constructor
+         * @see {@link http://www.backbonejs.org/#Collection}
+         * @augments module:Backbone.Collection
+         * @memberOf module:collections-comments
+         * @alias module:collections-comments.Comments
          */
-        var Comment = Backbone.Collection.extend({
-            model: Comment,
-            localStorage: new Backbone.LocalStorage("Comments"),
-            
+        var Comments = Backbone.Collection.extend({
+
             /**
-             * @constructor
+             * Model of the instances contained in this collection
+             * @alias module:collections-comments.Comments#initialize
              */
-            initialize: function(models,annotation){
-                _.bindAll(this,"setUrl");
-                
+            model       : Comment,
+
+            /**
+             * Localstorage container for the collection
+             * @alias module:collections-comments.Comments#localStorage
+             * @type {Backbone.LocalStorgage}
+             */
+            localStorage: new Backbone.LocalStorage("Comments"),
+
+            /**
+             * constructor
+             * @alias module:collections-comments.Comments#initialize
+             */
+            initialize: function (models, annotation) {
+                _.bindAll(this, "setUrl");
                 this.setUrl(annotation);
             },
-            
-            parse: function(resp, xhr) {
-              if(resp.comments && _.isArray(resp.comments))
-                return resp.comments;
-              else if(_.isArray(resp))
-                return resp;
-              else
-                return null;
-            },
-            
+
             /**
-             * Define the url from the collection with the given annotation
-             *
-             * @param {Annotation} annotation containing the comments
+             * Parse the given data
+             * @alias module:collections-comments.Comments#parse
+             * @param  {object} data Object or array containing the data to parse.
+             * @return {object}      the part of the given data related to the comments
              */
-            setUrl: function(annotation){
-                if(!annotation){
+            parse: function (resp) {
+                if (resp.comments && _.isArray(resp.comments)) {
+                    return resp.comments;
+                } else if (_.isArray(resp)) {
+                    return resp;
+                } else {
+                    return null;
+                }
+            },
+
+            /**
+             * Define the url from the collection with the given video
+             * @alias module:collections-comments.Comments#setUrl
+             * @param {{@linkcode module:models-track.Track}} Annotation containing the comments
+             */
+            setUrl: function (annotation) {
+                if (!annotation) {
                     throw "The parent annotation of the comments must be given!";
                 } else if (annotation.collection) {
-                    this.url = annotation.url() + "/comments";  
+                    this.url = annotation.url() + "/comments";
                 }
 
-                if(window.annotationsTool && annotationsTool.localStorage)
-                      this.localStorage = new Backbone.LocalStorage(this.url);
+                if (window.annotationsTool && annotationsTool.localStorage) {
+                    this.localStorage = new Backbone.LocalStorage(this.url);
+                }
             }
         });
-        
-        return Comment;
-
-});
-    
-    
+        return Comments;
+    }
+);

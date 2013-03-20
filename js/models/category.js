@@ -16,24 +16,38 @@
 
 /**
  * A module representing the category model
- * @module Category
+ * @module models-category
+ * @requires jQuery
+ * @requires collections-labels
+ * @requires ACCESS
+ * @requires backbone
+ * @requires localstorage
  */
 define(["jquery",
         "collections/labels",
         "access",
         "backbone",
         "localstorage"],
-    
+
     function ($, Labels, ACCESS, Backbone) {
 
         "use strict";
-        
+
         /**
          * @constructor
-         * @alias module:Category
+         * @see {@link http://www.backbonejs.org/#Model}
+         * @augments module:Backbone.Model
+         * @memberOf module:models-category
+         * @alias module:models-category.Category
          */
         var Category = Backbone.Model.extend({
-            
+
+            /**
+             * Default models value
+             * @alias module:models-category.Category#defaults
+             * @type {map}
+             * @static
+             */
             defaults: {
                 access: ACCESS.PRIVATE,
                 created_at: null,
@@ -44,31 +58,32 @@ define(["jquery",
                 deleted_by: null,
                 has_duration: true
             },
-            
+
             /**
              * Constructor
-             * @param {Object} attr Object literal containing the model initialion attribute. Should contain a name attribute.
+             * @alias module:models-category.Category#initialize
+             * @param {object} attr Object literal containing the model initialion attributes.
              */
             initialize: function (attr) {
 
-                _.bindAll(this,'setUrl','validate', 'toExportJSON');
+                _.bindAll(this, "setUrl", "validate", "toExportJSON");
 
                 if (!attr || _.isUndefined(attr.name)) {
-                    throw "'name' attribute is required";
+                    throw "\"name\" attribute is required";
                 }
-                
+
                 // Check if the track has been initialized
                 if (!attr.id) {
                     // If local storage, we set the cid as id
                     if (window.annotationsTool.localStorage) {
                         attr.id = this.cid;
                     }
-                        
+
                     this.toCreate = true;
                 }
 
                 // If localStorage used, we have to save the video at each change on the children
-                if (window.annotationsTool.localStorage){
+                if (window.annotationsTool.localStorage) {
                     if (!attr.created_by) {
                         attr.created_by = annotationsTool.user.get("id");
                         attr.created_by_nickname = annotationsTool.user.get("nickname");
@@ -100,7 +115,7 @@ define(["jquery",
                 } else {
                     attr.isPublic = false;
                 }
-                
+
                 if (attr.labels && _.isArray(attr.labels)) {
                     this.attributes.labels  = new Labels(attr.labels, this);
                     delete attr.labels;
@@ -109,19 +124,20 @@ define(["jquery",
                 } else if (_.isObject(attr.labels) && attr.labels.model) {
                     this.attributes.labels = new Labels(attr.labels.models, this);
                     delete attr.labels;
-                } 
+                }
 
                 if (attr.id) {
                     this.attributes.labels.fetch({async: false});
                 }
-                
+
                 this.set(attr);
             },
-            
+
             /**
              * Parse the attribute list passed to the model
-             * @param  {Object} data Object literal containing the model attribute to parse.
-             * @return {Object}  The object literal with the list of parsed model attribute.
+             * @alias module:models-category.Category#parse
+             * @param  {object} data Object literal containing the model attribute to parse.
+             * @return {object}  The object literal with the list of parsed model attribute.
              */
             parse: function (data) {
                 var attr = data.attributes ? data.attributes : data;
@@ -150,7 +166,7 @@ define(["jquery",
                 if (attr.tags) {
                     attr.tags = this.parseJSONString(attr.tags);
                 }
-                
+
                 if (attr.category) {
                     attr.category = this.parseJSONString(attr.category.settings);
                 }
@@ -175,16 +191,17 @@ define(["jquery",
 
                 return data;
             },
-            
+
             /**
              * Validate the attribute list passed to the model
-             * @param  {Object} data Object literal containing the model attribute to validate.
-             * @return {String}  If the validation failed, an error message will be returned.
+             * @alias module:models-category.Category#validate
+             * @param  {object} data Object literal containing the model attribute to validate.
+             * @return {string}  If the validation failed, an error message will be returned.
              */
             validate: function (attr) {
                 var tmpCreated,
                     self = this;
-                
+
                 if (attr.id) {
                     if (this.get("id") !== attr.id) {
                         this.id = attr.id;
@@ -198,26 +215,24 @@ define(["jquery",
                                 self.ready = true;
                             }
                         });
-                    
                     }
                 }
 
-                
                 if (attr.description && !_.isString(attr.description)) {
-                    return "'description' attribute must be a string";
+                    return "\"description\" attribute must be a string";
                 }
-                
+
                 if (attr.settings && (!_.isObject(attr.settings) && !_.isString(attr.settings))) {
-                    return "'description' attribute must be a string or a JSON object";
+                    return "\"description\" attribute must be a string or a JSON object";
                 }
 
                 if (attr.tags && _.isUndefined(this.parseJSONString(attr.tags))) {
-                    return "'tags' attribute must be a string or a JSON object";
+                    return "\"tags\" attribute must be a string or a JSON object";
                 }
-                
+
                 if (!_.isUndefined(attr.access)) {
                     if (!_.include(ACCESS, attr.access)) {
-                        return "'access' attribute is not valid.";
+                        return "\"access\" attribute is not valid.";
                     } else if (this.attributes.access !== attr.access) {
                         if (attr.access === ACCESS.PUBLIC) {
                             this.attributes.isPublic = true;
@@ -226,27 +241,27 @@ define(["jquery",
                         }
                     }
                 }
-                
+
                 if (attr.created_at) {
                     if ((tmpCreated = this.get("created_at")) && tmpCreated !== attr.created_at) {
-                        return "'created_at' attribute can not be modified after initialization!";
+                        return "\"created_at\" attribute can not be modified after initialization!";
                     } else if (!_.isNumber(attr.created_at)) {
-                        return "'created_at' attribute must be a number!";
+                        return "\"created_at\" attribute must be a number!";
                     }
                 }
-        
+
                 if (attr.updated_at && !_.isNumber(attr.updated_at)) {
-                    return "'updated_at' attribute must be a number!";
+                    return "\"updated_at\" attribute must be a number!";
                 }
 
                 if (attr.deleted_at && !_.isNumber(attr.deleted_at)) {
-                    return "'deleted_at' attribute must be a number!";
+                    return "\"deleted_at\" attribute must be a number!";
                 }
 
                 if (attr.labels) {
                     attr.labels.each(function (value) {
                         var parseValue = value.parse({category: this.toJSON()});
-                        
+
                         if (parseValue.category) {
                             parseValue = parseValue.category;
                         }
@@ -258,8 +273,8 @@ define(["jquery",
 
             /**
              * Change category color
-             * @method
-             * @param  {String} color the new color
+             * @alias module:models-category.Category#setColor
+             * @param  {string} color the new color
              */
             setColor: function (color) {
                 var settings = this.attributes.settings;
@@ -267,9 +282,10 @@ define(["jquery",
 
                 this.set("settings", settings);
             },
-            
+
             /**
              * Modify the current url for the annotations collection
+             * @alias module:models-category.Category#setUrl
              */
             setUrl: function (labels) {
                 if (labels) {
@@ -279,8 +295,8 @@ define(["jquery",
 
             /**
              * Override the default toJSON function to ensure complete JSONing.
-             *
-             * @return {JSON} JSON representation of the instane
+             * @alias module:models-category.Category#toJSON
+             * @return {JSON} JSON representation of the instance
              */
             toJSON: function () {
                 var json = Backbone.Model.prototype.toJSON.call(this);
@@ -304,11 +320,16 @@ define(["jquery",
                 return json;
             },
 
+            /**
+             * Prepare the model as JSON to export and return it
+             * @alias module:models-category.Category#toExportJSON
+             * @return {JSON} JSON representation of the model for export
+             */
             toExportJSON: function () {
                 var json = {
                     name: this.attributes.name,
-                    labels: this.attributes.labels.toExportJSON(),                  
-                }
+                    labels: this.attributes.labels.toExportJSON()
+                };
 
                 if (this.attributes.tags) {
                     json.tags = JSON.stringify(this.attributes.tags);
@@ -316,11 +337,11 @@ define(["jquery",
 
                 if (this.attributes.description) {
                     json.description = this.attributes.description;
-                }                
+                }
 
                 if (this.attributes.has_duration) {
                     json.has_duration = this.attributes.has_duration;
-                }                
+                }
 
                 if (this.attributes.scale_id) {
                     json.scale_id = this.attributes.scale_id;
@@ -339,16 +360,17 @@ define(["jquery",
 
             /**
              * Parse the given parameter to JSON if given as String
-             * @param  {String} parameter the parameter as String
+             * @alias module:models-category.Category#parseJSONString
+             * @param  {string} parameter the parameter as String
              * @return {JSON} parameter as JSON object
              */
             parseJSONString: function (parameter) {
                 if (parameter && _.isString(parameter)) {
                     try {
                         parameter = JSON.parse(parameter);
-                        
+
                     } catch (e) {
-                        console.warn("Can not parse parameter '" + parameter + "': " + e);
+                        console.warn("Can not parse parameter \"" + parameter + "\": " + e);
                         return undefined;
                     }
                 } else if (!_.isObject(parameter) || _.isFunction(parameter)) {
@@ -358,13 +380,16 @@ define(["jquery",
                 return parameter;
             },
 
+            /**
+             * Override the default save function
+             * @alias module:models-category.Category#save
+             * @return {object} options The given options for the save operation
+             */
             save: function (options) {
                 this.attributes.settings = JSON.stringify(this.attributes.settings);
                 Backbone.Model.prototype.save.call(this, options);
             }
-
         });
-        
         return Category;
-    
-    });
+    }
+);

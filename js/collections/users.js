@@ -13,33 +13,64 @@
  *  permissions and limitations under the License.
  *
  */
-    
+
+/**
+ * A module representing a users collection
+ * @module collections-users
+ * @requires jQuery
+ * @requires models-user
+ * @requires backbone
+ * @requires localstorage
+ */
 define(["jquery",
         "models/user",
         "backbone",
         "localstorage"],
-       
-       function($, User, Backbone){
-    
+
+       function ($, User, Backbone) {
+
+        "use strict";
+
         /**
-         * Users collection
-         * @class
+         * @constructor
+         * @see {@link http://www.backbonejs.org/#Collection}
+         * @augments module:Backbone.Collection
+         * @memberOf module:collections-users
+         * @alias module:collections-users.User
          */
         var Users = Backbone.Collection.extend({
+
+            /**
+             * Model of the instances contained in this collection
+             * @alias module:collections-users.User#initialize
+             */
             model: User,
+
+            /**
+             * Localstorage container for the collection
+             * @alias module:collections-users.User#localStorage
+             * @type {Backbone.LocalStorgage}
+             */
             localStorage: new Backbone.LocalStorage("Users"),
-            
-            initialize: function(){
+
+            /**
+             * constructor
+             * @alias module:collections-users.User#initialize
+             */
+            initialize: function () {
                 this.url = window.annotationsTool.restEndpointsUrl + "/users";
             },
-            
-            parse: function(resp, xhr) {
-              return resp.users;
+
+            /**
+             * Parse the given data
+             * @alias module:collections-users.User#parse
+             * @param  {object} data Object or array containing the data to parse.
+             * @return {object}      the part of the given data related to the users
+             */
+            parse: function (resp) {
+                return resp.users;
             }
         });
-        
         return Users;
-
-});
-    
-    
+    }
+);

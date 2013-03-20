@@ -4960,7 +4960,7 @@
   }
   div.timeline-event {
     background-color: rgba(249, 103, 38, 0.6);
-    z-index: 3;
+    z-index: 2;
   }
   div.timeline-event-selected {
     background-color: rgba(245, 215, 115, 0.75);
@@ -5268,7 +5268,7 @@
     padding: 2px;
     overflow: hidden;
     min-width: 20px;
-    z-index: 3;
+    z-index: 4;
   }
   div.timeline-item span {
     float: left;
@@ -5302,9 +5302,9 @@
     height: 22px!important;
   }
   div#timeline {
-    padding-right: 20px;
     overflow-x: hidden;
-    overflow-y: scroll!important;
+    overflow-y: auto!important;
+    min-height: 55px!important;
   }
   .standard_border_radius {
     border-radius: 0px 0px 0px 0px;
@@ -5376,6 +5376,12 @@
     width: 100%;
     max-height: 500px;
     vertical-align: bottom;
+  }
+  #alert {
+    overflow: visible!important;
+  }
+  #alert h4 {
+    margin-bottom: 10px;
   }
   body {
     background: url("../img/annotation/background.png") #636363 repeat;
@@ -5596,6 +5602,12 @@
   #annotate-container .navbar .currentTrack .content {
     font-weight: bold;
   }
+  #annotate-container .navbar .dropdown {
+    visibility: hidden;
+  }
+  #annotate-container.expanded .navbar .dropdown {
+    visibility: visible;
+  }
   #annotate-container .control-group {
     margin: 0;
   }
@@ -5623,6 +5635,7 @@
   }
   #annotate-container #label-tabs-contents div.carousel .category-item {
     height: 100%;
+    min-width: 150px!important;
     /* Position 6 to 12 need to carry the scaling on the left side */
   
   }
@@ -5640,12 +5653,13 @@
     display: none;
   }
   #annotate-container #label-tabs-contents div.carousel .category-item .catItem-header input {
-    width: 45px;
+    width: 50%;
     margin: 0 0 3px 0;
     padding: 1px;
     font-weight: bold;
     text-overflow: clip;
     color: #000000;
+    min-width: 72px!important;
   }
   #annotate-container #label-tabs-contents div.carousel .category-item .catItem-header input[disabled] {
     margin: 0;
@@ -5678,13 +5692,11 @@
     display: none;
   }
   #annotate-container #label-tabs-contents div.carousel .category-item .label-item .item-abbreviation {
-    width: 28px;
-  }
-  #annotate-container #label-tabs-contents div.carousel .category-item .label-item span.item-abbreviation:hover {
-    cursor: pointer;
+    width: 32px;
   }
   #annotate-container #label-tabs-contents div.carousel .category-item .label-item .item-value {
-    width: 100%;
+    min-width: 78px;
+    width: 54%;
     margin-left: 4px;
   }
   #annotate-container #label-tabs-contents div.carousel .category-item .label-item .read-only {
@@ -5729,6 +5741,9 @@
   #annotate-container #label-tabs-contents div.carousel .category-item .label-item.scale-enabled {
     /* Hover needs to be done twice to keep the overlay open when mouse enters the .scaling area */
   
+  }
+  #annotate-container #label-tabs-contents div.carousel .category-item .label-item.scale-enabled:hover {
+    cursor: default;
   }
   #annotate-container #label-tabs-contents div.carousel .category-item .label-item.scale-enabled:hover .scaling {
     display: block;
@@ -5916,6 +5931,7 @@
     border: none;
     margin-left: 5px;
     float: right;
+    display: inline-block !important;
   }
   #annotate-container.edit-on i.edit:hover {
     background-color: rgba(57, 163, 241, 0.3);
@@ -5941,15 +5957,15 @@
   #annotate-container #label-tabs-contents div.tab-pane i.edit {
     visibility: hidden;
   }
+  #annotate-container #label-tabs-contents div.tab-pane .carousel-inner {
+    width: 320%;
+  }
   #annotate-container #label-tabs-contents div.tab-pane.edit-on .edit {
     visibility: visible;
     display: inline-block;
   }
   #annotate-container #label-tabs-contents div.tab-pane.edit-on div.carousel {
     height: 250px;
-  }
-  #annotate-container #label-tabs-contents div.tab-pane.edit-on div.carousel .carousel-inner {
-    width: 300%;
   }
   #annotate-container #label-tabs-contents div.tab-pane.edit-on div.carousel .category-item .label-item .item-value {
     width: 50px;
@@ -6020,15 +6036,25 @@
     color: red;
     font-weight: bold;
   }
+  #scale-editor .header-name {
+    float: left;
+    margin-left: 65px;
+    width: 100px;
+    margin-right: 3px;
+  }
   .standard_border_radius {
     border-radius: 0px 0px 0px 0px;
   }
-  #list-container {
-    overflow-y: scroll;
-    overflow-x: hidden;
+  #list-container .navbar .dropdown {
+    visibility: hidden;
+  }
+  #list-container.expanded .navbar .dropdown {
+    visibility: visible;
   }
   #list-container #content-list {
-    overflow: auto;
+    overflow-y: auto;
+    overflow-x: hidden;
+    min-height: 55px;
   }
   #list-container a.proxy-anchor {
     display: none;
@@ -6076,6 +6102,7 @@
     float: right;
     padding: 0;
     height: 20px;
+    margin-right: 10px;
   }
   #list-container div.annotation .header-container .left {
     overflow: hidden;
@@ -6271,6 +6298,7 @@
     min-height: 16px;
     display: block;
     text-align: right;
+    margin-right: 10px;
   }
   #list-container div.comments-container .comment-header span.add-comment a.add-comment {
     color: #303030;

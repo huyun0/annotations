@@ -18,11 +18,13 @@
  * A module containing the ACCESS values enum.
  * @module ACCESS
  */
-define([],function(){
-    
+define([], function () {
+
+    "use strict";
+
     /**
      * Enum for access to ressource
-     * 
+     *
      * @readonly
      * @enum {number}
      */
@@ -34,5 +36,4 @@ define([],function(){
         /** Group = 2*/
         GROUP: 2
     };
-
-})
+});

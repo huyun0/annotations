@@ -95,7 +95,18 @@ i.check{
 				font-weight: bold;
 			}
 		}
+
+		.dropdown {
+	        visibility: hidden;
+	    }
 	}
+
+    
+    &.expanded {
+        .navbar .dropdown {
+            visibility: visible;
+        }
+    }
 	
 	.control-group {
 		margin: 0;
@@ -133,6 +144,8 @@ i.check{
 			.category-item{ 
 			
 				height: 100%;
+				min-width: 150px!important;
+
 				.catItem-header{
 					text-align: left;
 					height: 25px;
@@ -148,12 +161,13 @@ i.check{
 					}
 						
 					input{
-						width: 45px;
+						width: 50%;
 						margin: 0 0 3px 0;
 						padding: 1px;
 						font-weight: bold;
 						text-overflow: clip;
 						color: @black;  
+						min-width: 72px!important;
 					 
 						&[disabled]{
 							margin: 0;
@@ -182,7 +196,7 @@ i.check{
 					background-color: fade(@white, 60%);
 					border-right: 1px solid @white;
 					border-bottom: 1px solid @white;
-					width:100%;
+					width: 100%;
 					.box-sizing(border-box);
 					
 					.edit {
@@ -190,15 +204,12 @@ i.check{
 					}
 					
 					.item-abbreviation{
-						width: 28px;
-					}
-
-					span.item-abbreviation:hover {
-						cursor: pointer;
+						width: 32px;
 					}
 					
 					.item-value{
-						width: 100%;
+						min-width: 78px;
+						width: 54%;
 						margin-left: 4px;
 					}
 
@@ -255,6 +266,7 @@ i.check{
 						}
 	
 						&:hover {
+							cursor: default;
 								.scaling{
 										.scalinghover();
 								}
@@ -397,6 +409,7 @@ i.check{
 			border: none;
 			margin-left: 5px;
 			float: right;
+			display: inline-block!important;
 
 			&:hover{
 				.iconHover();
@@ -432,6 +445,10 @@ i.check{
 				visibility: hidden;
 		}
 
+		.carousel-inner {
+			width:320%;
+		} 
+
 		&.edit-on {
 
 			.edit {
@@ -443,10 +460,6 @@ i.check{
 			
 				// Make the whole thing bigger in edit mode and allow horizontal scrolling
 				height:250px;
-				
-				.carousel-inner {
-					width:300%; 
-				} 
 			
 				.category-item{ 
 					.label-item{
@@ -531,3 +544,13 @@ i.check{
     color: red;
     font-weight: bold; 
 } 
+
+
+#scale-editor{
+	.header-name{
+	    float: left;
+	    margin-left: 65px;
+	    width: 100px;
+	    margin-right: 3px;
+  	}
+}
