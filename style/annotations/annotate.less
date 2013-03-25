@@ -144,7 +144,7 @@ i.check{
 			.category-item{ 
 			
 				height: 100%;
-				min-width: 150px!important;
+				//min-width: 150px!important;
 
 				.catItem-header{
 					text-align: left;
@@ -161,13 +161,13 @@ i.check{
 					}
 						
 					input{
-						width: 50%;
+						width: 100%;
 						margin: 0 0 3px 0;
 						padding: 1px;
 						font-weight: bold;
 						text-overflow: clip;
 						color: @black;  
-						min-width: 72px!important;
+						// min-width: 72px!important;
 					 
 						&[disabled]{
 							margin: 0;
@@ -176,7 +176,7 @@ i.check{
 							cursor: default;
 							box-shadow: none;
 							border:none;
-							width:100%;
+							// width:100%;
 						}
 					}
 
@@ -204,12 +204,12 @@ i.check{
 					}
 					
 					.item-abbreviation{
-						width: 32px;
+						width: 30px;
 					}
 					
 					.item-value{
-						min-width: 78px;
-						width: 54%;
+						// min-width: 78px;
+						width: 100%;
 						margin-left: 4px;
 					}
 
@@ -445,10 +445,6 @@ i.check{
 				visibility: hidden;
 		}
 
-		.carousel-inner {
-			width:320%;
-		} 
-
 		&.edit-on {
 
 			.edit {
@@ -460,8 +456,17 @@ i.check{
 			
 				// Make the whole thing bigger in edit mode and allow horizontal scrolling
 				height:250px;
+
+				.carousel-inner {
+					width:320%;
+				}
 			
-				.category-item{ 
+				.category-item{
+					.catItem-header input {
+						width: 38%;
+						min-width: 42px;
+					}
+
 					.label-item{
 					
 					  .item-value {
