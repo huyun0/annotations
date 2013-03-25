@@ -43,6 +43,10 @@ define(["jquery",
                     findAll,
                     destroy;
 
+
+                // Enable cross-domain for jquery ajax query
+                $.support.cors = true;
+
                 // Sync module configuration
                 this.config = {
                     headerParams: {
