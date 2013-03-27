@@ -10,7 +10,7 @@ require.config({
     'popover': 'libs/bootstrap/popover',
     'backbone': 'libs/backbone/backbone-min-0.9.9',
     'jquery.colorPicker': 'libs/jquery.colorPicker.min',
-    'jquery.FileReader': 'libs/jquery.FileReader.min',
+    'jquery.FileReader': 'libs/jquery.FileReader',
     'localstorage': 'libs/backbone/backbone.localStorage-1.0',
     'handlebars': "libs/handlebars",
     'jquery': 'libs/jquery-1.7.2.min',
