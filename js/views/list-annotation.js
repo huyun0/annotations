@@ -153,6 +153,8 @@ function ($, PlayerAdapter, Annotation, User, CommentsContainer, Template, Backb
          * @alias module:views-comments-container.CommentsContainer#initialize
          */
         initialize: function (attr) {
+            var category;
+
             if (!attr.annotation) {
                 throw "The annotations have to be given to the annotate view.";
             }
@@ -184,7 +186,13 @@ function ($, PlayerAdapter, Annotation, User, CommentsContainer, Template, Backb
             this.commentContainer = new CommentsContainer({id: this.id, comments: this.model.get("comments"), collapsed: this.collapsed});
 
             if (this.model.get("label")) {
-                this.scale = annotationsTool.video.get("scales").get(this.model.get("label").category.scale_id);
+                category = this.model.get("label").category;
+
+                if (!category) {
+                    category = this.model.get("label").get("category");
+                }
+
+                this.scale = annotationsTool.video.get("scales").get(category.scale_id);
             }
 
             if (this.scale) {
