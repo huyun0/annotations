@@ -166,7 +166,6 @@ define(["jquery",
                     // Set the current context for all these functions
                     _.bindAll(this,
                               "insert",
-                              "render",
                               "reset",
                               "onFocusIn",
                               "onFocusOut",
@@ -266,13 +265,14 @@ define(["jquery",
                     }
 
                     annotation = annotationsTool.selectedTrack.get("annotations").create(params, options);
-                    annotationsTool.setSelection([annotation], true);
+                    annotationsTool.setSelection([annotation], false, true);
 
                     if (this.continueVideo) {
-                        this.playerAdapter.play();
+                        annotationsTool.playerAdapter.play();
                     }
 
                     this.input.val("");
+                    this.input.focus();
                 },
 
                 /**
@@ -298,7 +298,7 @@ define(["jquery",
                  * @alias module:views-annotate.Annotate#onFocusIn
                  */
                 onFocusIn: function () {
-                    if (!this.$el.find("#pause-video").attr("checked") || (this.playerAdapter.getStatus() === PlayerAdapter.STATUS.PAUSED)) {
+                    if (!this.$el.find("#pause-video").attr("checked") || (annotationsTool.playerAdapter.getStatus() === PlayerAdapter.STATUS.PAUSED)) {
                         return;
                     }
 
@@ -306,7 +306,7 @@ define(["jquery",
                     this.playerAdapter.pause();
 
                     // If the video is moved, or played, we do no continue the video after insertion
-                    $(this.playerAdapter).one(PlayerAdapter.EVENTS.TIMEUPDATE, function () {
+                    $(annotationsTool.playerAdapter).one(PlayerAdapter.EVENTS.TIMEUPDATE, function () {
                         this.continueVideo = false;
                     });
                 },
@@ -324,7 +324,7 @@ define(["jquery",
                  * @alias module:views-annotate.Annotate#checkToContinueVideo
                  */
                 checkToContinueVideo: function () {
-                    if (this.playerAdapter.getStatus() === PlayerAdapter.STATUS.PAUSED && this.continueVideo) {
+                    if ((annotationsTool.playerAdapter.getStatus() === PlayerAdapter.STATUS.PAUSED) && this.continueVideo) {
                         this.continueVideo = false;
                         this.playerAdapter.play();
                     }
@@ -355,11 +355,11 @@ define(["jquery",
                  */
                 addTab: function (categories, attr) {
                     var params = {
-                            id: attr.id,
-                            name: attr.name,
+                            id        : attr.id,
+                            name      : attr.name,
                             categories: categories,
-                            filter: attr.filter,
-                            roles: attr.roles,
+                            filter    : attr.filter,
+                            roles     : attr.roles,
                             attributes: attr.attributes
                         },
                         newButton = this.tabsButtonTemplate(params),

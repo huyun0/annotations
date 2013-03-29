@@ -211,15 +211,21 @@ define(["jquery",
                  * @param {Array} selection The new selection
                  * @param {Boolean} moveTo define if the video should be move to the start point of the selection
                  */
-                setSelection: function (selection, moveTo) {
+                setSelection: function (selection, moveTo, isManualSelected) {
                     this.currentSelection = selection;
+                    this.isManualSelected = isManualSelected;
 
                     // if the selection is not empty, we move the playhead to it
                     if (_.isArray(selection) && selection.length > 0 && moveTo) {
                         this.playerAdapter.setCurrentTime(selection[0].get("start"));
-                        this.isManualSelected = true;
+
+                        if (typeof isManualSelected === "undefined") {
+                            this.isManualSelected = true;
+                        }
                     } else {
-                        this.isManualSelected = false;
+                        if (typeof isManualSelected === "undefined") {
+                            this.isManualSelected = false;
+                        }
                     }
 
                     // Trigger the seleciton event
