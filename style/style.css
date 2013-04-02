@@ -6042,6 +6042,11 @@
     width: 100px;
     margin-right: 3px;
   }
+  #scale-editor .error {
+    color: red;
+    font-weight: bold;
+    border: 1px solid red;
+  }
   .standard_border_radius {
     border-radius: 0px 0px 0px 0px;
   }
