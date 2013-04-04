@@ -42,12 +42,15 @@ All the dependancies below are related to the web application.
 * * [FileSaver](https://github.com/eligrey/FileSaver.js)
 
 ## Participants
+
 ### Development
 * [Entwine](www.entwinemedia.com)
 * [Switch](switch.ch)
 * [Claudio Beffa](beffa.ch)
+
 ### Design
 Pädagogische Hochschule Zürich, PHZH|Digital Learning / E-Learning
+
 ### Institutions
 These represent the original institutions that have started this project.
 
