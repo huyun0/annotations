@@ -170,7 +170,7 @@ define(["jquery",
                         $value = this.$el.find(".scale-value-value"),
                         value = parseFloat($value.val());
 
-                    if (_.isNumber(value)) {
+                    if (!isNaN(value)) {
                         $value.removeClass("error");
                         this.model.set({
                             name: name,
