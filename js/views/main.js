@@ -171,7 +171,20 @@ define(["jquery",
                 annotationsTool.filtersManager   = new FiltersManager();
                 annotationsTool.importCategories = this.importCategories;
 
+                this.loadPlugins(annotationsTool.plugins);
+
                 this.onWindowResize();
+            },
+
+            /**
+             * Load the given plugins
+             * @param  {Array} plugins The array of plugins to load
+             * @alias module:views-main.MainView#loadPlugins
+             */
+            loadPlugins: function (plugins) {
+                _.each(plugins, function (plugin) {
+                    plugin();
+                }, this);
             },
 
             /**
