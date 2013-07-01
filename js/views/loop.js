@@ -27,7 +27,8 @@ define(["jquery",
         "prototypes/player_adapter",
         "backbone",
         "text!templates/loop-control.tmpl",
-        "handlebars"],
+        "handlebars",
+        "slider"],
 
         function ($, Loops, PlayerAdapter, Backbone, LoopTmpl, Handlebars) {
 
@@ -64,8 +65,7 @@ define(["jquery",
                 events: {
                     "click #enableLoop": "toggle",
                     "click .next"      : "nextLoop",
-                    "click .previous"  : "previousLoop",
-                    "change select"    : "changeInterval"
+                    "click .previous"  : "previousLoop"
                 },
 
                 /**
@@ -76,46 +76,67 @@ define(["jquery",
                     _.bindAll(this, "toggle",
                                     "createLoops",
                                     "checkLoop",
-                                    "checkLoopEnded",
+                                    "initSlider",
                                     "findCurrentLoop",
                                     "nextLoop",
                                     "previousLoop",
-                                    "changeInterval",
+                                    "changeLoopLength",
                                     "resetLoops");
+                    var duration;
 
                     this.playerAdapter = annotationsTool.playerAdapter;
                     this.loops = new Loops([], annotationsTool.video);
 
+
                     $("#video-container").after(this.loopTemplate());
                     this.setElement($("#loop")[0]);
-
-                    this.currentInterval = parseInt(this.$el.find("select").val(), 10);
+                    $(this.playerAdapter).one(PlayerAdapter.EVENTS.READY, this.initSlider);
 
                     this.toggle(false);
                 },
 
+                initSlider: function () {
+                    var duration = this.playerAdapter.getDuration();
+                    this.currentLoopLength = Math.round(duration / 10);
+                    this.slider = $("#slider").slider({
+                            min     : 5,
+                            max     : Math.round(duration - 1),
+                            step    : 1,
+                            value   : this.currentLoopLength,
+                            formater: function (value) {
+                                return value + " s";
+                            }
+                    });
+
+                    $("#slider").bind("slideStop", this.changeLoopLength);
+                    this.$el.find("#loop-length").html(this.currentLoopLength + " s");
+                },
+
+                /**
+                 * Switch on/off the loop function
+                 * @param  {Object} event The click event
+                 * @alias module:views-loop.Loop#toggle
+                 */
                 toggle: function (event) {
                     var isEnable = (!event.target && _.isBoolean(event)) ? event : !(_.isUndefined($(event.target).attr("checked")));
 
                     if (isEnable) {
                         $(this.playerAdapter).bind(PlayerAdapter.EVENTS.TIMEUPDATE, this.checkLoop);
-                        $(this.playerAdapter).bind(PlayerAdapter.EVENTS.ENDED, this.checkLoopEnded);
-                        this.$el.find("select").removeAttr("disabled");
-                        this.createLoops(this.currentInterval);
+                        this.createLoops(this.currentLoopLength);
+                        this.$el.removeClass("disabled");
                     } else {
                         $(this.playerAdapter).unbind(PlayerAdapter.EVENTS.TIMEUPDATE, this.checkLoop);
-                        $(this.playerAdapter).unbind(PlayerAdapter.EVENTS.ENDED, this.checkLoopEnded);
-                        this.$el.find("select").attr("disabled", "disabled");
-                        this.$el.find(".previous, .next").hide();
+                        this.$el.addClass("disabled");
                     }
 
                     this.isEnable = isEnable;
                 },
 
-                checkLoopEnded: function () {
-                    this.playerAdapter.play();
-                },
-
+                /**
+                 * Switch on/off the loop function
+                 * @param  {Object} event The click event
+                 * @alias module:views-loop.Loop#checkLoop
+                 */
                 checkLoop: function () {
                     if (_.isUndefined(this.currentLoop)) {
                         return;
@@ -126,11 +147,19 @@ define(["jquery",
 
                     if (difference >= 0 && difference < this.MAX_MARGIN) {
                         this.playerAdapter.setCurrentTime(this.currentLoop.get("start"));
+
+                        if (currentTime === this.playerAdapter.getDuration()) {
+                            this.playerAdapter.play();
+                        }
                     } else if (difference > this.MAX_MARGIN) {
                         this.setCurrentLoop(this.findCurrentLoop());
                     }
                 },
 
+                /**
+                 * Move to next loop
+                 * @alias module:views-loop.Loop#nextLoop
+                 */
                 nextLoop: function () {
                     if (this.isEnable) {
                         this.setCurrentLoop(this.loops.indexOf(this.currentLoop) + 1);
@@ -138,6 +167,10 @@ define(["jquery",
                     }
                 },
 
+                /**
+                 * Move to previous loop
+                 * @alias module:views-loop.Loop#previousLoop
+                 */
                 previousLoop: function () {
                     if (this.isEnable) {
                         this.setCurrentLoop(this.loops.indexOf(this.currentLoop) - 1);
@@ -145,11 +178,21 @@ define(["jquery",
                     }
                 },
 
-                changeInterval: function () {
-                    this.currentInterval = parseInt(this.$el.find("select").val(), 10);
-                    this.createLoops(this.currentInterval);
+                /**
+                 * Change the loop length
+                 * @alias module:views-loop.Loop#changeLoopLength
+                 */
+                changeLoopLength: function () {
+                    this.currentLoopLength = parseInt(this.slider.val(), 10);
+                    this.$el.find("#loop-length").html(this.currentLoopLength + " s");
+                    this.createLoops(this.currentLoopLength);
                 },
 
+                /**
+                 * Set the given loop as the current one
+                 * @param {Object || Integer} loop The new loop object or its index
+                 * @alias module:views-loop.Loop#setCurrentLoop
+                 */
                 setCurrentLoop: function (loop) {
                     var index = _.isNumber(loop) ? loop : this.loops.indexOf(loop);
 
@@ -168,6 +211,10 @@ define(["jquery",
                     this.currentLoop = this.loops.at(index);
                 },
 
+                /**
+                 * Find and return the loop related to the current playhead
+                 * @return {Object} Return the related loop
+                 */
                 findCurrentLoop: function () {
                     var currentTime = this.playerAdapter.getCurrentTime();
 
@@ -176,28 +223,37 @@ define(["jquery",
                             });
                 },
 
-                createLoops: function (interval) {
+                /**
+                 * Create all the loops with the given length
+                 * @param  {Integer} event The click event
+                 * @alias module:views-loop.Loop#createLoops
+                 */
+                createLoops: function (loopLength) {
                     var duration = this.playerAdapter.getDuration(),
                         i;
 
-                    if (interval >= duration) {
+                    if (loopLength >= duration) {
                         annotationsTool.alertInfo("Interval too long to create one loop!");
                         return;
                     }
 
                     this.resetLoops();
-                    this.currentInterval = interval;
+                    this.currentLoopLength = loopLength;
 
-                    for (i = 0; i < duration / interval; i++) {
+                    for (i = 0; i < duration / loopLength; i++) {
                         this.loops.add({
-                            start: i * interval,
-                            end  : ((i + 1) * interval < duration ? (i + 1) * interval : duration)
+                            start: i * loopLength,
+                            end  : ((i + 1) * loopLength < duration ? (i + 1) * loopLength : duration )
                         });
                     }
 
                     this.setCurrentLoop(this.findCurrentLoop());
                 },
 
+                /**
+                 * Reset the loops array
+                 * @alias module:views-loop.Loop#resetLoops
+                 */
                 resetLoops: function () {
                     this.loops.each(function (loop) {
                         loop.destroy();
@@ -206,8 +262,14 @@ define(["jquery",
                     this.loops.reset();
                 },
 
+                /**
+                 * Reset the view
+                 * @alias module:views-loop.Loop#reset
+                 */
                 reset: function () {
                     this.resetLoops();
+                    this.undelegateEvents();
+                    this.$el.remove();
                 }
             });
 
