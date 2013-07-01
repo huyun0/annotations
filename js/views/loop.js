@@ -65,8 +65,7 @@ define(["jquery",
                 events: {
                     "click #enableLoop": "toggle",
                     "click .next"      : "nextLoop",
-                    "click .previous"  : "previousLoop",
-                    "change select"    : "changeLoopLength"
+                    "click .previous"  : "previousLoop"
                 },
 
                 /**
@@ -77,23 +76,40 @@ define(["jquery",
                     _.bindAll(this, "toggle",
                                     "createLoops",
                                     "checkLoop",
+                                    "initSlider",
                                     "findCurrentLoop",
                                     "nextLoop",
                                     "previousLoop",
                                     "changeLoopLength",
                                     "resetLoops");
+                    var duration;
 
                     this.playerAdapter = annotationsTool.playerAdapter;
                     this.loops = new Loops([], annotationsTool.video);
 
+
                     $("#video-container").after(this.loopTemplate());
                     this.setElement($("#loop")[0]);
-
-                    this.currentLoopLength = parseInt(this.$el.find("select").val(), 10);
-
-                    $("#slider").slider();
+                    $(this.playerAdapter).one(PlayerAdapter.EVENTS.READY, this.initSlider);
 
                     this.toggle(false);
+                },
+
+                initSlider: function () {
+                    var duration = this.playerAdapter.getDuration();
+                    this.currentLoopLength = Math.round(duration / 10);
+                    this.slider = $("#slider").slider({
+                            min     : 5,
+                            max     : Math.round(duration - 1),
+                            step    : 1,
+                            value   : this.currentLoopLength,
+                            formater: function (value) {
+                                return value + " s";
+                            }
+                    });
+
+                    $("#slider").bind("slideStop", this.changeLoopLength);
+                    this.$el.find("#loop-length").html(this.currentLoopLength + " s");
                 },
 
                 /**
@@ -106,12 +122,11 @@ define(["jquery",
 
                     if (isEnable) {
                         $(this.playerAdapter).bind(PlayerAdapter.EVENTS.TIMEUPDATE, this.checkLoop);
-                        this.$el.find("select").removeAttr("disabled");
                         this.createLoops(this.currentLoopLength);
+                        this.$el.removeClass("disabled");
                     } else {
                         $(this.playerAdapter).unbind(PlayerAdapter.EVENTS.TIMEUPDATE, this.checkLoop);
-                        this.$el.find("select").attr("disabled", "disabled");
-                        this.$el.find(".previous, .next").hide();
+                        this.$el.addClass("disabled");
                     }
 
                     this.isEnable = isEnable;
@@ -168,7 +183,8 @@ define(["jquery",
                  * @alias module:views-loop.Loop#changeLoopLength
                  */
                 changeLoopLength: function () {
-                    this.currentLoopLength = parseInt(this.$el.find("select").val(), 10);
+                    this.currentLoopLength = parseInt(this.slider.val(), 10);
+                    this.$el.find("#loop-length").html(this.currentLoopLength + " s");
                     this.createLoops(this.currentLoopLength);
                 },
 

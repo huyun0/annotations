@@ -34,6 +34,21 @@ div#loop {
         }
     }
 
-    padding: 5px;
+    &.disabled {
+        div.slider, div.btn-group, #loop-length {
+            visibility: hidden;
+        }
+    }
+
+    label {
+        margin-right: 20px;
+    }
+
+    #loop-length {
+        margin-left: 5px;
+    }
+
+    padding: 5px 10px 10px 10px;
     color: white;
+    overflow: visible;
 }
