@@ -6351,35 +6351,6 @@
     float: left;
     margin-right: 5px;
   }
-  div#loop {
-    padding: 5px;
-    color: white;
-  }
-  div#loop h4 {
-    font-size: 12px;
-    padding: 2px;
-    background-color: grey;
-  }
-  div#loop div.repeat,
-  div#loop div.duration {
-    float: left;
-  }
-  div#loop div.repeat .after {
-    margin-left: -5px;
-  }
-  div#loop div.controls label {
-    float: left;
-    color: white;
-  }
-  div#loop div.controls select#interval {
-    float: left;
-    width: 60px;
-    margin-left: 20px;
-    margin-bottom: 0px;
-  }
-  div#loop div.controls div.btn-group {
-    float: right;
-  }
 }
 @media screen and (max-width: 767px) {
   .visible-phone {
