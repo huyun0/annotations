@@ -219,7 +219,7 @@ define(["jquery",
                     var currentTime = this.playerAdapter.getCurrentTime();
 
                     return this.loops.find(function (loop) {
-                                return loop.get("start") <= currentTime && loop.get("end") >= currentTime;
+                                return loop.get("start") <= currentTime && loop.get("end") > currentTime;
                             });
                 },
 
@@ -229,8 +229,13 @@ define(["jquery",
                  * @alias module:views-loop.Loop#createLoops
                  */
                 createLoops: function (loopLength) {
-                    var duration = this.playerAdapter.getDuration(),
-                        i;
+                    var duration    = this.playerAdapter.getDuration(),
+                        currentTime = this.playerAdapter.getCurrentTime(),
+                        limit       = currentTime === 0 ? duration : currentTime,
+                        timeline    = annotationsTool.views.timeline,
+                        isLimit     = false,
+                        startTime   = 0,
+                        endTime;
 
                     if (loopLength >= duration) {
                         annotationsTool.alertInfo("Interval too long to create one loop!");
@@ -240,11 +245,27 @@ define(["jquery",
                     this.resetLoops();
                     this.currentLoopLength = loopLength;
 
-                    for (i = 0; i < duration / loopLength; i++) {
+                    while (startTime < duration) {
+
+                        if (startTime + loopLength >= limit && startTime < currentTime) {
+                            endTime = limit;
+                            limit   = duration;
+                            isLimit = true;
+                        } else {
+                            endTime = startTime + loopLength;
+                        }
+
                         this.loops.add({
-                            start: i * loopLength,
-                            end  : ((i + 1) * loopLength < duration ? (i + 1) * loopLength : duration )
+                            start: startTime,
+                            end  : endTime
                         });
+
+                        if (isLimit) {
+                            startTime = currentTime;
+                            isLimit = false
+                        } else {
+                            startTime += loopLength;
+                        }
                     }
 
                     this.setCurrentLoop(this.findCurrentLoop());
