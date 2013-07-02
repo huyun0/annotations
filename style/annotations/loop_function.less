@@ -17,6 +17,8 @@ div#loop {
     }
 
     div.controls {
+        margin-top: 4px;
+
         label{
             float: left;
             color: white;
@@ -31,6 +33,7 @@ div#loop {
 
         div.btn-group{
             float: right;
+            margin-top: -3px;
         }
     }
 
@@ -41,14 +44,37 @@ div#loop {
     }
 
     label {
+        padding-top : 0px;
         margin-right: 20px;
+    }
+
+    .slider {
+        margin-top: -2px;
     }
 
     #loop-length {
         margin-left: 5px;
     }
 
-    padding: 5px 10px 10px 10px;
-    color: white;
-    overflow: visible;
+    padding    : 5px 10px 10px 10px;
+    color      : white;
+    overflow   : visible;
+}
+
+div#timeline {
+    div.loop {
+        height: 21px;
+        margin-top: -27px;
+        background-color: lighten(green, 10%);
+        opacity: 0.6;
+        border: 1px solid black;
+    }
+
+    div.loop-group {
+        height: 20px;
+        background-color: grey;
+        color: white;
+        padding: 2px;
+        font-weight: bold;
+    }
 }

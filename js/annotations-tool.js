@@ -46,7 +46,8 @@ define(["jquery",
             window.annotationsTool = {
 
                 EVENTS: {
-                    ANNOTATION_SELECTION: "annotation-selection"
+                    ANNOTATION_SELECTION: "at:annotation-selection",
+                    READY               : "at:ready"
                 },
 
                 views: {},
@@ -228,7 +229,7 @@ define(["jquery",
                         }
                     }
 
-                    // Trigger the seleciton event
+                    // Trigger the selection event
                     this.trigger(this.EVENTS.ANNOTATION_SELECTION, this.currentSelection);
                 },
 

@@ -73,15 +73,15 @@ define(["jquery",
                  * @alias module:views-loop.Loop#initialize
                  */
                 initialize: function () {
-                    _.bindAll(this, "toggle",
-                                    "createLoops",
+                    _.bindAll(this, "changeLoopLength",
                                     "checkLoop",
-                                    "initSlider",
+                                    "createLoops",
                                     "findCurrentLoop",
+                                    "initSlider",
                                     "nextLoop",
                                     "previousLoop",
-                                    "changeLoopLength",
-                                    "resetLoops");
+                                    "resetLoops",
+                                    "toggle");
                     var duration;
 
                     this.playerAdapter = annotationsTool.playerAdapter;
@@ -90,7 +90,7 @@ define(["jquery",
 
                     $("#video-container").after(this.loopTemplate());
                     this.setElement($("#loop")[0]);
-                    $(this.playerAdapter).one(PlayerAdapter.EVENTS.READY, this.initSlider);
+                    this.initSlider();
 
                     this.toggle(false);
                 },
@@ -127,6 +127,8 @@ define(["jquery",
                     } else {
                         $(this.playerAdapter).unbind(PlayerAdapter.EVENTS.TIMEUPDATE, this.checkLoop);
                         this.$el.addClass("disabled");
+                        this.resetLoops();
+                        annotationsTool.views.timeline.redraw();
                     }
 
                     this.isEnable = isEnable;
@@ -219,7 +221,7 @@ define(["jquery",
                     var currentTime = this.playerAdapter.getCurrentTime();
 
                     return this.loops.find(function (loop) {
-                                return loop.get("start") <= currentTime && loop.get("end") >= currentTime;
+                                return loop.get("start") <= currentTime && loop.get("end") > currentTime;
                             });
                 },
 
@@ -229,8 +231,13 @@ define(["jquery",
                  * @alias module:views-loop.Loop#createLoops
                  */
                 createLoops: function (loopLength) {
-                    var duration = this.playerAdapter.getDuration(),
-                        i;
+                    var duration    = this.playerAdapter.getDuration(),
+                        currentTime = this.playerAdapter.getCurrentTime(),
+                        limit       = currentTime === 0 ? duration : currentTime,
+                        timeline    = annotationsTool.views.timeline,
+                        isLimit     = false,
+                        startTime   = 0,
+                        endTime;
 
                     if (loopLength >= duration) {
                         annotationsTool.alertInfo("Interval too long to create one loop!");
@@ -240,12 +247,39 @@ define(["jquery",
                     this.resetLoops();
                     this.currentLoopLength = loopLength;
 
-                    for (i = 0; i < duration / loopLength; i++) {
+                    while (startTime < duration) {
+
+                        if ((startTime + loopLength) >= limit) {
+                            endTime = limit;
+                            if (startTime < currentTime) {
+                                limit   = duration;
+                                isLimit = true;
+                            }
+                        } else {
+                            endTime = startTime + loopLength;
+                        }
+
                         this.loops.add({
-                            start: i * loopLength,
-                            end  : ((i + 1) * loopLength < duration ? (i + 1) * loopLength : duration )
+                            start: startTime,
+                            end  : endTime
                         });
+
+                        if (isLimit) {
+                            startTime = currentTime;
+                            isLimit = false
+                        } else {
+                            startTime += loopLength;
+                        }
                     }
+
+                    this.loops.each(function (loop, index) {
+                        timeline.addItem("loop-" + index, {
+                            start  : timeline.getFormatedDate(loop.get("start")),
+                            end    : timeline.getFormatedDate(loop.get("end")),
+                            group  : "<div class=\"loop-group\">Loops",
+                            content: "<div class=\"loop\"></div>"
+                        });
+                    });
 
                     this.setCurrentLoop(this.findCurrentLoop());
                 },
@@ -255,7 +289,12 @@ define(["jquery",
                  * @alias module:views-loop.Loop#resetLoops
                  */
                 resetLoops: function () {
-                    this.loops.each(function (loop) {
+                    this.loops.each(function (loop, index) {
+                        annotationsTool.views.timeline.removeItem("loop-" + index);
+                    });
+
+                    this.loops.each(function (loop, index) {
+                        // annotationsTool.views.timeline.removeItem("loop-" + index);
                         loop.destroy();
                     });
 

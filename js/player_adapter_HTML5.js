@@ -195,6 +195,7 @@ define(["jquery",
                 case PlayerAdapter.STATUS.ENDED:
                     // If yes, we play it
                     targetElement.play();
+                    self.status =  PlayerAdapter.STATUS.PLAYING;
                     self.waitToPlay = false;
                     break;
                 }
@@ -213,7 +214,6 @@ define(["jquery",
             this.load = function () {
                 self.initialized = false;
                 self.status = PlayerAdapter.STATUS.INITIALIZING;
-                targetElement.load();
                 targetElement.load();
             };
 

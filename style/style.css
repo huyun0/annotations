@@ -6532,6 +6532,9 @@
   div#loop div.repeat .after {
     margin-left: -5px;
   }
+  div#loop div.controls {
+    margin-top: 4px;
+  }
   div#loop div.controls label {
     float: left;
     color: white;
@@ -6544,6 +6547,7 @@
   }
   div#loop div.controls div.btn-group {
     float: right;
+    margin-top: -3px;
   }
   div#loop.disabled div.slider,
   div#loop.disabled div.btn-group,
@@ -6551,10 +6555,28 @@
     visibility: hidden;
   }
   div#loop label {
+    padding-top: 0px;
     margin-right: 20px;
+  }
+  div#loop .slider {
+    margin-top: -2px;
   }
   div#loop #loop-length {
     margin-left: 5px;
+  }
+  div#timeline div.loop {
+    height: 21px;
+    margin-top: -27px;
+    background-color: #00b300;
+    opacity: 0.6;
+    border: 1px solid black;
+  }
+  div#timeline div.loop-group {
+    height: 20px;
+    background-color: grey;
+    color: white;
+    padding: 2px;
+    font-weight: bold;
   }
 }
 @media screen and (max-width: 767px) {
