@@ -62,9 +62,7 @@ define(["jquery",
             initialize: function (models, video) {
                 _.bindAll(this, "setUrl");
 
-                annotationsTool.localStorageOnlyModel.push(this.TYPE);
-
-                // this.setUrl(video);
+                annotationsTool.localStorageOnlyModel.push(this.TYPE); 
             },
 
             /**

@@ -115,14 +115,16 @@ define(["jquery",
                     throw "The player adapter is not valid! It must has PlayerAdapter as prototype.";
                 }
 
-                _.bindAll(this, "logout",
-                                "checkUserAndLogin",
-                                "initModels",
+                _.bindAll(this, "checkUserAndLogin",
                                 "createViews",
-                                "setLoadingProgress",
+                                "initModels",
+                                "logout",
+                                "loadPlugins",
                                 "onDeletePressed",
                                 "onWindowResize",
-                                "print");
+                                "print",
+                                "ready",
+                                "setLoadingProgress");
 
                 this.setLoadingProgress(10, "Starting tool.");
 
@@ -170,10 +172,9 @@ define(["jquery",
 
                 annotationsTool.filtersManager   = new FiltersManager();
                 annotationsTool.importCategories = this.importCategories;
-
-                this.loadPlugins(annotationsTool.plugins);
-
-                this.onWindowResize();
+                annotationsTool.dispatcher.once(annotationsTool.EVENTS.READY, function () {
+                    this.loadPlugins(annotationsTool.plugins);
+                }, this);
             },
 
             /**
@@ -213,6 +214,7 @@ define(["jquery",
                             // Create views with Timeline
                             this.setLoadingProgress(70, "Creating timeline.");
                             this.timelineView = new TimelineView({playerAdapter: this.playerAdapter});
+                            annotationsTool.views.timeline = this.timelineView;
                         }
 
                         if (annotationsTool.getLayoutConfiguration().annotate) {
@@ -221,6 +223,7 @@ define(["jquery",
                             this.annotateView = new AnnotateView({playerAdapter: this.playerAdapter});
                             this.listenTo(this.annotateView, "change-layout", this.onWindowResize);
                             this.annotateView.$el.show();
+                            annotationsTool.views.annotate = this.annotateView;
                         }
 
                         if (annotationsTool.getLayoutConfiguration().list) {
@@ -229,16 +232,10 @@ define(["jquery",
                             this.listView = new ListView();
                             this.listenTo(this.listView, "change-layout", this.onWindowResize);
                             this.listView.$el.show();
+                            annotationsTool.views.list = this.listView;
                         }
 
-                        this.setLoadingProgress(100, "Ready.");
-                        this.loadingBox.hide();
-
-                        this.onWindowResize();
-
-                        // Show logout button
-                        $("a#logout").css("display", "block");
-                        this.timelineView.redraw();
+                        this.ready();
                     }, this);
 
                     this.playerAdapter.load();
@@ -253,6 +250,22 @@ define(["jquery",
                     }
 
                 }, this));
+            },
+
+            /**
+             * Function to signal that the tool is ready
+             * @alias module:views-main.MainView#ready
+             */
+            ready: function () {
+                this.setLoadingProgress(100, "Ready.");
+                this.loadingBox.hide();
+                this.onWindowResize();
+
+                // Show logout button
+                $("a#logout").css("display", "block");
+                this.timelineView.redraw();
+
+                annotationsTool.dispatcher.trigger(annotationsTool.EVENTS.READY);
             },
 
             /**

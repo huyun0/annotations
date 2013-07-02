@@ -56,13 +56,14 @@ require.config({
 
     "bootstrap": ["jquery"],
     "scrollspy": ["bootstrap"],
-    "carousel": ["bootstrap"],
-    "tab": ["bootstrap"],
+    "carousel" : ["bootstrap"],
+    "tab"      : ["bootstrap"],
+    "slider"   : ["jquery"]
   }
 });
 
 // Bootstrap function for main app
-require(['domReady', 'annotations-tool-configuration', 'annotations-tool'],
+require(["domReady", "annotations-tool-configuration", "annotations-tool"],
 
 function (domReady, config, app) {
     domReady(function () {
