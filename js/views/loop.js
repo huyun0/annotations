@@ -45,10 +45,27 @@ define(["jquery",
 
                 /**
                  * Maximal margin supported to define if we are still in the same loop
-                 * @alias module:views-loop.Loop#MAX_MARGIN
+                 * @constant
                  * @type {Number}
+                 * @alias module:views-loop.Loop#MAX_MARGIN
                  */
                 MAX_MARGIN: 3,
+
+                /**
+                 * The minimal length of a loop
+                 * @constant
+                 * @type {Number}
+                 * @alias module:views-loop.Loop#MINIMAL_LOOP
+                 */
+                MINIMAL_LOOP: 5,
+
+                /**
+                 * Length of the step between each value of the slider
+                 * @constant
+                 * @type {Number}
+                 * @alias module:views-loop.Loop#SLIDER_STEP
+                 */
+                SLIDER_STEP: 1,
 
                 /**
                  * Loop template
@@ -87,7 +104,6 @@ define(["jquery",
                     this.playerAdapter = annotationsTool.playerAdapter;
                     this.loops = new Loops([], annotationsTool.video);
 
-
                     $("#video-container").after(this.loopTemplate());
                     this.setElement($("#loop")[0]);
                     this.initSlider();
@@ -97,9 +113,10 @@ define(["jquery",
 
                 initSlider: function () {
                     var duration = this.playerAdapter.getDuration();
-                    this.currentLoopLength = Math.round(duration / 10);
+
+                    this.currentLoopLength = (duration / 10) < this.MINIMAL_LOOP ? this.MINIMAL_LOOP : Math.round(duration / 10);
                     this.slider = $("#slider").slider({
-                            min     : 5,
+                            min     : this.MINIMAL_LOOP,
                             max     : Math.round(duration - 1),
                             step    : 1,
                             value   : this.currentLoopLength,
@@ -294,7 +311,6 @@ define(["jquery",
                     });
 
                     this.loops.each(function (loop, index) {
-                        // annotationsTool.views.timeline.removeItem("loop-" + index);
                         loop.destroy();
                     });
 
@@ -308,6 +324,7 @@ define(["jquery",
                 reset: function () {
                     this.resetLoops();
                     this.undelegateEvents();
+                    this.isEnable = false;
                     this.$el.remove();
                 }
             });

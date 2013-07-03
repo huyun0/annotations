@@ -40,17 +40,6 @@ define(["jquery",
             TYPE: "Loop",
 
             /**
-             * Default models value
-             * @alias module:models-loop.Loop#defaults
-             * @type {map}
-             * @static
-             */
-            defaults: {
-                start: 0,
-                end  : 0
-            },
-
-            /**
              * Constructor
              * @alias module:models-loop.Loop#initialize
              * @param {object} attr Object literal containing the model initialion attributes.
@@ -76,8 +65,12 @@ define(["jquery",
                     return "The attributes 'start' and 'end' are required for the loop model!";
                 }
 
-                if (!_.isNumber(attr.start) || !_.isNumber(attr.end)) {
-                    return "";
+                if (!_.isNumber(attr.start) || !_.isNumber(attr.end) || attr.start < 0 || attr.end < 0) {
+                    return "Start and end points must be valid number!";
+                }
+
+                if (attr.start > attr.end) {
+                    return "The start point is after the end point!";
                 }
             },
         });

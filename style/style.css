@@ -6567,9 +6567,10 @@
   div#timeline div.loop {
     height: 21px;
     margin-top: -27px;
-    background-color: #00b300;
+    background-color: #00cd00;
     opacity: 0.6;
-    border: 1px solid black;
+    border: 1px solid #004d00;
+    border-right: 3px solid #b3ffb3;
   }
   div#timeline div.loop-group {
     height: 20px;
