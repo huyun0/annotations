@@ -20,7 +20,7 @@
  * @requires Backbone
  * @requires templates/loop-modal.tmpl
  * @requires ROLES
- * @requires hanldebars
+ * @requires handlebars
  */
 define(["jquery",
         "collections/loops",
@@ -80,9 +80,10 @@ define(["jquery",
                  * @type {object}
                  */
                 events: {
-                    "click #enableLoop": "toggle",
-                    "click .next"      : "nextLoop",
-                    "click .previous"  : "previousLoop"
+                    "click #enableLoop"  : "toggle",
+                    "click .next"        : "nextLoop",
+                    "click .previous"    : "previousLoop",
+                    "change #loop-length": "typeLoopLength"
                 },
 
                 /**
@@ -90,7 +91,8 @@ define(["jquery",
                  * @alias module:views-loop.Loop#initialize
                  */
                 initialize: function () {
-                    _.bindAll(this, "changeLoopLength",
+                    _.bindAll(this, "addTimelineItem",
+                                    "changeLoopLength",
                                     "checkLoop",
                                     "createLoops",
                                     "findCurrentLoop",
@@ -98,7 +100,8 @@ define(["jquery",
                                     "nextLoop",
                                     "previousLoop",
                                     "resetLoops",
-                                    "toggle");
+                                    "toggle",
+                                    "typeLoopLength");
                     var duration;
 
                     this.playerAdapter = annotationsTool.playerAdapter;
@@ -126,7 +129,7 @@ define(["jquery",
                     });
 
                     $("#slider").bind("slideStop", this.changeLoopLength);
-                    this.$el.find("#loop-length").html(this.currentLoopLength + " s");
+                    this.$el.find("#loop-length").val(this.currentLoopLength);
                 },
 
                 /**
@@ -198,12 +201,34 @@ define(["jquery",
                 },
 
                 /**
-                 * Change the loop length
+                 * Change the loop length through the text box
+                 * @param  {Object} event The event object
+                 * @alias module:views-loop.Loop#typeLoopLength
+                 */
+                typeLoopLength: function (event) {
+                    var loopInput = $(event.target),
+                        newValue = parseInt(loopInput.val(), 10);
+
+                    if (_.isNaN(newValue) || newValue > this.playerAdapter.getDuration() || newValue < 0) {
+                        annotationsTool.alertWarning("The given value for the loop length is not valid!");
+                        loopInput.val(this.currentLoopLength);
+                        return;
+                    }
+
+                    this.currentLoopLength = newValue;
+                    this.$el.find("#slider").slider("setValue", this.currentLoopLength);
+                    this.createLoops(this.currentLoopLength);
+                },
+
+                /**
+                 * Change the loop length through the slider
+                 * @param  {Object} event The event object
                  * @alias module:views-loop.Loop#changeLoopLength
                  */
-                changeLoopLength: function () {
-                    this.currentLoopLength = parseInt(this.slider.val(), 10);
-                    this.$el.find("#loop-length").html(this.currentLoopLength + " s");
+                changeLoopLength: function (event) {
+                    this.currentLoopLength = parseInt(event.value, 10);
+                    this.$el.find("#loop-length").val(this.currentLoopLength);
+                    this.$el.find("#slider").slider("setValue", this.currentLoopLength);
                     this.createLoops(this.currentLoopLength);
                 },
 
@@ -214,6 +239,10 @@ define(["jquery",
                  */
                 setCurrentLoop: function (loop) {
                     var index = _.isNumber(loop) ? loop : this.loops.indexOf(loop);
+
+                    if (!_.isUndefined(this.currentLoop)) {
+                        this.addTimelineItem(this.currentLoop, false);
+                    }
 
                     this.$el.find(".previous, .next").show();
 
@@ -228,6 +257,7 @@ define(["jquery",
                     }
 
                     this.currentLoop = this.loops.at(index);
+                    this.addTimelineItem(this.currentLoop, true);
                 },
 
                 /**
@@ -251,7 +281,6 @@ define(["jquery",
                     var duration    = this.playerAdapter.getDuration(),
                         currentTime = this.playerAdapter.getCurrentTime(),
                         limit       = currentTime === 0 ? duration : currentTime,
-                        timeline    = annotationsTool.views.timeline,
                         isLimit     = false,
                         startTime   = 0,
                         endTime;
@@ -263,6 +292,7 @@ define(["jquery",
 
                     this.resetLoops();
                     this.currentLoopLength = loopLength;
+                    this.currentLoop = undefined;
 
                     while (startTime < duration) {
 
@@ -290,15 +320,28 @@ define(["jquery",
                     }
 
                     this.loops.each(function (loop, index) {
-                        timeline.addItem("loop-" + index, {
-                            start  : timeline.getFormatedDate(loop.get("start")),
-                            end    : timeline.getFormatedDate(loop.get("end")),
-                            group  : "<div class=\"loop-group\">Loops",
-                            content: "<div class=\"loop\"></div>"
-                        });
-                    });
+                        this.addTimelineItem(loop, false);
+                    }, this);
 
                     this.setCurrentLoop(this.findCurrentLoop());
+                },
+
+                /**
+                 * Add the given loop on the timeline. If the given loop already has a representation, this one will be replaced.
+                 * @param {object}  loop      The loop to represent on the timeline
+                 * @param {Boolean} isCurrent Define if the loop is the current one
+                 * @alias module:views-loop.Loop#addTimelineItem
+                 */
+                addTimelineItem: function (loop, isCurrent) {
+                    var timeline    = annotationsTool.views.timeline,
+                        loopClass   = isCurrent ? "loop current" : "loop";
+
+                    timeline.addItem("loop-" + loop.cid, {
+                        start  : timeline.getFormatedDate(loop.get("start")),
+                        end    : timeline.getFormatedDate(loop.get("end")),
+                        group  : "<div class=\"loop-group\">Loops",
+                        content: "<div id=\"loop-" + loop.cid + "\" class=\"" + loopClass + "\"></div>"
+                    });
                 },
 
                 /**
@@ -307,7 +350,7 @@ define(["jquery",
                  */
                 resetLoops: function () {
                     this.loops.each(function (loop, index) {
-                        annotationsTool.views.timeline.removeItem("loop-" + index);
+                        annotationsTool.views.timeline.removeItem("loop-" + loop.cid);
                     });
 
                     this.loops.each(function (loop, index) {

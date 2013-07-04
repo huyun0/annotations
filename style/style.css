@@ -6551,7 +6551,8 @@
   }
   div#loop.disabled div.slider,
   div#loop.disabled div.btn-group,
-  div#loop.disabled #loop-length {
+  div#loop.disabled #loop-length,
+  div#loop.disabled span {
     visibility: hidden;
   }
   div#loop label {
@@ -6562,15 +6563,22 @@
     margin-top: -2px;
   }
   div#loop #loop-length {
-    margin-left: 5px;
+    width: 3em;
+    line-height: 12px;
+    margin: -2px 2px 0px 5px;
+    padding: 1px;
+    text-align: right;
   }
   div#timeline div.loop {
     height: 21px;
     margin-top: -27px;
-    background-color: #00cd00;
+    background-color: #009a00;
     opacity: 0.6;
     border: 1px solid #004d00;
-    border-right: 3px solid #b3ffb3;
+    border-right: 2px solid #000000;
+  }
+  div#timeline div.loop.current {
+    background-color: #9aff9a;
   }
   div#timeline div.loop-group {
     height: 20px;

@@ -448,6 +448,13 @@ define(["jquery",
                 }, true);
             },
 
+            /**
+             * Add a new item to the timeline
+             * @param {string}  id           The id of the item
+             * @param {object}  item         The object representing the item
+             * @param {Boolean} isPartOfList Define if the object is part of a group insertion
+             * @alias module:views-timeline.TimelineView#addItem
+             */
             addItem: function (id, item, isPartOfList) {
                 this.allItems[id] = item;
                 if (!isPartOfList) {
@@ -456,6 +463,11 @@ define(["jquery",
                 }
             },
 
+            /**
+             * Remove the timeline item with the given id
+             * @param  {string} id The id of the item to remove
+             * @alias module:views-timeline.TimelineView#removeItem
+             */
             removeItem: function (id) {
                 delete this.allItems[id];
                 this.filterItems();

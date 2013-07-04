@@ -30,7 +30,7 @@ define(["jquery",
                var self = this;
 
                if (_.contains(annotationsTool.localStorageOnlyModel ,model.TYPE)) {
-                  Backbone.localSync(method, model, options);
+                  return Backbone.localSync(method, model, options);
                }
                
                // Sync module configuration

@@ -38,7 +38,7 @@ div#loop {
     }
 
     &.disabled {
-        div.slider, div.btn-group, #loop-length {
+        div.slider, div.btn-group, #loop-length, span {
             visibility: hidden;
         }
     }
@@ -53,7 +53,11 @@ div#loop {
     }
 
     #loop-length {
-        margin-left: 5px;
+        width: 3em;
+        line-height: 12px;
+        margin: -2px 2px 0px 5px;
+        padding: 1px;
+        text-align: right;
     }
 
     padding    : 5px 10px 10px 10px;
@@ -65,10 +69,14 @@ div#timeline {
     div.loop {
         height: 21px;
         margin-top: -27px;
-        background-color: lighten(green, 15%);
+        background-color: lighten(green, 5%);
         opacity: 0.6;
         border: 1px solid darken(green, 10%);
-        border-right: 3px solid lighten(green, 60%);
+        border-right: 2px solid darken(green, 50%);
+
+        &.current {
+            background-color: lighten(green, 55%);
+        }
     }
 
     div.loop-group {

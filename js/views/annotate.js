@@ -58,7 +58,7 @@ define(["jquery",
              */
             DEFAULT_TABS = {
                 ALL: {
-                    id   :  "all",
+                    id   : "all",
                     name : "All",
                     roles: []
                 },
