@@ -258,7 +258,7 @@ define(["jquery",
                 this.titleLink = attr.button;
                 this.titleLink.find("i.add").bind("click", this.onAddCategory);
                 this.titleLink.find("i.export").bind("click", this.onExport);
-                this.titleLink.find("i.import").click(this.chooseFile);
+                this.titleLink.find("i.import").bind("click", this.chooseFile);
 
                 this.titleLink.find(".file").fileReader({
                     id            : "fileReaderSWFObject",
@@ -267,7 +267,6 @@ define(["jquery",
                     debugMode     : false,
                     callback      : function () {},
                     multiple      : false,
-                    //accept      : "text/javascript",
                     label         : "JSON files",
                     extensions    : "*.json"
                 });
@@ -645,7 +644,9 @@ define(["jquery",
              * Simulate the a click on file input box to choose a file to import
              * @alias module:views-annotate-tab.AnnotateTab#chooseFile
              */
-            chooseFile: function () {
+            chooseFile: function (event) {
+                event.preventDefault();
+                event.stopImmediatePropagation();
                 this.titleLink.find(".file").click();
             },
 

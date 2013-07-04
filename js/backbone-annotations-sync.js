@@ -43,6 +43,11 @@ define(["jquery",
                     findAll,
                     destroy;
 
+                // Check if the model is limited to persistence on localStorage
+                if (_.contains(annotationsTool.localStorageOnlyModel, model.TYPE)) {
+                    return Backbone.localSync(method, model, options);
+                }
+
 
                 // Enable cross-domain for jquery ajax query
                 $.support.cors = true;

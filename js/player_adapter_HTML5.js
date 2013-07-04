@@ -195,6 +195,7 @@ define(["jquery",
                 case PlayerAdapter.STATUS.ENDED:
                     // If yes, we play it
                     targetElement.play();
+                    self.status =  PlayerAdapter.STATUS.PLAYING;
                     self.waitToPlay = false;
                     break;
                 }

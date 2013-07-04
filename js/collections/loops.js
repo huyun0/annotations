@@ -60,9 +60,7 @@ define(["jquery",
              * @alias module:collections-loops.Loops#initialize
              */
             initialize: function (models, video) {
-                _.bindAll(this, "setUrl");
-
-                annotationsTool.localStorageOnlyModel.push(this.TYPE); 
+                annotationsTool.localStorageOnlyModel.push(this.TYPE);
             },
 
             /**
@@ -79,21 +77,6 @@ define(["jquery",
                 } else {
                     return null;
                 }
-            },
-
-            /**
-             * Define the url from the collection with the given video
-             * @alias module:collections-loops.Loops#setUrl
-             * @param {Video} Video containing the loops
-             */
-            setUrl: function (video) {
-                if (!video) {
-                    throw "The parent video of the loops must be given!";
-                } else if (video.collection) {
-                    this.url = video.url() + "/loops";
-                }
-
-                // this.localStorage = new Backbone.LocalStorage(this.url);
             },
 
             comparator: function (loop) {
