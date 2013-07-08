@@ -75,6 +75,25 @@ define(["jquery",
                 DEACTIVATED_CLASS: "deactivated",
 
                 /**
+                 * Class for the button to hide/show the loop function in the layout menu
+                 * @type {String}
+                 * @alias module:views-loop.Loop#LAYOUT_MENU_CLASS
+                 */
+                LAYOUT_MENU_CLASS: "enableLoops",
+
+                /**
+                 * Template of the button to hide/show the loop function in the layout menu
+                 * @type {String}
+                 * @alias module:views-loop.Loop#LAYOUT_MENU_TMPL
+                 */
+                LAYOUT_MENU_TMPL:   "<li class=\"divider\"></li>\
+                                     <li>\
+                                         <a id=\"enableLoops\" href=\"#\" class=\"checked\">\
+                                             <i class=\"check icon-check\"></i> Loop function\
+                                         </a>\
+                                     </li>",
+
+                /**
                  * Loop template
                  * @alias module:views-loop.Loop#loopTemplate
                  * @type {Handlebars template}
@@ -108,6 +127,7 @@ define(["jquery",
                                     "previousLoop",
                                     "resetLoops",
                                     "toggle",
+                                    "toggleVisibity",
                                     "typeLoopLength");
                     var duration;
 
@@ -118,7 +138,34 @@ define(["jquery",
                     this.setElement($("#loop")[0]);
                     this.initSlider();
 
+                    if (!_.isUndefined(annotationsTool.views.annotate)) {
+                        var annotateView = annotationsTool.views.annotate,
+                            self = this;
+                        annotateView.$el.find(".dropdown-menu").append(this.LAYOUT_MENU_TMPL);
+                        annotateView.$el.find(".dropdown-menu #" + this.LAYOUT_MENU_CLASS).bind("click", this.toggleVisibity);
+                    }
+
                     this.toggle(false);
+                },
+
+                /**
+                 * Listesner for the button to activate/deactivate the loop function in the layout menu
+                 * @param  {Object} event The related event object
+                 * @alias module:views-loop.Loop#toggle
+                 */
+                toggleVisibity: function (event) {
+                    $(event.target).toggleClass("checked");
+
+                    if ($(event.target).hasClass("checked")) {
+                        if (this.wasEnableBeforeDeactivate) {
+                            this.toggle(true)
+                        }
+                        this.$el.show();
+                    } else {
+                        this.$el.hide();
+                        this.wasEnableBeforeDeactivate = this.isEnable;
+                        this.toggle(false);
+                    }
                 },
 
                 initSlider: function () {
