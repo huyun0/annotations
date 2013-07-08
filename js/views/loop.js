@@ -173,7 +173,7 @@ define(["jquery",
                         if (currentTime === this.playerAdapter.getDuration()) {
                             this.playerAdapter.play();
                         }
-                    } else if (difference > this.MAX_MARGIN) {
+                    } else if (Math.abs(difference) > this.MAX_MARGIN) {
                         this.setCurrentLoop(this.findCurrentLoop());
                     }
                 },
