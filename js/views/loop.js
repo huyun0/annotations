@@ -49,7 +49,7 @@ define(["jquery",
                  * @type {Number}
                  * @alias module:views-loop.Loop#MAX_MARGIN
                  */
-                MAX_MARGIN: 3,
+                MAX_MARGIN: 1,
 
                 /**
                  * The minimal length of a loop
@@ -165,15 +165,20 @@ define(["jquery",
                     }
 
                     var currentTime = this.playerAdapter.getCurrentTime(),
-                        difference = (currentTime - this.currentLoop.get("end"));
+                        differenceEnd = (this.currentLoop.get("end") - currentTime),
+                        differenceStart = (currentTime - this.currentLoop.get("start")),
+                        MAX_MARGIN = this.MAX_MARGIN,
+                        checkLimit = function (limit) {
+                            return (limit < 0) && (Math.abs(limit) > MAX_MARGIN);
+                        };
 
-                    if (difference >= 0 && difference < this.MAX_MARGIN) {
+                    if (differenceEnd <= 0 && Math.abs(differenceEnd) < this.MAX_MARGIN) {
                         this.playerAdapter.setCurrentTime(this.currentLoop.get("start"));
 
                         if (currentTime === this.playerAdapter.getDuration()) {
                             this.playerAdapter.play();
                         }
-                    } else if (Math.abs(difference) > this.MAX_MARGIN) {
+                    } else if (checkLimit(differenceEnd) || checkLimit(differenceStart)) {
                         this.setCurrentLoop(this.findCurrentLoop());
                     }
                 },
@@ -184,8 +189,15 @@ define(["jquery",
                  */
                 nextLoop: function () {
                     if (this.isEnable) {
+                        var isPlaying = this.playerAdapter.getStatus() === PlayerAdapter.STATUS.PLAYING;
+                        if (isPlaying) {
+                            this.playerAdapter.pause();
+                        }
                         this.setCurrentLoop(this.loops.indexOf(this.currentLoop) + 1);
                         this.playerAdapter.setCurrentTime(this.currentLoop.get("start"));
+                        if (isPlaying) {
+                            this.playerAdapter.play();
+                        }
                     }
                 },
 
@@ -195,8 +207,15 @@ define(["jquery",
                  */
                 previousLoop: function () {
                     if (this.isEnable) {
+                        var isPlaying = this.playerAdapter.getStatus() === PlayerAdapter.STATUS.PLAYING;
+                        if (isPlaying) {
+                            this.playerAdapter.pause();
+                        }
                         this.setCurrentLoop(this.loops.indexOf(this.currentLoop) - 1);
                         this.playerAdapter.setCurrentTime(this.currentLoop.get("start"));
+                        if (isPlaying) {
+                            this.playerAdapter.play();
+                        }
                     }
                 },
 
@@ -280,10 +299,9 @@ define(["jquery",
                 createLoops: function (loopLength) {
                     var duration    = this.playerAdapter.getDuration(),
                         currentTime = this.playerAdapter.getCurrentTime(),
-                        limit       = currentTime === 0 ? duration : currentTime,
                         isLimit     = false,
-                        startTime   = 0,
-                        endTime;
+                        endTime,
+                        startTime   = currentTime % loopLength;
 
                     if (loopLength >= duration) {
                         annotationsTool.alertInfo("Interval too long to create one loop!");
@@ -294,14 +312,17 @@ define(["jquery",
                     this.currentLoopLength = loopLength;
                     this.currentLoop = undefined;
 
+                    if (startTime > 0) {
+                        this.loops.add({
+                            start: 0,
+                            end  : startTime
+                        })
+                    }
+
                     while (startTime < duration) {
 
-                        if ((startTime + loopLength) >= limit) {
-                            endTime = limit;
-                            if (startTime < currentTime) {
-                                limit   = duration;
-                                isLimit = true;
-                            }
+                        if ((startTime + loopLength) >= duration) {
+                            endTime = duration;
                         } else {
                             endTime = startTime + loopLength;
                         }
@@ -311,12 +332,7 @@ define(["jquery",
                             end  : endTime
                         });
 
-                        if (isLimit) {
-                            startTime = currentTime;
-                            isLimit = false
-                        } else {
-                            startTime += loopLength;
-                        }
+                        startTime += loopLength;
                     }
 
                     this.loops.each(function (loop, index) {
