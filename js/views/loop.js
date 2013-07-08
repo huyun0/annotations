@@ -68,6 +68,13 @@ define(["jquery",
                 SLIDER_STEP: 1,
 
                 /**
+                 * Class to mark a button as deactivated
+                 * @type {String}
+                 * @alias module:views-loop.Loop#DEACTIVATED_CLASS
+                 */
+                DEACTIVATED_CLASS: "deactivated",
+
+                /**
                  * Loop template
                  * @alias module:views-loop.Loop#loopTemplate
                  * @type {Handlebars template}
@@ -187,8 +194,8 @@ define(["jquery",
                  * Move to next loop
                  * @alias module:views-loop.Loop#nextLoop
                  */
-                nextLoop: function () {
-                    if (this.isEnable) {
+                nextLoop: function (event) {
+                    if (this.isEnable && !$(event.target).parent().hasClass(this.DEACTIVATED_CLASS)) {
                         var isPlaying = this.playerAdapter.getStatus() === PlayerAdapter.STATUS.PLAYING;
                         if (isPlaying) {
                             this.playerAdapter.pause();
@@ -206,7 +213,7 @@ define(["jquery",
                  * @alias module:views-loop.Loop#previousLoop
                  */
                 previousLoop: function () {
-                    if (this.isEnable) {
+                    if (this.isEnable && !$(event.target).parent().hasClass(this.DEACTIVATED_CLASS)) {
                         var isPlaying = this.playerAdapter.getStatus() === PlayerAdapter.STATUS.PLAYING;
                         if (isPlaying) {
                             this.playerAdapter.pause();
@@ -263,16 +270,16 @@ define(["jquery",
                         this.addTimelineItem(this.currentLoop, false);
                     }
 
-                    this.$el.find(".previous, .next").show();
+                    this.$el.find(".previous, .next").removeClass(this.DEACTIVATED_CLASS);
 
                     if (index <= 0) {
                         index = 0;
-                        this.$el.find(".previous").hide();
+                        this.$el.find(".previous").addClass(this.DEACTIVATED_CLASS);
                     }
 
                     if (index >= (this.loops.size() - 1)) {
                         index = this.loops.size() - 1;
-                        this.$el.find(".next").hide();
+                        this.$el.find(".next").addClass(this.DEACTIVATED_CLASS);
                     }
 
                     this.currentLoop = this.loops.at(index);

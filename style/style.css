@@ -6549,6 +6549,19 @@
     float: right;
     margin-top: -3px;
   }
+  div#loop div.controls div.btn-group .deactivated {
+    background-image: none;
+    -webkit-box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
+    -moz-box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05) 0 1px #000000;
+    -moz-box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05) 0 1px #000000;
+    -webkit-box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05) 0 1px #000000;
+    background-color: #676767;
+  }
+  div#loop div.controls div.btn-group .deactivated:hover {
+    cursor: default;
+  }
   div#loop.disabled div.slider,
   div#loop.disabled div.btn-group,
   div#loop.disabled #loop-length,
