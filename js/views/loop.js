@@ -94,6 +94,16 @@ define(["jquery",
                                      </li>",
 
                 /**
+                 * Template of the timelineItem
+                 * @type {Object}
+                 * @alias module:views-loop.Loop#timelineItemTmpl
+                 */
+                timelineItemTmpl: Handlebars.compile("<div id=\"loop-{{cid}}\"\
+                                                          class=\"{{class}}\"\
+                                                          onclick=\"annotationsTool.loopFunction.setCurrentLoop({{index}}, true)\">\
+                                                      </div>"),
+
+                /**
                  * Loop template
                  * @alias module:views-loop.Loop#loopTemplate
                  * @type {Handlebars template}
@@ -146,6 +156,8 @@ define(["jquery",
                     }
 
                     this.toggle(false);
+
+                    annotationsTool.loopFunction = this;
                 },
 
                 /**
@@ -243,15 +255,8 @@ define(["jquery",
                  */
                 nextLoop: function (event) {
                     if (this.isEnable && !$(event.target).parent().hasClass(this.DEACTIVATED_CLASS)) {
-                        var isPlaying = this.playerAdapter.getStatus() === PlayerAdapter.STATUS.PLAYING;
-                        if (isPlaying) {
-                            this.playerAdapter.pause();
-                        }
                         this.setCurrentLoop(this.loops.indexOf(this.currentLoop) + 1);
                         this.playerAdapter.setCurrentTime(this.currentLoop.get("start"));
-                        if (isPlaying) {
-                            this.playerAdapter.play();
-                        }
                     }
                 },
 
@@ -261,15 +266,8 @@ define(["jquery",
                  */
                 previousLoop: function () {
                     if (this.isEnable && !$(event.target).parent().hasClass(this.DEACTIVATED_CLASS)) {
-                        var isPlaying = this.playerAdapter.getStatus() === PlayerAdapter.STATUS.PLAYING;
-                        if (isPlaying) {
-                            this.playerAdapter.pause();
-                        }
                         this.setCurrentLoop(this.loops.indexOf(this.currentLoop) - 1);
                         this.playerAdapter.setCurrentTime(this.currentLoop.get("start"));
-                        if (isPlaying) {
-                            this.playerAdapter.play();
-                        }
                     }
                 },
 
@@ -308,9 +306,10 @@ define(["jquery",
                 /**
                  * Set the given loop as the current one
                  * @param {Object || Integer} loop The new loop object or its index
+                 * @param {Boolean} moveTo Define if yes or no the playhead must be moved at the beginning of the loop
                  * @alias module:views-loop.Loop#setCurrentLoop
                  */
-                setCurrentLoop: function (loop) {
+                setCurrentLoop: function (loop, moveTo) {
                     var index = _.isNumber(loop) ? loop : this.loops.indexOf(loop);
 
                     if (!_.isUndefined(this.currentLoop)) {
@@ -331,6 +330,10 @@ define(["jquery",
 
                     this.currentLoop = this.loops.at(index);
                     this.addTimelineItem(this.currentLoop, true);
+
+                    if (_.isBoolean(moveTo) && moveTo) {
+                        this.playerAdapter.setCurrentTime(this.currentLoop.get("start"));
+                    }
                 },
 
                 /**
@@ -410,7 +413,11 @@ define(["jquery",
                         start   : timeline.getFormatedDate(loop.get("start")),
                         end     : timeline.getFormatedDate(loop.get("end")),
                         group   : "<div class=\"loop-group\">Loops",
-                        content : "<div id=\"loop-" + loop.cid + "\" class=\"" + loopClass + "\"></div>",
+                        content : this.timelineItemTmpl({
+                            cid  : loop.cid,
+                            class: loopClass,
+                            index: this.loops.indexOf(loop)
+                        }),
                         editable: false
                     });
                 },

@@ -6592,6 +6592,12 @@
   div#timeline div.loop.current {
     background-color: #0e90d2;
   }
+  div#timeline div.loop.current:hover {
+    cursor: default;
+  }
+  div#timeline div.loop:hover {
+    cursor: pointer;
+  }
   div#timeline div.loop-group {
     height: 20px;
     background-color: grey;
