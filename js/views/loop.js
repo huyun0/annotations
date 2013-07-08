@@ -337,10 +337,11 @@ define(["jquery",
                         loopClass   = isCurrent ? "loop current" : "loop";
 
                     timeline.addItem("loop-" + loop.cid, {
-                        start  : timeline.getFormatedDate(loop.get("start")),
-                        end    : timeline.getFormatedDate(loop.get("end")),
-                        group  : "<div class=\"loop-group\">Loops",
-                        content: "<div id=\"loop-" + loop.cid + "\" class=\"" + loopClass + "\"></div>"
+                        start   : timeline.getFormatedDate(loop.get("start")),
+                        end     : timeline.getFormatedDate(loop.get("end")),
+                        group   : "<div class=\"loop-group\">Loops",
+                        content : "<div id=\"loop-" + loop.cid + "\" class=\"" + loopClass + "\"></div>",
+                        editable: false
                     });
                 },
 
