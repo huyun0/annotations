@@ -6549,6 +6549,19 @@
     float: right;
     margin-top: -3px;
   }
+  div#loop div.controls div.btn-group .deactivated {
+    background-image: none;
+    -webkit-box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
+    -moz-box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05) 0 1px #000000;
+    -moz-box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05) 0 1px #000000;
+    -webkit-box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05) 0 1px #000000;
+    background-color: #676767;
+  }
+  div#loop div.controls div.btn-group .deactivated:hover {
+    cursor: default;
+  }
   div#loop.disabled div.slider,
   div#loop.disabled div.btn-group,
   div#loop.disabled #loop-length,
@@ -6572,13 +6585,20 @@
   div#timeline div.loop {
     height: 21px;
     margin-top: -27px;
-    background-color: #009a00;
-    opacity: 0.6;
-    border: 1px solid #004d00;
+    background-color: grey;
+    border: 1px solid #676767;
     border-right: 2px solid #000000;
   }
   div#timeline div.loop.current {
-    background-color: #9aff9a;
+    background-color: #0e90d2;
+  }
+  div#timeline div.loop.current:hover {
+    background-color: #0e90d2;
+    cursor: default;
+  }
+  div#timeline div.loop:hover {
+    background-color: #9a9a9a;
+    cursor: pointer;
   }
   div#timeline div.loop-group {
     height: 20px;

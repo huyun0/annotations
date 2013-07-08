@@ -49,7 +49,7 @@ define(["jquery",
                  * @type {Number}
                  * @alias module:views-loop.Loop#MAX_MARGIN
                  */
-                MAX_MARGIN: 3,
+                MAX_MARGIN: 1,
 
                 /**
                  * The minimal length of a loop
@@ -66,6 +66,42 @@ define(["jquery",
                  * @alias module:views-loop.Loop#SLIDER_STEP
                  */
                 SLIDER_STEP: 1,
+
+                /**
+                 * Class to mark a button as deactivated
+                 * @type {String}
+                 * @alias module:views-loop.Loop#DEACTIVATED_CLASS
+                 */
+                DEACTIVATED_CLASS: "deactivated",
+
+                /**
+                 * Class for the button to hide/show the loop function in the layout menu
+                 * @type {String}
+                 * @alias module:views-loop.Loop#LAYOUT_MENU_CLASS
+                 */
+                LAYOUT_MENU_CLASS: "enableLoops",
+
+                /**
+                 * Template of the button to hide/show the loop function in the layout menu
+                 * @type {String}
+                 * @alias module:views-loop.Loop#LAYOUT_MENU_TMPL
+                 */
+                LAYOUT_MENU_TMPL:   "<li class=\"divider\"></li>\
+                                     <li>\
+                                         <a id=\"enableLoops\" href=\"#\" class=\"checked\">\
+                                             <i class=\"check icon-check\"></i> Loop function\
+                                         </a>\
+                                     </li>",
+
+                /**
+                 * Template of the timelineItem
+                 * @type {Object}
+                 * @alias module:views-loop.Loop#timelineItemTmpl
+                 */
+                timelineItemTmpl: Handlebars.compile("<div id=\"loop-{{cid}}\"\
+                                                          class=\"{{class}}\"\
+                                                          onclick=\"annotationsTool.loopFunction.setCurrentLoop({{index}}, true)\">\
+                                                      </div>"),
 
                 /**
                  * Loop template
@@ -101,6 +137,7 @@ define(["jquery",
                                     "previousLoop",
                                     "resetLoops",
                                     "toggle",
+                                    "toggleVisibity",
                                     "typeLoopLength");
                     var duration;
 
@@ -111,7 +148,36 @@ define(["jquery",
                     this.setElement($("#loop")[0]);
                     this.initSlider();
 
+                    if (!_.isUndefined(annotationsTool.views.annotate)) {
+                        var annotateView = annotationsTool.views.annotate,
+                            self = this;
+                        annotateView.$el.find(".dropdown-menu").append(this.LAYOUT_MENU_TMPL);
+                        annotateView.$el.find(".dropdown-menu #" + this.LAYOUT_MENU_CLASS).bind("click", this.toggleVisibity);
+                    }
+
                     this.toggle(false);
+
+                    annotationsTool.loopFunction = this;
+                },
+
+                /**
+                 * Listesner for the button to activate/deactivate the loop function in the layout menu
+                 * @param  {Object} event The related event object
+                 * @alias module:views-loop.Loop#toggle
+                 */
+                toggleVisibity: function (event) {
+                    $(event.target).toggleClass("checked");
+
+                    if ($(event.target).hasClass("checked")) {
+                        if (this.wasEnableBeforeDeactivate) {
+                            this.toggle(true)
+                        }
+                        this.$el.show();
+                    } else {
+                        this.$el.hide();
+                        this.wasEnableBeforeDeactivate = this.isEnable;
+                        this.toggle(false);
+                    }
                 },
 
                 initSlider: function () {
@@ -165,15 +231,20 @@ define(["jquery",
                     }
 
                     var currentTime = this.playerAdapter.getCurrentTime(),
-                        difference = (currentTime - this.currentLoop.get("end"));
+                        differenceEnd = (this.currentLoop.get("end") - currentTime),
+                        differenceStart = (currentTime - this.currentLoop.get("start")),
+                        MAX_MARGIN = this.MAX_MARGIN,
+                        checkLimit = function (limit) {
+                            return (limit < 0) && (Math.abs(limit) > MAX_MARGIN);
+                        };
 
-                    if (difference >= 0 && difference < this.MAX_MARGIN) {
+                    if (differenceEnd <= 0 && Math.abs(differenceEnd) < this.MAX_MARGIN) {
                         this.playerAdapter.setCurrentTime(this.currentLoop.get("start"));
 
                         if (currentTime === this.playerAdapter.getDuration()) {
                             this.playerAdapter.play();
                         }
-                    } else if (difference > this.MAX_MARGIN) {
+                    } else if (checkLimit(differenceEnd) || checkLimit(differenceStart)) {
                         this.setCurrentLoop(this.findCurrentLoop());
                     }
                 },
@@ -182,8 +253,8 @@ define(["jquery",
                  * Move to next loop
                  * @alias module:views-loop.Loop#nextLoop
                  */
-                nextLoop: function () {
-                    if (this.isEnable) {
+                nextLoop: function (event) {
+                    if (this.isEnable && !$(event.target).parent().hasClass(this.DEACTIVATED_CLASS)) {
                         this.setCurrentLoop(this.loops.indexOf(this.currentLoop) + 1);
                         this.playerAdapter.setCurrentTime(this.currentLoop.get("start"));
                     }
@@ -194,7 +265,7 @@ define(["jquery",
                  * @alias module:views-loop.Loop#previousLoop
                  */
                 previousLoop: function () {
-                    if (this.isEnable) {
+                    if (this.isEnable && !$(event.target).parent().hasClass(this.DEACTIVATED_CLASS)) {
                         this.setCurrentLoop(this.loops.indexOf(this.currentLoop) - 1);
                         this.playerAdapter.setCurrentTime(this.currentLoop.get("start"));
                     }
@@ -235,29 +306,34 @@ define(["jquery",
                 /**
                  * Set the given loop as the current one
                  * @param {Object || Integer} loop The new loop object or its index
+                 * @param {Boolean} moveTo Define if yes or no the playhead must be moved at the beginning of the loop
                  * @alias module:views-loop.Loop#setCurrentLoop
                  */
-                setCurrentLoop: function (loop) {
+                setCurrentLoop: function (loop, moveTo) {
                     var index = _.isNumber(loop) ? loop : this.loops.indexOf(loop);
 
                     if (!_.isUndefined(this.currentLoop)) {
                         this.addTimelineItem(this.currentLoop, false);
                     }
 
-                    this.$el.find(".previous, .next").show();
+                    this.$el.find(".previous, .next").removeClass(this.DEACTIVATED_CLASS);
 
                     if (index <= 0) {
                         index = 0;
-                        this.$el.find(".previous").hide();
+                        this.$el.find(".previous").addClass(this.DEACTIVATED_CLASS);
                     }
 
                     if (index >= (this.loops.size() - 1)) {
                         index = this.loops.size() - 1;
-                        this.$el.find(".next").hide();
+                        this.$el.find(".next").addClass(this.DEACTIVATED_CLASS);
                     }
 
                     this.currentLoop = this.loops.at(index);
                     this.addTimelineItem(this.currentLoop, true);
+
+                    if (_.isBoolean(moveTo) && moveTo) {
+                        this.playerAdapter.setCurrentTime(this.currentLoop.get("start"));
+                    }
                 },
 
                 /**
@@ -280,10 +356,9 @@ define(["jquery",
                 createLoops: function (loopLength) {
                     var duration    = this.playerAdapter.getDuration(),
                         currentTime = this.playerAdapter.getCurrentTime(),
-                        limit       = currentTime === 0 ? duration : currentTime,
                         isLimit     = false,
-                        startTime   = 0,
-                        endTime;
+                        endTime,
+                        startTime   = currentTime % loopLength;
 
                     if (loopLength >= duration) {
                         annotationsTool.alertInfo("Interval too long to create one loop!");
@@ -294,14 +369,17 @@ define(["jquery",
                     this.currentLoopLength = loopLength;
                     this.currentLoop = undefined;
 
+                    if (startTime > 0) {
+                        this.loops.add({
+                            start: 0,
+                            end  : startTime
+                        })
+                    }
+
                     while (startTime < duration) {
 
-                        if ((startTime + loopLength) >= limit) {
-                            endTime = limit;
-                            if (startTime < currentTime) {
-                                limit   = duration;
-                                isLimit = true;
-                            }
+                        if ((startTime + loopLength) >= duration) {
+                            endTime = duration;
                         } else {
                             endTime = startTime + loopLength;
                         }
@@ -311,12 +389,7 @@ define(["jquery",
                             end  : endTime
                         });
 
-                        if (isLimit) {
-                            startTime = currentTime;
-                            isLimit = false
-                        } else {
-                            startTime += loopLength;
-                        }
+                        startTime += loopLength;
                     }
 
                     this.loops.each(function (loop, index) {
@@ -337,10 +410,15 @@ define(["jquery",
                         loopClass   = isCurrent ? "loop current" : "loop";
 
                     timeline.addItem("loop-" + loop.cid, {
-                        start  : timeline.getFormatedDate(loop.get("start")),
-                        end    : timeline.getFormatedDate(loop.get("end")),
-                        group  : "<div class=\"loop-group\">Loops",
-                        content: "<div id=\"loop-" + loop.cid + "\" class=\"" + loopClass + "\"></div>"
+                        start   : timeline.getFormatedDate(loop.get("start")),
+                        end     : timeline.getFormatedDate(loop.get("end")),
+                        group   : "<div class=\"loop-group\">Loops",
+                        content : this.timelineItemTmpl({
+                            cid  : loop.cid,
+                            class: loopClass,
+                            index: this.loops.indexOf(loop)
+                        }),
+                        editable: false
                     });
                 },
 
