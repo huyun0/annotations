@@ -6572,13 +6572,12 @@
   div#timeline div.loop {
     height: 21px;
     margin-top: -27px;
-    background-color: #009a00;
-    opacity: 0.6;
-    border: 1px solid #004d00;
+    background-color: grey;
+    border: 1px solid #676767;
     border-right: 2px solid #000000;
   }
   div#timeline div.loop.current {
-    background-color: #9aff9a;
+    background-color: #0e90d2;
   }
   div#timeline div.loop-group {
     height: 20px;
