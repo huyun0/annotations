@@ -6593,9 +6593,11 @@
     background-color: #0e90d2;
   }
   div#timeline div.loop.current:hover {
+    background-color: #0e90d2;
     cursor: default;
   }
   div#timeline div.loop:hover {
+    background-color: #9a9a9a;
     cursor: pointer;
   }
   div#timeline div.loop-group {

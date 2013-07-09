@@ -103,7 +103,8 @@ require(["jquery",
                                     getDuration   : sinon.stub(),
                                     getCurrentTime: sinon.stub(),
                                     setCurrentTime: sinon.stub(),
-                                    play: sinon.stub()
+                                    play: sinon.stub(),
+                                    getStatus: sinon.stub()
                                 },
                                 timeline = {
                                     redraw         : sinon.stub(),
@@ -114,6 +115,7 @@ require(["jquery",
 
                             playerAdapter.getDuration.returns(10);
                             playerAdapter.getCurrentTime.returns(0);
+                            playerAdapter.getStatus.returns(PlayerAdapter.STATUS.PLAYING);
 
                             _.extend(playerAdapter, Backbone.Events);
 
@@ -168,11 +170,18 @@ require(["jquery",
                     annotationsTool.playerAdapter.getCurrentTime.returns(9);
                     $(annotationsTool.playerAdapter).trigger(PlayerAdapter.EVENTS.TIMEUPDATE);
                     notEqual(loopView.currentLoop.cid, currentLoop.cid, "The current loop should have changed");
+                    currentLoop = loopView.currentLoop;
 
                     annotationsTool.playerAdapter.getCurrentTime.returns(10);
                     $(annotationsTool.playerAdapter).trigger(PlayerAdapter.EVENTS.TIMEUPDATE);
                     notEqual(annotationsTool.playerAdapter.setCurrentTime.callCount, setCurrentTimeCall, "The current loop should have been repeated");
                     ok(annotationsTool.playerAdapter.play.calledOnce, "The video being at the end and the loop being repeated, the video should contine");
+                    equal(loopView.currentLoop.cid, currentLoop.cid, "The current loop should still be the same");
+                    currentLoop = loopView.currentLoop;
+
+                    annotationsTool.playerAdapter.getCurrentTime.returns(2);
+                    $(annotationsTool.playerAdapter).trigger(PlayerAdapter.EVENTS.TIMEUPDATE);
+                    notEqual(loopView.currentLoop.cid, currentLoop.cid, "The current loop should have change");
                 });
 
                 QUnit.start();
