@@ -133,6 +133,7 @@ define(["jquery",
                                     "createLoops",
                                     "findCurrentLoop",
                                     "initSlider",
+                                    "isVisible",
                                     "nextLoop",
                                     "previousLoop",
                                     "resetLoops",
@@ -158,6 +159,17 @@ define(["jquery",
                     this.toggle(false);
 
                     annotationsTool.loopFunction = this;
+
+                    annotationsTool.onWindowResize();
+                },
+
+                /**
+                 * Define if the loop function view is visible or not
+                 * @return {Boolean} True if the view is visisble
+                 * @alias module:views-loop.Loop#isVisible
+                 */
+                isVisible: function () {
+                    return this.$el.filter(":visible").length > 0;
                 },
 
                 /**
@@ -178,6 +190,8 @@ define(["jquery",
                         this.wasEnableBeforeDeactivate = this.isEnable;
                         this.toggle(false);
                     }
+
+                    annotationsTool.onWindowResize();
                 },
 
                 initSlider: function () {
