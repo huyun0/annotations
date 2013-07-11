@@ -98,8 +98,7 @@ define(["jquery",
                  * @type {Object}
                  * @alias module:views-loop.Loop#timelineItemTmpl
                  */
-                timelineItemTmpl: Handlebars.compile("<div id=\"loop-{{cid}}\"\
-                                                          class=\"{{class}}\"\
+                timelineItemTmpl: Handlebars.compile("<div class=\"{{class}}\"\
                                                           onclick=\"annotationsTool.loopFunction.setCurrentLoop({{index}}, true)\">\
                                                       </div>"),
 
