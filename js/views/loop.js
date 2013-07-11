@@ -98,8 +98,7 @@ define(["jquery",
                  * @type {Object}
                  * @alias module:views-loop.Loop#timelineItemTmpl
                  */
-                timelineItemTmpl: Handlebars.compile("<div id=\"loop-{{cid}}\"\
-                                                          class=\"{{class}}\"\
+                timelineItemTmpl: Handlebars.compile("<div class=\"{{class}}\"\
                                                           onclick=\"annotationsTool.loopFunction.setCurrentLoop({{index}}, true)\">\
                                                       </div>"),
 
@@ -133,6 +132,7 @@ define(["jquery",
                                     "createLoops",
                                     "findCurrentLoop",
                                     "initSlider",
+                                    "isVisible",
                                     "nextLoop",
                                     "previousLoop",
                                     "resetLoops",
@@ -158,6 +158,17 @@ define(["jquery",
                     this.toggle(false);
 
                     annotationsTool.loopFunction = this;
+
+                    annotationsTool.onWindowResize();
+                },
+
+                /**
+                 * Define if the loop function view is visible or not
+                 * @return {Boolean} True if the view is visisble
+                 * @alias module:views-loop.Loop#isVisible
+                 */
+                isVisible: function () {
+                    return this.$el.filter(":visible").length > 0;
                 },
 
                 /**
@@ -178,6 +189,8 @@ define(["jquery",
                         this.wasEnableBeforeDeactivate = this.isEnable;
                         this.toggle(false);
                     }
+
+                    annotationsTool.onWindowResize();
                 },
 
                 initSlider: function () {
@@ -231,6 +244,7 @@ define(["jquery",
                     }
 
                     var currentTime = this.playerAdapter.getCurrentTime(),
+                        isPlaying = this.playerAdapter.getStatus() === PlayerAdapter.STATUS.PLAYING,
                         differenceEnd = (this.currentLoop.get("end") - currentTime),
                         differenceStart = (currentTime - this.currentLoop.get("start")),
                         MAX_MARGIN = this.MAX_MARGIN,
@@ -238,7 +252,7 @@ define(["jquery",
                             return (limit < 0) && (Math.abs(limit) > MAX_MARGIN);
                         };
 
-                    if (differenceEnd <= 0 && Math.abs(differenceEnd) < this.MAX_MARGIN) {
+                    if (isPlaying && differenceEnd <= 0 && Math.abs(differenceEnd) < this.MAX_MARGIN) {
                         this.playerAdapter.setCurrentTime(this.currentLoop.get("start"));
 
                         if (currentTime === this.playerAdapter.getDuration()) {
@@ -264,7 +278,7 @@ define(["jquery",
                  * Move to previous loop
                  * @alias module:views-loop.Loop#previousLoop
                  */
-                previousLoop: function () {
+                previousLoop: function (event) {
                     if (this.isEnable && !$(event.target).parent().hasClass(this.DEACTIVATED_CLASS)) {
                         this.setCurrentLoop(this.loops.indexOf(this.currentLoop) - 1);
                         this.playerAdapter.setCurrentTime(this.currentLoop.get("start"));

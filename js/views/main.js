@@ -175,6 +175,8 @@ define(["jquery",
                 annotationsTool.dispatcher.once(annotationsTool.EVENTS.READY, function () {
                     this.loadPlugins(annotationsTool.plugins);
                 }, this);
+
+                annotationsTool.onWindowResize = this.onWindowResize;
             },
 
             /**
@@ -554,13 +556,19 @@ define(["jquery",
              */
             onWindowResize: function () {
                 var listContent,
-                    windowHeight;
+                    windowHeight = $(window).height(),
+                    rest;
+
+                // TODO: improve this part with a better layout management, more generic
 
                 if (this.annotateView && this.listView) {
-                    windowHeight = $(window).height();
                     listContent = this.listView.$el.find("#content-list");
                     listContent.css("max-height", windowHeight - $("#annotate-container").height() - 100);
-                    this.timelineView.$el.find("#timeline").css("max-height", windowHeight - ($("#video-container").height() + 130));
+                }
+
+                if (this.timelineView) {
+                    rest = !_.isUndefined(annotationsTool.loopFunction) && annotationsTool.loopFunction.isVisible() ? annotationsTool.loopFunction.$el.height() + 160 : 125;
+                    this.timelineView.$el.find("#timeline").css("max-height", windowHeight - ($("#video-container").height() + rest));
                 }
             },
             /**

@@ -103,7 +103,8 @@ require(["jquery",
                                     getDuration   : sinon.stub(),
                                     getCurrentTime: sinon.stub(),
                                     setCurrentTime: sinon.stub(),
-                                    play: sinon.stub()
+                                    play: sinon.stub(),
+                                    getStatus: sinon.stub()
                                 },
                                 timeline = {
                                     redraw         : sinon.stub(),
@@ -114,6 +115,7 @@ require(["jquery",
 
                             playerAdapter.getDuration.returns(10);
                             playerAdapter.getCurrentTime.returns(0);
+                            playerAdapter.getStatus.returns(PlayerAdapter.STATUS.PLAYING);
 
                             _.extend(playerAdapter, Backbone.Events);
 
