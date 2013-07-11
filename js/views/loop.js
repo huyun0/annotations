@@ -49,7 +49,7 @@ define(["jquery",
                  * @type {Number}
                  * @alias module:views-loop.Loop#MAX_MARGIN
                  */
-                MAX_MARGIN: 1,
+                MAX_MARGIN: 0.5,
 
                 /**
                  * The minimal length of a loop
