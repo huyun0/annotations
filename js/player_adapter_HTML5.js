@@ -143,6 +143,10 @@ define(["jquery",
                     self.triggerEvent(PlayerAdapter.EVENTS.PLAY);
                 });
 
+                $(targetElement).bind("playing", function () {
+                    self.status =  PlayerAdapter.STATUS.PLAYING;
+                });
+
                 $(targetElement).bind("pause", function () {
                     if (!self.initialized) {
                         return;
@@ -158,8 +162,17 @@ define(["jquery",
                 });
 
                 $(targetElement).bind("seeking", function () {
+                    self.oldStatus = self.status;
                     self.status =  PlayerAdapter.STATUS.SEEKING;
                     self.triggerEvent(PlayerAdapter.EVENTS.SEEKING);
+                });
+
+                $(targetElement).bind("seeked", function () {
+                    if (typeof self.oldStatus !== "undefined") {
+                        self.status =  self.oldStatus;
+                    } else {
+                        self.status = PlayerAdapter.STATUS.PLAYING;
+                    }
                 });
 
                 $(targetElement).bind("timeupdate", function () {
@@ -214,6 +227,7 @@ define(["jquery",
             this.load = function () {
                 self.initialized = false;
                 self.status = PlayerAdapter.STATUS.INITIALIZING;
+                targetElement.load();
                 targetElement.load();
             };
 
