@@ -56,7 +56,7 @@ define(["backbone"], function (Backbone) {
                 active: false,
                 filter: function (list) {
                     return _.filter(list, function (item) {
-                        return item.model.get("isMine");
+                        return _.isUndefined(item.model) || item.model.get("isMine");
                     }, this);
                 }
             },
@@ -64,7 +64,7 @@ define(["backbone"], function (Backbone) {
                 active: false,
                 filter: function (list) {
                     return _.filter(list, function (item) {
-                        return item.model.get("isPublic");
+                        return _.isUndefined(item.model) || item.model.get("isPublic");
                     }, this);
                 }
             }

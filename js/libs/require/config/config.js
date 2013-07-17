@@ -2,25 +2,26 @@
 require.config({
   baseUrl: "js",
   paths: {
-    'timeline': 'libs/timeline-min',
-    'scrollspy': 'libs/bootstrap/scrollspy',
-    'tab': 'libs/bootstrap/tab',
-    'carousel': 'libs/bootstrap/carousel2.2',
-    'tooltip': 'libs/bootstrap/tooltip',
-    'popover': 'libs/bootstrap/popover',
-    'backbone': 'libs/backbone/backbone-min-0.9.9',
-    'jquery.colorPicker': 'libs/jquery.colorPicker.min',
-    'jquery.FileReader': 'libs/jquery.FileReader',
-    'localstorage': 'libs/backbone/backbone.localStorage-1.0',
-    'handlebars': "libs/handlebars",
-    'jquery': 'libs/jquery-1.7.2.min',
-    'underscore': 'libs/underscore-min-1.4.3',
-    'templates': '../templates',
-    'domReady': 'libs/require/config/domReady',
-    'text': 'libs/require/config/text',
-    'annotations-tool': 'annotations-tool',
-    'annotations-tool-configuration': 'annotations-tool-configuration',
-    'bootstrap': 'libs/bootstrap/bootstrap.min'
+    "timeline"                      : "libs/timeline-min",
+    "scrollspy"                     : "libs/bootstrap/scrollspy",
+    "tab"                           : "libs/bootstrap/tab",
+    "carousel"                      : "libs/bootstrap/carousel2.2",
+    "tooltip"                       : "libs/bootstrap/tooltip",
+    "popover"                       : "libs/bootstrap/popover",
+    "backbone"                      : "libs/backbone/backbone-min-0.9.9",
+    "jquery.colorPicker"            : "libs/jquery.colorPicker.min",
+    "jquery.FileReader"             : "libs/jquery.FileReader",
+    "localstorage"                  : "libs/backbone/backbone.localStorage-1.0",
+    "handlebars"                    : "libs/handlebars",
+    "jquery"                        : "libs/jquery-1.7.2.min",
+    "underscore"                    : "libs/underscore-min-1.4.3",
+    "templates"                     : "../templates",
+    "domReady"                      : "libs/require/config/domReady",
+    "text"                          : "libs/require/config/text",
+    "annotations-tool"              : "annotations-tool",
+    "annotations-tool-configuration": "annotations-tool-configuration",
+    "bootstrap"                     : "libs/bootstrap/bootstrap.min",
+    "slider"                        : "libs/bootstrap/bootstrap-slider"
   },
   waitSeconds: 20,
 
@@ -55,13 +56,14 @@ require.config({
 
     "bootstrap": ["jquery"],
     "scrollspy": ["bootstrap"],
-    "carousel": ["bootstrap"],
-    "tab": ["bootstrap"],
+    "carousel" : ["bootstrap"],
+    "tab"      : ["bootstrap"],
+    "slider"   : ["jquery"]
   }
 });
 
 // Bootstrap function for main app
-require(['domReady', 'annotations-tool-configuration', 'annotations-tool'],
+require(["domReady", "annotations-tool-configuration", "annotations-tool"],
 
 function (domReady, config, app) {
     domReady(function () {

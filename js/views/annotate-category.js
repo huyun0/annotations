@@ -129,6 +129,33 @@ define(["jquery",
                   "onCreateLabel",
                   "editScale");
 
+
+                // Define the colors (global setting for all color pickers)
+                $.fn.colorPicker.defaults.colors = ["ffff99",
+                                                  "ffd800",
+                                                  "ffcc99",
+                                                  "ffa800",
+                                                  "ff7800",
+                                                  "c36e00",
+                                                  "d5d602",
+                                                  "d9be6c",
+                                                  "ff99cc",
+                                                  "ff5d7c",
+                                                  "da0000",
+                                                  "d15c49",
+                                                  "969601",
+                                                  "adfded",
+                                                  "8fc7c7",
+                                                  "a4d2ff",
+                                                  "00ccff",
+                                                  "64b0e8",
+                                                  "61ae24",
+                                                  "9ded0a",
+                                                  "92ffaa",
+                                                  "c0adfd",
+                                                  "ac5bff",
+                                                  "6569ff"];
+
                 // Type use for delete operation
                 this.typeForDelete = annotationsTool.deleteOperation.targetTypes.CATEGORY;
                 this.roles = attr.roles;
@@ -366,32 +393,6 @@ define(["jquery",
                 }, this);
 
                 this.nameInput = this.$el.find(".catItem-header input");
-
-                // Define the colors (global setting for all color pickers)
-                $.fn.colorPicker.defaults.colors = ["ffff99",
-                                                  "ffd800",
-                                                  "ffcc99",
-                                                  "ffa800",
-                                                  "ff7800",
-                                                  "c36e00",
-                                                  "d5d602",
-                                                  "d9be6c",
-                                                  "ff99cc",
-                                                  "ff5d7c",
-                                                  "da0000",
-                                                  "d15c49",
-                                                  "969601",
-                                                  "adfded",
-                                                  "8fc7c7",
-                                                  "a4d2ff",
-                                                  "00ccff",
-                                                  "64b0e8",
-                                                  "61ae24",
-                                                  "9ded0a",
-                                                  "92ffaa",
-                                                  "c0adfd",
-                                                  "ac5bff",
-                                                  "6569ff"];
 
                 this.$el.find(".colorpicker").colorPicker({
                     pickerDefault: this.model.attributes.settings.color.replace("#", ""),

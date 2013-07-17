@@ -59,6 +59,28 @@ define(["jquery",
             localStorage: true,
 
             /**
+             * List of models using only the localStory sync module
+             * @type {Array}
+             * @readOnly
+             */
+            localStorageOnlyModel: [],
+
+
+            /**
+             * List of plugins to load,
+             * the bootstrap function of each plugin is called once the tool is ready
+             * @type {Object}
+             * @readOnly
+             */
+            plugins: {
+                Loop: function (callback) {
+                        require(["views/loop"], function (Loop) {
+                            annotationsTool.loopView = new Loop();
+                        });
+                    }
+            },
+
+            /**
              * Url from the annotations Rest Endpoints
              * @alias module:annotations-tool-configuration.Configuration.restEndpointsUrl
              * @type {string}
