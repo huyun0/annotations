@@ -372,7 +372,8 @@ define(["jquery",
                         currentTime = this.playerAdapter.getCurrentTime(),
                         isLimit     = false,
                         endTime,
-                        startTime   = currentTime % loopLength;
+                        startTime   = currentTime % loopLength,
+                        loop;
 
                     if (loopLength >= duration) {
                         annotationsTool.alertInfo("Interval too long to create one loop!");
@@ -398,17 +399,15 @@ define(["jquery",
                             endTime = startTime + loopLength;
                         }
 
-                        this.loops.add({
+                        loop = {
                             start: startTime,
-                            end  : endTime
-                        });
+                            end: endTime
+                        };
+
+                        this.addTimelineItem(this.loops.create(loop));
 
                         startTime += loopLength;
                     }
-
-                    this.loops.each(function (loop, index) {
-                        this.addTimelineItem(loop, false);
-                    }, this);
 
                     this.setCurrentLoop(this.findCurrentLoop());
                 },
@@ -433,7 +432,7 @@ define(["jquery",
                             index: this.loops.indexOf(loop)
                         }),
                         editable: false
-                    });
+                    }, !isCurrent);
                 },
 
                 /**
@@ -442,8 +441,8 @@ define(["jquery",
                  */
                 resetLoops: function () {
                     this.loops.each(function (loop, index) {
-                        annotationsTool.views.timeline.removeItem("loop-" + loop.cid);
-                    });
+                        annotationsTool.views.timeline.removeItem("loop-" + loop.cid, (index !== this.loops.length));
+                    }, this);
 
                     this.loops.each(function (loop, index) {
                         loop.destroy();
