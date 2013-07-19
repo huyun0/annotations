@@ -468,10 +468,12 @@ define(["jquery",
              * @param  {string} id The id of the item to remove
              * @alias module:views-timeline.TimelineView#removeItem
              */
-            removeItem: function (id) {
+            removeItem: function (id, isPartOfList) {
                 delete this.allItems[id];
-                this.filterItems();
-                this.redraw();
+                if (!isPartOfList) {
+                    this.filterItems();
+                    this.redraw();
+                }
             },
 
             /**
