@@ -5155,6 +5155,10 @@
   div.timeline-groups-text div.timeline-group a:hover {
     text-decoration: none!important;
   }
+  div.timeline-groups-text div.timeline-group a.content-overlay {
+    display: inline-block;
+    width: 150px;
+  }
   div.timeline-groups-text div.timeline-group div.content {
     width: 105px;
     white-space: nowrap;

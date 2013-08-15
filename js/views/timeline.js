@@ -293,7 +293,7 @@ define(["jquery",
                     _.bindAll(this.timeline, "findGroup");
                 }
 
-                $("div.timeline-group .content").popover({});
+                $("div.timeline-group .content-overlay").popover({});
 
                 this.$el.find(".timeline-frame > div").first()[0].addEventListener("mousewheel", function (event) {
                     event.stopPropagation();
@@ -332,7 +332,7 @@ define(["jquery",
                     this.onSelectionUpdate(annotationsTool.getSelection());
                 }
 
-                $("div.timeline-group .content").popover({});
+                $("div.timeline-group .content-overlay").popover({});
 
                 this.updateDraggingCtrl();
 

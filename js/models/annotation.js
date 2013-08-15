@@ -17,7 +17,7 @@
  * A module representing the annotation model
  * @module models-annotation
  * @requires jQuery
- * @requires underscore
+ * @requires collections-comments
  * @requires ACCESS
  * @requires backbone
  * @requires localstorage
