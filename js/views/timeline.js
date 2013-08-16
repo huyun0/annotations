@@ -1145,6 +1145,8 @@ define(["jquery",
             onUpdateTrack: function (event, trackId) {
                 event.stopImmediatePropagation();
 
+                $("#track" + trackId).popover('hide')
+
                 var track = this.tracks.get(trackId),
                     trackCurrentVisibility,
                     newTrackVisibility;

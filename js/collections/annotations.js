@@ -25,9 +25,10 @@
 define(["jquery",
         "models/annotation",
         "backbone",
+        "access",
         "localstorage"],
 
-    function ($, Annotation, Backbone) {
+    function ($, Annotation, Backbone, ACCESS) {
 
         "use strict";
 
@@ -46,6 +47,9 @@ define(["jquery",
              */
             model       : Annotation,
 
+
+            
+
             /**
              * Localstorage container for the collection
              * @alias module:collections-annotations.Annotations#localStorage
@@ -58,8 +62,49 @@ define(["jquery",
              * @alias module:collections-annotations.Annotations#initialize
              */
             initialize: function (models, track) {
-                _.bindAll(this, "setUrl");
+                _.bindAll(this, "setUrl", "updateAccess", "setAccess");
                 this.setUrl(track);
+
+                /**
+             * Access value for all the annotations in the collection
+             * @alias module:collections-annotations.Annotations#access
+             * @type {integer}
+             */
+                this.access = ACCESS.PUBLIC;
+
+                if (!_.isUndefined(track)) {
+                    track.bind("change:access", this.updateAccess, this);
+                    this.updateAccess(track);
+                    this.access = track.get("access");
+                }
+
+                _.each(models, this.setAccess, this);
+
+                this.bind("add", this.setAccess, this);
+            },
+
+            /**
+             * Listener on track acess changes, keep the annotations access value up to date.
+             * @alias module:collections-annotations.Annotations#updateAccess
+             * @param  {object} track The track containing the annotations
+             */
+            updateAccess: function (track) {
+                this.access = track.get("access");
+                this.each(this.setAccess, this)
+            },
+
+            /**
+             * Set access for the model
+             * @alias module:collections-annotations.Annotations#setAccess
+             * @param {model} model The model to update
+             */
+            setAccess: function (model) {
+                console.log("acces defined for annotation " + model.id);
+                if (!_.isUndefined(model.attributes)) {
+                    model.set({access: this.access});
+                } else {
+                    model.access = this.access
+                }
             },
 
             /**
@@ -70,8 +115,10 @@ define(["jquery",
              */
             parse: function (data) {
                 if (data.annotations && _.isArray(data.annotations)) {
+                    _.each(data.annotations, this.setAccess, this);
                     return data.annotations;
                 } else if (_.isArray(data)) {
+                    _.each(data, this.setAccess, this);
                     return data;
                 } else {
                     return null;

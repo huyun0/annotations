@@ -441,7 +441,7 @@ define(["jquery",
                  */
                 resetLoops: function () {
                     this.loops.each(function (loop, index) {
-                        annotationsTool.views.timeline.removeItem("loop-" + loop.cid, (index !== this.loops.length));
+                        annotationsTool.views.timeline.removeItem("loop-" + loop.cid, (index + 1 !== this.loops.length));
                     }, this);
 
                     this.loops.each(function (loop, index) {

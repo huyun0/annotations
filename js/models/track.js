@@ -147,6 +147,8 @@ define(["jquery",
                     data = attr;
                 }
 
+                this.on("change:access")
+
                 return data;
             },
 

@@ -64,23 +64,6 @@ define(["jquery",
 
 
             /**
-             * List of filter used for the list elements
-             * @alias module:views-list.List#filters
-             * @type {Object}
-             */
-            filters: {
-                // Define if only the annotation created by the current user should be visible in the list
-                mine: {
-                    active: false,
-                    filter: function (list) {
-                        return _.filter(list, function (annotationView) {
-                            return annotationView.model.get("isMine");
-                        }, this);
-                    }
-                }
-            },
-
-            /**
              * Events to handle
              * @alias module:views-list.List#events
              * @type {object}
