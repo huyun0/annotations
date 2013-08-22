@@ -1,10 +1,10 @@
-<div class="timeline-group{{#if isMine}} mine{{/if}} track-max-level-{{#if timlineMaxLevel}}{{timelineMaxLevel}}{{else}}0{{/if}}" {{#if isMine}}onclick="$(window).trigger('selectTrack', ['{{id}}'])"{{/if}}>
+<div class="timeline-group{{#if isMine}} mine{{/if}} track-max-level-{{#if timlineMaxLevel}}{{timelineMaxLevel}}{{else}}0{{/if}}" {{#if isMine}}onclick="$(window).trigger('selectTrack', ['{{id}}'])" ondblclick="$(window).trigger('updateTrack', ['{{id}}'])"{{/if}}>
     <div class="track-id">{{id}}</div>
     {{#if isMine}}
     {{/if}}
     <a id="track{{id}}"
        class="content-overlay"
-       {{#if isMine}}onclick="$(window).trigger('selectTrack', ['{{id}}'])"{{/if}}
+       {{#if isMine}}onclick="$(window).trigger('selectTrack', ['{{id}}'])" ondblclick="$(window).trigger('updateTrack', ['{{id}}'])"{{/if}}
        title="{{secure name}}"
        rel="popover"
        data-content="<p>{{#if description}}{{secure description}}{{else}}No description{{/if}}</p> <p><b>Owner:</b> {{created_by_nickname}}</p>">
@@ -15,7 +15,7 @@
     {{#if isMine}}
         <div class="group-edit">
             <i onclick="$(window).trigger('deleteTrack', ['{{id}}'])" class="delete icon-trash" title="Delete  track"></i>
-            <i onclick="$(window).trigger('updateTrack', ['{{id}}'])" class="visibility icon-eye-{{#if isPublic}}open{{else}}close{{/if}}" title="Change track visibility"></i>
+            <i onclick="$(window).trigger('updateTrackAccess', ['{{id}}'])" class="visibility icon-eye-{{#if isPublic}}open{{else}}close{{/if}}" title="Change track visibility"></i>
         </div>
     {{/if}}
     </a>

@@ -38,7 +38,8 @@ define(["jquery",
         "collections/annotations",
         "text!templates/timeline-group.tmpl",
         "text!templates/timeline-item.tmpl",
-        "text!templates/timeline-modal-group.tmpl",
+        "text!templates/timeline-modal-add-group.tmpl",
+        "text!templates/timeline-modal-update-group.tmpl",
         "access",
         "roles",
         "FiltersManager",
@@ -48,7 +49,7 @@ define(["jquery",
         "tooltip",
         "popover"],
 
-    function ($, PlayerAdapter, Annotation, Annotations, GroupTmpl, ItemTmpl, ModalGroupTmpl, ACCESS, ROLES, FiltersManager, Backbone, Handlebars) {
+    function ($, PlayerAdapter, Annotation, Annotations, GroupTmpl, ItemTmpl, ModalAddGroupTmpl, ModalUpdateGroupTmpl, ACCESS, ROLES, FiltersManager, Backbone, Handlebars) {
 
         "use strict";
 
@@ -95,10 +96,17 @@ define(["jquery",
 
             /**
              * Modal template for group insertion
-             * @alias module:views-timeline.TimelineView#modalGroupTemplate
+             * @alias module:views-timeline.TimelineView#modalAddGroupTemplate
              * @type {Handlebars template}
              */
-            modalGroupTemplate: Handlebars.compile(ModalGroupTmpl),
+            modalAddGroupTemplate: Handlebars.compile(ModalAddGroupTmpl),
+
+            /**
+             * Modal template for group update
+             * @alias module:views-timeline.TimelineView#modalUpdateGroupTemplate
+             * @type {Handlebars template}
+             */
+            modalUpdateGroupTemplate: Handlebars.compile(ModalUpdateGroupTmpl),
 
             /**
              * Events to handle by the timeline view
@@ -197,6 +205,7 @@ define(["jquery",
                                "onWindowResize",
                                "onTimelineResetZoom",
                                "initTrackCreation",
+                               "initTrackUpdate",
                                "filterItems",
                                "switchFilter",
                                "updateFiltersRender",
@@ -263,7 +272,8 @@ define(["jquery",
                 $(window).bind("resize", this.onWindowResize);
                 $(window).bind("selectTrack", $.proxy(this.onTrackSelected, this));
                 $(window).bind("deleteTrack", $.proxy(this.onDeleteTrack, this));
-                $(window).bind("updateTrack", $.proxy(this.onUpdateTrack, this));
+                $(window).bind("updateTrack", $.proxy(this.initTrackUpdate, this));
+                $(window).bind("updateTrackAccess", $.proxy(this.onUpdateTrack, this));
 
                 $(this.playerAdapter).bind("pa_timeupdate", this.onPlayerTimeUpdate);
 
@@ -664,21 +674,21 @@ define(["jquery",
                     name,
                     description,
                     insertTrack = function () {
-                        name = self.groupModal.find("#name")[0].value;
-                        description = self.groupModal.find("#description")[0].value;
+                        name = self.createGroupModal.find("#name")[0].value;
+                        description = self.createGroupModal.find("#description")[0].value;
 
                         if (name === "") {
-                            self.groupModal.find(".alert #content").html("Name is required!");
-                            self.groupModal.find(".alert").show();
+                            self.createGroupModal.find(".alert #content").html("Name is required!");
+                            self.createGroupModal.find(".alert").show();
                             return;
                         } else if (name.search(/<\/?script>/i) >= 0 || description.search(/<\/?script>/i) >= 0) {
-                            self.groupModal.find(".alert #content").html("Scripts are not allowed!");
-                            self.groupModal.find(".alert").show();
+                            self.createGroupModal.find(".alert #content").html("Scripts are not allowed!");
+                            self.createGroupModal.find(".alert").show();
                             return;
                         }
 
-                        if (self.groupModal.find("#public").length > 0) {
-                            access = self.groupModal.find("#public")[0].checked ? ACCESS.PUBLIC : ACCESS.PRIVATE;
+                        if (self.createGroupModal.find("#public").length > 0) {
+                            access = self.createGroupModal.find("#public")[0].checked ? ACCESS.PUBLIC : ACCESS.PRIVATE;
                         } else {
                             access = ACCESS.PUBLIC;
                         }
@@ -689,37 +699,115 @@ define(["jquery",
                             access     : access
                         }, this);
                           
-                        self.groupModal.modal("toggle");
+                        self.createGroupModal.modal("toggle");
                     };
                 
                 // If the modal is already loaded and displayed, we do nothing
                 if ($("div#modal-add-group.modal.in").length > 0) {
                     return;
-                } else if (!this.groupModal) {
+                } else if (!this.createGroupModal) {
                     // Otherwise we load the login modal if not loaded
-                    $("body").append(this.modalGroupTemplate({isSupervisor: annotationsTool.user.get("role") === ROLES.SUPERVISOR}));
-                    this.groupModal = $("#modal-add-group");
-                    this.groupModal.modal({show: true, backdrop: false, keyboard: true });
-                    this.groupModal.find("a#add-group").bind("click", insertTrack);
-                    this.groupModal.bind("keypress", function (event) {
+                    $("body").append(this.modalAddGroupTemplate({isSupervisor: annotationsTool.user.get("role") === ROLES.SUPERVISOR}));
+                    this.createGroupModal = $("#modal-add-group");
+                    this.createGroupModal.modal({show: true, backdrop: false, keyboard: true });
+                    this.createGroupModal.find("a#add-group").bind("click", insertTrack);
+                    this.createGroupModal.bind("keypress", function (event) {
                         if (event.keyCode === 13) {
                             insertTrack();
                         }
                     });
                     
-                    this.groupModal.on("shown", $.proxy(function () {
-                        this.groupModal.find("#name").focus();
+                    this.createGroupModal.on("shown", $.proxy(function () {
+                        this.createGroupModal.find("#name").focus();
                     }, this));
                     
-                    this.groupModal.find("#name").focus();
+                    this.createGroupModal.find("#name").focus();
                 }
                 else {
                     // if the modal has already been initialized, we reset input and show modal
-                    this.groupModal.find(".alert #content").html("");
-                    this.groupModal.find(".alert").hide();
-                    this.groupModal.find("#name")[0].value = "";
-                    this.groupModal.find("#description")[0].value = "";
-                    this.groupModal.modal("toggle");
+                    this.createGroupModal.find(".alert #content").html("");
+                    this.createGroupModal.find(".alert").hide();
+                    this.createGroupModal.find("#name")[0].value = "";
+                    this.createGroupModal.find("#description")[0].value = "";
+                    this.createGroupModal.modal("toggle");
+                }
+            },
+
+            /**
+             * Initialize the update of the selected track, load the modal window to modify the track.
+             * @alias module:views-timeline.TimelineView#initTrackUpdate
+             * @param {Event} event Event object
+             * @param {Integer} The track Id of the selected track
+             */
+            initTrackUpdate: function (event, id) {
+                var self = this,
+                    access,
+                    name,
+                    track = this.getTrack(id),
+                    description,
+                    updateTrack = function () {
+                        name = self.updateGroupModal.find("#name")[0].value;
+                        description = self.updateGroupModal.find("#description")[0].value;
+
+                        if (name === "") {
+                            self.updateGroupModal.find(".alert #content").html("Name is required!");
+                            self.updateGroupModal.find(".alert").show();
+                            return;
+                        } else if (name.search(/<\/?script>/i) >= 0 || description.search(/<\/?script>/i) >= 0) {
+                            self.updateGroupModal.find(".alert #content").html("Scripts are not allowed!");
+                            self.updateGroupModal.find(".alert").show();
+                            return;
+                        }
+
+                        if (self.updateGroupModal.find("#public").length > 0) {
+                            access = self.updateGroupModal.find("#public")[0].checked ? ACCESS.PUBLIC : ACCESS.PRIVATE;
+                        } else {
+                            access = ACCESS.PUBLIC;
+                        }
+
+                        track.set({
+                            name       : name,
+                            description: description,
+                            access     : access
+                        });
+                          
+                        self.updateGroupModal.modal("toggle");
+                    };
+                
+                // If the modal is already loaded and displayed, we do nothing
+                if ($("div#modal-update-group.modal.in").length > 0) {
+                    return;
+                } else if (!this.updateGroupModal) {
+                    // Otherwise we load the login modal if not loaded
+                    $("body").append(this.modalUpdateGroupTemplate(track.toJSON()));
+                    this.updateGroupModal = $("#modal-update-group");
+                    this.updateGroupModal.modal({show: true, backdrop: false, keyboard: true });
+                    this.updateGroupModal.find("a#update-group").bind("click", updateTrack);
+                    this.updateGroupModal.bind("keypress", function (event) {
+                        if (event.keyCode === 13) {
+                            updateTrack();
+                        }
+                    });
+                    
+                    this.updateGroupModal.on("shown", $.proxy(function () {
+                        this.updateGroupModal.find("#name").focus();
+                    }, this));
+                    
+                    this.updateGroupModal.find("#name").focus();
+                }
+                else {
+                    // if the modal has already been initialized, we reset input and show modal
+                    this.updateGroupModal.find(".alert #content").html("");
+                    this.updateGroupModal.find(".alert").hide();
+                    this.updateGroupModal.find("#name")[0].value = track.get("name");
+                    this.updateGroupModal.find("#description")[0].value = track.get("description");
+                    this.updateGroupModal.find("a#update-group").unbind("click").bind("click", updateTrack);
+                    this.updateGroupModal.unbind("keypress").bind("keypress", function (event) {
+                        if (event.keyCode === 13) {
+                            updateTrack();
+                        }
+                    });
+                    this.updateGroupModal.modal("toggle");
                 }
             },
 
@@ -1501,8 +1589,12 @@ define(["jquery",
 
                 this.undelegateEvents();
 
-                if (this.groupModal) {
-                    this.groupModal.remove();
+                if (this.createGroupModal) {
+                    this.createGroupModal.remove();
+                }
+
+                if (this.updateGroupModal) {
+                    this.updateGroupModal.remove();
                 }
 
                 this.tracks.each(function (track) {
