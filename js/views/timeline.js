@@ -309,6 +309,8 @@ define(["jquery",
                     event.stopPropagation();
                 }, true);
 
+                $("div#timeline").scroll(this.updateHeader);
+
                 this.timeline.redraw();
             },
 
@@ -336,6 +338,7 @@ define(["jquery",
              * @alias module:views-timeline.TimelineView#redraw
              */
             redraw: function () {
+
                 this.timeline.draw(this.filteredItems, this.option);
 
                 if (annotationsTool.hasSelection()) {
@@ -351,6 +354,16 @@ define(["jquery",
                 }
 
                 this.updateUnselectListener();
+            },
+
+            /**
+             * Update the position of the timeline header on scroll
+             * @alias module:views-timeline.TimelineView#updateHeader
+             */
+            updateHeader: function () {
+                $("div.timeline-frame > div:first-child > div:first-child").css({
+                    "margin-top": $("#timeline").scrollTop() - 2
+                });
             },
 
             /**

@@ -5199,7 +5199,7 @@
     border: 2px solid transparent;
   }
   div.timeline-customtime {
-    z-index: 3;
+    z-index: 6;
     background-color: #da0000;
     width: 1px;
   }
@@ -5473,6 +5473,10 @@
     overflow-x: hidden;
     overflow-y: auto!important;
     min-height: 55px!important;
+  }
+  div.timeline-frame > div:first-child > div:first-child {
+    background-color: white;
+    z-index: 5;
   }
   .standard_border_radius {
     border-radius: 0px 0px 0px 0px;

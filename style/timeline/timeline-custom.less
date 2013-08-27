@@ -132,7 +132,7 @@ div.timeline-groups-text{
 }
 
 div.timeline-customtime {
-    z-index: 3;
+    z-index: 6;
     background-color: @red;
     width: 1px;
 }
@@ -326,6 +326,11 @@ div#timeline {
     overflow-x: hidden;
     overflow-y: auto!important;
     min-height: 55px!important;
+}
+
+div.timeline-frame > div:first-child > div:first-child {
+    background-color: white;
+    z-index: 5;
 }
 
 
