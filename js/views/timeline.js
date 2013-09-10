@@ -345,8 +345,6 @@ define(["jquery",
                     this.onSelectionUpdate(annotationsTool.getSelection());
                 }
 
-                $("div.timeline-group .content-overlay").popover({});
-
                 this.updateDraggingCtrl();
 
                 if (annotationsTool.selectedTrack) {
@@ -354,6 +352,8 @@ define(["jquery",
                 }
 
                 this.updateUnselectListener();
+
+                $("div.timeline-group .content-overlay").popover({});
             },
 
             /**
@@ -934,6 +934,11 @@ define(["jquery",
                 }
 
                 this.updateUnselectListener();
+
+                // Wait a short moment to ensure that DOM elemnts have been drawn
+                setTimeout(function () {
+                    $("div.timeline-group .content-overlay").popover({});
+                }, 100);
             },
 
             updateUnselectListener: function () {
@@ -1079,7 +1084,6 @@ define(["jquery",
 
                 this.filterItems();
                 this.timeline.redraw();
-                
 
                 if (hasToPlay) {
                     this.playerAdapter.play();
