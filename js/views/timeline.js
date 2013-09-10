@@ -891,9 +891,12 @@ define(["jquery",
              */
             changeItem: function (annotation) {
                 var value = this.getTimelineItemFromAnnotation(annotation);
-                this.allItems[annotation.id] = this.generateItem(annotation, value.model);
-                this.filterItems();
-                this.timeline.redraw();
+                if (!_.isUndefined(value)) {
+                    // Only update annotation view if the item has already been created
+                    this.allItems[annotation.id] = this.generateItem(annotation, value.model);
+                    this.filterItems();
+                    this.timeline.redraw();
+                }
             },
             
             /**
