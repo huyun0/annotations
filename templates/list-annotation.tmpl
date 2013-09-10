@@ -49,6 +49,8 @@
 		{{#if isMine}}
 		<i class="private icon-user" title="You own this annotation"></i>
 		{{/if}}
+
+		<div class="creator">{{created_by_nickname}}</div>
 		
 		<span class="category" title="{{#if label}}{{label.category.name}} - {{label.value}} ({{label.abbreviation}}){{/if}}">
 				{{#if label}}<span class="abbreviation">{{label.abbreviation}}</span>{{else}}{{text}}{{/if}}

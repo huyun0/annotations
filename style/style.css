@@ -5155,6 +5155,10 @@
   div.timeline-groups-text div.timeline-group a:hover {
     text-decoration: none!important;
   }
+  div.timeline-groups-text div.timeline-group a.content-overlay {
+    display: inline-block;
+    width: 150px;
+  }
   div.timeline-groups-text div.timeline-group div.content {
     width: 105px;
     white-space: nowrap;
@@ -5172,7 +5176,8 @@
     background-color: inherit;
   }
   div.timeline-groups-text i.delete,
-  div.timeline-groups-text i.visibility {
+  div.timeline-groups-text i.visibility,
+  div.timeline-groups-text i.update {
     z-index: 4;
     margin-top: 5px;
     margin-right: 4px;
@@ -5180,7 +5185,8 @@
     display: inline-block;
   }
   div.timeline-groups-text i.delete:hover,
-  div.timeline-groups-text i.visibility:hover {
+  div.timeline-groups-text i.visibility:hover,
+  div.timeline-groups-text i.update:hover {
     background-color: rgba(57, 163, 241, 0.3);
     box-shadow: 0 0 3px rgba(57, 163, 241, 0.7) inset;
     border-radius: 3px;
@@ -5195,7 +5201,7 @@
     border: 2px solid transparent;
   }
   div.timeline-customtime {
-    z-index: 3;
+    z-index: 6;
     background-color: #da0000;
     width: 1px;
   }
@@ -5469,6 +5475,10 @@
     overflow-x: hidden;
     overflow-y: auto!important;
     min-height: 55px!important;
+  }
+  div.timeline-frame > div:first-child > div:first-child {
+    background-color: white;
+    z-index: 5;
   }
   .standard_border_radius {
     border-radius: 0px 0px 0px 0px;
@@ -6245,6 +6255,9 @@
   
     /* Content elements in body*/
   
+  }
+  #list-container div.annotation .creator {
+    display: none;
   }
   #list-container div.annotation:first-child {
     border-top: none;

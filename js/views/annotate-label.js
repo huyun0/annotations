@@ -246,6 +246,10 @@ define(["jquery",
                     params.created_by_nickname = annotationsTool.user.get("nickname");
                 }
 
+                if (!annotationsTool.localStorage) {
+                    options.wait = true;
+                }
+
                 annotation = annotationsTool.selectedTrack.get("annotations").create(params, options);
                 annotationsTool.setSelection([annotation], true);
             },

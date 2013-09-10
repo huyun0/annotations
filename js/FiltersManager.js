@@ -19,7 +19,7 @@
  * @module filters-manager
  * @requires backbone
  */
-define(["backbone"], function (Backbone) {
+define(["backbone", "access"], function (Backbone, ACCESS) {
 
     "use strict";
 
@@ -64,7 +64,7 @@ define(["backbone"], function (Backbone) {
                 active: false,
                 filter: function (list) {
                     return _.filter(list, function (item) {
-                        return _.isUndefined(item.model) || item.model.get("isPublic");
+                        return _.isUndefined(item.model) || item.model.get("isPublic") || (item.model.get("access") === ACCESS.PUBLIC);
                     }, this);
                 }
             }

@@ -76,7 +76,12 @@ div.timeline-groups-text{
         a:hover{
             text-decoration: none!important;
         }
-               
+        
+        a.content-overlay {
+            display: inline-block;
+            width: 150px;
+        }
+
         div.content{
         	width: 105px;
             overflow: hidden;
@@ -103,7 +108,7 @@ div.timeline-groups-text{
         }
     }
     
-    i.delete, i.visibility {
+    i.delete, i.visibility, i.update {
         z-index: 4;
         margin-top: 5px;
         margin-right: 4px;
@@ -127,7 +132,7 @@ div.timeline-groups-text{
 }
 
 div.timeline-customtime {
-    z-index: 3;
+    z-index: 6;
     background-color: @red;
     width: 1px;
 }
@@ -321,6 +326,11 @@ div#timeline {
     overflow-x: hidden;
     overflow-y: auto!important;
     min-height: 55px!important;
+}
+
+div.timeline-frame > div:first-child > div:first-child {
+    background-color: white;
+    z-index: 5;
 }
 
 
