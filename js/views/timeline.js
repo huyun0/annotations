@@ -783,6 +783,8 @@ define(["jquery",
                             description: description,
                             access     : access
                         });
+
+                        track.save();
                           
                         self.updateGroupModal.modal("toggle");
                     };
@@ -1180,6 +1182,8 @@ define(["jquery",
 
                 // Destroy the track and redraw the timeline
                 callback = $.proxy(function () {
+                    // delete track popover
+                    $("#track" + trackId).popover("disable");
 
                     values = _.values(this.allItems);
 
