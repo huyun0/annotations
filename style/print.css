@@ -57,12 +57,11 @@ source::before {
   display: block;
   content: " (" attr(src) ")";
 }
-div.navbar .brand {
-  text-decoration: none;
-  font-size: 1.5em;
-}
-div.navbar li {
+div.navbar {
   display: none;
+}
+div#title-container div#title-name {
+  font-size: 20px;
 }
 div#list-container .navbar {
   display: none;
@@ -76,6 +75,11 @@ div#list-container .annotation {
 div#list-container .annotation > div {
   margin: 2px;
 }
+div#list-container .annotation .icon-comment-amount,
+div#list-container .annotation .add-comment,
+div#list-container .annotation .button-bar {
+  display: none;
+}
 div#list-container .start,
 div#list-container .duration {
   background: #b3b3b3 !important;
@@ -84,14 +88,9 @@ div#list-container .duration {
   border-radius: 3px;
 }
 div#list-container .category {
+  display: block;
   font-style: italic;
   font-weight: bold;
-}
-div#list-container .category::before {
-  content: "Category:";
-  margin-left: 5px;
-  margin-right: 2px;
-  font-weight: normal;
 }
 .user {
   font-weight: bold;
@@ -106,4 +105,7 @@ div#list-container .category::before {
 .track::before {
   content: "track ";
   font-weight: normal;
+}
+div#loop {
+  display: none;
 }

@@ -50,6 +50,7 @@ define(["jquery",
         "models/user",
         "models/track",
         "models/video",
+        "text!templates/categories-legend.tmpl",
         "backbone-annotations-sync",
         "roles",
         "FiltersManager",
@@ -60,7 +61,7 @@ define(["jquery",
         "tab"],
 
     function ($, PlayerAdapter, AnnotateView, ListView, TimelineView, LoginView, ScaleEditorView,
-              Annotations, Users, Videos, User, Track, Video, AnnotationSync, ROLES, FiltersManager, Backbone) {
+              Annotations, Users, Videos, User, Track, Video, CategoriesLegendTmpl, AnnotationSync, ROLES, FiltersManager, Backbone) {
 
         "use strict";
 
@@ -94,6 +95,14 @@ define(["jquery",
              */
             loadingBox: $("div#loading"),
 
+
+            /**
+             * Template for the categories legend
+             * @alias module:views-main.MainView#categoriesLegendTmpl
+             * @type {Handlebars template}
+             */
+            categoriesLegendTmpl: Handlebars.compile(CategoriesLegendTmpl),
+
             /**
              * Events to handle by the main view
              * @alias module:views-main.MainView#event
@@ -118,13 +127,15 @@ define(["jquery",
                 _.bindAll(this, "checkUserAndLogin",
                                 "createViews",
                                 "initModels",
+                                "generateCategoriesLegend",
                                 "logout",
                                 "loadPlugins",
                                 "onDeletePressed",
                                 "onWindowResize",
                                 "print",
                                 "ready",
-                                "setLoadingProgress");
+                                "setLoadingProgress",
+                                "updateTitle");
 
                 this.setLoadingProgress(10, "Starting tool.");
 
@@ -174,13 +185,15 @@ define(["jquery",
                 annotationsTool.importCategories = this.importCategories;
                 annotationsTool.dispatcher.once(annotationsTool.EVENTS.READY, function () {
                     this.loadPlugins(annotationsTool.plugins);
+                    this.generateCategoriesLegend(annotationsTool.video.get("categories").toExportJSON());
+                    this.updateTitle(annotationsTool.video);
                 }, this);
 
                 annotationsTool.onWindowResize = this.onWindowResize;
             },
 
             /**
-             * Load the given plugins
+             * Loads the given plugins
              * @param  {Array} plugins The array of plugins to load
              * @alias module:views-main.MainView#loadPlugins
              */
@@ -191,7 +204,31 @@ define(["jquery",
             },
 
             /**
-             * Create the views for the annotations
+             * Updates the title of the page for print mode
+             * @param  {object} video The video model
+             * @alias module:views-main.MainView#updateTitle
+             */
+            updateTitle: function (video) {
+                this.$el.find("#video-title").html(video.get("title"));
+                this.$el.find("#video-owner").html("Owner: " + video.get("src_owner"));
+                if (_.isUndefined(video.get("src_creation_date"))) {
+                    this.$el.find("#video-date").remove();
+                } else {
+                    this.$el.find("#video-date").html("Date: " + video.get("src_creation_date"));
+                }
+            },
+
+            /**
+             * Generates the legend for all the categories (for printing)
+             * @param  {array} categories The array containing all the categories
+             * @alias module:views-main.MainView#generateCategoriesLegend
+             */
+            generateCategoriesLegend: function (categories) {
+                this.$el.find("#categories-legend").html(this.categoriesLegendTmpl(categories));
+            },
+
+            /**
+             * Creates the views for the annotations
              * @alias module:views-main.MainView#createViews
              */
             createViews: function () {
@@ -429,9 +466,10 @@ define(["jquery",
                     videos.fetch();
 
                     if (videos.length === 0) {
-                        video = videos.create({video_extid: annotationsTool.getVideoExtId()}, {wait: true});
+                        video = videos.create(annotationsTool.getVideoParameters(), {wait: true});
                     } else {
                         video = videos.at(0);
+                        video.set(annotationsTool.getVideoParameters());
                     }
 
                     annotationsTool.video = video;

@@ -1,6 +1,7 @@
 <span class="comments header">
+	<span class="caption print">Comment</span>
 	<span class="username">{{creator}}</span>
-	<span class="date">added on the {{creationdate}}{{#if updateddate}}	and modified on the {{updateddate}}{{/if}}</span>
+	<span class="date">added on the {{formatDate creationdate}}{{#if updateddate}}	and modified on the {{formatDate updateddate}}{{/if}}</span>
 </span>
 {{#if canEdit}}
 <i class="delete-comment icon-trash" title="Delete comment"></i>

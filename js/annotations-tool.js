@@ -122,6 +122,14 @@ define(["jquery",
                         this.loadVideo();
                     }
 
+                    /**
+                     * Handlebars helper to format a date to the configured format
+                     * @alias module:Handlebars#formatDate
+                     * @param  {date} date The date to format
+                     * @return {string}      The formated date
+                     */
+                    Handlebars.registerHelper("formatDate", config.formatDate);
+
                     this.deleteOperation.start = _.bind(this.deleteOperation.start, this);
                     this.initDeleteModal();
                     $(this.playerAdapter).bind(PlayerAdapter.EVENTS.TIMEUPDATE, this.updateSelectionOnTimeUpdate);

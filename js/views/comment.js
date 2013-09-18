@@ -163,13 +163,13 @@ define(["jquery",
                 var modelJSON = this.model.toJSON(),
                     data = {
                         creator     : modelJSON.created_by_nickname,
-                        creationdate: new Date(modelJSON.created_at).toLocaleString(),
+                        creationdate: new Date(modelJSON.created_at),
                         text        : _.escape(modelJSON.text).replace(/\n/g, "<br/>"),
                         canEdit     : annotationsTool.user.get("id") === modelJSON.created_by
                     };
                 if (modelJSON.created_at !== modelJSON.updated_at) {
                     data.updator = modelJSON.updated_by_nickname;
-                    data.updateddate = new Date(modelJSON.updated_at).toLocaleString();
+                    data.updateddate = new Date(modelJSON.updated_at);
                 }
                 this.$el.html(this.template(data));
                 this.delegateEvents(this.events);

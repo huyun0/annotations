@@ -8,47 +8,50 @@
   thead { display: table-header-group; } /* h5bp.com/t */
   tr, img { page-break-inside: avoid; }
   img { max-width: 100% !important; }
-  @page { margin: 0.5cm; }
+  @page { margin: 1cm; }
   p, h2, h3 { orphans: 3; widows: 3; }
   h2, h3 { page-break-after: avoid; }
 
 
   @color1: grey;
 
-  div#error-container > div, div#video-container > div, div#annotate-container > div, div#timeline-container > div{
+  div#error-container > div, div#video-container > div, div#annotate-container > div, div#timeline-container > div, .navbar, div#loop, span.scaling {
     display: none;
   }
 
-  source::before {
+  source:before {
     display: block;
     content: " (" attr(src) ")";
   }
 
-  // Title 
-  div.navbar {
-    .brand {
-      text-decoration: none;
-      font-size: 1.3em;
+    div#title-container {
+    div#video-title {
+      font-size: 20pt;
     }
 
-    li {
-      display: none;
+    div#title-owner {
+      font-size: 14pt;
     }
+
+    border-bottom: 1px solid black;
+    padding-bottom: 20px;
+    margin-bottom: 5px;
   }
 
   // Annotation list
   div#list-container {
-    .navbar {
-      display: none;
-    }
 
     .annotation {
-      padding: 2px;
-      border-bottom: gray 3px solid;
-      margin: 2px;
+      padding: 0px;
+      border-bottom: solid 1px black;
+      margin: 8px 0px 8px 0px;
 
       > div {
         margin: 4px;
+      }
+
+      .icon-comment-amount, .add-comment, .button-bar {
+        display: none;
       }
     }
 
@@ -61,37 +64,77 @@
     }
 
     .start,.end {
-      background: lighten(@color1, 20%) !important;
-      padding: 0px;
-      margin: 1px;
-      border-radius: 3px;
+      color: grey !important;
+      background: none !important;
+      border: none;
+      float: right;
+      width: 100px;
+      text-align: right;
+
+      input {
+        color: grey !important;
+        width: 70px;
+        font-size: 11pt;
+      }
+    }
+
+    .start {
+      margin-right: 80px;
+    }
+
+    .end {
+      margin-right: -182px;
+
+      &:before {
+        content: "-";
+      }
+
+      &.no-duration {
+        display: none;
+      }
     }
 
     input {
       background: transparent !important;
-    }
-
-    .category {
-      font-style: italic;
-      font-weight: bold;
+      border: none;
     }
 
     span.freetext .read-only {
       display: block
     }
 
-    span.label:before {
-      content: "Label: ";
-      margin-left: 5px;
-      margin-right: 2px;
-      font-weight: normal;
+    .category {
+      color: grey !important;
+      display: block;
+
+
+      span {
+        font-size: 11pt;
+        display: inline-block;
+        &:after {
+          content: "|";
+          margin-left: 5px;
+        }
+
+        &:last-child{
+          display: none;
+        }
+      }
+
+      .no-label{
+        display: none;
+      }
     }
 
-    .category::before {
-      content: "Category:";
+    .creator, .category-print, .creation-date {
+      font-size: 11pt;
+      color: grey !important;
+      display: inline-block;
+    }
+
+    .creator:after, .category-print:after {
+      content: "|";
       margin-left: 5px;
-      margin-right: 2px;
-      font-weight: normal;
     }
 
     .scaling {
@@ -99,28 +142,68 @@
       float: right;
     }
 
+    div.comment-list {
+      > div {
+        margin: 8px 0px 0px 50px;
 
-    .scaling::before{
-      content: "Scale value: ";
+        span.header {
+          font-size: 11pt;
+          color: grey !important;
+          display: inline-block;
+
+          span {
+            color: grey !important;
+            
+            &:after {
+              content: "|";
+              margin-left: 5px;
+            }
+
+            &.date:after {
+              display: none;
+            }
+          }
+        }
+
+        span.text {
+          color: black !important;
+          display: block;
+          border:none;
+        }
+      }
     }
   }
 
   .user {
+    color: grey !important;
     font-weight: bold;
   }
 
-  .user::before {
-    content: "user ";
-    font-weight: normal;
+  #categories-legend {
+    margin-top: 80px;
+    .category-legend {
+        margin-top: 20px;
+
+        .name, .scale {
+            display: inline-block;
+            font-style: italic;
+            margin-right: 5px;
+        }
+
+        .label {
+          .abbreviation {
+            width: 40px;
+            display: inline-block;
+          }
+
+          .value:before {
+            content: "|";
+            margin-right: 5px;
+          }
+        }
+    }
   }
 
-  .track {
-    font-weight: bold;
-  }
 
-  .track::before {
-    content: "track ";
-    font-weight: normal;
-  }
 
 

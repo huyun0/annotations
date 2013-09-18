@@ -112,6 +112,19 @@ define(["jquery",
             playerAdapter: undefined,
 
             /**
+             * Formats the given date in 
+             * @alias module:annotations-tool-configuration.Configuration.formatDate
+             * @type {module:player-adapter.formatDate}
+             */
+            formatDate: function (date) {
+                if (_.isDate(date)) {
+                    return date.getDate() + "." + (date.getMonth() + 1) + "." + date.getFullYear()
+                } else {
+                    return "Unvalid date";
+                }
+            },
+
+            /**
              * Get the tool layout configuration
              * @return {object} The tool layout configuration
              */
@@ -144,6 +157,31 @@ define(["jquery",
              */
             getVideoExtId: function () {
                 return $("video")[0].id;
+            },            
+
+            /**
+             * Get the external parameters related to video. The supported parameters are now the following:
+             *     - video_extid: Required! Same as the value returned by getVideoExtId
+             *     - title: The title of the video
+             *     - src_owner: The owner of the video in the system
+             *     - src_creation_date: The date of the course, when the video itself was created.
+             * @alias module:annotations-tool-configuration.Configuration.getVideoExtId
+             * @example
+             * {
+             *     video_extid: 123, // Same as the value returned by getVideoExtId
+             *     title: "Math lesson 4", // The title of the video
+             *     src_owner: "Professor X", // The owner of the video in the system
+             *     src_creation_date: "12-12-1023" // The date of the course, when the video itself was created.
+             * }
+             * @return {Object} The literal object containing all the parameters described in the example.
+             */
+            getVideoParameters: function () {
+                return {
+                    video_extid: this.getVideoExtId(),
+                    title: $("video")[0].currentSrc.split("/").pop().split(".")[0],
+                    src_owner: $("video").first().attr("data-owner"),
+                    src_creation_date:  $("video").first().attr("data-date")
+                }
             },
 
             /**

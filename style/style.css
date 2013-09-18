@@ -5702,6 +5702,10 @@
   .uneditable-input {
     border-radius: 0px 0px 0px 0px;
   }
+  #title-container,
+  .print {
+    display: none;
+  }
   .standard_border_radius {
     border-radius: 0px 0px 0px 0px;
   }
@@ -6436,6 +6440,9 @@
   #list-container div.annotation span.category span.abbreviation {
     color: #000000;
     font-weight: bold;
+  }
+  #list-container div.annotation span.category span.category-name {
+    display: none;
   }
   #list-container div.annotation span.text {
     display: block;
@@ -7741,7 +7748,7 @@
     max-width: 100% !important;
   }
   @page  {
-    margin: 0.5cm;
+    margin: 1cm;
   }
   p,
   h2,
@@ -7756,30 +7763,39 @@
   div#error-container > div,
   div#video-container > div,
   div#annotate-container > div,
-  div#timeline-container > div {
+  div#timeline-container > div,
+  .navbar,
+  div#loop,
+  span.scaling {
     display: none;
   }
-  source::before {
+  source:before {
     display: block;
     content: " (" attr(src) ")";
   }
-  div.navbar .brand {
-    text-decoration: none;
-    font-size: 1.3em;
+  div#title-container {
+    border-bottom: 1px solid black;
+    padding-bottom: 20px;
+    margin-bottom: 5px;
   }
-  div.navbar li {
-    display: none;
+  div#title-container div#video-title {
+    font-size: 20pt;
   }
-  div#list-container .navbar {
-    display: none;
+  div#title-container div#title-owner {
+    font-size: 14pt;
   }
   div#list-container .annotation {
-    padding: 2px;
-    border-bottom: gray 3px solid;
-    margin: 2px;
+    padding: 0px;
+    border-bottom: solid 1px black;
+    margin: 8px 0px 8px 0px;
   }
   div#list-container .annotation > div {
     margin: 4px;
+  }
+  div#list-container .annotation .icon-comment-amount,
+  div#list-container .annotation .add-comment,
+  div#list-container .annotation .button-bar {
+    display: none;
   }
   div#list-container .edit {
     display: none;
@@ -7789,53 +7805,118 @@
   }
   div#list-container .start,
   div#list-container .end {
-    background: #b3b3b3 !important;
-    padding: 0px;
-    margin: 1px;
-    border-radius: 3px;
+    color: grey !important;
+    background: none !important;
+    border: none;
+    float: right;
+    width: 100px;
+    text-align: right;
+  }
+  div#list-container .start input,
+  div#list-container .end input {
+    color: grey !important;
+    width: 70px;
+    font-size: 11pt;
+  }
+  div#list-container .start {
+    margin-right: 80px;
+  }
+  div#list-container .end {
+    margin-right: -182px;
+  }
+  div#list-container .end:before {
+    content: "-";
+  }
+  div#list-container .end.no-duration {
+    display: none;
   }
   div#list-container input {
     background: transparent !important;
-  }
-  div#list-container .category {
-    font-style: italic;
-    font-weight: bold;
+    border: none;
   }
   div#list-container span.freetext .read-only {
     display: block;
   }
-  div#list-container span.label:before {
-    content: "Label: ";
-    margin-left: 5px;
-    margin-right: 2px;
-    font-weight: normal;
+  div#list-container .category {
+    color: grey !important;
+    display: block;
   }
-  div#list-container .category::before {
-    content: "Category:";
+  div#list-container .category span {
+    font-size: 11pt;
+    display: inline-block;
+  }
+  div#list-container .category span:after {
+    content: "|";
     margin-left: 5px;
-    margin-right: 2px;
-    font-weight: normal;
+  }
+  div#list-container .category span:last-child {
+    display: none;
+  }
+  div#list-container .category .no-label {
+    display: none;
+  }
+  div#list-container .creator,
+  div#list-container .category-print,
+  div#list-container .creation-date {
+    font-size: 11pt;
+    color: grey !important;
+    display: inline-block;
+  }
+  div#list-container .creator:after,
+  div#list-container .category-print:after {
+    content: "|";
+    margin-left: 5px;
   }
   div#list-container .scaling {
     font-style: oblique;
     float: right;
   }
-  div#list-container .scaling::before {
-    content: "Scale value: ";
+  div#list-container div.comment-list > div {
+    margin: 8px 0px 0px 50px;
+  }
+  div#list-container div.comment-list > div span.header {
+    font-size: 11pt;
+    color: grey !important;
+    display: inline-block;
+  }
+  div#list-container div.comment-list > div span.header span {
+    color: grey !important;
+  }
+  div#list-container div.comment-list > div span.header span:after {
+    content: "|";
+    margin-left: 5px;
+  }
+  div#list-container div.comment-list > div span.header span.date:after {
+    display: none;
+  }
+  div#list-container div.comment-list > div span.text {
+    color: black !important;
+    display: block;
+    border: none;
   }
   .user {
+    color: grey !important;
     font-weight: bold;
   }
-  .user::before {
-    content: "user ";
-    font-weight: normal;
+  #categories-legend {
+    margin-top: 80px;
   }
-  .track {
-    font-weight: bold;
+  #categories-legend .category-legend {
+    margin-top: 20px;
   }
-  .track::before {
-    content: "track ";
-    font-weight: normal;
+  #categories-legend .category-legend .name,
+  #categories-legend .category-legend .scale {
+    display: inline-block;
+    font-style: italic;
+    margin-right: 5px;
+  }
+  #categories-legend .category-legend .label .abbreviation {
+    width: 40px;
+    display: inline-block;
+  }
+  #categories-legend .category-legend .label .value:before {
+    content: "|";
+    margin-right: 5px;
   }
 }
 /* ===== Primary Styles ========================================================

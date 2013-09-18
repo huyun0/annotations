@@ -98,6 +98,10 @@ define(["jquery",
                         attr.created_by_nickname = annotationsTool.user.get("nickname");
                     }
 
+                    if (!attr.created_at) {
+                        attr.created_at == new Date();
+                    }
+
                     saveChange = function () {
                         this.save();
                     };
