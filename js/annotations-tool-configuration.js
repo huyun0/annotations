@@ -38,6 +38,7 @@ define(["jquery",
 
             /**
              * List of possible layout configuration
+             * @alias module:annotations-tool-configuration.Configuration.LAYOUT_CONFIGURATION
              * @memberOf module:annotations-tool-configuration.Configuration
              * @type {Object}
              */
@@ -49,6 +50,14 @@ define(["jquery",
                     annotate: true
                 }
             },
+
+            /**
+             * The minmal duration used for annotation representation on timeline
+             * @alias module:annotations-tool-configuration.Configuration.MINIMAL_DURATION
+             * @memberOf module:annotations-tool-configuration.Configuration
+             * @type {Object}
+             */
+            MINIMAL_DURATION: 5,
 
             /**
              * Define if the localStorage should be used or not

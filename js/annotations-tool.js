@@ -227,14 +227,9 @@ define(["jquery",
                     // if the selection is not empty, we move the playhead to it
                     if (_.isArray(selection) && selection.length > 0 && moveTo) {
                         this.playerAdapter.setCurrentTime(selection[0].get("start"));
-
-                        if (typeof isManualSelected === "undefined") {
-                            this.isManualSelected = true;
-                        }
+                        this.isManualSelected = isManualSelected;
                     } else {
-                        if (typeof isManualSelected === "undefined") {
-                            this.isManualSelected = false;
-                        }
+                        this.isManualSelected = isManualSelected;
                     }
 
                     // Trigger the selection event
@@ -283,7 +278,7 @@ define(["jquery",
 
                         start    = annotation.get("start");
                         duration = annotation.get("duration");
-                        end      = start + duration;
+                        end      = start + (duration < this.MINIMAL_DURATION ? this.MINIMAL_DURATION : duration);
 
                         if (_.isNumber(duration) && start <= currentTime && end >= currentTime) {
                             selection.push(annotation);
