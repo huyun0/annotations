@@ -185,7 +185,7 @@ define(["jquery",
                 annotationsTool.importCategories = this.importCategories;
                 annotationsTool.dispatcher.once(annotationsTool.EVENTS.READY, function () {
                     this.loadPlugins(annotationsTool.plugins);
-                    this.generateCategoriesLegend(annotationsTool.video.get("categories").toExportJSON());
+                    this.generateCategoriesLegend(annotationsTool.video.get("categories").toExportJSON(true));
                     this.updateTitle(annotationsTool.video);
                 }, this);
 

@@ -99,7 +99,8 @@ define(["jquery",
                     }
 
                     if (!attr.created_at) {
-                        attr.created_at == new Date();
+                        this.set("created_at", new Date());
+                        this.save();
                     }
 
                     saveChange = function () {
@@ -251,7 +252,7 @@ define(["jquery",
                 if (attr.created_at) {
                     if ((tmpCreated = this.get("created_at")) && tmpCreated !== attr.created_at) {
                         return "\"created_at\" attribute can not be modified after initialization!";
-                    } else if (!_.isNumber(attr.created_at)) {
+                    } else if (!_.isNumber(attr.created_at) && !_.isDate(attr.created_at)) {
                         return "\"created_at\" attribute must be a number!";
                     }
                 }

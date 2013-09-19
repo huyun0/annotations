@@ -7849,7 +7849,7 @@
     content: "|";
     margin-left: 5px;
   }
-  div#list-container .category span:last-child {
+  div#list-container .category span:last-child:after {
     display: none;
   }
   div#list-container .category .no-label {
@@ -7872,7 +7872,12 @@
     float: right;
   }
   div#list-container div.comment-list > div {
-    margin: 8px 0px 0px 50px;
+    background-image: url("../img/arrow-right.png") !important;
+    background-size: 20px !important;
+    background-repeat: no-repeat !important;
+    background-position: 25px top !important;
+    margin: 8px 0px 0px 0px;
+    padding-left: 60px;
   }
   div#list-container div.comment-list > div span.header {
     font-size: 11pt;
@@ -7909,6 +7914,14 @@
     display: inline-block;
     font-style: italic;
     margin-right: 5px;
+  }
+  #categories-legend .category-legend .name .scale-value:after,
+  #categories-legend .category-legend .scale .scale-value:after {
+    content: ", ";
+  }
+  #categories-legend .category-legend .name .scale-value:last-child:after,
+  #categories-legend .category-legend .scale .scale-value:last-child:after {
+    display: none;
   }
   #categories-legend .category-legend .label .abbreviation {
     width: 40px;

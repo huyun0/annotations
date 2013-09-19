@@ -116,7 +116,7 @@
           margin-left: 5px;
         }
 
-        &:last-child{
+        &:last-child:after{
           display: none;
         }
       }
@@ -144,7 +144,12 @@
 
     div.comment-list {
       > div {
-        margin: 8px 0px 0px 50px;
+        background-image: url("../img/arrow-right.png") !important;
+        background-size: 20px !important;
+        background-repeat: no-repeat !important;
+        background-position: 25px top !important;
+        margin: 8px 0px 0px 0px;
+        padding-left: 60px;
 
         span.header {
           font-size: 11pt;
@@ -188,6 +193,14 @@
             display: inline-block;
             font-style: italic;
             margin-right: 5px;
+
+            .scale-value:after {
+              content: ", ";
+            }
+
+            .scale-value:last-child:after {
+              display: none;
+            }
         }
 
         .label {
