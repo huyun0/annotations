@@ -126,8 +126,12 @@ define(["jquery",
              * @type {module:player-adapter.formatDate}
              */
             formatDate: function (date) {
+                if (_.isNumber(date)) {
+                    date = new Date(date);
+                }
+
                 if (_.isDate(date)) {
-                    return date.getDate() + "." + (date.getMonth() + 1) + "." + date.getFullYear()
+                    return date.getDate() + "." + (date.getMonth() + 1) + "." + date.getFullYear();
                 } else {
                     return "Unvalid date";
                 }

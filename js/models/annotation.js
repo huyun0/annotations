@@ -99,8 +99,7 @@ define(["jquery",
                     }
 
                     if (!attr.created_at) {
-                        this.set("created_at", new Date());
-                        this.save();
+                        attr.created_at = new Date();
                     }
 
                     saveChange = function () {
