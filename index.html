@@ -70,10 +70,16 @@
     
     <div class="row-fluid">
         <div class="span6"> 
+
+            <div id="title-container">
+                <div id="video-title"></div>
+                <div id="video-owner"></div>
+                <div id="video-date"></div>
+            </div>
         
             <!-- container for the video -->
             <div id="video-container" class="window" style="display:none">
-                <video id="example" style="width:100%" controls preload="auto">
+                <video id="example" style="width:100%" controls preload="auto" data-date="10.10.2010" data-owner="Moi">
                     <source src="resources/aav1.mp4" type="video/mp4" />
 <source src="resources/aav1.webm" type="video/webm" />
 <source src="resources/aav1.ogv" type="video/ogg" />
@@ -86,8 +92,8 @@
                     <div class="navbar">
                         <div class="navbar-inner">
                           <div class="container-fluid">
-                            <!-- Be sure to leave the brand out there if you want it shown -->
-                            <a class="window-title" href="#">Timeline</a>
+                            <span class="window-title">Timeline</span>
+                            <span class="time-header">Current time: <span class="time"></span></span>
                             <ul class="nav pull-right">
                                   <li class="dropdown">
                                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">Filter <b class="caret"></b></a>
@@ -187,7 +193,7 @@
                           <div class="container">
                          
                             <!-- Be sure to leave the brand out there if you want it shown -->
-                            <a class="window-title" href="#">List</a>
+                            <span class="window-title">List</span>
                             
                             <ul class="nav pull-right">
                                   <li class="dropdown">
@@ -219,7 +225,11 @@
         </div>
 
       </div>
+
+      <!-- Containter for the categories legend, only displayed in print mode -->
     </div> <!-- /container -->
+
+    <div id="categories-legend" class="print"></div>
     <div id="dialogs"></div>
     <div class="modal" id="user-login" style="display:none"></div>
     <div class="modal" id="scale-editor" style="display:none"></div>

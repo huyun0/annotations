@@ -26,13 +26,16 @@
 
   // Title 
   div.navbar {
-    .brand {
-      text-decoration: none;
-      font-size: 1.5em;
+    display: none;
+  }
+
+  div#title-container {
+    div#title-name {
+      font-size: 20px;
     }
 
-    li {
-      display: none;
+    div#title-owner {
+
     }
   }
 
@@ -51,6 +54,10 @@
       > div {
         margin: 2px;
       }
+
+      .icon-comment-amount, .add-comment, .button-bar {
+        display: none;
+      }
     }
 
     .start,.duration {
@@ -62,16 +69,14 @@
 
 
     .category {
+      display: block;
       font-style: italic;
       font-weight: bold;
+
+
     }
 
-    .category::before {
-      content: "Category:";
-      margin-left: 5px;
-      margin-right: 2px;
-      font-weight: normal;
-    }
+
   }
 
   .user {

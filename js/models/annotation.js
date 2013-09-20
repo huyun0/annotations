@@ -98,6 +98,10 @@ define(["jquery",
                         attr.created_by_nickname = annotationsTool.user.get("nickname");
                     }
 
+                    if (!attr.created_at) {
+                        attr.created_at = new Date();
+                    }
+
                     saveChange = function () {
                         this.save();
                     };
@@ -247,7 +251,7 @@ define(["jquery",
                 if (attr.created_at) {
                     if ((tmpCreated = this.get("created_at")) && tmpCreated !== attr.created_at) {
                         return "\"created_at\" attribute can not be modified after initialization!";
-                    } else if (!_.isNumber(attr.created_at)) {
+                    } else if (!_.isNumber(attr.created_at) && !_.isDate(attr.created_at)) {
                         return "\"created_at\" attribute must be a number!";
                     }
                 }

@@ -312,6 +312,7 @@ define(["jquery",
                 $("div#timeline").scroll(this.updateHeader);
 
                 this.timeline.redraw();
+                this.onPlayerTimeUpdate();
             },
 
 
@@ -906,9 +907,11 @@ define(["jquery",
              * @alias module:views-timeline.TimelineView#onPlayerTimeUpdate
              */
             onPlayerTimeUpdate: function () {
-                var newDate = this.getFormatedDate(this.playerAdapter.getCurrentTime());
+                var currentTime = this.playerAdapter.getCurrentTime(),
+                    newDate = this.getFormatedDate(currentTime);
 
                 this.timeline.setCustomTime(newDate);
+                this.$el.find("span.time").html(annotationsTool.getWellFormatedTime(currentTime));
 
                 this.moveToCurrentTime();
             },
@@ -930,7 +933,7 @@ define(["jquery",
                 if (!this.isAnnotationSelectedonTimeline(selection[0])) {
                     _.each(data, function (item, index) {
                         if (selection[0].get("id") === item.id) {
-                            this.timeline.selectItem(index);
+                            this.timeline.selectItem(index, false, true);
                         }
                     }, this);
                 }
@@ -944,14 +947,21 @@ define(["jquery",
             },
 
             updateUnselectListener: function () {
-                var className = this.ITEM_SELECTED_CLASS;
+                var className = this.ITEM_SELECTED_CLASS,
+                    self = this,
+                    unselect = function (event) {
+                        if ($(this).parent().parent().hasClass(className)) {
+                            console.log("unselected");
+                            event.stopImmediatePropagation();
+                            annotationsTool.setSelection();
+                        }
+                    };
 
-                this.$el.find("." + this.ITEM_SELECTED_CLASS + " .timeline-item").one("dblclick", function (event) {
-                    if ($(this).parent().parent().hasClass(className)) {
-                        event.stopImmediatePropagation();
-                        annotationsTool.setSelection();
-                    }
-                });
+
+                setTimeout(function () {
+                    self.$el.find(".timeline-item").unbind("click", unselect);
+                    self.$el.find("." + className+ " .timeline-item").one("click", unselect);
+                }, 300);
             },
             
             /**
@@ -1130,7 +1140,7 @@ define(["jquery",
                 if (this.playerAdapter.getStatus() !== PlayerAdapter.STATUS.PLAYING ||
                       Math.abs(this.playerAdapter.getCurrentTime() - this.getTimeInSeconds(item.item.start)) > 1) {
                     this.playerAdapter.pause();
-                    annotationsTool.setSelection([annotation], true);
+                    annotationsTool.setSelection([annotation], true, true);
                 }
             },
             

@@ -323,9 +323,10 @@ define(["jquery",
             /**
              * Prepare the model as JSON to export and return it
              * @alias module:models-category.Category#toExportJSON
+             * @param {boolean} withScales Define if the scale has to be included
              * @return {JSON} JSON representation of the model for export
              */
-            toExportJSON: function () {
+            toExportJSON: function (withScale) {
                 var json = {
                     name: this.attributes.name,
                     labels: this.attributes.labels.toExportJSON()
@@ -353,6 +354,14 @@ define(["jquery",
 
                 if (this.attributes.tags) {
                     json.tags = this.attributes.tags;
+                }
+
+                if (!_.isUndefined(withScale) &&  withScale) {
+                    if (this.attributes.scale_id) {
+                        json.scale = annotationsTool.video.get("scales").get(this.attributes.scale_id).toExportJSON();
+                    } else if (this.attributes.scale) {
+                        json.scale = annotationsTool.video.get("scales").get(this.attributes.scale.get("id")).toExportJSON();
+                    }
                 }
 
                 return json;
