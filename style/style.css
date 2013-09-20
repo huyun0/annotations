@@ -5105,6 +5105,13 @@
   #timeline-container .navbar {
     margin: 0;
   }
+  #timeline-container .navbar span.time-header {
+    margin-left: 10px;
+  }
+  #timeline-container .navbar span.time-header span.time {
+    font-size: bold;
+    color: white;
+  }
   .item-id,
   .annotation-id,
   .group-id,

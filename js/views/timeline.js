@@ -312,6 +312,7 @@ define(["jquery",
                 $("div#timeline").scroll(this.updateHeader);
 
                 this.timeline.redraw();
+                this.onPlayerTimeUpdate();
             },
 
 
@@ -906,9 +907,11 @@ define(["jquery",
              * @alias module:views-timeline.TimelineView#onPlayerTimeUpdate
              */
             onPlayerTimeUpdate: function () {
-                var newDate = this.getFormatedDate(this.playerAdapter.getCurrentTime());
+                var currentTime = this.playerAdapter.getCurrentTime(),
+                    newDate = this.getFormatedDate(currentTime);
 
                 this.timeline.setCustomTime(newDate);
+                this.$el.find("span.time").html(annotationsTool.getWellFormatedTime(currentTime));
 
                 this.moveToCurrentTime();
             },
