@@ -47,7 +47,8 @@ define(["jquery",
 
                 EVENTS: {
                     ANNOTATION_SELECTION: "at:annotation-selection",
-                    READY               : "at:ready"
+                    READY               : "at:ready",
+                    ANNOTATE_TOGGLE_EDIT: "at:annotate-switch-edit-modus"
                 },
 
                 views: {},

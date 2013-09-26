@@ -138,7 +138,8 @@ define(["jquery",
                                 "onKeyDown",
                                 "onDeleteLabel",
                                 "annnotateWithScaling",
-                                "changeCategory");
+                                "changeCategory",
+                                "updateInputWidth");
 
                 // Type use for delete operation
                 this.typeForDelete = annotationsTool.deleteOperation.targetTypes.LABEL;
@@ -171,9 +172,9 @@ define(["jquery",
                     this.scaleValues = this.scaleValues.get("scaleValues");
                 }
 
-                if (_.contains(this.roles, annotationsTool.user.get("role"))) {
-                    this.listenTo(annotationsTool.video, "switchEditModus", this.onSwitchEditModus);
-                }
+                // if (_.contains(this.roles, annotationsTool.user.get("role"))) {
+                //     this.listenTo(annotationsTool, annotationsTool.EVENTS.ANNOTATE_TOGGLE_EDIT, this.onSwitchEditModus);
+                // }
 
                 return this.render();
             },
@@ -371,6 +372,15 @@ define(["jquery",
             },
 
             /**
+             * Update the size of all the input for the label value
+             * alias module:views-annotate-category.CategoryView#updateInputWidth
+             */
+            updateInputWidth: function () {
+                var width = this.$el.width() - (this.$el.find("input.item-abbreviation").outerWidth() + this.$el.find("i.delete").outerWidth() + 25);
+                this.$el.find("input.item-value").width(width);
+            },
+
+            /**
              * Draw the view
              * @alias module:views-annotate-label.LabelView#render
              * @return {LabelView} this label view
@@ -399,6 +409,8 @@ define(["jquery",
                 }
 
                 this.delegateEvents(this.events);
+
+                this.updateInputWidth();
                 return this;
             }
 

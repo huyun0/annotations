@@ -127,7 +127,8 @@ define(["jquery",
                   "onColorChange",
                   "removeOne",
                   "onCreateLabel",
-                  "editScale");
+                  "editScale",
+                  "updateInputWidth");
 
 
                 // Define the colors (global setting for all color pickers)
@@ -177,12 +178,32 @@ define(["jquery",
                 this.listenTo(this.model, "change", this.onChange);
 
                 if (_.contains(this.roles, annotationsTool.user.get("role"))) {
-                    this.listenTo(annotationsTool.video, "switchEditModus", this.onSwitchEditModus);
+                    this.listenTo(annotationsTool, annotationsTool.EVENTS.ANNOTATE_TOGGLE_EDIT, this.onSwitchEditModus);
                 }
+
+                $(window).bind("resize", this.updateInputWidth);
 
                 this.render();
                 this.nameInput = this.$el.find(".catItem-header input");
                 return this;
+            },
+
+            /**
+             * Update the size of all the input for the label value
+             * alias module:views-annotate-category.CategoryView#updateInputWidth
+             */
+            updateInputWidth: function () {
+                var $headerEl   = this.$el.find(".catItem-header"),
+                    titleWidth  = $headerEl.width() - ($headerEl.find(".colorPicker-picker").outerWidth() 
+                                                       + $headerEl.find(".delete").outerWidth() 
+                                                       + $headerEl.find(".scale").outerWidth()
+                                                       + 25);
+
+                $headerEl.find("input").width(titleWidth);
+
+                _.each(this.labelViews, function (labelView) {
+                    labelView.updateInputWidth();
+                }, this);
             },
 
             /**
@@ -215,7 +236,10 @@ define(["jquery",
 
                 if (status) {
                     this.$el.find("input[disabled=\"disabled\"]").removeAttr("disabled");
+                    // Wait that style are applied
+                    setTimeout(this.updateInputWidth, 20);
                 } else {
+                    this.$el.find(".catItem-header input").width("100%");
                     this.$el.find("input").attr("disabled", "disabled");
                 }
             },
@@ -390,6 +414,7 @@ define(["jquery",
 
                 _.each(this.labelViews, function (view) {
                     this.$el.find(".catItem-labels").append(view.render().$el);
+                    view.updateInputWidth();
                 }, this);
 
                 this.nameInput = this.$el.find(".catItem-header input");
@@ -400,9 +425,11 @@ define(["jquery",
                 });
                 this.$el.find(".colorPicker-picker").addClass("edit");
                 this.delegateEvents(this.events);
+
                 return this;
             }
         });
+
         return CategoryView;
     }
 );

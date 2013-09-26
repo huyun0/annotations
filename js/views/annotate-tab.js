@@ -277,7 +277,7 @@ define(["jquery",
                 this.listenTo(this.categories, "remove", this.removeOne);
                 this.listenTo(this.categories, "destroy", this.removeOne);
 
-                this.listenTo(annotationsTool.video, "switchEditModus", this.onSwitchEditModus);
+                this.listenTo(annotationsTool, annotationsTool.EVENTS.ANNOTATE_TOGGLE_EDIT, this.onSwitchEditModus);
 
                 this.hasEditMode = _.contains(this.roles, annotationsTool.user.get("role"));
 
@@ -471,7 +471,6 @@ define(["jquery",
                 if (!hasBeenInit) {
                     this.carouselElement.carousel(0);
                 }
-
             },
 
             /**

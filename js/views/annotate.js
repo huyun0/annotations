@@ -401,7 +401,7 @@ define(["jquery",
                     this.$el.toggleClass("edit-on", status);
 
                     // trigger an event that all element switch in edit modus
-                    annotationsTool.video.trigger("switchEditModus", status);
+                    annotationsTool.trigger(annotationsTool.EVENTS.ANNOTATE_TOGGLE_EDIT, status);
                 },
 
                 /**
