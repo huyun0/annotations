@@ -367,6 +367,35 @@ define(["jquery",
                     }
                 },
 
+
+                COMMENT: {
+                    name: "comment",
+                    getContent: function (target) {
+                        return target.get("text");
+                    },
+                    destroy: function (target, callback) {
+
+                        target.destroy({
+
+                            success: function () {
+                                if (annotationsTool.localStorage) {
+                                     if (target.collection) {
+                                        target.collection.remove(target);
+                                    }
+
+                                    annotationsTool.video.save();
+                                }
+                                if (callback) {
+                                    callback();
+                                }
+                            },
+                            error: function (error) {
+                                console.warn("Cannot delete comment: " + error);
+                            }
+                        });
+                    }
+                },
+
                 LABEL: {
                     name: "label",
                     getContent: function (target) {

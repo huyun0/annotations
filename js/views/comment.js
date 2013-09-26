@@ -89,22 +89,38 @@ define(["jquery",
                 this.el.id     = this.id;
                 // Bind function to the good context
                 _.bindAll(this,
-                          "render",
+                          "deleteView",
                           "onDeleteComment",
                           "onEditComment",
                           "onSubmit",
-                          "onCancel");
+                          "onCancel",
+                          "render");
+
+                // Type use for delete operation
+                this.typeForDelete = annotationsTool.deleteOperation.targetTypes.COMMENT;
 
                 return this;
+            },
+
+            /**
+             * Delete only this comment
+             * @alias module:views-comment.Comment#deleteView
+             */
+            deleteView: function () {
+                this.remove();
+                this.undelegateEvents();
+                this.deleted = true;
             },
 
             /**
              * Delete the comment related to this view
              * @alias module:views-comment.Comment#onDeleteComment
              */
-            onDeleteComment: function () {
-                this.model.destroy();
-                this.remove();
+            onDeleteComment: function (event) {
+                if (event) {
+                    event.stopImmediatePropagation();
+                }
+                annotationsTool.deleteOperation.start(this.model, this.typeForDelete);
             },
 
             /**
