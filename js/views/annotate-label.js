@@ -172,9 +172,9 @@ define(["jquery",
                     this.scaleValues = this.scaleValues.get("scaleValues");
                 }
 
-                // if (_.contains(this.roles, annotationsTool.user.get("role"))) {
-                //     this.listenTo(annotationsTool, annotationsTool.EVENTS.ANNOTATE_TOGGLE_EDIT, this.onSwitchEditModus);
-                // }
+                if (_.contains(this.roles, annotationsTool.user.get("role"))) {
+                    this.listenTo(annotationsTool, annotationsTool.EVENTS.ANNOTATE_TOGGLE_EDIT, this.onSwitchEditModus);
+                }
 
                 return this.render();
             },
@@ -272,11 +272,11 @@ define(["jquery",
             switchEditModus: function (status) {
                 this.editModus = status;
 
-                if (status) {
-                    this.$el.find("input[disabled='disabled']").removeAttr("disabled");
-                } else {
-                    this.$el.find("input").attr("disabled", "disabled");
-                }
+                // if (status) {
+                //     this.$el.find("input[disabled='disabled']").removeAttr("disabled");
+                // } else {
+                //     this.$el.find("input").attr("disabled", "disabled");
+                // }
             },
 
             /**
@@ -376,7 +376,12 @@ define(["jquery",
              * alias module:views-annotate-category.CategoryView#updateInputWidth
              */
             updateInputWidth: function () {
-                var width = this.$el.width() - (this.$el.find("input.item-abbreviation").outerWidth() + this.$el.find("i.delete").outerWidth() + 25);
+                var width = this.$el.width() - (this.$el.find("input.item-abbreviation").outerWidth() + 25);
+
+                if (this.editModus) {
+                    width -= this.$el.find("i.delete").outerWidth();
+                }
+                
                 this.$el.find("input.item-value").width(width);
             },
 
