@@ -1,5 +1,8 @@
 # Annotating Academic Video
 
+### [News] (https://github.com/entwinemedia/annotations/wiki/News)
+You can find the latest news about the annotations tool on [this page] (https://github.com/entwinemedia/annotations/wiki/News).
+
 ### Project description
 The Annotating Academic Video (AAV) project is a video annotation service that is suitable for research, teaching or learning.  Architected as a stand-alone service, AAV can be integrated with most video players, video management systems, learning management systems, and lecture capture systems.
 
