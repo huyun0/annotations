@@ -431,7 +431,7 @@ define(["jquery",
                 });
                 this.$el.find(".colorPicker-picker").addClass("edit");
 
-                this.$el.width((100/annotationsTool.CATEGORIES_PRO_TAB) + "%");
+                this.$el.width((100/annotationsTool.CATEGORIES_PER_TAB) + "%");
 
                 this.updateInputWidth();
 

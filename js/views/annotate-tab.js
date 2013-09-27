@@ -418,7 +418,7 @@ define(["jquery",
                 var itemsLength = this.categoriesContainer.find("div.category-item").length;
 
                 // Create a new carousel if the current one is full
-                if ((itemsLength % annotationsTool.CATEGORIES_PRO_TAB) === 0) {
+                if ((itemsLength % annotationsTool.CATEGORIES_PER_TAB) === 0) {
                     this.addCarouselItem();
                 }
 
@@ -429,7 +429,7 @@ define(["jquery",
                 this.itemsCurrentContainer.append(categoryView.render().$el);
 
                 // Move the carousel to the container of the new item
-                this.carouselElement.carousel(parseInt(itemsLength / annotationsTool.CATEGORIES_PRO_TAB, 10)).carousel("pause");
+                this.carouselElement.carousel(parseInt(itemsLength / annotationsTool.CATEGORIES_PER_TAB, 10)).carousel("pause");
             },
 
             /**
@@ -438,13 +438,13 @@ define(["jquery",
              */
             addCarouselItem: function () {
                 var length = this.categoriesContainer.find("div.category-item").length,
-                    pageNumber = (length - (length % annotationsTool.CATEGORIES_PRO_TAB)) / annotationsTool.CATEGORIES_PRO_TAB;
+                    pageNumber = (length - (length % annotationsTool.CATEGORIES_PER_TAB)) / annotationsTool.CATEGORIES_PER_TAB;
 
                 this.categoriesContainer.append(this.itemContainerTemplate({number: (pageNumber + 1)}));
 
                 this.itemsCurrentContainer = this.categoriesContainer.find("div div div.row-fluid").last();
 
-                if (length >= annotationsTool.CATEGORIES_PRO_TAB) {
+                if (length >= annotationsTool.CATEGORIES_PER_TAB) {
                     this.carouselPagination.parent().css("display", "block");
                 }
 
