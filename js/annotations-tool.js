@@ -272,7 +272,6 @@ define(["jquery",
                  * @param  {Object} annotation The destroyed annotation
                  */
                 onDestroyRemoveSelection: function (annotation) {
-                    console.debug("remove selection on destroy");
                     _.each(this.currentSelection, function (item, index) {
                         if (item.get("id") == annotation.get("id")) {
                             this.currentSelection.splice(index, 1);
@@ -372,12 +371,6 @@ define(["jquery",
                     _.each(this.currentSelection, function (item) {
                         this.listenTo(item, "destroy", this.onDestroyRemoveSelection);
                     }, this);
-
-                    var selectionStr = "";
-                    _.each(this.currentSelection, function (item, index) {
-                        selectionStr += (index ==0) ? item.get("id") : ", " + item.get("id"); 
-                    }, this);
-                    console.log("Selection: " + selectionStr);
 
                     // if the selection is not empty, we move the playhead to it
                     if (this.currentSelection.length >0 && moveTo) {
