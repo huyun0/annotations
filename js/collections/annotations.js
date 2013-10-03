@@ -66,10 +66,10 @@ define(["jquery",
                 this.setUrl(track);
 
                 /**
-             * Access value for all the annotations in the collection
-             * @alias module:collections-annotations.Annotations#access
-             * @type {integer}
-             */
+                 * Access value for all the annotations in the collection
+                 * @alias module:collections-annotations.Annotations#access
+                 * @type {integer}
+                 */
                 this.access = ACCESS.PUBLIC;
 
                 if (!_.isUndefined(track)) {

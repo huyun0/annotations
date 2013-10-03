@@ -549,11 +549,9 @@ function ($, PlayerAdapter, Annotation, User, CommentsContainer, Template, Backb
             // If annotation already selected
             if (annotationsTool.hasSelection() && annotationsTool.getSelection()[0].get("id") === this.model.get("id")) {
                 annotationsTool.setSelection();
-                annotationsTool.dispatcher.trigger("unselect-annotation");
                 this.isSelected = false;
             } else {
-                annotationsTool.setSelection([this.model], true);
-                this.model.trigger("selected", {model: this.model});
+                annotationsTool.setSelection([this.model], true, true);
             }
         },
 

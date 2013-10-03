@@ -171,10 +171,8 @@ define(["jquery",
                 this.loginView              = new LoginView();
                 annotationsTool.scaleEditor = new ScaleEditorView();
 
-                annotationsTool.dispatcher  = _.clone(Backbone.Events);
-
                 this.listenTo(annotationsTool.users, "login", this.createViews);
-                this.listenTo(annotationsTool.dispatcher, "deleteAnnotation", this.deleteAnnotation);
+                this.listenTo(annotationsTool, "deleteAnnotation", this.deleteAnnotation);
 
                 this.checkUserAndLogin();
 
@@ -183,7 +181,7 @@ define(["jquery",
 
                 annotationsTool.filtersManager   = new FiltersManager();
                 annotationsTool.importCategories = this.importCategories;
-                annotationsTool.dispatcher.once(annotationsTool.EVENTS.READY, function () {
+                annotationsTool.once(annotationsTool.EVENTS.READY, function () {
                     this.loadPlugins(annotationsTool.plugins);
                     this.generateCategoriesLegend(annotationsTool.video.get("categories").toExportJSON(true));
                     this.updateTitle(annotationsTool.video);
@@ -304,7 +302,7 @@ define(["jquery",
                 $("a#logout").css("display", "block");
                 this.timelineView.redraw();
 
-                annotationsTool.dispatcher.trigger(annotationsTool.EVENTS.READY);
+                annotationsTool.trigger(annotationsTool.EVENTS.READY);
             },
 
             /**
@@ -557,7 +555,7 @@ define(["jquery",
 
                     annotation = annotationsTool.getSelection()[0];
                     if (annotation) {
-                        annotationsTool.dispatcher.trigger("deleteAnnotation", annotation.get("id"), annotation.trackId);
+                        annotationsTool.trigger("deleteAnnotation", annotation.get("id"), annotation.trackId);
                     }
                 }
             },
