@@ -60,6 +60,14 @@ define(["jquery",
             MINIMAL_DURATION: 5,
 
             /**
+             * Define the number of categories pro tab in the annotate box. Bigger is number, thinner will be the columns for the categories.
+             * @alias module:annotations-tool-configuration.Configuration.CATEGORIES_PER_TAB
+             * @memberOf module:annotations-tool-configuration.Configuration
+             * @type {Number}
+             */
+            CATEGORIES_PER_TAB: 7,
+
+            /**
              * Define if the localStorage should be used or not
              * @alias module:annotations-tool-configuration.Configuration.localStorage
              * @type {boolean}

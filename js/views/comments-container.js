@@ -101,6 +101,7 @@ define(["jquery",
                 // Bind function to the good context
                 _.bindAll(this,
                           "render",
+                          "deleteView",
                           "onAddComment",
                           "insert",
                           "onCancelComment",
@@ -121,7 +122,9 @@ define(["jquery",
                 // Add backbone events to the model
                 _.extend(this.comments, Backbone.Events);
 
+
                 this.listenTo(this.comments, "destroy", this.deleteView);
+                this.listenTo(this.comments, "remove", this.deleteView);
 
                 return this.render();
             },
@@ -152,6 +155,7 @@ define(["jquery",
                 _.find(this.commentViews, function (commentView, index) {
                     if (delComment === commentView.model) {
                         this.commentViews.splice(index, 1);
+                        commentView.deleteView();
                         this.render();
                         return;
                     }

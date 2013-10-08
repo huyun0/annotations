@@ -135,6 +135,7 @@ function ($, PlayerAdapter, Annotation, User, CommentsContainer, Template, Backb
             "click button.in"            : "setCurrentTimeAsStart",
             "click button.out"           : "setCurrentTimeAsEnd",
             "click a.collapse"           : "onCollapse",
+            "click i.icon-comment-amount": "onCollapse",
             "dblclick .start"            : "startEdit",
             "dblclick .end"              : "startEdit",
             "dblclick .end-btn"          : "startEdit",
@@ -203,6 +204,7 @@ function ($, PlayerAdapter, Annotation, User, CommentsContainer, Template, Backb
             _.extend(this.model, Backbone.Events);
 
             this.listenTo(this.model, "change", this.render);
+            this.listenTo(this.model.get("comments"), "add", this.render);
             this.listenTo(this.model.get("comments"), "change", this.render);
             this.listenTo(this.model.get("comments"), "remove", this.render);
             this.listenTo(this.model, "destroy", this.deleteView);
@@ -547,11 +549,9 @@ function ($, PlayerAdapter, Annotation, User, CommentsContainer, Template, Backb
             // If annotation already selected
             if (annotationsTool.hasSelection() && annotationsTool.getSelection()[0].get("id") === this.model.get("id")) {
                 annotationsTool.setSelection();
-                annotationsTool.dispatcher.trigger("unselect-annotation");
                 this.isSelected = false;
             } else {
-                annotationsTool.setSelection([this.model], true);
-                this.model.trigger("selected", {model: this.model});
+                annotationsTool.setSelection([this.model], true, true);
             }
         },
 

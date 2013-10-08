@@ -1,6 +1,6 @@
-<div title="{{text}}" class="timeline-item {{#if atEnd}}at-end{{/if}}" style="{{#if category.settings.color}};background-color: {{category.settings.color}}{{/if}}">
+<div title="{{text}}" class="timeline-item {{#if atEnd}}at-end{{/if}}" style="{{#if category.settings.color}};background-color: {{category.settings.color}}{{/if}}" onclick="annotationsTool.onClickSelectionById([{id:'{{id}}',trackId:'{{track}}'}], true, true)">
     <span>{{#if label}}<b>{{label.abbreviation}}</b>{{/if}} {{text}}</span>
-    <i class="delete icon-remove" title="Delete  annotation" onclick="annotationsTool.dispatcher.trigger('deleteAnnotation', {{id}}, {{track}})"></i>
+    <i class="delete icon-remove" title="Delete  annotation" onclick="annotationsTool.trigger('deleteAnnotation', {{id}}, {{track}})"></i>
     <div class='annotation-id'>{{id}}</div>
     <div class='track-id'>{{track}}</div>
 </div>
