@@ -262,7 +262,7 @@ define(["jquery",
 
                     if (!annotationsTool.localStorage) {
                         options.wait = true;
-                    }
+                    } 
 
                     annotation = annotationsTool.selectedTrack.get("annotations").create(params, options);
 

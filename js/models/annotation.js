@@ -70,9 +70,6 @@ define(["jquery",
                 // Check if the category has been initialized
                 if (!attr.id) {
                     // If local storage, we set the cid as id
-                    if (window.annotationsTool.localStorage) {
-                        attr.id = this.cid;
-                    }
                     this.toCreate = true;
                 }
 
