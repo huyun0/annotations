@@ -385,10 +385,10 @@ define(["jquery",
                     this.currentLoop = undefined;
 
                     if (startTime > 0) {
-                        this.loops.add({
+                        this.addTimelineItem(this.loops.create({
                             start: 0,
                             end  : startTime
-                        })
+                        }));
                     }
 
                     while (startTime < duration) {
@@ -441,7 +441,7 @@ define(["jquery",
                  */
                 resetLoops: function () {
                     this.loops.each(function (loop, index) {
-                        annotationsTool.views.timeline.removeItem("loop-" + loop.cid, (index + 1 !== this.loops.length));
+                        annotationsTool.views.timeline.removeItem("loop-" + loop.cid, (index + 1 == this.loops.length));
                     }, this);
 
                     this.loops.each(function (loop, index) {
