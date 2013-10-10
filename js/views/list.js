@@ -143,16 +143,18 @@ define(["jquery",
              * @param {Track} track Annotation target
              * @param {Boolean} isPartofList Define if the annotation is added with a whole list
              */
-            addAnnotation: function (addAnnotation, track, isPartofList) {
+            addAnnotation: function (annotation, track, isPartofList) {
                 var view;
 
-                // If annotation has not id, we save it to have an id
-                if (!addAnnotation.id) {
-                    this.listenTo(addAnnotation, "ready", this.addAnnotation);
+                // Wait that the id has be set to the model before to add it
+                if (_.isUndefined(annotation.get("id"))) {                 
+                    annotation.once("ready", function () {
+                        this.addAnnotation(annotation, track);
+                    }, this);
                     return;
                 }
 
-                view = new AnnotationView({annotation: addAnnotation, track: track});
+                view = new AnnotationView({annotation: annotation, track: track});
                 this.annotationViews.push(view);
 
                 if (!isPartofList) {

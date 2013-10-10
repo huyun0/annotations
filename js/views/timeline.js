@@ -346,9 +346,9 @@ define(["jquery",
 
                 if (annotationsTool.hasSelection()) {
                     this.onSelectionUpdate(annotationsTool.getSelection());
+                    this.updateDraggingCtrl();
                 }
 
-                this.updateDraggingCtrl();
 
                 if (annotationsTool.selectedTrack) {
                     this.onTrackSelected(null, annotationsTool.selectedTrack.id);
@@ -513,7 +513,18 @@ define(["jquery",
              * @param {Boolean} [isList]  define if the insertion is part of a list, Default is false
              */
             addAnnotation: function (annotation, track, isList) {
+                console.debug("Add listener annotation called");
+
+                // Wait that the id has be set to the model before to add it
+                if (_.isUndefined(annotation.get("id"))) {                 
+                    annotation.once("ready", function () {
+                        this.addAnnotation(annotation, track, isList);
+                    }, this);
+                    return;
+                }
+
                 if (annotation.get("oldId") && this.ignoreAdd === annotation.get("oldId")) {
+                    console.debug("Add annotation ignored");
                     delete this.ignoreAdd;
                     return;
                 }
@@ -1361,7 +1372,7 @@ define(["jquery",
                     oldTrack,
                     newTrack;
 
-                if (_.isUndefined(annotation)) {
+                if (_.isUndefined(annotation) || _.isUndefined(this.allItems[annotation.get("id")])) {
                     console.warn("No annotation selected!");
                     return;
                 }
@@ -1401,11 +1412,19 @@ define(["jquery",
              */
             updateDraggingCtrl: function () {
                 var selectedElement =  this.$el.find("." + this.ITEM_SELECTED_CLASS),
-                    item = this.getSelectedItemAndAnnotation(),
-                    cssProperties = {
+                    cssProperties,
+                    item = this.getSelectedItemAndAnnotation();
+
+                if (_.isUndefined(item)) {
+                    // No current selection
+                    return;
+                }
+
+                selectedElement =  this.$el.find("." + this.ITEM_SELECTED_CLASS);
+                cssProperties = {
                         "margin-top": parseInt(selectedElement.css("margin-top"), 10) + parseInt(selectedElement.find(".timeline-item").css("margin-top"), 10) + "px",
                         "height"    : selectedElement.find(".timeline-item").outerHeight() + "px"
-                    };
+                };
 
                 this.$el.find(".timeline-event-range-drag-left").css(cssProperties);
 
