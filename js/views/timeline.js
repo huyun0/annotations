@@ -434,6 +434,11 @@ define(["jquery",
                 }
 
                 this.timeline.setVisibleChartRange(start, end);
+
+                // Wait a short moment to ensure that DOM elemnts have been drawn
+                setTimeout(function () {
+                    $("div.timeline-group .content-overlay").popover({});
+                }, 200);
             },
 
             /**
@@ -920,11 +925,18 @@ define(["jquery",
              * @param  {Array} selection The new array of selected item(s)
              */
             onSelectionUpdate: function (selection) {
-                var data = this.filteredItems;
+                var data = this.filteredItems,
+                    updateOverlay = function () {
+                        // Wait a short moment to ensure that DOM elemnts have been drawn
+                        setTimeout(function () {
+                            $("div.timeline-group .content-overlay").popover({});
+                        }, 200);
+                    };
 
                 // If no selection, we unselected elements currently selected and return
                 if (!annotationsTool.hasSelection()) {
                     this.timeline.unselectItem();
+                    updateOverlay();
                     return;
                 }
 
@@ -934,12 +946,9 @@ define(["jquery",
                             this.timeline.selectItem(index, false, true);
                         }
                     }, this);
-                }
 
-                // Wait a short moment to ensure that DOM elemnts have been drawn
-                setTimeout(function () {
-                    $("div.timeline-group .content-overlay").popover({});
-                }, 100);
+                    updateOverlay();
+                }
             },
             
             /**
@@ -960,6 +969,11 @@ define(["jquery",
                 if (hasToPlay) {
                     this.playerAdapter.play();
                 }
+
+                // Wait a short moment to ensure that DOM elemnts have been drawn
+                setTimeout(function () {
+                    $("div.timeline-group .content-overlay").popover({});
+                }, 200);
             },
             
             /**
