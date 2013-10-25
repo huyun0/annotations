@@ -821,14 +821,14 @@ define(["jquery",
                     }, this));
                     
                     this.updateGroupModal.find("#name").focus();
-                }
-                else {
+                } else {
                     // if the modal has already been initialized, we reset input and show modal
                     this.updateGroupModal.find(".alert #content").html("");
                     this.updateGroupModal.find(".alert").hide();
                     this.updateGroupModal.find("#name")[0].value = track.get("name");
                     this.updateGroupModal.find("#description")[0].value = track.get("description");
                     this.updateGroupModal.find("a#update-group").unbind("click").bind("click", updateTrack);
+                    this.updateGroupModal.find("#public")[0].checked = (track.get("access") === ACCESS.PUBLIC);
                     this.updateGroupModal.unbind("keypress").bind("keypress", function (event) {
                         if (event.keyCode === 13) {
                             updateTrack();
