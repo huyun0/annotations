@@ -65,8 +65,6 @@ define(["jquery",
                     throw "\"start\" attribute is required";
                 }
 
-                console.debug("Initialize annotaiton with id " + attr.id);
-
                 // Check if the category has been initialized
                 if (!attr.id) {
                     // If local storage, we set the cid as id
@@ -132,7 +130,6 @@ define(["jquery",
              * @return {object}  The object literal with the list of parsed model attribute.
              */
             parse: function (data) {
-                console.debug("Parsing annotation with id " + data.id);
                 var attr = data.attributes ? data.attributes : data,
                     tempSettings,
                     categories,

@@ -513,8 +513,6 @@ define(["jquery",
              * @param {Boolean} [isList]  define if the insertion is part of a list, Default is false
              */
             addAnnotation: function (annotation, track, isList) {
-                console.debug("Add listener annotation called");
-
                 // Wait that the id has be set to the model before to add it
                 if (_.isUndefined(annotation.get("id"))) {                 
                     annotation.once("ready", function () {
@@ -524,7 +522,6 @@ define(["jquery",
                 }
 
                 if (annotation.get("oldId") && this.ignoreAdd === annotation.get("oldId")) {
-                    console.debug("Add annotation ignored");
                     delete this.ignoreAdd;
                     return;
                 }
