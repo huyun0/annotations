@@ -48,7 +48,6 @@ define(["jquery",
              * @static
              */
             defaults: {
-                access  : ACCESS.PRIVATE,
                 start   : 0,
                 duration: 0
             },
@@ -83,6 +82,10 @@ define(["jquery",
 
                 if (attr.id) {
                     this.attributes.comments.fetch({async: false});
+                }
+
+                if (_.isUndefined(attr.access)) {
+                    attr.access = this.collection.access;
                 }
 
                 // If localStorage used, we have to save the video at each change on the children
