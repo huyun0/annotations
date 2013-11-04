@@ -7729,13 +7729,28 @@
     margin-left: 30px;
   }
 }
+@media screen and (min-width: 1000px) and (max-width: 1500px) {
+  #annotate-container #label-tabs-contents div.tab-pane.edit-on div.carousel .carousel-inner {
+    width: 250% !important;
+  }
+}
+@media screen and (min-width: 1500px) and (max-width: 2000px) {
+  #annotate-container #label-tabs-contents div.tab-pane.edit-on div.carousel .carousel-inner {
+    width: 200% !important;
+  }
+}
+@media screen and (min-width: 2000px) and (max-width: 2500px) {
+  #annotate-container #label-tabs-contents div.tab-pane.edit-on div.carousel .carousel-inner {
+    width: 150% !important;
+  }
+}
 @media print {
   * {
     background: transparent !important;
-    color: black !important;
     text-shadow: none !important;
     filter: none !important;
     -ms-filter: none !important;
+    -webkit-print-color-adjust: exact;
   }
   /* Black prints faster: h5bp.com/s */
   a[href]:after {
@@ -7765,6 +7780,7 @@
   }
   img {
     max-width: 100% !important;
+    visibility: visible;
   }
   @page  {
     margin: 1cm;
@@ -7828,7 +7844,7 @@
   div#list-container .start,
   div#list-container .end {
     color: grey !important;
-    background: none !important;
+    background: transparent !important;
     border: none;
     float: right;
     width: 100px;
@@ -7836,9 +7852,11 @@
   }
   div#list-container .start input,
   div#list-container .end input {
-    color: grey !important;
     width: 70px;
+    font-family: 'Times';
     font-size: 11pt;
+    color: grey !important;
+    display: inline-block;
   }
   div#list-container .start {
     margin-right: 80px;
@@ -7853,7 +7871,6 @@
     display: none;
   }
   div#list-container input {
-    background: transparent !important;
     border: none;
   }
   div#list-container span.freetext .read-only {
@@ -7893,7 +7910,11 @@
     font-style: oblique;
     float: right;
   }
+  div#list-container div.comment-list {
+    background-color: transparent !important;
+  }
   div#list-container div.comment-list > div {
+    background-color: transparent !important;
     background-image: url("../img/arrow-right.png") !important;
     background-size: 20px !important;
     background-repeat: no-repeat !important;
@@ -7926,6 +7947,7 @@
     font-weight: bold;
   }
   #categories-legend {
+    page-break-inside: avoid;
     margin-top: 80px;
   }
   #categories-legend .category-legend {

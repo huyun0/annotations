@@ -459,9 +459,23 @@ i.check{
 
 				.carousel-inner {
 					width:320%;
+
+					@media (min-width: 1000px) and (max-width: 1500px) {
+						width: 250% !important;
+					}
+
+					@media (min-width: 1500px) and (max-width: 2000px) {
+						width: 200% !important;
+					}
+
+					@media (min-width: 2000px) and (max-width: 2500px) {
+						width: 150% !important;
+					}
 				}
 			
 				.category-item{
+
+
 					.catItem-header input {
 						width: 38%;
 						min-width: 42px;

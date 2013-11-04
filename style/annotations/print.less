@@ -1,5 +1,5 @@
   // Default print stylesheet taken from HTML5 boilerplate: https://github.com/h5bp/html5-boilerplate/blob/master/css/main.css
-  * { background: transparent !important; color: black !important; text-shadow: none !important; filter:none !important; -ms-filter: none !important; } /* Black prints faster: h5bp.com/s */
+  * { background: transparent !important; text-shadow: none !important; filter:none !important; -ms-filter: none !important; -webkit-print-color-adjust: exact; } /* Black prints faster: h5bp.com/s */
   a, a:visited {}
   a[href]:after { content: " (" attr(href) ")";}
   abbr[title]:after { content: " (" attr(title) ")"; }
@@ -7,7 +7,7 @@
   pre, blockquote { border: 1px solid #999; page-break-inside: avoid; }
   thead { display: table-header-group; } /* h5bp.com/t */
   tr, img { page-break-inside: avoid; }
-  img { max-width: 100% !important; }
+  img { max-width: 100% !important; visibility: visible;}
   @page { margin: 1cm; }
   p, h2, h3 { orphans: 3; widows: 3; }
   h2, h3 { page-break-after: avoid; }
@@ -69,7 +69,7 @@
 
     .start,.end {
       color: grey !important;
-      background: none !important;
+      background: transparent !important;
       border: none;
       float: right;
       width: 100px;
@@ -79,6 +79,11 @@
         color: grey !important;
         width: 70px;
         font-size: 11pt;
+
+        font-family: 'Times';
+        font-size: 11pt;
+        color: grey !important;
+        display: inline-block;
       }
     }
 
@@ -99,7 +104,7 @@
     }
 
     input {
-      background: transparent !important;
+      // åbackground: transparent !important;
       border: none;
     }
 
@@ -147,7 +152,10 @@
     }
 
     div.comment-list {
+      background-color: transparent !important;
+
       > div {
+        background-color: transparent !important;
         background-image: url("../img/arrow-right.png") !important;
         background-size: 20px !important;
         background-repeat: no-repeat !important;
@@ -189,6 +197,7 @@
   }
 
   #categories-legend {
+    page-break-inside: avoid;
     margin-top: 80px;
     .category-legend {
         margin-top: 20px;

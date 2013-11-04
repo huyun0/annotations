@@ -77,10 +77,6 @@ define(["jquery",
                     this.updateAccess(track);
                     this.access = track.get("access");
                 }
-
-                _.each(models, this.setAccess, this);
-
-                this.bind("add", this.setAccess, this);
             },
 
             /**
@@ -98,10 +94,10 @@ define(["jquery",
              * @alias module:collections-annotations.Annotations#setAccess
              * @param {model} model The model to update
              */
-            setAccess: function (model) {
-                console.log("acces defined for annotation " + model.id);
+            setAccess: function (model, siltentUpdate) {
                 if (!_.isUndefined(model.attributes)) {
-                    model.set({access: this.access});
+                    model.set({access: this.access}, {silent: siltentUpdate});
+                    model.save();
                 } else {
                     model.access = this.access
                 }

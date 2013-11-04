@@ -11,7 +11,7 @@ require.config({
     "backbone"                      : "libs/backbone/backbone-min-0.9.9",
     "jquery.colorPicker"            : "libs/jquery.colorPicker.min",
     "jquery.FileReader"             : "libs/jquery.FileReader",
-    "localstorage"                  : "libs/backbone/backbone.localStorage-min-1.1.6",
+    "localstorage"                  : "libs/backbone/backbone.localStorage-1.0",
     "handlebars"                    : "libs/handlebars",
     "jquery"                        : "libs/jquery-1.7.2.min",
     "underscore"                    : "libs/underscore-min-1.4.3",

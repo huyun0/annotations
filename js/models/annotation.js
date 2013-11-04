@@ -48,7 +48,6 @@ define(["jquery",
              * @static
              */
             defaults: {
-                access  : ACCESS.PRIVATE,
                 start   : 0,
                 duration: 0
             },
@@ -64,8 +63,6 @@ define(["jquery",
                 if (!attr || _.isUndefined(attr.start)) {
                     throw "\"start\" attribute is required";
                 }
-
-                console.debug("Initialize annotaiton with id " + attr.id);
 
                 // Check if the category has been initialized
                 if (!attr.id) {
@@ -85,6 +82,10 @@ define(["jquery",
 
                 if (attr.id) {
                     this.attributes.comments.fetch({async: false});
+                }
+
+                if (_.isUndefined(attr.access)) {
+                    attr.access = this.collection.access;
                 }
 
                 // If localStorage used, we have to save the video at each change on the children
@@ -132,7 +133,6 @@ define(["jquery",
              * @return {object}  The object literal with the list of parsed model attribute.
              */
             parse: function (data) {
-                console.debug("Parsing annotation with id " + data.id);
                 var attr = data.attributes ? data.attributes : data,
                     tempSettings,
                     categories,

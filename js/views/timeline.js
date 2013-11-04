@@ -230,6 +230,10 @@ define(["jquery",
                 this.endDate = this.getFormatedDate(this.playerAdapter.getDuration());
                 this.startDate = new Date(this.endDate.getFullYear(), this.endDate.getMonth(), this.endDate.getDate(), 0, 0, 0);
 
+                // Initial the footprint of the filtering and drawing operation
+                this.lastFilteringOn = 1;
+                this.lastDrawOn = 0 ;
+
                 // Options for the links timeline
                 this.options = {
                     width:  "100%",
@@ -273,6 +277,7 @@ define(["jquery",
                 $(window).bind("updateTrackAccess", $.proxy(this.onUpdateTrack, this));
 
                 $(this.playerAdapter).bind("pa_timeupdate", this.onPlayerTimeUpdate);
+                //this.listenTo(annotationsTool, annotationsTool.EVENTS.TIMEUPDATE + ":" + 10, this.onPlayerTimeUpdate);
 
                 this.$el.find(".timeline-frame > div:first-child").bind("click", function (event) {
                     if ($(event.target).find(".timeline-event").length > 0) {
@@ -305,16 +310,17 @@ define(["jquery",
                     _.bindAll(this.timeline, "findGroup");
                 }
 
-                $("div.timeline-group .content-overlay").popover({});
-
                 this.$el.find(".timeline-frame > div").first()[0].addEventListener("mousewheel", function (event) {
                     event.stopPropagation();
                 }, true);
 
+
                 $("div#timeline").scroll(this.updateHeader);
 
-                this.timeline.redraw();
+                this.redraw();
                 this.onPlayerTimeUpdate();
+
+                $("div.timeline-group .content-overlay").popover({});
             },
 
 
@@ -344,16 +350,17 @@ define(["jquery",
 
                 this.timeline.draw(this.filteredItems, this.option);
 
+
                 if (annotationsTool.hasSelection()) {
                     this.onSelectionUpdate(annotationsTool.getSelection());
                     this.updateDraggingCtrl();
                 }
 
-
                 if (annotationsTool.selectedTrack) {
                     this.onTrackSelected(null, annotationsTool.selectedTrack.id);
                 }
 
+                $("div.popover.fade.right.in").remove()
                 $("div.timeline-group .content-overlay").popover({});
             },
 
@@ -435,10 +442,8 @@ define(["jquery",
 
                 this.timeline.setVisibleChartRange(start, end);
 
-                // Wait a short moment to ensure that DOM elemnts have been drawn
-                setTimeout(function () {
-                    $("div.timeline-group .content-overlay").popover({});
-                }, 200);
+                //$("div.popover.fade.right.in").remove()
+                $("div.timeline-group .content-overlay").popover({});
             },
 
             /**
@@ -513,8 +518,6 @@ define(["jquery",
              * @param {Boolean} [isList]  define if the insertion is part of a list, Default is false
              */
             addAnnotation: function (annotation, track, isList) {
-                console.debug("Add listener annotation called");
-
                 // Wait that the id has be set to the model before to add it
                 if (_.isUndefined(annotation.get("id"))) {                 
                     annotation.once("ready", function () {
@@ -524,7 +527,6 @@ define(["jquery",
                 }
 
                 if (annotation.get("oldId") && this.ignoreAdd === annotation.get("oldId")) {
-                    console.debug("Add annotation ignored");
                     delete this.ignoreAdd;
                     return;
                 }
@@ -539,7 +541,7 @@ define(["jquery",
 
                 if (!isList) {
                     this.filterItems();
-                    this.timeline.redraw();
+                    this.redraw();
                     annotationsTool.setSelection([annotation], false);
                     this.onPlayerTimeUpdate();
                 }
@@ -576,7 +578,7 @@ define(["jquery",
                 annotations.bind("change", this.changeItem, this);
 
                 this.filterItems();
-                this.timeline.redraw();
+                this.redraw();
             },
             
             /**
@@ -688,7 +690,7 @@ define(["jquery",
                     annotationsTool.selectedTrack = track;
                 }
                 
-                this.timeline.redraw();
+                this.redraw();
                 this.onTrackSelected(null, annotationsTool.selectedTrack.id);
             },
             
@@ -824,14 +826,14 @@ define(["jquery",
                     }, this));
                     
                     this.updateGroupModal.find("#name").focus();
-                }
-                else {
+                } else {
                     // if the modal has already been initialized, we reset input and show modal
                     this.updateGroupModal.find(".alert #content").html("");
                     this.updateGroupModal.find(".alert").hide();
                     this.updateGroupModal.find("#name")[0].value = track.get("name");
                     this.updateGroupModal.find("#description")[0].value = track.get("description");
                     this.updateGroupModal.find("a#update-group").unbind("click").bind("click", updateTrack);
+                    this.updateGroupModal.find("#public")[0].checked = (track.get("access") === ACCESS.PUBLIC);
                     this.updateGroupModal.unbind("keypress").bind("keypress", function (event) {
                         if (event.keyCode === 13) {
                             updateTrack();
@@ -848,6 +850,8 @@ define(["jquery",
              */
             filterItems: function () {
                 var tempList = _.values(this.allItems);
+                    
+                this.lastFilteringOn = new Date().getTime(); 
 
                 _.each(this.filtersManager.getFilters(), function (filter) {
                     if (filter.active) {
@@ -887,7 +891,7 @@ define(["jquery",
                 }
 
                 this.filterItems();
-                this.timeline.redraw();
+                this.redraw();
             },
 
             /**
@@ -898,7 +902,7 @@ define(["jquery",
                 this.$el.find(".filter").removeClass("checked");
                 this.filtersManager.disableFilters();
                 this.filterItems();
-                this.timeline.redraw();
+                this.redraw();
             },
             
             /**
@@ -908,6 +912,7 @@ define(["jquery",
              */
             changeItem: function (annotation) {
                 var value = this.getTimelineItemFromAnnotation(annotation);
+
                 if (!_.isUndefined(value)) {
                     // Only update annotation view if the item has already been created
                     this.allItems[annotation.id] = this.generateItem(annotation, value.model);
@@ -925,7 +930,7 @@ define(["jquery",
                     newDate = this.getFormatedDate(currentTime);
 
                 this.timeline.setCustomTime(newDate);
-                this.$el.find("span.time").html(annotationsTool.getWellFormatedTime(currentTime));
+                this.$el.find("span.time").html(annotationsTool.getWellFormatedTime(currentTime, true));
 
                 this.moveToCurrentTime();
             },
@@ -958,7 +963,7 @@ define(["jquery",
                         }
                     }, this);
 
-                    updateOverlay();
+                    //updateOverlay();
                 }
             },
             
@@ -971,6 +976,7 @@ define(["jquery",
                 var newTime = this.getTimeInSeconds(event.time),
                     hasToPlay = (this.playerAdapter.getStatus() === PlayerAdapter.STATUS.PLAYING);
 
+
                 if (hasToPlay) {
                     this.playerAdapter.pause();
                 }
@@ -980,11 +986,6 @@ define(["jquery",
                 if (hasToPlay) {
                     this.playerAdapter.play();
                 }
-
-                // Wait a short moment to ensure that DOM elemnts have been drawn
-                setTimeout(function () {
-                    $("div.timeline-group .content-overlay").popover({});
-                }, 200);
             },
             
             /**
@@ -1039,7 +1040,8 @@ define(["jquery",
                     };
 
                     this.filterItems();
-                    this.timeline.redraw();
+                    this.redraw();
+
                     if (hasToPlay) {
                         this.playerAdapter.play();
                     }
@@ -1101,7 +1103,7 @@ define(["jquery",
                         annotationsTool.setSelection([newAnnotation], true, true, true);
 
                         self.filterItems();
-                        self.timeline.redraw();
+                        self.redraw();
 
                         if (hasToPlay) {
                             self.playerAdapter.play();
@@ -1121,7 +1123,8 @@ define(["jquery",
 
                     annotationsTool.playerAdapter.setCurrentTime(values.annotation.get("start"));
                     this.filterItems();
-                    this.timeline.redraw();
+                    this.redraw();
+
 
                     if (hasToPlay) {
                         this.playerAdapter.play();
@@ -1225,7 +1228,7 @@ define(["jquery",
                     }
 
                     this.filterItems();
-                    this.timeline.redraw();
+                    this.redraw();
                 }, this);
 
                 annotationsTool.deleteOperation.start(track, this.typeForDeleteTrack, callback);
@@ -1255,7 +1258,7 @@ define(["jquery",
 
                 if (!(options && options.silent) && redrawRequired) {
                     this.filterItems();
-                    this.timeline.redraw();
+                    this.redraw();
                 }
             },
 
@@ -1323,7 +1326,7 @@ define(["jquery",
              * @alias module:views-timeline.TimelineView#onWindowsResize
              */
             onWindowResize: function () {
-                this.timeline.redraw();
+                this.redraw();
                 if (annotationsTool.selectedTrack) {
                     this.onTrackSelected(null, annotationsTool.selectedTrack.id);
                 }

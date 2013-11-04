@@ -1,4 +1,4 @@
-<div class="timeline-group{{#if isMine}} mine{{/if}} track-max-level-{{#if timlineMaxLevel}}{{timelineMaxLevel}}{{else}}0{{/if}}" {{#if isMine}}onclick="$(window).trigger('selectTrack', ['{{id}}'])" ondblclick="$(window).trigger('updateTrack', ['{{id}}'])"{{/if}}>
+<div class="timeline-group{{#if isMine}} mine{{/if}} track-max-level-{{#if timlineMaxLevel}}{{timelineMaxLevel}}{{else}}0{{/if}}" {{#if isMine}}onclick="$(window).trigger('selectTrack', ['{{id}}'])" ondblclick="$(window).trigger('updateTrack', ['{{id}}'])"{{/if}} onmouseout="$('div.popover.fade.right.in').remove();">
     <div class="track-id">{{id}}</div>
     <a id="track{{id}}"
        class="content-overlay"

@@ -48,7 +48,8 @@ define(["jquery",
                 EVENTS: {
                     ANNOTATION_SELECTION: "at:annotation-selection",
                     READY               : "at:ready",
-                    ANNOTATE_TOGGLE_EDIT: "at:annotate-switch-edit-modus"
+                    ANNOTATE_TOGGLE_EDIT: "at:annotate-switch-edit-modus",
+                    TIMEUPDATE          : "at:timeupdate"
                 },
 
                 views: {},
@@ -121,6 +122,7 @@ define(["jquery",
                                     "onDestroyRemoveSelection",
                                     "onMouseDown",
                                     "onMouseUp",
+                                    "onTimeUpdate",
                                     "setSelection",
                                     "setSelectionById",
                                     "updateSelectionOnTimeUpdate");
@@ -145,6 +147,8 @@ define(["jquery",
                     this.currentSelection = [];
 
                     this.views.main = new MainView(this.playerAdapter);
+
+                    $(this.playerAdapter).bind("pa_timeupdate", this.onTimeUpdate);
 
                     $(window).bind("mousedown", this.onMouseDown);
                     $(window).bind("mouseup", this.onMouseUp);
@@ -192,13 +196,14 @@ define(["jquery",
                 /**
                  * Transform time in seconds (i.e. 12.344) into a well formated time (01:12:04)
                  * @alias   annotationsTool.getWellFormatedTime
-                 * @param {number} the time in seconds
+                 * @param {number} time the time in seconds
+                 * @param {boolean} [noRounted] Define if the number should be rounded or if the decimal should be simply removed. Default is rounding (false). 
                  */
-                getWellFormatedTime: function (time) {
+                getWellFormatedTime: function (time, noRounding) {
                     var twoDigit = function (number) {
                             return (number < 10 ? "0" : "") + number;
                         },
-                        base    = Math.round(time),
+                        base    = (_.isUndefined(noRounding) || !noRounding) ? Math.round(time) : Math.floor(time),
                         seconds = base % 60,
                         minutes = ((base - seconds) / 60) % 60,
                         hours   = (base - seconds - minutes * 60) / 3600;
@@ -242,6 +247,40 @@ define(["jquery",
                     this.timeMouseDown = new Date() - this.startMouseDown;
                     this.startMouseDown = undefined;
                     this.isMouseDown = false;
+                },
+
+                /**
+                 * Listen and retrigger timeupdate event from player adapter events in divided frequence (between 1/1 and 1/10)
+                 * @alias   annotationsTool.onTimeUpdate
+                 */
+                onTimeUpdate: function () {
+                    var currentTime = this.playerAdapter.getCurrentTime();
+
+                    // Ensure that this is an timeupdate due to normal playback, otherwise reinitialize the interval to 0.
+                    if (_.isUndefined(this.timeUpdateInterval) || (this.playerAdapter.getStatus() !== PlayerAdapter.STATUS.PLAYING) || (currentTime - this.lastTimeUpdate > 50)) {
+                        this.timeUpdateInterval = 1;
+                    }
+
+                    // Ensure that the timestamp from the last update is set
+                    if (_.isUndefined(this.lastTimeUpdate)) {
+                        this.lastTimeUpdate = 1;
+                    }
+                    
+                    // Trigger all the current events
+                    this.trigger(this.EVENTS.TIMEUPDATE, currentTime);
+                    for (var i = 1; i <= 10; i++) {
+                        if (this.timeUpdateInterval % i == 0) {
+                            this.trigger(this.EVENTS.TIMEUPDATE + ":" + i, currentTime);
+                        }                        
+                    }
+
+                    this.lastTimeUpdate = new Date().getTime();
+
+                    if (this.timeUpdateInterval > 10 ) {
+                        this.timeUpdateInterval = 1;
+                    } else {
+                        this.timeUpdateInterval++;
+                    }
                 },
 
                 ///////////////////////////////////////////////
