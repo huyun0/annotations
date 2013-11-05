@@ -16,7 +16,7 @@
         <div class="group-edit">
             <i onclick="$(window).trigger('deleteTrack', ['{{id}}'])" class="delete icon-trash" title="Delete  track"></i>
             <i onclick="$(window).trigger('updateTrack', ['{{id}}'])" class="update  icon-pencil" title="Update  track"></i>
-            <i onclick="$(window).trigger('updateTrackAccess', ['{{id}}'])" title="Make {{#if isPublic}}in{{/if}}visible to others" class="visibility icon-dark-grey {{#if isPublic}}icon-public{{else}}icon-private{{/if}}"></i>
+            <span class="visibility" onclick="$(window).trigger('updateTrackAccess', ['{{id}}'])" title="Make {{#if isPublic}}in{{/if}}visible to others"><i class="icon-dark-grey {{#if isPublic}}icon-public{{else}}icon-private{{/if}}"></i> {{#if isPublic}}Public{{else}}Private{{/if}}</span>
         </div>
     {{/if}}
     </a>
