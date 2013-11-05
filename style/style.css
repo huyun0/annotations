@@ -5183,29 +5183,16 @@
     background-color: inherit;
   }
   div.timeline-groups-text i.delete,
-  div.timeline-groups-text i.update {
+  div.timeline-groups-text i.update,
+  div.timeline-groups-text i.visibility {
     z-index: 4;
     margin-right: 4px;
     position: relative;
     display: inline-block;
   }
   div.timeline-groups-text i.delete:hover,
-  div.timeline-groups-text i.update:hover {
-    background-color: rgba(57, 163, 241, 0.3);
-    box-shadow: 0 0 3px rgba(57, 163, 241, 0.7) inset;
-    border-radius: 3px;
-    cursor: pointer;
-  }
-  div.timeline-groups-text span.visibility {
-    font-size: 9pt;
-    z-index: 4;
-    margin-top: 5px;
-    margin-right: 4px;
-    position: relative;
-    display: inline-block;
-    padding: 0px 2px 0px 2px;
-  }
-  div.timeline-groups-text span.visibility:hover {
+  div.timeline-groups-text i.update:hover,
+  div.timeline-groups-text i.visibility:hover {
     background-color: rgba(57, 163, 241, 0.3);
     box-shadow: 0 0 3px rgba(57, 163, 241, 0.7) inset;
     border-radius: 3px;
