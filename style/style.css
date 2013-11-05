@@ -5582,6 +5582,9 @@
   .icon-grey {
     background-image: url("../img/annotation/icons-grey.png");
   }
+  .icon-dark-grey {
+    background-image: url("../img/annotation/icons-dark-grey.png");
+  }
   .icon-edit {
     background-position: 0 -72px;
   }
@@ -5637,11 +5640,27 @@
   .icon-color-corner {
     background-position: -384px -168px;
   }
+  .icon-public {
+    background-position: -96px -120px;
+    height: 15px;
+    width: 23px;
+  }
+  .icon-private {
+    background-position: -120px -120px;
+    height: 15px;
+    width: 23px;
+  }
   .icon-empty-slot {
     background-position: -408px -168px;
   }
   .icon-empty-slot {
     background-position: -432px -168px;
+  }
+  .icon-empty-slot {
+    background-position: -456px -168px;
+  }
+  .icon-empty-slot {
+    background-position: -456px -168px;
   }
   .icon-empty-slot {
     background-position: -456px -168px;

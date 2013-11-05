@@ -16,12 +16,18 @@ body {
 // Sprite icons 
 // -------------------------
 @iconSpritePath:          "../img/annotation/icons.png";
+@iconDarkGreySpritePath:  "../img/annotation/icons-dark-grey.png";
 @iconGreySpritePath:     "../img/annotation/icons-grey.png";
 @iconWhiteSpritePath:     "../img/annotation/icons-white.png";
 
 /* Additional icon color: Grey (#c4c4c4) */
 .icon-grey {
   background-image: url("@{iconGreySpritePath}");
+}
+
+/* Additional icon color: Grey (#c4c4c4) */
+.icon-dark-grey {
+  background-image: url("@{iconDarkGreySpritePath}");
 }
 
 /* Change edit icon to pencil */
@@ -46,8 +52,12 @@ body {
 .icon-likert-plusplus    { background-position: -336px -168px; }
 .icon-color-palette      { background-position: -360px -168px; }
 .icon-color-corner       { background-position: -384px -168px; }
+.icon-public       		 { background-position: -96px -120px; height:15px; width: 23px;}
+.icon-private            { background-position: -120px -120px; height:15px; width: 23px;}
 .icon-empty-slot         { background-position: -408px -168px; }
 .icon-empty-slot         { background-position: -432px -168px; }
+.icon-empty-slot         { background-position: -456px -168px; }
+.icon-empty-slot         { background-position: -456px -168px; }
 .icon-empty-slot         { background-position: -456px -168px; }
 
 /* Some icons are bigger than 14x14px */
