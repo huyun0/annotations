@@ -687,11 +687,9 @@ define(["jquery",
                 }
 
                 track = this.tracks.create(param, {wait: true});
-                
-                // If no track selected, we use the new one
-                if (!annotationsTool.selectedTrack) {
-                    annotationsTool.selectedTrack = track;
-                }
+
+                // Select the new track
+                annotationsTool.selectedTrack = track;
                 
                 this.redraw();
                 this.onTrackSelected(null, annotationsTool.selectedTrack.id);
