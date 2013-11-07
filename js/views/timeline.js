@@ -428,6 +428,7 @@ define(["jquery",
                     size = end - start,
                     currentTime = this.playerAdapter.getCurrentTime(),
                     videoDuration = this.playerAdapter.getDuration();
+                    // popovers = $("div.popover.fade.right.in");
 
                 if ((currentTime - size / 2) < 0) {
                     start = this.getFormatedDate(0);
@@ -442,7 +443,9 @@ define(["jquery",
 
                 this.timeline.setVisibleChartRange(start, end);
 
-                //$("div.popover.fade.right.in").remove()
+                // if (popovers.length > 1) {
+                //     $("div.popover.fade.right.in").last().remove();
+                // }
                 $("div.timeline-group .content-overlay").popover({});
             },
 

@@ -5165,6 +5165,7 @@
   div.timeline-groups-text div.timeline-group a.content-overlay {
     display: inline-block;
     width: 150px;
+    height: 100%;
   }
   div.timeline-groups-text div.timeline-group div.content {
     width: 105px;
