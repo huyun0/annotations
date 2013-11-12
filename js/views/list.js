@@ -106,6 +106,7 @@ define(["jquery",
 
                 this.listenTo(this.filtersManager, "switch", this.updateFiltersRender);
                 this.listenTo(this.categories, "change", this.render);
+                this.listenTo(this.tracks, "change", this.render);
                 this.listenTo(this.tracks, "add", this.addTrack);
                 this.listenTo(annotationsTool, annotationsTool.EVENTS.ANNOTATION_SELECTION, this.select);
 
