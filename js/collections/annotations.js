@@ -70,23 +70,26 @@ define(["jquery",
                  * @alias module:collections-annotations.Annotations#access
                  * @type {integer}
                  */
-                this.access = ACCESS.PUBLIC;
+                this.access = undefined;
 
                 if (!_.isUndefined(track)) {
+                    this.track = track;
                     track.bind("change:access", this.updateAccess, this);
                     this.updateAccess(track);
-                    this.access = track.get("access");
                 }
             },
 
             /**
              * Listener on track acess changes, keep the annotations access value up to date.
              * @alias module:collections-annotations.Annotations#updateAccess
-             * @param  {object} track The track containing the annotations
+             * @param  {object} [track] The track containing the annotations
              */
             updateAccess: function (track) {
-                this.access = track.get("access");
-                this.each(this.setAccess, this)
+                var newAccess = (_.isUndefined(track)) ? this.track.get("access") : track.get("access");
+                if (this.access !== newAccess) {
+                    this.access = newAccess; 
+                    this.each(this.setAccess, this);
+                }
             },
 
             /**
@@ -94,10 +97,9 @@ define(["jquery",
              * @alias module:collections-annotations.Annotations#setAccess
              * @param {model} model The model to update
              */
-            setAccess: function (model, siltentUpdate) {
+            setAccess: function (model, silentUpdate) {
                 if (!_.isUndefined(model.attributes)) {
-                    model.set({access: this.access}, {silent: siltentUpdate});
-                    model.save();
+                    model.set({access: this.access}, {silent: (_.isUndefined(silentUpdate) || !_.isBoolean(silentUpdate) ? true : silentUpdate)});
                 } else {
                     model.access = this.access
                 }

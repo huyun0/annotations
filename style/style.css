@@ -5165,6 +5165,7 @@
   div.timeline-groups-text div.timeline-group a.content-overlay {
     display: inline-block;
     width: 150px;
+    height: 100%;
   }
   div.timeline-groups-text div.timeline-group div.content {
     width: 105px;
@@ -7933,7 +7934,6 @@
     background-color: transparent !important;
   }
   div#list-container div.comment-list > div {
-    background-color: transparent !important;
     background-image: url("../img/arrow-right.png") !important;
     background-size: 20px !important;
     background-repeat: no-repeat !important;

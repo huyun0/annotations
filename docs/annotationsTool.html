@@ -187,7 +187,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="annotations-tool.js.html">annotations-tool.js</a>, line 136
+        <a href="annotations-tool.js.html">annotations-tool.js</a>, line 162
     </li></ul></dd>
     
     
@@ -300,7 +300,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="annotations-tool.js.html">annotations-tool.js</a>, line 154
+        <a href="annotations-tool.js.html">annotations-tool.js</a>, line 180
     </li></ul></dd>
     
     
@@ -413,7 +413,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="annotations-tool.js.html">annotations-tool.js</a>, line 145
+        <a href="annotations-tool.js.html">annotations-tool.js</a>, line 171
     </li></ul></dd>
     
     
@@ -549,7 +549,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="annotations-tool.js.html">annotations-tool.js</a>, line 296
+        <a href="annotations-tool.js.html">annotations-tool.js</a>, line 483
     </li></ul></dd>
     
     
@@ -614,7 +614,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="annotations-tool.js.html">annotations-tool.js</a>, line 241
+        <a href="annotations-tool.js.html">annotations-tool.js</a>, line 428
     </li></ul></dd>
     
     
@@ -660,7 +660,7 @@
         
             
 <dt>
-    <h4 class="name" id="getWellFormatedTime"><span class="type-signature">&lt;static> </span>getWellFormatedTime<span class="signature">(the)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="getWellFormatedTime"><span class="type-signature">&lt;static> </span>getWellFormatedTime<span class="signature">(time, <span class="optional">noRounted</span>)</span><span class="type-signature"></span></h4>
     
     
 </dt>
@@ -690,6 +690,8 @@
 		<th>Type</th>
 		
 		
+		<th>Argument</th>
+		
 		
 		
 		
@@ -702,7 +704,7 @@
 	
         <tr>
             
-                <td class="name"><code>the</code></td>
+                <td class="name"><code>time</code></td>
             
             
             <td class="type">
@@ -715,10 +717,47 @@
             </td>
             
             
+                <td class="attributes">
+                
+                    
+                
+                </td>
             
             
             
-            <td class="description last"><p>time in seconds</p></td>
+            
+            <td class="description last"><p>the time in seconds</p></td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>noRounted</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+            
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+                    
+                
+                </td>
+            
+            
+            
+            
+            <td class="description last"><p>Define if the number should be rounded or if the decimal should be simply removed. Default is rounding (false).</p></td>
         </tr>
 	
 	
@@ -749,7 +788,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="annotations-tool.js.html">annotations-tool.js</a>, line 175
+        <a href="annotations-tool.js.html">annotations-tool.js</a>, line 202
     </li></ul></dd>
     
     
@@ -814,7 +853,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="annotations-tool.js.html">annotations-tool.js</a>, line 250
+        <a href="annotations-tool.js.html">annotations-tool.js</a>, line 437
     </li></ul></dd>
     
     
@@ -901,7 +940,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="annotations-tool.js.html">annotations-tool.js</a>, line 162
+        <a href="annotations-tool.js.html">annotations-tool.js</a>, line 188
     </li></ul></dd>
     
     
@@ -966,7 +1005,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="annotations-tool.js.html">annotations-tool.js</a>, line 201
+        <a href="annotations-tool.js.html">annotations-tool.js</a>, line 228
     </li></ul></dd>
     
     
@@ -1053,7 +1092,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="annotations-tool.js.html">annotations-tool.js</a>, line 192
+        <a href="annotations-tool.js.html">annotations-tool.js</a>, line 219
     </li></ul></dd>
     
     
@@ -1099,7 +1138,7 @@
         
             
 <dt>
-    <h4 class="name" id="setSelection"><span class="type-signature">&lt;static> </span>setSelection<span class="signature">(selection, moveTo)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="onClickSelectionById"><span class="type-signature">&lt;static> </span>onClickSelectionById<span class="signature">(selection, moveTo, isManuallySelected)</span><span class="type-signature"></span></h4>
     
     
 </dt>
@@ -1107,7 +1146,482 @@
     
     
     <div class="description">
-        <p>Set the given annotation as current selection</p>
+        <p>Proxy to select annotation by Id on mouse click</p>
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>selection</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">Array</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last"><p>The new selection. This is an array of object containing the id of the annotation and optionnaly the track id. See example below.</p></td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>moveTo</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">Boolean</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last"><p>define if the video should be move to the start point of the selection</p></td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>isManuallySelected</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">Boolean</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last"><p>define if the selection has been done manually or through a video timeupdate</p></td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="annotations-tool.js.html">annotations-tool.js</a>, line 302
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+    
+    
+    
+    
+    
+    
+        <h5>Example</h5>
+        
+    <pre class="prettyprint"><code>{
+    id: "a123", // The id of the annotations
+    trackId: "b23", // The track id (optional)
+}</code></pre>
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="onDestroyRemoveSelection"><span class="type-signature">&lt;static> </span>onDestroyRemoveSelection<span class="signature">(annotation)</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        <p>Listener for destroy event on selected annotation to update the selection</p>
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>annotation</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last"><p>The destroyed annotation</p></td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="annotations-tool.js.html">annotations-tool.js</a>, line 313
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="onMouseDown"><span class="type-signature">&lt;static> </span>onMouseDown<span class="signature">()</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        <p>Listener for mouse down event to get infos about the click</p>
+    </div>
+    
+
+    
+    
+    
+    
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="annotations-tool.js.html">annotations-tool.js</a>, line 236
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="onMouseUp"><span class="type-signature">&lt;static> </span>onMouseUp<span class="signature">()</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        <p>Listener for mouse up event to get infos about the click</p>
+    </div>
+    
+
+    
+    
+    
+    
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="annotations-tool.js.html">annotations-tool.js</a>, line 246
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="onTimeUpdate"><span class="type-signature">&lt;static> </span>onTimeUpdate<span class="signature">()</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        <p>Listen and retrigger timeupdate event from player adapter events in divided frequence (between 1/1 and 1/10)</p>
+    </div>
+    
+
+    
+    
+    
+    
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="annotations-tool.js.html">annotations-tool.js</a>, line 256
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="setSelection"><span class="type-signature">&lt;static> </span>setSelection<span class="signature">(selection, moveTo, isManuallySelected)</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        <p>Set the given annotation(s) as current selection</p>
     </div>
     
 
@@ -1184,6 +1698,29 @@
         </tr>
 	
 	
+	
+        <tr>
+            
+                <td class="name"><code>isManuallySelected</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">Boolean</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last"><p>define if the selection has been done manually or through a video timeupdate</p></td>
+        </tr>
+	
+	
 	</tbody>
 </table>
     
@@ -1211,7 +1748,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="annotations-tool.js.html">annotations-tool.js</a>, line 215
+        <a href="annotations-tool.js.html">annotations-tool.js</a>, line 360
     </li></ul></dd>
     
     
@@ -1229,6 +1766,173 @@
     
     
     
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="setSelectionById"><span class="type-signature">&lt;static> </span>setSelectionById<span class="signature">(selection, moveTo, isManuallySelected)</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        <p>Set the given annotation(s) as current selection</p>
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>selection</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">Array</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last"><p>The new selection. This is an array of object containing the id of the annotation and optionnaly the track id. See example below.</p></td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>moveTo</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">Boolean</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last"><p>define if the video should be move to the start point of the selection</p></td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>isManuallySelected</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">Boolean</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last"><p>define if the selection has been done manually or through a video timeupdate</p></td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="annotations-tool.js.html">annotations-tool.js</a>, line 335
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+    
+    
+    
+    
+    
+    
+        <h5>Example</h5>
+        
+    <pre class="prettyprint"><code>{
+    id: "a123", // The id of the annotations
+    trackId: "b23", // The track id (optional)
+}</code></pre>
+
     
 </dd>
 
@@ -1324,7 +2028,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="annotations-tool.js.html">annotations-tool.js</a>, line 113
+        <a href="annotations-tool.js.html">annotations-tool.js</a>, line 115
     </li></ul></dd>
     
     
@@ -1389,7 +2093,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="annotations-tool.js.html">annotations-tool.js</a>, line 258
+        <a href="annotations-tool.js.html">annotations-tool.js</a>, line 445
     </li></ul></dd>
     
     
@@ -1432,7 +2136,7 @@
 <br clear="both">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.0-dev</a> on Thu Jul 04 2013 14:39:40 GMT+0200 (CEST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.0-dev</a> on Mon Nov 04 2013 23:11:30 GMT+0100 (CET)
 </footer>
 
 <script> prettyPrint(); </script>

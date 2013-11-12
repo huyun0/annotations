@@ -37,6 +37,7 @@ define(["jquery",
         "models/annotation",
         "collections/annotations",
         "text!templates/timeline-group.tmpl",
+        "text!templates/timeline-group-empty.tmpl",
         "text!templates/timeline-item.tmpl",
         "text!templates/timeline-modal-add-group.tmpl",
         "text!templates/timeline-modal-update-group.tmpl",
@@ -49,7 +50,7 @@ define(["jquery",
         "tooltip",
         "popover"],
 
-    function ($, PlayerAdapter, Annotation, Annotations, GroupTmpl, ItemTmpl, ModalAddGroupTmpl, ModalUpdateGroupTmpl, ACCESS, ROLES, FiltersManager, Backbone, Handlebars) {
+    function ($, PlayerAdapter, Annotation, Annotations, GroupTmpl, GroupEmptyTmpl, ItemTmpl, ModalAddGroupTmpl, ModalUpdateGroupTmpl, ACCESS, ROLES, FiltersManager, Backbone, Handlebars) {
 
         "use strict";
 
@@ -86,6 +87,13 @@ define(["jquery",
              * @type {Handlebars template}
              */
             groupTemplate: Handlebars.compile(GroupTmpl),
+
+            /**
+             * Empty group template
+             * @alias module:views-timeline.TimelineView#groupEmptyTemplate
+             * @type {Handlebars template}
+             */
+            groupEmptyTemplate: Handlebars.compile(GroupEmptyTmpl),
 
             /**
              * Item template
@@ -126,11 +134,24 @@ define(["jquery",
 
             /**
              * Template for void item content
-             * @alias module:views-timeline.TimelineView#VOID_ITEM
+             * @alias module:views-timeline.TimelineView#VOID_ITEM_TMPL
              * @type {string}
              * @constant
              */
-            VOID_ITEM: "<div style=\"display:none\"></div>",
+            VOID_ITEM_TMPL: "<div style=\"display:none\"></div>",
+
+            /**
+             * Void track paramters
+             * @alias module:views-timeline.TimelineView#VOID_TRACK
+             * @type {Object}
+             * @constant
+             */
+            VOID_TRACK: {
+                isMine: true,
+                id: "empty-timeline",
+                name: "No track available",
+                description: "No track corresponding with the current filter(s)."
+            },
 
             /**
              * Default duration for annotation
@@ -230,39 +251,35 @@ define(["jquery",
                 this.endDate = this.getFormatedDate(this.playerAdapter.getDuration());
                 this.startDate = new Date(this.endDate.getFullYear(), this.endDate.getMonth(), this.endDate.getDate(), 0, 0, 0);
 
-                // Initial the footprint of the filtering and drawing operation
-                this.lastFilteringOn = 1;
-                this.lastDrawOn = 0 ;
-
                 // Options for the links timeline
                 this.options = {
-                    width:  "100%",
-                    height: "auto",
-                    style: "box",
-                    //scale: links.Timeline.StepDate.SCALE.SECOND,
-                    //step: 30,
-                    showButtonNew: false,
-                    editable: true,
-                    start: this.startDate,
-                    end: this.endDate,
-                    min: this.startDate,
-                    max: this.endDate,
-                    intervalMin: 5000,
-                    showCustomTime: true,
-                    showNavigation: false,
-                    showMajorLabels: false,
-                    snapEvents: false,
-                    stackEvents: true,
-                    minHeight: "200",
-                    axisOnTop: true,
-                    groupsWidth: "150px",
-                    animate: true,
-                    animateZoom: true,
+                    width  : "100%",
+                    height : "auto",
+                    style  : "box",
+                    //scale : links.Timeline.StepDate.SCALE.SECOND,
+                    //step  : 30,
+                    showButtonNew   : false,
+                    editable        : true,
+                    start           : this.startDate,
+                    end             : this.endDate,
+                    min             : this.startDate,
+                    max             : this.endDate,
+                    intervalMin     : 5000,
+                    showCustomTime  : true,
+                    showNavigation  : false,
+                    showMajorLabels : false,
+                    snapEvents      : false,
+                    stackEvents     : true,
+                    minHeight       : "200",
+                    axisOnTop       : true,
+                    groupsWidth     : "150px",
+                    animate         : true,
+                    animateZoom     : true,
                     // cluster: true,
-                    eventMarginAxis: 0,
-                    eventMargin: 0,
-                    dragAreaWidth: 5,
-                    groupsChangeable: true
+                    eventMarginAxis  : 0,
+                    eventMargin      : 0,
+                    dragAreaWidth    : 5,
+                    groupsChangeable : true
                 };
 
                 // Create the timeline
@@ -360,7 +377,7 @@ define(["jquery",
                     this.onTrackSelected(null, annotationsTool.selectedTrack.id);
                 }
 
-                $("div.popover.fade.right.in").remove()
+                $("div.popover.fade.right.in").remove();
                 $("div.timeline-group .content-overlay").popover({});
             },
 
@@ -428,6 +445,7 @@ define(["jquery",
                     size = end - start,
                     currentTime = this.playerAdapter.getCurrentTime(),
                     videoDuration = this.playerAdapter.getDuration();
+                    // popovers = $("div.popover.fade.right.in");
 
                 if ((currentTime - size / 2) < 0) {
                     start = this.getFormatedDate(0);
@@ -442,7 +460,9 @@ define(["jquery",
 
                 this.timeline.setVisibleChartRange(start, end);
 
-                //$("div.popover.fade.right.in").remove()
+                // if (popovers.length > 1) {
+                //     $("div.popover.fade.right.in").last().remove();
+                // }
                 $("div.timeline-group .content-overlay").popover({});
             },
 
@@ -519,7 +539,7 @@ define(["jquery",
              */
             addAnnotation: function (annotation, track, isList) {
                 // Wait that the id has be set to the model before to add it
-                if (_.isUndefined(annotation.get("id"))) {                 
+                if (_.isUndefined(annotation.get("id"))) {
                     annotation.once("ready", function () {
                         this.addAnnotation(annotation, track, isList);
                     }, this);
@@ -572,7 +592,7 @@ define(["jquery",
                 // Add void item
                 this.allItems["track_" + track.id] = this.generateVoidItem(track);
 
-                annotations = track.get("annotations"),
+                annotations = track.get("annotations");
                 annotations.each(annotationWithList, this);
                 annotations.bind("add", proxyToAddAnnotation, this);
                 annotations.bind("change", this.changeItem, this);
@@ -609,7 +629,7 @@ define(["jquery",
                     isPublic: track.get("isPublic"),
                     start   : this.startDate - 5000,
                     end     : this.startDate - 4500,
-                    content : this.VOID_ITEM,
+                    content : this.VOID_ITEM_TMPL,
                     group   : this.groupTemplate(trackJSON)
                 };
             },
@@ -684,11 +704,9 @@ define(["jquery",
                 }
 
                 track = this.tracks.create(param, {wait: true});
-                
-                // If no track selected, we use the new one
-                if (!annotationsTool.selectedTrack) {
-                    annotationsTool.selectedTrack = track;
-                }
+
+                // Select the new track
+                annotationsTool.selectedTrack = track;
                 
                 this.redraw();
                 this.onTrackSelected(null, annotationsTool.selectedTrack.id);
@@ -850,8 +868,6 @@ define(["jquery",
              */
             filterItems: function () {
                 var tempList = _.values(this.allItems);
-                    
-                this.lastFilteringOn = new Date().getTime(); 
 
                 _.each(this.filtersManager.getFilters(), function (filter) {
                     if (filter.active) {
@@ -862,6 +878,18 @@ define(["jquery",
                 this.filteredItems = _.sortBy(tempList, function (item) {
                     return _.isUndefined(item.model) ? 0 : item.model.get("name");
                 }, this);
+
+                if (this.filteredItems.length === 0) {
+                    this.filteredItems.push({
+                        trackId : this.VOID_TRACK.id,
+                        isMine  : this.VOID_TRACK.isMine,
+                        isPublic: true,
+                        start   : this.startDate - 5000,
+                        end     : this.startDate - 4500,
+                        content : this.VOID_ITEM_TMPL,
+                        group   : this.groupEmptyTemplate(this.VOID_TRACK)
+                    });
+                }
 
                 return this.filteredItems;
             },
@@ -884,6 +912,8 @@ define(["jquery",
              * @param  {PlainObject} attr The plain object representing the updated filter
              */
             updateFiltersRender: function (attr) {
+                console.log("Change filter");
+
                 if (attr.active) {
                     this.$el.find("#filter-" + attr.id).addClass("checked");
                 } else {
@@ -995,14 +1025,10 @@ define(["jquery",
             onTimelineItemChanged: function () {
                 var hasToPlay = (this.playerAdapter.getStatus() === PlayerAdapter.STATUS.PLAYING),
                     values = this.getSelectedItemAndAnnotation(),
-                    htmlElement,
-                    index,
-                    newItem,
                     oldItemId,
                     duration,
                     start,
                     annJSON,
-                    newAnnotation,
                     successCallback,
                     destroyCallback,
                     self = this;
@@ -1069,11 +1095,11 @@ define(["jquery",
                             values.newTrack.get("annotations").create(annJSON, {
                                     wait: true,
                                     success: successCallback
-                            });
+                                });
                         }
                     },
                     successCallback = function (newAnnotation) {
-                        newAnnotation.set("level", self.PREFIX_STACKING_CLASS + self.getStackLevel(newAnnotation), {silent: true});
+                        newAnnotation.set({level : self.PREFIX_STACKING_CLASS + self.getStackLevel(newAnnotation)}, {silent: true});
                         newAnnotation.unset("oldId", {silent: true});
                         newAnnotation.save();
 
@@ -1098,9 +1124,11 @@ define(["jquery",
                             model    : values.newTrack
                         }, false);
 
-                        self.removeItem(annJSON.oldId, false)
+                        self.removeItem(annJSON.oldId, false);
 
                         annotationsTool.setSelection([newAnnotation], true, true, true);
+
+                        newAnnotation.set({access: values.newTrack.get("access")});
 
                         self.filterItems();
                         self.redraw();
@@ -1108,14 +1136,12 @@ define(["jquery",
                         if (hasToPlay) {
                             self.playerAdapter.play();
                         }
-                    } ;
+                    };
                     
                     values.annotation.destroy({
                         success: destroyCallback,
                     });
                     
-                    // values.annotation.collection.remove(values.annotation, {silent: true});
-                    // destroyCallback(); 
                 } else {
                     this.allItems[values.annotation.id] = values.item;
                     values.annotation.set({start: start, duration: duration});
@@ -1211,7 +1237,7 @@ define(["jquery",
 
                     // If the track was selected
                     if (!annotationsTool.selectedTrack || annotationsTool.selectedTrack.id === track.id) {
-                        if (self.tracks.length > 0) {  // If there is still other tracks
+                        if (self.tracks.length > 0) { // If there is still other tracks
                             self.tracks.each(function (t) {
                                 if (t.get("isMine")) {
                                     newTrackId = t.id;
@@ -1271,7 +1297,7 @@ define(["jquery",
             onUpdateTrack: function (event, trackId) {
                 event.stopImmediatePropagation();
 
-                $("#track" + trackId).popover('hide')
+                $("#track" + trackId).popover("hide");
 
                 var track = this.tracks.get(trackId),
                     trackCurrentVisibility,
@@ -1290,7 +1316,7 @@ define(["jquery",
                     newTrackVisibility = ACCESS.PRIVATE;
                 }
 
-                track.set({access: newTrackVisibility});
+                track.setAccess(newTrackVisibility);
                 track.save();
             },
 
@@ -1427,7 +1453,7 @@ define(["jquery",
                 cssProperties = {
                         "margin-top": parseInt(selectedElement.css("margin-top"), 10) + parseInt(selectedElement.find(".timeline-item").css("margin-top"), 10) + "px",
                         "height"    : selectedElement.find(".timeline-item").outerHeight() + "px"
-                };
+                    };
 
                 this.$el.find(".timeline-event-range-drag-left").css(cssProperties);
 
@@ -1460,7 +1486,7 @@ define(["jquery",
                 // Target annotation values
                 var tStart = annotation.get("start"),
                     tEnd   = tStart + annotation.get("duration"),
-                    annotationItem = this.allItems[annotation.get("id")],
+                    //annotationItem = this.allItems[annotation.get("id")],
                     maxLevelTrack = 0, // Higher level for the whole track, no matter if the annotations are in the given annotation slot
                     newLevel = 0, // the new level to return
                     maxLevel, // Higher stack level
@@ -1538,13 +1564,13 @@ define(["jquery",
                     maxLevelTrack = newLevel;
                 }
 
-                if (annotationItem && annotationItem.model && annotationItem.model.get("timelineMaxLevel") !== maxLevelTrack) {
-                    /*annotationItem.model.set("timelineMaxLevel", maxLevelTrack, {silent: true});
+                /*if (annotationItem && annotationItem.model && annotationItem.model.get("timelineMaxLevel") !== maxLevelTrack) {
+                    annotationItem.model.set("timelineMaxLevel", maxLevelTrack, {silent: true});
                     this.changeTrack(annotationItem.model, {silent: true});
                     trackEl = this.$el.find(".timeline-group .track-id:contains(" + annotationItem.trackId + ")").parent();
                     trackEl.removeClass("track-max-level-" + (annotationItem.model.get("timelineMaxLevel") || 0));
-                    trackEl.addClass("track-max-level-" + maxLevelTrack);*/
-                }
+                    trackEl.addClass("track-max-level-" + maxLevelTrack);
+                }*/
                 return newLevel;
             },
 

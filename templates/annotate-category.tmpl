@@ -1,5 +1,5 @@
-<div class="catItem-header" {{#if settings.color}}style="background-color:{{settings.color}}"{{/if}}>
-    <input type="text" title="{{name}}" value="{{name}}" {{#if notEdit}}disabled='disabled'{{/if}}/> 
+<div class="catItem-header" {{#if settings.color}}style="background-color:{{settings.color}}"{{/if}} title="{{name}}">
+    <input type="text" value="{{name}}" {{#if notEdit}}disabled='disabled'{{/if}}/> 
    <i class="icon-pencil scale edit" title="Edit scaling for this category"></i> 
     <i class="icon-trash delete edit"></i>
     <div class="colorpicker">

@@ -1,5 +1,5 @@
 <a href="#{{id}}" class="proxy-anchor"></a>
-<div class="header-container" {{#if label.category}}style="background-color:{{label.category.settings.color}}"{{/if}}>
+<div class="header-container" {{#if label.category}}style="background-color:{{label.category.settings.color}}"{{/if}} title="{{#if label}}{{label.abbreviation}} - {{label.value}}{{else}}{{text}}{{/if}}">
     <div class="right">
         <i class="icon-comment-amount" title="{{numberOfComments}} Comment(s)"><span class="comment-amount">{{numberOfComments}}</span></i>
 
@@ -22,14 +22,13 @@
         </a>
         <button class="btn in edit" title="Set the video playhead as start point.">IN</button>
         <span class="start">
-                <input id="start-{{id}}" class="start-value" type="text" value="{{time start}}" {{#if isEditEnable}} {{else}}disabled{{/if}}></input>
+                <input title="Start time{{#if isMine}} (double-click to edit){{/if}}" id="start-{{id}}" class="start-value" type="text" value="{{time start}}" {{#if isEditEnable}} {{else}}disabled{{/if}}></input>
         </span>
 
         <span class="end {{#if duration}}has-duration{{else}}no-duration{{/if}}">
-                <input id="end-{{id}}" class="end-value" type="text" value="{{end start duration}}" {{#if isEditEnable}} {{else}}disabled{{/if}}></input>
+                <input title="End time{{#if isMine}} (double-click to edit){{/if}}" id="end-{{id}}" class="end-value" type="text" value="{{end start duration}}" {{#if isEditEnable}} {{else}}disabled{{/if}}></input>
         </span>
         <button class="btn out edit" title="Set the video playhead as end point.">OUT</button>
-
 
         {{#if scalevalues}}
         <span class="scaling">

@@ -1,0 +1,15 @@
+
+
+<div class="timeline-group track-max-level-{{#if timlineMaxLevel}}{{timelineMaxLevel}}{{else}}0{{/if}}">
+    <div class="track-id">{{id}}</div>
+    <a id="track{{id}}"
+       class="content-overlay"
+       title="{{secure name}}"
+       rel="popover"
+       data-content="<p>{{#if description}}{{secure description}}{{else}}No description{{/if}}</p>"
+      >
+        <div class="content">
+            {{secure name}}
+        </div>
+    </a>
+</div>

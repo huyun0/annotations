@@ -77,6 +77,7 @@ define(["jquery",
         "models/user",
         "models/track",
         "models/video",
+        "text!templates/categories-legend.tmpl",
         "backbone-annotations-sync",
         "roles",
         "FiltersManager",
@@ -87,7 +88,7 @@ define(["jquery",
         "tab"],
 
     function ($, PlayerAdapter, AnnotateView, ListView, TimelineView, LoginView, ScaleEditorView,
-              Annotations, Users, Videos, User, Track, Video, AnnotationSync, ROLES, FiltersManager, Backbone) {
+              Annotations, Users, Videos, User, Track, Video, CategoriesLegendTmpl, AnnotationSync, ROLES, FiltersManager, Backbone) {
 
         "use strict";
 
@@ -121,6 +122,14 @@ define(["jquery",
              */
             loadingBox: $("div#loading"),
 
+
+            /**
+             * Template for the categories legend
+             * @alias module:views-main.MainView#categoriesLegendTmpl
+             * @type {Handlebars template}
+             */
+            categoriesLegendTmpl: Handlebars.compile(CategoriesLegendTmpl),
+
             /**
              * Events to handle by the main view
              * @alias module:views-main.MainView#event
@@ -145,13 +154,15 @@ define(["jquery",
                 _.bindAll(this, "checkUserAndLogin",
                                 "createViews",
                                 "initModels",
+                                "generateCategoriesLegend",
                                 "logout",
                                 "loadPlugins",
                                 "onDeletePressed",
                                 "onWindowResize",
                                 "print",
                                 "ready",
-                                "setLoadingProgress");
+                                "setLoadingProgress",
+                                "updateTitle");
 
                 this.setLoadingProgress(10, "Starting tool.");
 
@@ -187,10 +198,8 @@ define(["jquery",
                 this.loginView              = new LoginView();
                 annotationsTool.scaleEditor = new ScaleEditorView();
 
-                annotationsTool.dispatcher  = _.clone(Backbone.Events);
-
                 this.listenTo(annotationsTool.users, "login", this.createViews);
-                this.listenTo(annotationsTool.dispatcher, "deleteAnnotation", this.deleteAnnotation);
+                this.listenTo(annotationsTool, "deleteAnnotation", this.deleteAnnotation);
 
                 this.checkUserAndLogin();
 
@@ -199,13 +208,17 @@ define(["jquery",
 
                 annotationsTool.filtersManager   = new FiltersManager();
                 annotationsTool.importCategories = this.importCategories;
-                annotationsTool.dispatcher.once(annotationsTool.EVENTS.READY, function () {
+                annotationsTool.once(annotationsTool.EVENTS.READY, function () {
                     this.loadPlugins(annotationsTool.plugins);
+                    this.generateCategoriesLegend(annotationsTool.video.get("categories").toExportJSON(true));
+                    this.updateTitle(annotationsTool.video);
                 }, this);
+
+                annotationsTool.onWindowResize = this.onWindowResize;
             },
 
             /**
-             * Load the given plugins
+             * Loads the given plugins
              * @param  {Array} plugins The array of plugins to load
              * @alias module:views-main.MainView#loadPlugins
              */
@@ -216,7 +229,31 @@ define(["jquery",
             },
 
             /**
-             * Create the views for the annotations
+             * Updates the title of the page for print mode
+             * @param  {object} video The video model
+             * @alias module:views-main.MainView#updateTitle
+             */
+            updateTitle: function (video) {
+                this.$el.find("#video-title").html(video.get("title"));
+                this.$el.find("#video-owner").html("Owner: " + video.get("src_owner"));
+                if (_.isUndefined(video.get("src_creation_date"))) {
+                    this.$el.find("#video-date").remove();
+                } else {
+                    this.$el.find("#video-date").html("Date: " + video.get("src_creation_date"));
+                }
+            },
+
+            /**
+             * Generates the legend for all the categories (for printing)
+             * @param  {array} categories The array containing all the categories
+             * @alias module:views-main.MainView#generateCategoriesLegend
+             */
+            generateCategoriesLegend: function (categories) {
+                this.$el.find("#categories-legend").html(this.categoriesLegendTmpl(categories));
+            },
+
+            /**
+             * Creates the views for the annotations
              * @alias module:views-main.MainView#createViews
              */
             createViews: function () {
@@ -292,7 +329,7 @@ define(["jquery",
                 $("a#logout").css("display", "block");
                 this.timelineView.redraw();
 
-                annotationsTool.dispatcher.trigger(annotationsTool.EVENTS.READY);
+                annotationsTool.trigger(annotationsTool.EVENTS.READY);
             },
 
             /**
@@ -454,9 +491,10 @@ define(["jquery",
                     videos.fetch();
 
                     if (videos.length === 0) {
-                        video = videos.create({video_extid: annotationsTool.getVideoExtId()}, {wait: true});
+                        video = videos.create(annotationsTool.getVideoParameters(), {wait: true});
                     } else {
                         video = videos.at(0);
+                        video.set(annotationsTool.getVideoParameters());
                     }
 
                     annotationsTool.video = video;
@@ -544,7 +582,7 @@ define(["jquery",
 
                     annotation = annotationsTool.getSelection()[0];
                     if (annotation) {
-                        annotationsTool.dispatcher.trigger("deleteAnnotation", annotation.get("id"), annotation.trackId);
+                        annotationsTool.trigger("deleteAnnotation", annotation.get("id"), annotation.trackId);
                     }
                 }
             },
@@ -581,13 +619,19 @@ define(["jquery",
              */
             onWindowResize: function () {
                 var listContent,
-                    windowHeight;
+                    windowHeight = $(window).height(),
+                    rest;
+
+                // TODO: improve this part with a better layout management, more generic
 
                 if (this.annotateView && this.listView) {
-                    windowHeight = $(window).height();
                     listContent = this.listView.$el.find("#content-list");
                     listContent.css("max-height", windowHeight - $("#annotate-container").height() - 100);
-                    this.timelineView.$el.find("#timeline").css("max-height", windowHeight - ($("#video-container").height() + 130));
+                }
+
+                if (this.timelineView) {
+                    rest = !_.isUndefined(annotationsTool.loopFunction) && annotationsTool.loopFunction.isVisible() ? annotationsTool.loopFunction.$el.height() + 160 : 125;
+                    this.timelineView.$el.find("#timeline").css("max-height", windowHeight - ($("#video-container").height() + rest));
                 }
             },
             /**
@@ -619,7 +663,7 @@ define(["jquery",
 <br clear="both">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.0-dev</a> on Thu Jul 04 2013 14:39:40 GMT+0200 (CEST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.0-dev</a> on Mon Nov 04 2013 23:11:30 GMT+0100 (CET)
 </footer>
 
 <script> prettyPrint(); </script>

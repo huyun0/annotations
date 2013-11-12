@@ -552,6 +552,7 @@ define(["jquery",
                                     return tmpAnnotation;
                                 }
                             }, this);
+                            return tmpAnnotation;
                         }
                     }
                 }

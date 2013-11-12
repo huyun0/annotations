@@ -74,7 +74,9 @@ define(["jquery",
 
                 EVENTS: {
                     ANNOTATION_SELECTION: "at:annotation-selection",
-                    READY               : "at:ready"
+                    READY               : "at:ready",
+                    ANNOTATE_TOGGLE_EDIT: "at:annotate-switch-edit-modus",
+                    TIMEUPDATE          : "at:timeupdate"
                 },
 
                 views: {},
@@ -139,9 +141,18 @@ define(["jquery",
                  */
                 start: function (config) {
                     _.bindAll(this, "updateSelectionOnTimeUpdate",
-                                    "setSelection",
+                                    "getAnnotation",
                                     "getSelection",
-                                    "hasSelection");
+                                    "getTrack",
+                                    "hasSelection",
+                                    "onClickSelectionById",
+                                    "onDestroyRemoveSelection",
+                                    "onMouseDown",
+                                    "onMouseUp",
+                                    "onTimeUpdate",
+                                    "setSelection",
+                                    "setSelectionById",
+                                    "updateSelectionOnTimeUpdate");
 
                     _.extend(this, config, _.clone(Backbone.Events));
 
@@ -149,10 +160,25 @@ define(["jquery",
                         this.loadVideo();
                     }
 
+                    /**
+                     * Handlebars helper to format a date to the configured format
+                     * @alias module:Handlebars#formatDate
+                     * @param  {date} date The date to format
+                     * @return {string}      The formated date
+                     */
+                    Handlebars.registerHelper("formatDate", config.formatDate);
+
                     this.deleteOperation.start = _.bind(this.deleteOperation.start, this);
                     this.initDeleteModal();
                     $(this.playerAdapter).bind(PlayerAdapter.EVENTS.TIMEUPDATE, this.updateSelectionOnTimeUpdate);
+                    this.currentSelection = [];
+
                     this.views.main = new MainView(this.playerAdapter);
+
+                    $(this.playerAdapter).bind("pa_timeupdate", this.onTimeUpdate);
+
+                    $(window).bind("mousedown", this.onMouseDown);
+                    $(window).bind("mouseup", this.onMouseUp);
                 },
 
                 /**
@@ -197,13 +223,14 @@ define(["jquery",
                 /**
                  * Transform time in seconds (i.e. 12.344) into a well formated time (01:12:04)
                  * @alias   annotationsTool.getWellFormatedTime
-                 * @param {number} the time in seconds
+                 * @param {number} time the time in seconds
+                 * @param {boolean} [noRounted] Define if the number should be rounded or if the decimal should be simply removed. Default is rounding (false). 
                  */
-                getWellFormatedTime: function (time) {
+                getWellFormatedTime: function (time, noRounding) {
                     var twoDigit = function (number) {
                             return (number &lt; 10 ? "0" : "") + number;
                         },
-                        base    = Math.round(time),
+                        base    = (_.isUndefined(noRounding) || !noRounding) ? Math.round(time) : Math.floor(time),
                         seconds = base % 60,
                         minutes = ((base - seconds) / 60) % 60,
                         hours   = (base - seconds - minutes * 60) / 3600;
@@ -229,31 +256,191 @@ define(["jquery",
                     return (navigator.appVersion.search("MSIE 9") > 0);
                 },
 
+                /**
+                 * Listener for mouse down event to get infos about the click
+                 * @alias   annotationsTool.onMouseDown
+                 */
+                onMouseDown: function () {
+                    this.timeMouseDown = undefined;
+                    this.startMouseDown = new Date();
+                    this.isMouseDown = true;
+                },
+
+                /**
+                 * Listener for mouse up event to get infos about the click
+                 * @alias   annotationsTool.onMouseUp
+                 */
+                onMouseUp: function () {
+                    this.timeMouseDown = new Date() - this.startMouseDown;
+                    this.startMouseDown = undefined;
+                    this.isMouseDown = false;
+                },
+
+                /**
+                 * Listen and retrigger timeupdate event from player adapter events in divided frequence (between 1/1 and 1/10)
+                 * @alias   annotationsTool.onTimeUpdate
+                 */
+                onTimeUpdate: function () {
+                    var currentTime = this.playerAdapter.getCurrentTime();
+
+                    // Ensure that this is an timeupdate due to normal playback, otherwise reinitialize the interval to 0.
+                    if (_.isUndefined(this.timeUpdateInterval) || (this.playerAdapter.getStatus() !== PlayerAdapter.STATUS.PLAYING) || (currentTime - this.lastTimeUpdate > 50)) {
+                        this.timeUpdateInterval = 1;
+                    }
+
+                    // Ensure that the timestamp from the last update is set
+                    if (_.isUndefined(this.lastTimeUpdate)) {
+                        this.lastTimeUpdate = 1;
+                    }
+                    
+                    // Trigger all the current events
+                    this.trigger(this.EVENTS.TIMEUPDATE, currentTime);
+                    for (var i = 1; i &lt;= 10; i++) {
+                        if (this.timeUpdateInterval % i == 0) {
+                            this.trigger(this.EVENTS.TIMEUPDATE + ":" + i, currentTime);
+                        }                        
+                    }
+
+                    this.lastTimeUpdate = new Date().getTime();
+
+                    if (this.timeUpdateInterval > 10 ) {
+                        this.timeUpdateInterval = 1;
+                    } else {
+                        this.timeUpdateInterval++;
+                    }
+                },
+
                 ///////////////////////////////////////////////
                 // Function related to annotation selection  //
                 ///////////////////////////////////////////////
+                
+                /**
+                 * Proxy to select annotation by Id on mouse click
+                 * @alias   annotationsTool.onClickSelectionById
+                 * @param {Array} selection The new selection. This is an array of object containing the id of the annotation and optionnaly the track id. See example below.
+                 * @example
+                 * {
+                 *     id: "a123", // The id of the annotations
+                 *     trackId: "b23", // The track id (optional)
+                 * }
+                 * @param {Boolean} moveTo define if the video should be move to the start point of the selection
+                 * @param {Boolean} isManuallySelected define if the selection has been done manually or through a video timeupdate
+                 */
+                onClickSelectionById: function (selectedIds, moveTo, isManuallySelected) {
+                    if (!this.isMouseDown && this.timeMouseDown &lt; 300) {
+                        this.setSelectionById(selectedIds, moveTo, isManuallySelected);
+                    }
+                }, 
 
                 /**
-                 * Set the given annotation as current selection
+                 * Listener for destroy event on selected annotation to update the selection
+                 * @alias   annotationsTool.onDestroyRemoveSelection
+                 * @param  {Object} annotation The destroyed annotation
+                 */
+                onDestroyRemoveSelection: function (annotation) {
+                    _.each(this.currentSelection, function (item, index) {
+                        if (item.get("id") == annotation.get("id")) {
+                            this.currentSelection.splice(index, 1);
+                            this.trigger(this.EVENTS.ANNOTATION_SELECTION, this.currentSelection);
+                            return;
+                        }
+                    }, this);
+                },
+                
+                /**
+                 * Set the given annotation(s) as current selection
+                 * @alias   annotationsTool.setSelectionById
+                 * @param {Array} selection The new selection. This is an array of object containing the id of the annotation and optionnaly the track id. See example below.
+                 * @example
+                 * {
+                 *     id: "a123", // The id of the annotations
+                 *     trackId: "b23", // The track id (optional)
+                 * }
+                 * @param {Boolean} moveTo define if the video should be move to the start point of the selection
+                 * @param {Boolean} isManuallySelected define if the selection has been done manually or through a video timeupdate
+                 */
+                setSelectionById: function (selectedIds, moveTo, isManuallySelected) {
+                    var selectionAsArray = [],
+                        tmpAnnotation;
+
+                    if (_.isArray(selectedIds) && selectedIds.length > 0) {
+                        _.each(selectedIds, function (selection, key) {
+                            tmpAnnotation = this.getAnnotation(selection.id, selection.trackId);
+                            if (!_.isUndefined(tmpAnnotation)) {
+                                selectionAsArray.push(tmpAnnotation);
+                            }
+                        }, this);
+                    } else {
+                        console.warn("Invalid selection: " + selectedIds);
+                    }
+
+                    this.setSelection(selectionAsArray, moveTo, isManuallySelected);
+                },
+
+                /**
+                 * Set the given annotation(s) as current selection
                  * @alias   annotationsTool.setSelection
                  * @param {Array} selection The new selection
                  * @param {Boolean} moveTo define if the video should be move to the start point of the selection
+                 * @param {Boolean} isManuallySelected define if the selection has been done manually or through a video timeupdate
                  */
-                setSelection: function (selection, moveTo, isManualSelected) {
-                    this.currentSelection = selection;
-                    this.isManualSelected = isManualSelected;
+                setSelection: function (selection, moveTo, isManuallySelected) {
 
-                    // if the selection is not empty, we move the playhead to it
-                    if (_.isArray(selection) && selection.length > 0 && moveTo) {
-                        this.playerAdapter.setCurrentTime(selection[0].get("start"));
+                    var isEqual =   _.bind(function (newSelection) {
+                                        var equal = true;
 
-                        if (typeof isManualSelected === "undefined") {
-                            this.isManualSelected = true;
+                                        if (this.currentSelection.length !== newSelection.length) {
+                                            return false;
+                                        }
+
+                                        _.each(this.currentSelection, function (annotation) {
+                                            if (!_.find(newSelection, function (newAnnotation) {
+                                                return newAnnotation.get("id") === annotation.get("id");
+                                            }, this)) {
+                                                return (equal = false);
+                                            }
+                                        }, this);
+
+                                        return equal;
+                                    }, this);
+
+                    this.isManuallySelected = isManuallySelected;
+
+                    if (_.isArray(selection) && selection.length > 0) {
+                        if (isEqual(selection)) {
+                            if (isManuallySelected) {
+                                // If the selection is the same, we unselect it if this is a manual selection
+                                // Remove listener for destroy event (unselect);
+                                _.each(this.currentSelection, function (item) {
+                                    this.stopListening(item, "destroy", this.onDestroyRemoveSelection);
+                                }, this);
+                                this.currentSelection = [];
+                                this.isManuallySelected = false;
+                            } else {
+                                // If the selection is not done manually we don't need to reselect it
+                                return;
+                            }
+                        } else {
+                            // else we set the new selection
+                            this.currentSelection = selection;
                         }
                     } else {
-                        if (typeof isManualSelected === "undefined") {
-                            this.isManualSelected = false;
+                        // If there is already no selection, no more work to do
+                        if (!this.hasSelection()) {
+                            return;
                         }
+
+                        this.currentSelection = [];
+                    }
+
+                    // Add listener for destroy event (unselect);
+                    _.each(this.currentSelection, function (item) {
+                        this.listenTo(item, "destroy", this.onDestroyRemoveSelection);
+                    }, this);
+
+                    // if the selection is not empty, we move the playhead to it
+                    if (this.currentSelection.length >0 && moveTo) {
+                        this.playerAdapter.setCurrentTime(selection[0].get("start"));
                     }
 
                     // Trigger the selection event
@@ -290,7 +477,7 @@ define(["jquery",
                         duration,
                         end;
 
-                    if (typeof this.video === "undefined" || this.isManualSelected) {
+                    if (typeof this.video === "undefined" || (this.isManuallySelected && this.hasSelection())) {
                         return;
                     }
 
@@ -302,7 +489,7 @@ define(["jquery",
 
                         start    = annotation.get("start");
                         duration = annotation.get("duration");
-                        end      = start + duration;
+                        end      = start + (duration &lt; this.MINIMAL_DURATION ? this.MINIMAL_DURATION : duration);
 
                         if (_.isNumber(duration) && start &lt;= currentTime && end >= currentTime) {
                             selection.push(annotation);
@@ -337,6 +524,62 @@ define(["jquery",
                         this.deleteOperation.start(annotation, this.deleteOperation.targetTypes.ANNOTATION);
                     } else {
                         console.warn("Not able to find annotation %i on track %i", annotationId, trackId);
+                    }
+                },
+
+
+                //////////////////////////////////////
+                // Shortcuts for Getters & Setters  //
+                /////////////////////////////////////
+
+                /**
+                 * Get the track with the given Id
+                 * @param  {String} id The track Id
+                 * @return {Object}    The track object or undefined if not found
+                 */
+                getTrack: function (id) {
+                    if (_.isUndefined(this.video)) {
+                        console.warn("No video present in the annotations tool. Either the tool is not completely loaded or an error happend during video loading.");
+                    } else {
+                        return this.video.getTrack(id);
+                    }
+                },
+
+                /**
+                 * Get the annotation with the given Id
+                 * @param  {String} annotationId The annotation 
+                 * @param  {String} (trackId)      The track Id (Optional)
+                 * @return {Object}   The annotation object or undefined if not found
+                 */
+                getAnnotation: function (annotationId, trackId) {
+                    var track,
+                        tmpAnnotation;
+
+                    if (!_.isUndefined(trackId)) {
+                        // If the track id is given, we only search for the annotation on it
+                        
+                        track = this.getTrack(trackId);
+
+                        if (_.isUndefined(track)) {
+                            console.warn("Not able to find the track with the given Id"); 
+                            return;
+                        } else {
+                            return track.getAnnotation(annotationId);
+                        }
+                    } else {
+                        // If no trackId present, we search through all tracks
+
+                        if (_.isUndefined(this.video)) {
+                            console.warn("No video present in the annotations tool. Either the tool is not completely loaded or an error happend during video loading.");
+                            return;
+                        } else {
+                            this.video.get("tracks").each(function (trackItem) {
+                                tmpAnnotation = trackItem.getAnnotation(annotationId);
+                                if (!_.isUndefined(tmpAnnotation)) {
+                                    return tmpAnnotation;
+                                }
+                            }, this);
+                        }
                     }
                 }
 
@@ -386,6 +629,35 @@ define(["jquery",
                             },
                             error: function (error) {
                                 console.warn("Cannot delete annotation: " + error);
+                            }
+                        });
+                    }
+                },
+
+
+                COMMENT: {
+                    name: "comment",
+                    getContent: function (target) {
+                        return target.get("text");
+                    },
+                    destroy: function (target, callback) {
+
+                        target.destroy({
+
+                            success: function () {
+                                if (annotationsTool.localStorage) {
+                                     if (target.collection) {
+                                        target.collection.remove(target);
+                                    }
+
+                                    annotationsTool.video.save();
+                                }
+                                if (callback) {
+                                    callback();
+                                }
+                            },
+                            error: function (error) {
+                                console.warn("Cannot delete comment: " + error);
                             }
                         });
                     }
@@ -605,7 +877,7 @@ define(["jquery",
 <br clear="both">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.0-dev</a> on Thu Jul 04 2013 14:39:40 GMT+0200 (CEST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.0-dev</a> on Mon Nov 04 2013 23:11:30 GMT+0100 (CET)
 </footer>
 
 <script> prettyPrint(); </script>
