@@ -176,6 +176,9 @@ define(["jquery",
                 });
 
                 $(targetElement).bind("timeupdate", function () {
+                    if ((self.status == PlayerAdapter.STATUS.PAUSED || self.status == PlayerAdapter.STATUS.SEEKING) && !this.paused && !this.ended && this.currentTime > 0) {
+                        self.status = PlayerAdapter.STATUS.PLAYING;
+                    }
                     self.triggerEvent(PlayerAdapter.EVENTS.TIMEUPDATE);
                 });
 

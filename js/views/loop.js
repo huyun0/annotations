@@ -324,7 +324,12 @@ define(["jquery",
                  * @alias module:views-loop.Loop#setCurrentLoop
                  */
                 setCurrentLoop: function (loop, moveTo) {
-                    var index = _.isNumber(loop) ? loop : this.loops.indexOf(loop);
+                    var index = _.isNumber(loop) ? loop : this.loops.indexOf(loop),
+                        isPlaying = this.playerAdapter.getStatus() === PlayerAdapter.STATUS.PLAYING;
+
+                    if (_.isBoolean(moveTo) && moveTo && isPlaying) {
+                        this.playerAdapter.pause();
+                    }
 
                     if (!_.isUndefined(this.currentLoop)) {
                         this.addTimelineItem(this.currentLoop, false);
@@ -347,6 +352,9 @@ define(["jquery",
 
                     if (_.isBoolean(moveTo) && moveTo) {
                         this.playerAdapter.setCurrentTime(this.currentLoop.get("start"));
+                        if (isPlaying) {
+                            this.playerAdapter.play();
+                        }
                     }
                 },
 
