@@ -40,6 +40,10 @@ define(['domReady',
                 get: function(id) {
                     return 8;
                 }
+            },
+
+            onWindowResize: function () {
+                // Function without content -> nothing to do for test
             }
         };
             

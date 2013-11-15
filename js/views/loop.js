@@ -251,16 +251,25 @@ define(["jquery",
                         checkLimit = function (limit) {
                             return (limit < 0) && (Math.abs(limit) > MAX_MARGIN);
                         };
-
+                    console.log("-- # Start check loop --");
+                    console.log("- current time: " + currentTime);
+                    console.log("- is playing: " + isPlaying);
+                    console.log("- player status: " + this.playerAdapter.getStatus());
+                    console.log("- diffrence end: " + differenceEnd);
+                    console.log("- diffrence start: " + differenceStart);
+                    
                     if (isPlaying && differenceEnd <= 0 && Math.abs(differenceEnd) < this.MAX_MARGIN) {
+                        console.log("- change current time to: " + this.currentLoop.get("start"));
                         this.playerAdapter.setCurrentTime(this.currentLoop.get("start"));
 
                         if (currentTime === this.playerAdapter.getDuration()) {
                             this.playerAdapter.play();
                         }
                     } else if (checkLimit(differenceEnd) || checkLimit(differenceStart)) {
+                        console.log("- search new loop");
                         this.setCurrentLoop(this.findCurrentLoop());
                     }
+                    console.log("-- # End Check loop --");
                 },
 
                 /**
@@ -324,7 +333,12 @@ define(["jquery",
                  * @alias module:views-loop.Loop#setCurrentLoop
                  */
                 setCurrentLoop: function (loop, moveTo) {
-                    var index = _.isNumber(loop) ? loop : this.loops.indexOf(loop);
+                    var index = _.isNumber(loop) ? loop : this.loops.indexOf(loop),
+                        isPlaying = this.playerAdapter.getStatus() === PlayerAdapter.STATUS.PLAYING;
+
+                    if (_.isBoolean(moveTo) && moveTo && isPlaying) {
+                        this.playerAdapter.pause();
+                    }
 
                     if (!_.isUndefined(this.currentLoop)) {
                         this.addTimelineItem(this.currentLoop, false);
@@ -347,6 +361,9 @@ define(["jquery",
 
                     if (_.isBoolean(moveTo) && moveTo) {
                         this.playerAdapter.setCurrentTime(this.currentLoop.get("start"));
+                        if (isPlaying) {
+                            this.playerAdapter.play();
+                        }
                     }
                 },
 
