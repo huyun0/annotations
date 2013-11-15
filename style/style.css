@@ -5177,6 +5177,11 @@
   div.timeline-groups-text div.timeline-group div.content:hover {
     text-decoration: none!important;
   }
+  div.timeline-groups-text div.timeline-group div.content.empty {
+    width: 150px;
+    color: grey;
+    text-transform: none;
+  }
   div.timeline-groups-text.selected {
     background-color: #eaeaea;
   }
@@ -7934,7 +7939,6 @@
     background-color: transparent !important;
   }
   div#list-container div.comment-list > div {
-    background-color: transparent !important;
     background-image: url("../img/arrow-right.png") !important;
     background-size: 20px !important;
     background-repeat: no-repeat !important;
