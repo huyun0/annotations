@@ -53,13 +53,13 @@ module.exports = function(grunt) {
           }
         },
         files: {
-          "style/annotations/test.css": "style/style.less"
+          "style/style.css": "style/style.less"
         }
       }
     },
 
     copy: {
-      local: {
+      'local': {
         files: [{
           flatten: false,
           expand: true,
@@ -67,6 +67,23 @@ module.exports = function(grunt) {
           dest: '/Users/xavierbutty/Sites/DEMO_ANNOT',
           filter: 'isFile'
         }]
+      },
+      'local-all': {
+        files: [{
+          flatten: false,
+          expand: true,
+          src: ['js/**/*', 'img/*', 'style/style.css', 'templates/*', 'resources/*', 'tests/**/*'],
+          dest: 'www',
+        }]
+      },
+      'local-index': {
+        options: {
+          processContent: function (content, srcpath) {
+            return grunt.template.process(content);
+          }
+        },
+        src: 'index.html',
+        dest: 'www/index.html'
       }
     },
 
@@ -103,7 +120,7 @@ module.exports = function(grunt) {
 
   // Default task(s).
   grunt.registerTask('default', ['jshint:all', 'less-all', 'copy:local-all']);
-  grunt.registerTask('dev', ['less:annotation', 'copy:local-all', 'concurrent:dev']);
+  grunt.registerTask('dev', ['less:annotation', 'copy:local-all', 'copy:local-index', 'concurrent:dev']);
 
   // on watch events configure jshint:all to only run on changed file
   grunt.event.on('watch', function(action, filepath, target) {
