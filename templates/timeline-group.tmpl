@@ -7,8 +7,8 @@
        rel="popover"
        data-trigger="manual" 
        data-content="<p>{{#if description}}{{secure description}}{{else}}No description{{/if}}</p> <p><b>Owner:</b> {{created_by_nickname}}</p>"
-       onmouseleave="$(this).popover('hide'); $('div.popover.fade.right.in').remove(); console.log('remove');"
-       onmouseenter="$(this).popover('show'); console.log('enter');">
+       onmouseleave="$('div.popover.fade.right.in').remove();"
+       onmouseenter="$(this).popover('show');">
     {{#if isMine}}
         <i class="private icon-user" title="You own this track"></i>
     {{/if}}
@@ -19,7 +19,11 @@
         <div class="group-edit">
             <i onclick="$(window).trigger('deleteTrack', ['{{id}}'])" class="delete icon-trash" title="Delete  track"></i>
             <i onclick="$(window).trigger('updateTrack', ['{{id}}'])" class="update  icon-pencil" title="Update  track"></i>
-            <span class="visibility" onclick="$(window).trigger('updateTrackAccess', ['{{id}}'])" title="Make {{#if isPublic}}in{{/if}}visible to others"><i class="icon-dark-grey {{#if isPublic}}icon-public{{else}}icon-private{{/if}}"></i> {{#if isPublic}}Public{{else}}Private{{/if}}</span>
+            <span class="visibility" 
+                  onmouseup="$(this).parent().parent().popover('show');"
+                  onmousedown="$(window).trigger('updateTrackAccess', ['{{id}}'])" 
+                  title="Make {{#if isPublic}}in{{/if}}visible to others">
+                    <i class="icon-dark-grey {{#if isPublic}}icon-public{{else}}icon-private{{/if}}"></i> {{#if isPublic}}Public{{else}}Private{{/if}}</span>
         </div>
     {{/if}}
     </a>

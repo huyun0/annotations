@@ -328,7 +328,7 @@ define(["jquery",
                     _.bindAll(this.timeline, "findGroup");
                 }
 
-                this.$el.find(".timeline-frame > div").first()[0].addEventListener("mousewheel", function (event) {
+                this.$el.find(".timeline-frame > div")[0].addEventListener("mousewheel", function (event) {
                     event.stopPropagation();
                 }, true);
 
@@ -376,6 +376,7 @@ define(["jquery",
                     this.onTrackSelected(null, annotationsTool.selectedTrack.id);
                 }
 
+                // Remove the popover div from old track elements
                 $("div.popover.fade.right.in").remove();
             },
 
