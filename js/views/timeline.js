@@ -50,7 +50,8 @@ define(["jquery",
         "tooltip",
         "popover"],
 
-    function ($, PlayerAdapter, Annotation, Annotations, GroupTmpl, GroupEmptyTmpl, ItemTmpl, ModalAddGroupTmpl, ModalUpdateGroupTmpl, ACCESS, ROLES, FiltersManager, Backbone, Handlebars) {
+    function ($, PlayerAdapter, Annotation, Annotations, GroupTmpl,
+                GroupEmptyTmpl, ItemTmpl, ModalAddGroupTmpl, ModalUpdateGroupTmpl, ACCESS, ROLES, FiltersManager, Backbone, Handlebars) {
 
         "use strict";
 
@@ -336,8 +337,6 @@ define(["jquery",
 
                 this.redraw();
                 this.onPlayerTimeUpdate();
-
-                $("div.timeline-group .content-overlay").popover({});
             },
 
 
@@ -378,7 +377,6 @@ define(["jquery",
                 }
 
                 $("div.popover.fade.right.in").remove();
-                $("div.timeline-group .content-overlay").popover({});
             },
 
             /**
@@ -459,11 +457,6 @@ define(["jquery",
                 }
 
                 this.timeline.setVisibleChartRange(start, end);
-
-                // if (popovers.length > 1) {
-                //     $("div.popover.fade.right.in").last().remove();
-                // }
-                $("div.timeline-group .content-overlay").popover({});
             },
 
             /**
@@ -971,13 +964,7 @@ define(["jquery",
              * @param  {Array} selection The new array of selected item(s)
              */
             onSelectionUpdate: function (selection) {
-                var data = this.filteredItems,
-                    updateOverlay = function () {
-                        // Wait a short moment to ensure that DOM elemnts have been drawn
-                        setTimeout(function () {
-                            $("div.timeline-group .content-overlay").popover({});
-                        }, 200);
-                    };
+                var data = this.filteredItems;
 
                 // If no selection, we unselected elements currently selected and return
                 if (!annotationsTool.hasSelection()) {
@@ -992,8 +979,6 @@ define(["jquery",
                             this.timeline.selectItem(index, false, true);
                         }
                     }, this);
-
-                    //updateOverlay();
                 }
             },
             
