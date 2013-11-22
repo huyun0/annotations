@@ -5,8 +5,10 @@
        {{#if isMine}}onclick="$(window).trigger('selectTrack', ['{{id}}'])" ondblclick="$(window).trigger('updateTrack', ['{{id}}'])"{{/if}}
        title="{{secure name}}"
        rel="popover"
+       data-trigger="manual" 
        data-content="<p>{{#if description}}{{secure description}}{{else}}No description{{/if}}</p> <p><b>Owner:</b> {{created_by_nickname}}</p>"
-       onmouseleave="$('div.popover.fade.right.in').remove();">
+       onmouseleave="$(this).popover('hide'); $('div.popover.fade.right.in').remove(); console.log('remove');"
+       onmouseenter="$(this).popover('show'); console.log('enter');">
     {{#if isMine}}
         <i class="private icon-user" title="You own this track"></i>
     {{/if}}
