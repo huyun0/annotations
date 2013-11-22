@@ -970,7 +970,6 @@ define(["jquery",
                 // If no selection, we unselected elements currently selected and return
                 if (!annotationsTool.hasSelection()) {
                     this.timeline.unselectItem();
-                    updateOverlay();
                     return;
                 }
 
