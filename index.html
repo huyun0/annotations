@@ -20,8 +20,6 @@
 <body>
 <!--[if lt IE 7]><p class=chromeframe>Your browser is <em>ancient!</em> <a href="http://browsehappy.com/">Upgrade to a different browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to experience this site.</p><![endif]-->
 
-
-
     <div class="navbar navbar-fixed-top">
 
       <div class="navbar-inner">
@@ -80,9 +78,7 @@
             <!-- container for the video -->
             <div id="video-container" class="window" style="display:none">
                 <video id="example" style="width:100%" controls >
-                    <source src="resources/aav1.mp4" type="video/mp4" />
-                    <source src="resources/aav1.webm" type="video/webm" /> 
-                    <source src="resources/aav1.ogv" type="video/ogg" /> 
+                    <%= currentProfile.sources %>
                 </video>
             </div>
             

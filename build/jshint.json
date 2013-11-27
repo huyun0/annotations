@@ -29,6 +29,9 @@
         "setTimeout"      : true,
         "document"        : true,
         "links"           : true,
-        "nospawwn"        : true
-    }
+        "nospawwn"        : true,
+        "require"         : true,
+        "navigator"       : true
+    },
+    "ignores": ["js/libs/**/*"]
 }
