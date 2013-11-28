@@ -33,46 +33,11 @@ define(["jquery",
         "views/comments-container",
         "text!templates/list-annotation.tmpl",
         "backbone",
-        "handlebars"],
+        "handlebarsHelpers"],
 
 function ($, PlayerAdapter, Annotation, User, CommentsContainer, Template, Backbone, Handlebars) {
 
     "use strict";
-
-    /**
-     * Handlebars helper to secure the text field
-     * @alias module:Handlebars#time
-     * @param  {double} start The start time
-     * @return {string}      The formated time
-     */
-    Handlebars.registerHelper("time", function (start) {
-        return annotationsTool.getWellFormatedTime(start);
-    });
-
-    /**
-     * Handlebars helper to display the annotation duration
-     * @alias module:Handlebars#end
-     * @param  {double} start The start time
-     * @param  {double} duration The annotation duration
-     * @return {string}      The formated time
-     */
-    Handlebars.registerHelper("end", function (start, duration) {
-        return annotationsTool.getWellFormatedTime(start + (duration || 0.0));
-    });
-
-    /**
-     * Handlebars helper to get user nickname
-     * @alias module:Handlebars#nickname
-     * @param  {User | integer} user The user object of its id
-     * @return {string}      The user nickname
-     */
-    Handlebars.registerHelper("nickname", function (user) {
-        if (!_.isObject(user)) {
-            return annotationsTool.users.get(user).get("nickname");
-        } else {
-            return user.nickname;
-        }
-    });
 
     /**
      * @constructor

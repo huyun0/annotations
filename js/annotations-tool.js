@@ -33,9 +33,10 @@ define(["jquery",
         "text!templates/delete-modal.tmpl",
         "text!templates/delete-warning-content.tmpl",
         "prototypes/player_adapter",
-        "handlebars"],
+        "handlebarsHelpers",
+        "roles"],
 
-        function ($, Backbone, MainView, AlertView, DeleteModalTmpl, DeleteContentTmpl, PlayerAdapter, Handlebars) {
+        function ($, Backbone, MainView, AlertView, DeleteModalTmpl, DeleteContentTmpl, PlayerAdapter, Handlebars, ROLES) {
 
             "use strict";
 
@@ -66,6 +67,7 @@ define(["jquery",
                      * @param {TargetsType} type Type of the target to be deleted
                      */
                     start: function (target, type, callback) {
+
                         var confirm = function () {
                                 type.destroy(target, callback);
                                 this.deleteModal.modal("toggle");
@@ -75,6 +77,11 @@ define(["jquery",
                                     confirm();
                                 }
                             };
+
+                        if (!target.get("isMine") && this.getUserRole() !== ROLES.ADMINISTRATOR) {
+                            this.alertWarning("You are not authorized to deleted this " + type.name + "!");
+                            return;
+                        }
 
                         confirmWithEnter = _.bind(confirmWithEnter, this);
                         confirm = _.bind(confirm, this);
@@ -254,7 +261,8 @@ define(["jquery",
                  * @alias   annotationsTool.onTimeUpdate
                  */
                 onTimeUpdate: function () {
-                    var currentTime = this.playerAdapter.getCurrentTime();
+                    var currentTime = this.playerAdapter.getCurrentTime(),
+                        i;
 
                     // Ensure that this is an timeupdate due to normal playback, otherwise reinitialize the interval to 0.
                     if (_.isUndefined(this.timeUpdateInterval) || (this.playerAdapter.getStatus() !== PlayerAdapter.STATUS.PLAYING) || (currentTime - this.lastTimeUpdate > 50)) {
@@ -268,15 +276,15 @@ define(["jquery",
                     
                     // Trigger all the current events
                     this.trigger(this.EVENTS.TIMEUPDATE, currentTime);
-                    for (var i = 1; i <= 10; i++) {
-                        if (this.timeUpdateInterval % i == 0) {
+                    for (i = 1; i <= 10; i++) {
+                        if (this.timeUpdateInterval % i === 0) {
                             this.trigger(this.EVENTS.TIMEUPDATE + ":" + i, currentTime);
-                        }                        
+                        }
                     }
 
                     this.lastTimeUpdate = new Date().getTime();
 
-                    if (this.timeUpdateInterval > 10 ) {
+                    if (this.timeUpdateInterval > 10) {
                         this.timeUpdateInterval = 1;
                     } else {
                         this.timeUpdateInterval++;
@@ -303,7 +311,7 @@ define(["jquery",
                     if (!this.isMouseDown && this.timeMouseDown < 300) {
                         this.setSelectionById(selectedIds, moveTo, isManuallySelected);
                     }
-                }, 
+                },
 
                 /**
                  * Listener for destroy event on selected annotation to update the selection
@@ -337,7 +345,7 @@ define(["jquery",
                         tmpAnnotation;
 
                     if (_.isArray(selectedIds) && selectedIds.length > 0) {
-                        _.each(selectedIds, function (selection, key) {
+                        _.each(selectedIds, function (selection) {
                             tmpAnnotation = this.getAnnotation(selection.id, selection.trackId);
                             if (!_.isUndefined(tmpAnnotation)) {
                                 selectionAsArray.push(tmpAnnotation);
@@ -370,7 +378,8 @@ define(["jquery",
                                             if (!_.find(newSelection, function (newAnnotation) {
                                                 return newAnnotation.get("id") === annotation.get("id");
                                             }, this)) {
-                                                return (equal = false);
+                                                equal = false;
+                                                return equal;
                                             }
                                         }, this);
 
@@ -412,7 +421,7 @@ define(["jquery",
                     }, this);
 
                     // if the selection is not empty, we move the playhead to it
-                    if (this.currentSelection.length >0 && moveTo) {
+                    if (this.currentSelection.length > 0 && moveTo) {
                         this.playerAdapter.setCurrentTime(selection[0].get("start"));
                     }
 
@@ -534,7 +543,7 @@ define(["jquery",
                         track = this.getTrack(trackId);
 
                         if (_.isUndefined(track)) {
-                            console.warn("Not able to find the track with the given Id"); 
+                            console.warn("Not able to find the track with the given Id");
                             return;
                         } else {
                             return track.getAnnotation(annotationId);
@@ -620,7 +629,7 @@ define(["jquery",
 
                             success: function () {
                                 if (annotationsTool.localStorage) {
-                                     if (target.collection) {
+                                    if (target.collection) {
                                         target.collection.remove(target);
                                     }
 

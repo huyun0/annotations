@@ -27,7 +27,7 @@
 define(["jquery",
         "models/annotation",
         "text!templates/annotate-label.tmpl",
-        "handlebars",
+        "handlebarsHelpers",
         "backbone"],
 
     function ($, Annotation, Template, Handlebars, Backbone) {

@@ -3,7 +3,7 @@
     <a id="track{{id}}"
        class="content-overlay"
        {{#if isMine}}onclick="$(window).trigger('selectTrack', ['{{id}}'])" ondblclick="$(window).trigger('updateTrack', ['{{id}}'])"{{/if}}
-       title="{{secure name}}"
+       title="{{secure name}}" 
        rel="popover"
        data-trigger="manual" 
        data-content="<p>{{#if description}}{{secure description}}{{else}}No description{{/if}}</p> <p><b>Owner:</b> {{created_by_nickname}}</p>"
@@ -15,16 +15,20 @@
         <div class="content">
             {{secure name}}
         </div>
-    {{#if isMine}}
+    {{#canBeDeleted}}
         <div class="group-edit">
             <i onclick="$(window).trigger('deleteTrack', ['{{id}}'])" class="delete icon-trash" title="Delete  track"></i>
-            <i onclick="$(window).trigger('updateTrack', ['{{id}}'])" class="update  icon-pencil" title="Update  track"></i>
-            <span class="visibility" 
-                  onmouseup="$(this).parent().parent().popover('show');"
-                  onmousedown="$(window).trigger('updateTrackAccess', ['{{id}}'])" 
-                  title="Make {{#if isPublic}}in{{/if}}visible to others">
-                    <i class="icon-dark-grey {{#if isPublic}}icon-public{{else}}icon-private{{/if}}"></i> {{#if isPublic}}Public{{else}}Private{{/if}}</span>
+            {{#if isMine}}<i onclick="$(window).trigger('updateTrack', ['{{id}}'])" class="update  icon-pencil" title="Update  track"></i>{{/if}}
+            {{#if isMine}}<span class="visibility" 
+                  onmouseup="{{#isPrivateOnly}}{{else}}$(this).parent().parent().popover('show');{{/isPrivateOnly}}"
+                  onmousedown="{{#isPrivateOnly}}
+                                      annotationsTool.alertWarning('Public tracks have been disallowed for this video.');
+                              {{else}}
+                                      $(window).trigger('updateTrackAccess', ['{{id}}'])
+                              {{/isPrivateOnly}}" 
+                  title="{{#isPrivateOnly}}No public track allowed in private-only mode!{{else}}Make {{#if isPublic}}in{{/if}}visible to others{{/isPrivateOnly}}">
+                    <i class="icon-dark-grey {{#isPrivateOnly}}icon-private{{else}}{{#if isPublic}}icon-public{{else}}icon-private{{/if}}{{/isPrivateOnly}}"></i> {{#isPrivateOnly}}Private{{else}}{{#if isPublic}}Public{{else}}Private{{/if}}{{/isPrivateOnly}}</span>{{/if}}
         </div>
-    {{/if}}
+    {{/canBeDeleted}}
     </a>
 </div>

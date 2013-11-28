@@ -90,7 +90,7 @@ define(["jquery",
              * @readOnly
              */
             plugins: {
-                Loop: function (callback) {
+                Loop: function () {
                         require(["views/loop"], function (Loop) {
                             annotationsTool.loopView = new Loop();
                         });
@@ -163,6 +163,15 @@ define(["jquery",
             },
 
             /**
+             * Define if the private-only mode is enabled
+             * @alias module:annotations-tool-configuration.Configuration.isPrivateOnly
+             * @return {boolean} True if this mode is enabled
+             */
+            isPrivateOnly: function () {
+                return false;
+            },
+
+            /**
              * Define if the free text annotations are or not enabled
              * @alias module:annotations-tool-configuration.Configuration.isFreeTextEnabled
              * @return {boolean} True if this feature is enabled
@@ -178,7 +187,7 @@ define(["jquery",
              */
             getVideoExtId: function () {
                 return $("video")[0].id;
-            },            
+            },
 
             /**
              * Get the external parameters related to video. The supported parameters are now the following:
@@ -202,7 +211,7 @@ define(["jquery",
                     title: $("video")[0].currentSrc.split("/").pop().split(".")[0],
                     src_owner: $("video").first().attr("data-owner"),
                     src_creation_date:  $("video").first().attr("data-date")
-                }
+                };
             },
 
             /**
@@ -220,7 +229,7 @@ define(["jquery",
              * @return {ROLE} The current user role
              */
             getUserRole: function () {
-                return ROLES.USER;
+                return ROLES.ADMINISTRATOR;
             },
 
             /**
