@@ -31,6 +31,8 @@ define([], function () {
         /** SUPERVISOR = "supervisor"*/
         SUPERVISOR: "supervisor",
         /** STUDENT = "user"*/
-        USER: "user"
+        USER: "user",
+        /** ADMINISTRATOR = "administrator"*/
+        ADMINISTRATOR: "administrator"
     };
 });

@@ -12,7 +12,9 @@ require.config({
     "jquery.colorPicker"            : "libs/jquery.colorPicker.min",
     "jquery.FileReader"             : "libs/jquery.FileReader",
     "localstorage"                  : "libs/backbone/backbone.localStorage-1.0",
-    "handlebars"                    : "libs/handlebars",
+    //"handlebars"                    : "libs/handlebars",
+    "handlebarsHelpers"             : "handlebarsHelpers",
+    "handlebars"                    : "libs/handlebars-v1.1.2",
     "jquery"                        : "libs/jquery-1.7.2.min",
     "underscore"                    : "libs/underscore-min-1.4.3",
     "templates"                     : "../templates",
@@ -26,6 +28,11 @@ require.config({
   waitSeconds: 20,
 
   shim: {
+    "handlebarsHelpers": {
+      deps: ["handlebars"],
+      exports: "Handlebars"
+    },
+
     "handlebars": {
       exports: "Handlebars"
     },

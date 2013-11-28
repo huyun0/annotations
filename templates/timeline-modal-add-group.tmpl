@@ -25,7 +25,10 @@
 				<div class="control-group">
 					<label class="control-label" for="public">Public: </label>
 					<div class="controls">
-						<input type="checkbox" id="public">
+						<input type="checkbox" id="public" {{#if isPrivateOnly }}disabled="disabled"{{/if}} />
+						{{#if isPrivateOnly}}
+							<span class="alert alert-warning">Public tracks have been disallowed for this video.</span>
+						{{/if}}
 					</div>
 				</div>
 

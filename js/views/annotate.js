@@ -39,7 +39,7 @@ define(["jquery",
         "text!templates/annotate-tab-title.tmpl",
         "roles",
         "access",
-        "handlebars",
+        "handlebarsHelpers",
         "backbone"],
 
     function ($, _, PlayerAdapter, Annotation, Annotations, Categories, AnnotateTab, TabTitleTemplate, ROLES, ACCESS, Handlebars, Backbone) {
