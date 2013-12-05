@@ -767,8 +767,8 @@ define(["jquery",
                 }
                 else {
                     // if the modal has already been initialized, we reset input and show modal
-                    this.createGroupModal.find(".alert #content").html("");
-                    this.createGroupModal.find(".alert").hide();
+                    this.createGroupModal.find(".alert #content").html("").hide();
+                    this.createGroupModal.find(".alert-error").hide();
                     this.createGroupModal.find("#name")[0].value = "";
                     this.createGroupModal.find("#description")[0].value = "";
                     this.createGroupModal.modal("toggle");
@@ -841,7 +841,7 @@ define(["jquery",
                 } else {
                     // if the modal has already been initialized, we reset input and show modal
                     this.updateGroupModal.find(".alert #content").html("");
-                    this.updateGroupModal.find(".alert").hide();
+                    this.updateGroupModal.find(".alert-error").hide();
                     this.updateGroupModal.find("#name")[0].value = track.get("name");
                     this.updateGroupModal.find("#description")[0].value = track.get("description");
                     this.updateGroupModal.find("a#update-group").unbind("click").bind("click", updateTrack);

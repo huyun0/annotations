@@ -25,14 +25,12 @@
 				<div class="control-group">
 					<label class="control-label" for="public">Public: </label>
 					<div class="controls">
-						<input type="checkbox" id="public" {{#isPrivateOnly }}disabled="disabled"{{/isPrivateOnly}} />
+						<input type="checkbox" id="public" {{#isPrivateOnly}}disabled="disabled"{{/isPrivateOnly}} />
 						{{#isPrivateOnly}}
 							<span class="alert alert-warning">Public tracks have been disallowed for this video.</span>
 						{{/isPrivateOnly}}
 					</div>
 				</div>
-
-
 				<div style="float:right"><b>* required fields</b></div>
 			</fieldset>
 		</form>
