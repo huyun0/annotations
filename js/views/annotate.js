@@ -73,7 +73,7 @@ define(["jquery",
                     id        : "mine",
                     name      : "Mine",
                     filter    : {isPublic: false},
-                    roles     : [ROLES.SUPERVISOR, ROLES.USER, ROLES.ADMINISTRATOR;],
+                    roles     : [ROLES.SUPERVISOR, ROLES.USER, ROLES.ADMINISTRATOR],
                     attributes: {access: ACCESS.PRIVATE}
                 }
             },
