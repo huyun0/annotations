@@ -28,7 +28,7 @@ define(["jquery",
         "access",
         "localstorage"],
 
-    function ($, Annotation, Backbone, ACCESS) {
+    function ($, Annotation, Backbone) {
 
         "use strict";
 
@@ -46,8 +46,6 @@ define(["jquery",
              * @alias module:collections-annotations.Annotations#initialize
              */
             model       : Annotation,
-
-
             
 
             /**
@@ -87,7 +85,7 @@ define(["jquery",
             updateAccess: function (track) {
                 var newAccess = (_.isUndefined(track)) ? this.track.get("access") : track.get("access");
                 if (this.access !== newAccess) {
-                    this.access = newAccess; 
+                    this.access = newAccess;
                     this.each(this.setAccess, this);
                 }
             },
@@ -101,7 +99,7 @@ define(["jquery",
                 if (!_.isUndefined(model.attributes)) {
                     model.set({access: this.access}, {silent: (_.isUndefined(silentUpdate) || !_.isBoolean(silentUpdate) ? true : silentUpdate)});
                 } else {
-                    model.access = this.access
+                    model.access = this.access;
                 }
             },
 
