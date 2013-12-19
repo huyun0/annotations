@@ -84,7 +84,7 @@ define(["jquery",
                     this.attributes.comments.fetch({async: false});
                 }
 
-                if (_.isUndefined(attr.access)) {
+                if (_.isUndefined(attr.access) && !_.isUndefined(attr.access)) {
                     attr.access = this.collection.access;
                 }
 

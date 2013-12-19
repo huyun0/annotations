@@ -105,8 +105,14 @@ define(["jquery",
                 this.playerAdapter   = annotationsTool.playerAdapter;
 
                 this.listenTo(this.filtersManager, "switch", this.updateFiltersRender);
-                this.listenTo(this.categories, "change", this.render);
-                this.listenTo(this.tracks, "change", this.render);
+                this.listenTo(this.categories, "change", function () {
+                    console.log("List: Render on categories change.");
+                    this.render();
+                });
+                this.listenTo(this.tracks, "change", function () {
+                    console.log("List: Render on categories change.");
+                    this.render();
+                });
                 this.listenTo(this.tracks, "add", this.addTrack);
                 this.listenTo(annotationsTool, annotationsTool.EVENTS.ANNOTATION_SELECTION, this.select);
 
@@ -122,8 +128,9 @@ define(["jquery",
              * Add one track
              * @alias module:views-list.List#initialize
              * @param {Track} track to add
+             * @param {Integer} index The index of the track in the list
              */
-            addTrack: function (track) {
+            addTrack: function (track, index) {
                 var ann = track.get("annotations"),
                     annotationTrack = track;
 
@@ -134,7 +141,7 @@ define(["jquery",
                 this.listenTo(ann, "destroy", this.removeOne);
                 this.listenTo(ann, "change", this.sortViewsbyTime);
 
-                this.addList(ann.toArray(), annotationTrack);
+                this.addList(ann.toArray(), annotationTrack, _.isNumber(index) && index === (this.tracks.length - 1));
             },
 
             /**
@@ -148,33 +155,37 @@ define(["jquery",
                 var view;
 
                 // Wait that the id has be set to the model before to add it
-                if (_.isUndefined(annotation.get("id"))) {                 
+                if (_.isUndefined(annotation.get("id"))) {
+                    console.log("List: Annotation not ready.");
                     annotation.once("ready", function () {
                         this.addAnnotation(annotation, track);
                     }, this);
                     return;
+                } else {
+                    console.log("List: Annotation ready.");
+                    view = new AnnotationView({annotation: annotation, track: track});
+                    this.annotationViews.push(view);
+
+                    if (!isPartofList) {
+                        this.sortViewsbyTime();
+                        view.selectVisually();
+                    }
                 }
 
-                view = new AnnotationView({annotation: annotation, track: track});
-                this.annotationViews.push(view);
-
-                if (!isPartofList) {
-                    this.sortViewsbyTime();
-                    view.selectVisually();
-                }
             },
 
             /**
              * Add a list of annotation, creating a view for each of them
              * @alias module:views-list.List#addList
              * @param {Array} annotationsList List of annotations
+             * @param {Boolean} sorting Defines if the list should be sorted after the list insertion
              */
-            addList: function (annotationsList, track) {
+            addList: function (annotationsList, track, sorting) {
                 _.each(annotationsList, function (annotation) {
                     this.addAnnotation(annotation, track, true);
                 }, this);
 
-                if (annotationsList.length > 0) {
+                if (annotationsList.length > 0 && sorting) {
                     this.sortViewsbyTime();
                 }
             },
@@ -259,6 +270,7 @@ define(["jquery",
                 this.annotationViews = _.sortBy(this.annotationViews, function (annotationView) {
                     return annotationView.model.get("start");
                 });
+                console.log("List: Sort by times: " + (new Date()).getTime());
                 this.render();
             },
 
@@ -337,6 +349,8 @@ define(["jquery",
                 _.each(list, function (annView) {
                     this.$el.find("#content-list").append(annView.render().$el);
                 }, this);
+
+                console.log("List: render: " + new Date());
 
                 return this;
             },

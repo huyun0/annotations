@@ -168,10 +168,22 @@ function ($, PlayerAdapter, Annotation, User, CommentsContainer, Template, Backb
             // Add backbone events to the model
             _.extend(this.model, Backbone.Events);
 
-            this.listenTo(this.model, "change", this.render);
-            this.listenTo(this.model.get("comments"), "add", this.render);
-            this.listenTo(this.model.get("comments"), "change", this.render);
-            this.listenTo(this.model.get("comments"), "remove", this.render);
+            this.listenTo(this.model, "change", function () {
+                console.log("List: Render on change.");
+                this.render();
+            });
+            this.listenTo(this.model.get("comments"), "add", function () {
+                console.log("List: Render on comments add.");
+                this.render();
+            });
+            this.listenTo(this.model.get("comments"), "change", function () {
+                console.log("List: Render on comments change.");
+                this.render();
+            });
+            this.listenTo(this.model.get("comments"), "remove", function () {
+                console.log("List: Render on comments remove.");
+                this.render();
+            });
             this.listenTo(this.model, "destroy", this.deleteView);
             this.listenTo(this.model, "remove", this.deleteView);
 
@@ -354,7 +366,7 @@ function ($, PlayerAdapter, Annotation, User, CommentsContainer, Template, Backb
 
                 $target.parent().find(".text-container span").show();
                 this.model.set("duration", Math.round(seconds - this.model.get("start")));
-                this.model.save();
+                this.model.save({siltent: true});
             }
 
             if (!this.isEditEnable) {
