@@ -31,7 +31,8 @@
         "links"           : true,
         "nospawwn"        : true,
         "require"         : true,
-        "navigator"       : true
+        "navigator"       : true,
+        "location"        : true
     },
     "ignores": ["js/libs/**/*"]
 }

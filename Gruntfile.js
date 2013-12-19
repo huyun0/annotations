@@ -8,33 +8,33 @@ module.exports = function(grunt) {
         jshintProperties: grunt.file.readJSON('build/jshint.json'),
 
         /** The current target file for the watch tasks */
-        currentWatchFile: "",
+        currentWatchFile: '',
 
         /** Local directory for the tests */
-        webServerDir: "www",
+        webServerDir: 'www',
 
         /** Paths for the different types of ressource */
         srcPath: {
-            js   : "js/**/*.js",
-            less : "style/**/*.less",
-            html : "**/*.html",
-            tmpl : "templates/*.tmpl",
-            tests: "tests/",
-            www  : "<%= webServerDir %>/**/*"
+            js   : 'js/**/*.js',
+            less : 'style/**/*.less',
+            html : '**/*.html',
+            tmpl : 'templates/*.tmpl',
+            tests: 'tests/',
+            www  : '<%= webServerDir %>/**/*'
         },
 
         profiles: {
             integration: {
-                sources : "",
-                target  : "/Users/xavierbutty/Documents/Projects/Entwine/Matterhorn/lib/local/entwine-annotations-tool-1.5-SNAPSHOT/ui",
-                config  : "build/profiles/integration/annotations-tool-configuration.js"
+                sources : '',
+                target  : '/Users/xavierbutty/Documents/Projects/Entwine/Matterhorn/lib/local/entwine-annotations-tool-1.5-SNAPSHOT/ui',
+                config  : 'build/profiles/integration/annotations-tool-configuration.js'
             },
             local: {
-                sources: "<source src=\"resources/aav1.mp4\" type=\"video/mp4\" />\n \
+                sources: '<source src=\"resources/aav1.mp4\" type=\"video/mp4\" />\n \
                           <source src=\"resources/aav1.webm\" type=\"video/webm\" />\n \
-                          <source src=\"resources/aav1.ogv\" type=\"video/ogg\" /> ",
-                target : "www",
-                config : "js/annotations-tool-configuration.js"
+                          <source src=\"resources/aav1.ogv\" type=\"video/ogg\" /> ',
+                target : 'www',
+                config : 'js/annotations-tool-configuration.js'
             }
         },
 
@@ -52,37 +52,37 @@ module.exports = function(grunt) {
             },
             // Watch Javascript files
             js: {
-                files: ["<%= srcPath.js %>"],
+                files: ['<%= srcPath.js %>'],
                 tasks: ['jshint:all', 'blanket_qunit:all', 'copy:local']
             },
             // Watch Templates files
             handlebars: {
-                files: ["<%= srcPath.tmpl %>"],
-                tasks: ["copy:local"]
+                files: ['<%= srcPath.tmpl %>'],
+                tasks: ['copy:local']
             },
             // Watch HTML files
             html: {
-                files: ["<%= srcPath.html %>"],
-                tasks: ["copy:local"]
+                files: ['<%= srcPath.html %>'],
+                tasks: ['copy:local']
             },
             // Watch LESS files
             less: {
-                files: ["<%= srcPath.less %>"],
-                tasks: ["less:annotation", "copy:style"]
+                files: ['<%= srcPath.less %>'],
+                tasks: ['less:annotation', 'copy:style']
             },
             // Watch the LESS, Javascript, Templates and HTML at the same times
             // Use it for single core processor. It could stop working with an important number of files
             multiple: {
-                files: ["<%= srcPath.less %>", "<%= srcPath.js %>", "<%= srcPath.html %>", "<%= srcPath.tmpl %>"],
-                tasks: ["copy:local"]
-            }
+                files: ['<%= srcPath.less %>', '<%= srcPath.js %>', '<%= srcPath.html %>', '<%= srcPath.tmpl %>'],
+                tasks: ['copy:local']
+            },
             // Watch file on web server for live reload
             www: {
                 options: {
                     livereload: true,
                     nospawn: true
                 },
-                files: ["<%= srcPath.www %>"]
+                files: ['<%= srcPath.www %>']
             }
         },
 
@@ -112,7 +112,7 @@ module.exports = function(grunt) {
                     amd: true
                 },
                 files: {
-                    "js/Templates.js": "<%= srcPath.tmpl %>"
+                    'js/Templates.js': '<%= srcPath.tmpl %>'
                 }
             }
         },
@@ -141,7 +141,7 @@ module.exports = function(grunt) {
             // ... the index locally 
             'local-index': {
                 options: {
-                    processContent: function(content, srcpath) {
+                    processContent: function (content) {
                         return grunt.template.process(content);
                     }
                 },
@@ -167,7 +167,7 @@ module.exports = function(grunt) {
             // ... the index locally 
             'index': {
                 options: {
-                    processContent: function(content, srcpath) {
+                    processContent: function (content) {
                         return grunt.template.process(content);
                     }
                 },
@@ -183,15 +183,15 @@ module.exports = function(grunt) {
 
         blanket_qunit: {
             all: {
-              options: {
-                urls: [
-                    '<%= srcPath.tests %>loop.html?coverage=true&gruntReport',
-                    '<%= srcPath.tests %>collections.html?coverage=true&gruntReport',
-                    '<%= srcPath.tests %>models.html?coverage=true&gruntReport'
+                options: {
+                    urls: [
+                        '<%= srcPath.tests %>loop.html?coverage=true&gruntReport',
+                        '<%= srcPath.tests %>collections.html?coverage=true&gruntReport',
+                        '<%= srcPath.tests %>models.html?coverage=true&gruntReport'
                     ],
-                threshold: 65,
-                globalThreshold: 70
-              }
+                    threshold: 10,
+                    globalThreshold: 10
+                }
             }
         },
 
@@ -223,15 +223,15 @@ module.exports = function(grunt) {
         requirejs: {
             compile: {
                 options: {
-                    baseUrl: './js',
-                    name: "annotations",
-                    mainConfigFile: "./js/libs/require/config/config.js",
-                    name: "main",
-                    optimizeAllPluginResources: false,
-                    preserveLicenseComments: false,
-                    optimize: "uglify",
-                    useStrict: true,
-                    out: "optimized.js"
+                    baseUrl                    : './js',
+                    name                       : 'annotations',
+                    mainConfigFile             : './js/libs/require/config/config.js',
+                    name                       : 'main',
+                    optimizeAllPluginResources : false,
+                    preserveLicenseComments    : false,
+                    optimize                   : 'uglify',
+                    useStrict                  : true,
+                    out                        : 'optimized.js'
                 }
             }
         }
@@ -251,32 +251,32 @@ module.exports = function(grunt) {
     // Default task(s).
     grunt.registerTask('default', ['jshint:all', 'less-all', 'copy:local-all', 'copy:local-index']);
     grunt.registerTask('baseDev', ['less:annotation', 'copy:all', 'copy:index', 'copy:config', 'concurrent:dev']);
-    grunt.registerTask('dev', "Develop task", function (profile) {
+    grunt.registerTask('dev', 'Develop task', function (profile) {
         // 
-        grunt.log.writeln("Develop task with profile '" + profile + "' started!");
+        grunt.log.writeln('Develop task with profile "' + profile + '" started!');
         grunt.config.set('currentProfile', grunt.config.get('profiles.' + profile));
         grunt.task.run('baseDev');
     });
 
     // on watch events configure jshint:all to only run on changed file
-    grunt.event.on('watch', function(action, filepath, target) {
+    grunt.event.on('watch', function (action, filepath, target) {
         grunt.log.writeln(target + ': ' + filepath + ' has ' + action);
         grunt.config.set('currentWatchFile', [filepath]);
 
-        if (target == "multiple") {
+        if (target == 'multiple') {
             // If the watch target is multiple, 
             // we manage the tasks to run following the touched file extension
-            var ext = filepath.split(".").pop();
+            var ext = filepath.split('.').pop();
 
             switch (ext) {
-                case "js":
+                case 'js':
                     grunt.task.run('jshint');
                     grunt.task.run('blanket_qunit');
                     break;
-                case "tmpl":
+                case 'tmpl':
                     grunt.task.run('handlebars');
                     break;
-                case "less":
+                case 'less':
                     grunt.task.run('less:annotation');
                     grunt.task.run('copy:style');
                     break;
