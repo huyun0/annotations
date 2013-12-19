@@ -3,7 +3,7 @@ require(['jquery',
          'collections/annotations',
          'access'],
                     
-        function($,Annotation,Annotations,ACCESS){
+        function($, Annotation, Annotations, ACCESS){
         
                 
                 var annotations, 
@@ -13,9 +13,23 @@ require(['jquery',
 
                 module("Annotations",  {
                         setup: function() {
-                            annotations = new Annotations([],{id: 123, collection:{}, url:function(){return 'test';}});
-                            annotation = new Annotation({start:5});
-                            annotations.add([{start:4},annotation]);
+                            var trackMockup = {
+                                id: 123, 
+                                collection:{}, 
+                                url: function () {
+                                    return 'test';
+                                },
+                                bind: function () {
+
+                                },
+                                get: function () {
+
+                                }
+                            }
+
+                            annotations = new Annotations([], trackMockup);
+                            annotation = new Annotation({start:5, id:12});
+                            annotations.add([{start:4}, annotation]);
                         }
                 });
                 
@@ -30,8 +44,8 @@ require(['jquery',
 
                 test("Get", function() {
                     var newAnnotation = annotations.get(annotation.get('id'));
-                    equal(annotation.get('id'), newAnnotation.get('id'),"annotation should have id "+annotation.get('id'));                 
-                })
+                    equal(annotation.get('id'), newAnnotation.get('id'), "annotation should have id " + annotation.get('id'));                 
+                });
 
                 
                 test("Remove", function() {
