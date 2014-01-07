@@ -1,7 +1,10 @@
-module.exports = function(grunt) {
+module.exports = function (grunt) {
 
-    // Project configuration.
+    /** ================================================
+     *  Project configuration
+     ==================================================*/
     grunt.initConfig({
+        /** Load informations from package.json */
         pkg: grunt.file.readJSON('package.json'),
 
         /** JSHint properties */
@@ -21,14 +24,19 @@ module.exports = function(grunt) {
             tmpl : 'templates/*.tmpl',
             tests: 'tests/',
             www  : '<%= webServerDir %>/**/*'
-        },
+        }, 
 
         profiles: {
+
+            // Default profile if no one is given
+            default: 'local',
+             
             integration: {
                 sources : '',
-                target  : '/Users/xavierbutty/Documents/Projects/Entwine/Matterhorn/lib/local/entwine-annotations-tool-1.5-SNAPSHOT/ui',
+                target  : '~/Documents/Projects/Entwine/Matterhorn/lib/local/entwine-annotations-tool-1.5-SNAPSHOT/ui',
                 config  : 'build/profiles/integration/annotations-tool-configuration.js'
             },
+
             local: {
                 sources: '<source src=\"resources/aav1.mp4\" type=\"video/mp4\" />\n \
                           <source src=\"resources/aav1.webm\" type=\"video/webm\" />\n \
@@ -53,7 +61,7 @@ module.exports = function(grunt) {
             // Watch Javascript files
             js: {
                 files: ['<%= srcPath.js %>'],
-                tasks: ['jshint:all', 'blanket_qunit:all', 'copy:local']
+                tasks: ['jshint:all', 'copy:local']
             },
             // Watch Templates files
             handlebars: {
@@ -119,27 +127,36 @@ module.exports = function(grunt) {
 
         /** Copy .. */
         copy: {
+
+
             // ... a single file locally
             'local': {
                 files: [{
-                    flatten: false,
-                    expand: true,
-                    src: '<%= currentWatchFile %>',
-                    dest: '<%= webServerDir %>',
-                    filter: 'isFile'
+                    flatten : false,
+                    expand  : true,
+                    src     : '<%= currentWatchFile %>',
+                    dest    : '<%= webServerDir %>',
+                    filter  : 'isFile'
                 }]
             },
             // ... all the tool files locally
             'local-all': {
                 files: [{
-                    flatten: false,
-                    expand: true,
-                    src: ['js/**/*', 'img/**/*', 'style/**/*.png', 'style/**/*.css', 'templates/*', 'resources/*', 'tests/**/*'],
-                    dest: '<%= webServerDir %>',
+                    flatten : false,
+                    expand  : true,
+                    src     : ['js/**/*', 'img/**/*', 'style/**/*.png', 'style/**/*.css', 'templates/*', 'resources/*', 'tests/**/*'],
+                    dest    : '<%= webServerDir %>',
+                }]
+            },
+            // ... the stylesheet locally
+            'style': {
+                files: [{
+                    src  : 'style/style.css',
+                    dest : '<%= currentProfile.target %>/style/style.css'
                 }]
             },
             // ... the index locally 
-            'local-index': {
+            'local-index': { 
                 options: {
                     processContent: function (content) {
                         return grunt.template.process(content);
@@ -147,13 +164,6 @@ module.exports = function(grunt) {
                 },
                 src: 'index.html',
                 dest: '<%= webServerDir %>/index.html'
-            },
-            // ... the stylesheet locally
-            'style': {
-                files: [{
-                    src: 'style/style.css',
-                    dest: '<%= currentProfile.target %>/'
-                }]
             },
             // ... all the tool files for the current profile
             'all': {
@@ -248,20 +258,57 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('assemble-less');
     grunt.loadNpmTasks('grunt-concurrent');
 
-    // Default task(s).
+
+    /** ================================================
+     *  Register custom tasks
+     ==================================================*/
+
+    // Default task
     grunt.registerTask('default', ['jshint:all', 'less-all', 'copy:local-all', 'copy:local-index']);
     grunt.registerTask('baseDev', ['less:annotation', 'copy:all', 'copy:index', 'copy:config', 'concurrent:dev']);
-    grunt.registerTask('dev', 'Develop task', function (profile) {
-        // 
-        grunt.log.writeln('Develop task with profile "' + profile + '" started!');
-        grunt.config.set('currentProfile', grunt.config.get('profiles.' + profile));
-        grunt.task.run('baseDev');
+
+    // Development workflow with profiles (grunt dev [--profile=PROFILE_NAME])
+    grunt.registerTask('dev', 'Development workflow', function () {
+
+        var profileName = grunt.option('profile'),
+            profileConfig;
+
+        // If no profile name given, use the default one
+        if (typeof profileName == 'undefined') {
+            profileName = grunt.config.get('profiles.default');
+            grunt.option('profile', profileName);
+            grunt.log.writeln('No profile name given as option, use default one.');
+        }
+
+        // Get the profile configuration
+        profileConfig = grunt.config.get('profiles.' + profileName);
+
+        // Check if the profile exist
+        if (typeof profileConfig == 'undefined') {
+            grunt.fail.fatal('The profile "' + profileName + '" does not exist in the Gruntfile.');
+        }
+
+        grunt.log.writeln('Develop task with profile "' + profileName + '" started! ');
+
+        // Configure the tasks with given profiles
+        grunt.config.set('currentProfile', profileConfig);
+
+        // Run the tasks
+        grunt.task.run('baseDev'); 
     });
+
+    /** ================================================
+     *  Listerers 
+     ==================================================*/
 
     // on watch events configure jshint:all to only run on changed file
     grunt.event.on('watch', function (action, filepath, target) {
-        grunt.log.writeln(target + ': ' + filepath + ' has ' + action);
+
+        // Set the current file processed for the different tasks
         grunt.config.set('currentWatchFile', [filepath]);
+
+        // Configure the tasks with given profiles
+        grunt.config.set('currentProfile', grunt.config.get('profiles.' + grunt.option('profile')));
 
         if (target == 'multiple') {
             // If the watch target is multiple, 
