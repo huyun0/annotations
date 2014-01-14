@@ -45,7 +45,7 @@ define(["jquery",
             LAYOUT_CONFIGURATION: {
                 /** default configuration */
                 DEFAULT: {
-                    timeline: true,
+                    timeline: false,
                     list: true,
                     annotate: true
                 }
@@ -127,6 +127,8 @@ define(["jquery",
              * @type {module:player-adapter.PlayerAdapter}
              */
             playerAdapter: undefined,
+
+            tracksToImport: "default_tracks_set",
 
             /**
              * Formats the given date in 
@@ -238,7 +240,7 @@ define(["jquery",
              * @return {ROLE} The name of the admin role
              */
             getAdminRoleName: function () {
-                return ROLE.ADMINISTRATOR;
+                return ROLES.ADMINISTRATOR;
             },
 
             /**

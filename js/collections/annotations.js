@@ -75,6 +75,14 @@ define(["jquery",
                     track.bind("change:access", this.updateAccess, this);
                     this.updateAccess(track);
                 }
+
+                annotationsTool.once(annotationsTool.EVENTS.READY, function () {
+                    if (!_.isUndefined(models) && _.isArray(models) && models.length > 0 && !(models[0] instanceof Annotation)) {
+                        _.each(models, function (annotation) {
+                            this.create(annotation);
+                        }, this);
+                    }
+                }, this);
             },
 
             /**

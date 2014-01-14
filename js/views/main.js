@@ -55,13 +55,14 @@ define(["jquery",
         "roles",
         "FiltersManager",
         "backbone",
+        "handlebars",
         "localstorage",
         "bootstrap",
         "carousel",
         "tab"],
 
     function ($, PlayerAdapter, AnnotateView, ListView, TimelineView, LoginView, ScaleEditorView,
-              Annotations, Users, Videos, User, Track, Video, CategoriesLegendTmpl, AnnotationSync, ROLES, FiltersManager, Backbone) {
+              Annotations, Users, Videos, User, Track, Video, CategoriesLegendTmpl, AnnotationSync, ROLES, FiltersManager, Backbone, Handlebars) {
 
         "use strict";
 
@@ -172,7 +173,7 @@ define(["jquery",
                 annotationsTool.scaleEditor = new ScaleEditorView();
 
                 this.listenTo(annotationsTool.users, "login", this.createViews);
-                this.listenTo(annotationsTool, "deleteAnnotation", this.deleteAnnotation);
+                this.listenTo(annotationsTool, "deleteAnnotation", annotationsTool.deleteAnnotation);
 
                 this.checkUserAndLogin();
 
@@ -300,7 +301,10 @@ define(["jquery",
 
                 // Show logout button
                 $("a#logout").css("display", "block");
-                this.timelineView.redraw();
+
+                if (annotationsTool.getLayoutConfiguration().timeline) {
+                    this.timelineView.redraw();
+                }
 
                 annotationsTool.trigger(annotationsTool.EVENTS.READY);
             },
