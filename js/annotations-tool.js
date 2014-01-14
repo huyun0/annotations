@@ -28,6 +28,7 @@
  */
 define(["jquery",
         "backbone",
+        "collections/Videos",
         "views/main",
         "views/alert",
         "text!templates/delete-modal.tmpl",
@@ -36,7 +37,7 @@ define(["jquery",
         "handlebarsHelpers",
         "roles"],
 
-        function ($, Backbone, MainView, AlertView, DeleteModalTmpl, DeleteContentTmpl, PlayerAdapter, Handlebars, ROLES) {
+        function ($, Backbone, Videos, MainView, AlertView, DeleteModalTmpl, DeleteContentTmpl, PlayerAdapter, Handlebars, ROLES) {
 
             "use strict";
 
@@ -47,13 +48,16 @@ define(["jquery",
             window.annotationsTool = {
 
                 EVENTS: {
-                    ANNOTATION_SELECTION: "at:annotation-selection",
-                    READY               : "at:ready",
-                    ANNOTATE_TOGGLE_EDIT: "at:annotate-switch-edit-modus",
-                    TIMEUPDATE          : "at:timeupdate"
+                    ANNOTATION_SELECTION : "at:annotation-selection",
+                    ANNOTATE_TOGGLE_EDIT : "at:annotate-switch-edit-modus",
+                    MODELS_INITIALIZED   : "at:models-initialized",
+                    READY                : "at:ready",
+                    TIMEUPDATE           : "at:timeupdate"
                 },
 
                 views: {},
+
+                modelsInitialized: false,
 
                 deleteModalTmpl: Handlebars.compile(DeleteModalTmpl),
 
@@ -127,6 +131,7 @@ define(["jquery",
                                     "getSelection",
                                     "getTrack",
                                     "getSelectedTrack",
+                                    "initModels",
                                     "importTracks",
                                     "importCategories",
                                     "hasSelection",
@@ -165,11 +170,15 @@ define(["jquery",
                     $(window).bind("mousedown", this.onMouseDown);
                     $(window).bind("mouseup", this.onMouseUp);
 
-                    if (!_.isUndefined(annotationsTool.tracksToImport)) {
-                        require([annotationsTool.tracksToImport], function (tracks) {
-                            annotationsTool.importTracks(tracks);
-                        });
-                    }
+                    annotationsTool.once(annotationsTool.EVENTS.MODELS_INITIALIZED, function () {
+                        if (!_.isUndefined(annotationsTool.tracksToImport)) {
+                            require([annotationsTool.tracksToImport], function (tracks) {
+                                annotationsTool.importTracks(tracks);
+                            });
+                        }
+                    }, this);
+
+                    this.initModels();
                 },
 
                 /**
@@ -670,7 +679,7 @@ define(["jquery",
 
                 /**
                  * Delete the annotation with the given id with the track with the given track id
-                 * @alias   annotationsTool.deleteAnnotation
+                 * @alias annotationsTool.deleteAnnotation
                  * @param {Integer} annotationId The id of the annotation to delete
                  * @param {Integer} trackId Id of the track containing the annotation
                  */
@@ -692,6 +701,97 @@ define(["jquery",
                         self.deleteOperation.start(annotation, self.deleteOperation.targetTypes.ANNOTATION);
                     } else {
                         console.warn("Not able to find annotation %i on track %i", annotationId, trackId);
+                    }
+                },
+
+                /**
+                 * Get all the annotations for the current user
+                 * @alias annotationsTool.initModels
+                 */
+                initModels: function () {
+                    var video,
+                        videos = new Videos(),
+                        tracks,
+                        annotations,
+                        selectedTrack,
+                        remindingFetchingTrack,
+
+                        // function to conclude the retrive of annotations
+                        concludeInitialization = $.proxy(function () {
+
+                            // At least one private track should exist, we select the first one
+                            selectedTrack = tracks.getMine()[0];
+
+                            if (!selectedTrack.get("id")) {
+                                selectedTrack.bind("ready", concludeInitialization(), this);
+                            } else {
+                                annotationsTool.selectedTrack = selectedTrack;
+                            }
+
+                            // Use to know if all the tracks have been fetched
+                            remindingFetchingTrack = tracks.length;
+
+                            // Function to add the different listener to the annotations
+                            tracks.each(function (track) {
+                                annotations = track.get("annotations");
+                                this.listenTo(annotations, "add", this.onWindowResize);
+                                if (--remindingFetchingTrack === 0) {
+                                    annotationsTool.modelsInitialized = true;
+                                    annotationsTool.trigger(annotationsTool.EVENTS.MODELS_INITIALIZED);
+                                }
+                            }, this);
+
+                        }, this),
+
+                        /**
+                         * Create a default track for the current user if no private track is present
+                         */
+                        createDefaultTrack = function () {
+
+                            tracks = annotationsTool.video.get("tracks");
+
+                            if (annotationsTool.localStorage) {
+                                tracks = tracks.getVisibleTracks();
+                            }
+
+                            if (tracks.getMine().length === 0) {
+                                tracks.create({
+                                        name        : "Default " + annotationsTool.user.get("nickname"),
+                                        description : "Default track for user " + annotationsTool.user.get("name")
+                                    },
+                                    {
+                                        wait    : true,
+                                        success : concludeInitialization
+                                    }
+                                );
+                            } else {
+                                concludeInitialization();
+                            }
+                        };
+
+                    // If we are using the localstorage
+                    if (this.localStorage) {
+                        videos.fetch();
+
+                        if (videos.length === 0) {
+                            video = videos.create(this.getVideoParameters(), {wait: true});
+                        } else {
+                            video = videos.at(0);
+                            video.set(this.getVideoParameters());
+                        }
+
+                        this.video = video;
+                        createDefaultTrack();
+                    } else { // With Rest storage
+                        videos.add({video_extid: this.getVideoExtId()});
+                        video = videos.at(0);
+                        this.video = video;
+                        video.save();
+                        if (video.get("ready")) {
+                            createDefaultTrack();
+                        } else {
+                            video.once("ready", createDefaultTrack);
+                        }
                     }
                 }
             };

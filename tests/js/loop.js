@@ -8,9 +8,6 @@ require(["jquery",
 
         function($, LoopView, Loop, Loops, PlayerAdapter, AnnotationSync, sinon){
 
-                QUnit.config.reorder   = false;
-                QUnit.config.autostart = false;
-                QUnit.config.autorun   = false;
 
                 var loops,
                     loop,
@@ -65,7 +62,7 @@ require(["jquery",
                     equal(loop.get('id'), newLoop.get('id'),"Loop should have id " + loop.get('id'));
                 });
 
-                test("Update", 2, function () {
+                test("Update", function () {
                     var nbErrors = 0;
 
                     stop();
@@ -74,8 +71,9 @@ require(["jquery",
                             nbErrors++;
                             if (nbErrors === 2 ) {
                                 loop.unbind('error');
+                            } else if (nbErrors === 1) {
+                                start();
                             }
-                            start();
                     });
                     loop.set("start", 3);
                     loop.set("start", "Two seconds");
