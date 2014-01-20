@@ -171,23 +171,27 @@ define(["jquery",
                 this.loginView              = new LoginView();
                 annotationsTool.scaleEditor = new ScaleEditorView();
 
-                this.listenTo(annotationsTool.users, "login", this.createViews);
                 this.listenTo(annotationsTool, "deleteAnnotation", annotationsTool.deleteAnnotation);
-
-                this.checkUserAndLogin();
 
                 $(window).resize(this.onWindowResize);
                 $(window).bind("keydown", $.proxy(this.onDeletePressed, this));
 
                 annotationsTool.filtersManager   = new FiltersManager();
                 annotationsTool.importCategories = this.importCategories;
+
                 annotationsTool.once(annotationsTool.EVENTS.READY, function () {
                     this.loadPlugins(annotationsTool.plugins);
                     this.generateCategoriesLegend(annotationsTool.video.get("categories").toExportJSON(true));
                     this.updateTitle(annotationsTool.video);
                 }, this);
 
+                annotationsTool.bind(annotationsTool.EVENTS.NOTIFICATION, function (message) {
+                    this.setLoadingProgress(this.loadingPercent, message);
+                }, this);
+
                 annotationsTool.onWindowResize = this.onWindowResize;
+
+                this.checkUserAndLogin();
             },
 
             /**
@@ -243,7 +247,6 @@ define(["jquery",
                     $(this.playerAdapter).off(PlayerAdapter.EVENTS.READY + " " + PlayerAdapter.EVENTS.PAUSE, loadVideoDependantView);
 
                     this.setLoadingProgress(60, "Start creating views.");
-
 
                     if (annotationsTool.getLayoutConfiguration().timeline) {
                         // Create views with Timeline
@@ -316,12 +319,16 @@ define(["jquery",
                 // If a user has been saved locally, we take it as current user
                 if (annotationsTool.users.length > 0) {
                     annotationsTool.user = annotationsTool.users.at(0);
+
+                    annotationsTool.trigger(annotationsTool.EVENTS.USER_LOGGED);
+
                     if (annotationsTool.modelsInitialized) {
                         this.createViews();
                     } else {
                         annotationsTool.on(annotationsTool.EVENTS.MODELS_INITIALIZED, this.createViews, this);
                     }
                 } else {
+                    annotationsTool.on(annotationsTool.EVENTS.MODELS_INITIALIZED, this.createViews, this);
                     this.loginView.show();
                 }
             },
@@ -478,7 +485,9 @@ define(["jquery",
              * @param {string} current loading operation message
              */
             setLoadingProgress: function (percent, message) {
-                this.loadingBox.find(".bar").width(percent + "%");
+                this.loadingPercent = percent;
+
+                this.loadingBox.find(".bar").width(this.loadingPercent + "%");
                 this.loadingBox.find(".info").text(message);
             }
         });

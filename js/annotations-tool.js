@@ -51,8 +51,10 @@ define(["jquery",
                     ANNOTATION_SELECTION : "at:annotation-selection",
                     ANNOTATE_TOGGLE_EDIT : "at:annotate-switch-edit-modus",
                     MODELS_INITIALIZED   : "at:models-initialized",
+                    NOTIFICATION         : "at:notification",
                     READY                : "at:ready",
-                    TIMEUPDATE           : "at:timeupdate"
+                    TIMEUPDATE           : "at:timeupdate",
+                    USER_LOGGED          : "at:logged"
                 },
 
                 views: {},
@@ -163,6 +165,15 @@ define(["jquery",
                     $(this.playerAdapter).bind(PlayerAdapter.EVENTS.TIMEUPDATE, this.updateSelectionOnTimeUpdate);
                     this.currentSelection = [];
 
+                    annotationsTool.once(annotationsTool.EVENTS.USER_LOGGED, this.initModels);
+
+                    annotationsTool.once(annotationsTool.EVENTS.MODELS_INITIALIZED, function () {
+                        if (!_.isUndefined(annotationsTool.tracksToImport)) {
+                            this.trigger(this.EVENTS.NOTIFICATION, "Start import");
+                            this.importTracks(this.tracksToImport());
+                            this.trigger(this.EVENTS.NOTIFICATION, "Import ended");
+                        }
+                    }, this);
                     this.views.main = new MainView(this.playerAdapter);
 
                     $(this.playerAdapter).bind("pa_timeupdate", this.onTimeUpdate);
@@ -170,15 +181,7 @@ define(["jquery",
                     $(window).bind("mousedown", this.onMouseDown);
                     $(window).bind("mouseup", this.onMouseUp);
 
-                    annotationsTool.once(annotationsTool.EVENTS.MODELS_INITIALIZED, function () {
-                        if (!_.isUndefined(annotationsTool.tracksToImport)) {
-                            require([annotationsTool.tracksToImport], function (tracks) {
-                                annotationsTool.importTracks(tracks);
-                            });
-                        }
-                    }, this);
 
-                    this.initModels();
                 },
 
                 /**
@@ -506,6 +509,7 @@ define(["jquery",
                 // CREATORs //
                 //////////////
                 
+                
                 /**
                  * Create a new track
                  * @alias   annotationsTool.createTrack
@@ -610,6 +614,11 @@ define(["jquery",
                 // IMPORTERs  //
                 ////////////////
                 
+                /**
+                 * Import the given tracks in the tool
+                 * @alias annotationsTool.importTracks
+                 * @param {PlainObject} tracks Object containing the tracks in the tool
+                 */
                 importTracks: function (tracks) {
                     _.each(tracks, function (track) {
                         if (_.isUndefined(this.getTrack(track.id))) {
@@ -619,7 +628,6 @@ define(["jquery",
                         }
                     }, this);
                 },
-                
 
                 /**
                  * Import the given categories in the tool

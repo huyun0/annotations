@@ -103,7 +103,7 @@ define(["jquery",
              * @type {string}
              * @readOnly
              */
-            restEndpointsUrl: "../../extended-annotations",
+            restEndpointsUrl: "../../../extended-annotations",
 
             /**
              * Url for redirect after the logout
@@ -128,7 +128,48 @@ define(["jquery",
              */
             playerAdapter: undefined,
 
-            tracksToImport: undefined,
+            /**
+             * Function to generate the tracks to import in the tool at start time.
+             * @alias module:annotations-tool-configuration.Configuration.tracksToImport
+             */
+            tracksToImport: function () {
+
+                var annStart = 0,
+                    duration = annotationsTool.playerAdapter.getDuration(),
+                    track,
+                    tracks = [],
+                    nbAnnotations = 30, // Number of annotations to generate pro track
+                    nbTrack = 25,       // Number of tracks to generate
+                    i,
+                    y;
+
+                // Generate tracks
+                for (i = 0; i < nbTrack; i++) {
+                    track = {
+                        id          : "testtrack" + i,
+                        name        : "Test track " + i,
+                        description : "Track dynamically generated for load tests",
+                        access      : Math.round(Math.random()),
+                        annotations : [],
+
+                    };
+
+                    // Generate  annotations
+                    for (y = 0; y < nbAnnotations; y++) {
+                        annStart = Math.floor((Math.random() * duration) + 1);
+
+                        track.annotations.push({
+                            text: "Annotation " + y + " on track " + i,
+                            start: annStart,
+                            duration: Math.floor((Math.random() * (duration - annStart)) + annStart)
+                        });
+                    }
+
+                    tracks.push(track);
+                }
+
+                return tracks;
+            },
 
             /**
              * Formats the given date in 
@@ -258,6 +299,10 @@ define(["jquery",
              */
             loadVideo: function () {
                 annotationsTool.playerAdapter = new HTML5PlayerAdapter($("video")[0]);
+            },
+
+            onWindowResize: function () {
+
             }
         };
 

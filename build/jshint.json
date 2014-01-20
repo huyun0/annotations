@@ -23,6 +23,7 @@
         "console"         : true,
         "window"          : true,
         "annotationsTool" : true,
+        "localStorage"    : true,
         "Backbone"        : true,
         "$"               : true,
         "Handlebars"      : true,

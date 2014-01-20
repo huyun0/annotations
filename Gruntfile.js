@@ -18,13 +18,14 @@ module.exports = function (grunt) {
 
         /** Paths for the different types of ressource */
         srcPath: {
-            js   : 'js/**/*.js',
-            less : 'style/**/*.less',
-            html : '**/*.html',
-            tmpl : 'templates/*.tmpl',
-            tests: 'tests/',
-            www  : '<%= webServerDir %>/**/*'
-        }, 
+            js      : 'js/**/*.js',
+            test_js : 'tests/js/**/*.js',
+            less    : 'style/**/*.less',
+            html    : '**/*.html',
+            tmpl    : 'templates/*.tmpl',
+            tests   : 'tests/',
+            www     : '<%= webServerDir %>/**/*'
+        },
 
         profiles: {
 
@@ -60,7 +61,7 @@ module.exports = function (grunt) {
             },
             // Watch Javascript files
             js: {
-                files: ['<%= srcPath.js %>'],
+                files: ['<%= srcPath.js %>', '<%= srcPath.test_js %>'],
                 tasks: ['jshint:all', 'copy:local']
             },
             // Watch Templates files

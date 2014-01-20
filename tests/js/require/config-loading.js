@@ -2,8 +2,8 @@
 require.config({
     baseUrl: "./../js",
     paths: {
-        "annotations-tool"               : "annotations-tool-configuration",
-        "annotations-tool-configuration" : "../tests/js/annotations-tool-configuration",
+        "annotations-tool"               : "annotations-tool",
+        "annotations-tool-configuration" : "../tests/js/annotations-tool-configuration-loading",
         "backbone"                       : "libs/backbone/backbone-0.9.9",
         "bootstrap"                      : "libs/bootstrap/bootstrap.min",
         "carousel"                       : "libs/bootstrap/carousel2.2",
@@ -14,6 +14,7 @@ require.config({
         "jquery.FileReader"              : "libs/jquery.FileReader",
         "localstorage"                   : "libs/backbone/backbone.localStorage-1.0",
         "jquery"                         : "libs/jquery-1.7.2.min",
+        "popover"                       : "libs/bootstrap/popover",
         "scrollspy"                      : "libs/bootstrap/scrollspy",
         "sinon"                          : "libs/tests/sinon-1.7.3",
         "slider"                         : "libs/bootstrap/bootstrap-slider",
@@ -22,7 +23,7 @@ require.config({
         "templates"                      : "../templates",
         "text"                           : "libs/require/config/text",
         "tooltip"                        : "libs/bootstrap/tooltip",
-        "timeline"                       : "libs/timeline-min.js",
+        "timeline"                       : "libs/timeline-min",
         "underscore"                     : "libs/underscore-min-1.4.3"
     },
     waitSeconds: 10,
@@ -56,10 +57,6 @@ require.config({
             exports : "jQuery.fn.fileReader"
         },
 
-        "sinon": {
-            exports: "sinon"
-        },
-
         "jquery.colorPicker": {
             deps: ["jquery"],
             exports: "jQuery.fn.colorPicker"
@@ -71,4 +68,43 @@ require.config({
         "tab"      : ["bootstrap"],
         "slider"   : ["jquery"]
     }
+});
+
+// Bootstrap function for main app
+require(["domReady", "annotations-tool-configuration", "annotations-tool"],
+
+function (domReady, config, app) {
+    domReady(function () {
+
+        var lastUpdate = 0,
+            i = 0,
+            nbFrame = 20,
+            lastValuesSum = 0,
+            targetFPS = $("#fps #value"),
+            calculateFPS = function () {
+                var currentTime = (new Date()).getTime();
+
+                lastValuesSum += (currentTime - lastUpdate);
+
+                if (++i === nbFrame) {
+                    targetFPS.html(1000 / (lastValuesSum / nbFrame));
+                    i = 0;
+                    lastValuesSum = 0;
+                }
+
+                lastUpdate = currentTime;
+            };
+
+        localStorage.clear();
+        app.start(config);
+
+        // if (_.isUndefined(annotationsTool.video)) {
+        //     annotationsTool.bind(annotationsTool.EVENTS.READY, function () {
+        //         annotationsTool.bind(annotationsTool.EVENTS.TIMEUPDATE, calculateFPS);
+        //     });
+        // } else {
+        //     annotationsTool.bind(annotationsTool.EVENTS.TIMEUPDATE, calculateFPS);
+        // }
+
+    });
 });

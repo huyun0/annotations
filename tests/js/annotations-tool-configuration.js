@@ -16,9 +16,33 @@ define(['domReady',
             
             /** Define if the localStorage should be used or not */
             localStorage: true,
+
+
+            /**
+             * List of possible layout configuration
+             * @alias module:annotations-tool-configuration.Configuration.LAYOUT_CONFIGURATION
+             * @memberOf module:annotations-tool-configuration.Configuration
+             * @type {Object}
+             */
+            LAYOUT_CONFIGURATION: {
+                /** default configuration */
+                DEFAULT: {
+                    timeline : true,
+                    list     : true,
+                    annotate : true
+                }
+            },
             
             /** Url from the annotations Rest Endpoints */
             restEndpointsUrl: "../../../extended-annotations",
+
+            /**
+             * Get the tool layout configuration
+             * @return {object} The tool layout configuration
+             */
+            getLayoutConfiguration: function () {
+                return this.LAYOUT_CONFIGURATION.DEFAULT;
+            },
             
             
             /* Function to get the current video id (video_extid) */

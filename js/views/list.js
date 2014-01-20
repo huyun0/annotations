@@ -105,14 +105,8 @@ define(["jquery",
                 this.playerAdapter   = annotationsTool.playerAdapter;
 
                 this.listenTo(this.filtersManager, "switch", this.updateFiltersRender);
-                this.listenTo(this.categories, "change", function () {
-                    console.log("List: Render on categories change.");
-                    this.render();
-                });
-                this.listenTo(this.tracks, "change", function () {
-                    console.log("List: Render on categories change.");
-                    this.render();
-                });
+                this.listenTo(this.categories, "change", this.render);
+                this.listenTo(this.tracks, "change", this.render);
                 this.listenTo(this.tracks, "add", this.addTrack);
                 this.listenTo(annotationsTool, annotationsTool.EVENTS.ANNOTATION_SELECTION, this.select);
 
@@ -156,13 +150,11 @@ define(["jquery",
 
                 // Wait that the id has be set to the model before to add it
                 if (_.isUndefined(annotation.get("id"))) {
-                    console.log("List: Annotation not ready.");
                     annotation.once("ready", function () {
                         this.addAnnotation(annotation, track);
                     }, this);
                     return;
                 } else {
-                    console.log("List: Annotation ready.");
                     view = new AnnotationView({annotation: annotation, track: track});
                     this.annotationViews.push(view);
 
@@ -270,7 +262,6 @@ define(["jquery",
                 this.annotationViews = _.sortBy(this.annotationViews, function (annotationView) {
                     return annotationView.model.get("start");
                 });
-                console.log("List: Sort by times: " + (new Date()).getTime());
                 this.render();
             },
 
@@ -349,8 +340,6 @@ define(["jquery",
                 _.each(list, function (annView) {
                     this.$el.find("#content-list").append(annView.render().$el);
                 }, this);
-
-                console.log("List: render: " + new Date());
 
                 return this;
             },

@@ -162,10 +162,13 @@ define(["jquery",
                             }
                         });
                     }
+
                     user.save();
                     annotationsTool.user = user;
                     this.$el.modal("toggle");
                     annotationsTool.users.trigger("login");
+                    annotationsTool.trigger(annotationsTool.EVENTS.USER_LOGGED);
+                    
                     return user;
                 },
 
