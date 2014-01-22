@@ -45,13 +45,14 @@ define(["jquery",
         "roles",
         "FiltersManager",
         "backbone",
+        "visibility",
         "handlebars",
         "timeline",
         "tooltip",
         "popover"],
 
     function ($, PlayerAdapter, Annotation, Annotations, GroupTmpl,
-                GroupEmptyTmpl, ItemTmpl, ModalAddGroupTmpl, ModalUpdateGroupTmpl, ACCESS, ROLES, FiltersManager, Backbone, Handlebars) {
+                GroupEmptyTmpl, ItemTmpl, ModalAddGroupTmpl, ModalUpdateGroupTmpl, ACCESS, ROLES, FiltersManager, Backbone, Visibility, Handlebars) {
 
         "use strict";
 
@@ -245,6 +246,11 @@ define(["jquery",
 
                 this.filtersManager = new FiltersManager(annotationsTool.filtersManager);
                 this.filtersManager.filters.timerange.end = attr.playerAdapter.getDuration();
+                this.filtersManager.filters.visibleTrack = {
+                    active  : false,
+                    tracks  : [],
+
+                };
 
                 this.listenTo(this.filtersManager, "switch", this.updateFiltersRender);
 
@@ -286,8 +292,11 @@ define(["jquery",
                     groupsChangeable : true
                 };
 
+                this.$navbar = this.$el.find(".navbar");
+
                 // Create the timeline
-                this.timeline = new links.Timeline(this.$el.find("#timeline")[0]);
+                this.$timeline = this.$el.find("#timeline");
+                this.timeline = new links.Timeline(this.$timeline[0]);
                 this.timeline.draw(this.filteredItems, this.options);
 
                 // Ensure that the timeline is redraw on window resize
@@ -297,8 +306,8 @@ define(["jquery",
                 $(window).bind("updateTrack", $.proxy(this.initTrackUpdate, this));
                 $(window).bind("updateTrackAccess", $.proxy(this.onUpdateTrack, this));
 
-                //$(this.playerAdapter).bind("pa_timeupdate", this.onPlayerTimeUpdate);
-                this.listenTo(annotationsTool, annotationsTool.EVENTS.TIMEUPDATE + ":" + 4, this.onPlayerTimeUpdate);
+
+                annotationsTool.addTimeupdateListener(this.onPlayerTimeUpdate, 900);
 
                 this.$el.find(".timeline-frame > div:first-child").bind("click", function (event) {
                     if ($(event.target).find(".timeline-event").length > 0) {
@@ -311,7 +320,7 @@ define(["jquery",
                 links.events.addListener(this.timeline, "change", this.onTimelineItemChanged);
                 links.events.addListener(this.timeline, "delete", this.onTimelineItemDeleted);
                 links.events.addListener(this.timeline, "add", this.onTimelineItemAdded);
-                //links.events.addListener(this.timeline, "rangechange", this.timerangeChange);
+                links.events.addListener(this.timeline, "rangechange", this.timerangeChange);
 
                 this.tracks = annotationsTool.video.get("tracks");
                 this.listenTo(this.tracks, "add", this.addTrack);
@@ -323,8 +332,8 @@ define(["jquery",
                 this.timeline.setCustomTime(this.startDate);
 
                 // Overwrite the redraw method
-                this.timeline.redraw = _.debounce(this.redraw, 300);
                 this.timeline.repaintCustomTime = this.repaintCustomTime;
+                this.timeline.redraw = _.debounce(this.redraw, 300);
 
                 // Add findGroup method to the timeline if missing
                 if (!this.timeline.findGroup) {
@@ -337,9 +346,10 @@ define(["jquery",
                 }, true);
 
 
-                $("div#timeline").scroll(this.updateHeader);
 
+                this.timerangeChange();
                 this.redraw();
+                this.$timeline.scroll(this.updateHeader);
                 this.onPlayerTimeUpdate();
             },
 
@@ -368,6 +378,8 @@ define(["jquery",
              */
             redraw: function () {
 
+                this.$timeline.detach();
+
                 this.timeline.draw(this.filteredItems, this.option);
 
 
@@ -382,16 +394,19 @@ define(["jquery",
 
                 // Remove the popover div from old track elements
                 $("div.popover.fade.right.in").remove();
+
+                this.$navbar.after(this.$timeline);
             },
 
-
+            /**
+             * Update the timerange filter with the timerange
+             * @alias module:views-timeline.TimelineView#timerangeChange
+             */
             timerangeChange: function () {
-                var timerange = this.timeline.getVisibleChartRange(),
-                    start = this.getTimeInSeconds(timerange.start),
-                    end = this.getTimeInSeconds(timerange.end);
+                var timerange = this.timeline.getVisibleChartRange();
 
-                this.filtersManager.filters.timerange.start = start;
-                this.filtersManager.filters.timerange.end = end;
+                this.filtersManager.filters.timerange.start = new Date(timerange.start).getTime();
+                this.filtersManager.filters.timerange.end = new Date(timerange.end).getTime();
 
                 this.filteredItems = this.filtersManager.filters.timerange.filter(this.filterItems());
 
@@ -404,7 +419,7 @@ define(["jquery",
              */
             updateHeader: function () {
                 $("div.timeline-frame > div:first-child > div:first-child").css({
-                    "margin-top": $("#timeline").scrollTop() - 2
+                    "margin-top": this.$timeline.scrollTop() - 2
                 });
             },
 
@@ -639,6 +654,7 @@ define(["jquery",
                     trackId : track.id,
                     isMine  : track.get("isMine"),
                     isPublic: track.get("isPublic"),
+                    voidItem: true,
                     start   : this.startDate - 5000,
                     end     : this.startDate - 4500,
                     content : this.VOID_ITEM_TMPL,

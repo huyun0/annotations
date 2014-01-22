@@ -79,15 +79,14 @@ define(["backbone", "access"], function (Backbone, ACCESS) {
                 start    : 0,
                 end      : 0,
                 condition: function (item) {
-                    if (_.isUndefined(item.model)) {
+                    if (!_.isUndefined(item.voidItem)) {
                         return true;
+                    } else if (_.isUndefined(item.start) || _.isUndefined(item.end)) {
+                        return false;
                     }
 
-                    var itemStart = item.model.get("start"),
-                        itemDuration = item.model.get("duration");
-
-                    return _.isUndefined(itemStart) && itemStart >= this.start &&
-                           _.isUndefined(itemDuration) && (itemDuration + itemStart) < this.end;
+                    return (item.start >= this.start && item.start < this.end) ||
+                           (item.start <= this.start && item.end >= this.end);
                 },
                 filter   : function (list) {
                     return _.filter(list, function (item) {

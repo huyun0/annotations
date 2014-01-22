@@ -58,6 +58,8 @@ define(["jquery",
                     USER_LOGGED          : "at:logged"
                 },
 
+                timeupdateIntervals: {},
+
                 views: {},
 
                 modelsInitialized: false,
@@ -163,13 +165,14 @@ define(["jquery",
 
                     this.deleteOperation.start = _.bind(this.deleteOperation.start, this);
                     this.initDeleteModal();
-                    $(this.playerAdapter).bind(PlayerAdapter.EVENTS.TIMEUPDATE, this.updateSelectionOnTimeUpdate);
+
+                    this.addTimeupdateListener(this.updateSelectionOnTimeUpdate, 900);
+
                     this.currentSelection = [];
 
                     this.once(this.EVENTS.USER_LOGGED, this.initModels);
                     this.once(this.EVENTS.MODELS_INITIALIZED, function () {
                         if (!_.isUndefined(this.tracksToImport)) {
-                            this.trigger(this.EVENTS.NOTIFICATION, "Start import");
                             if (this.playerAdapter.getStatus() === PlayerAdapter.STATUS.PAUSED) {
                                 this.importTracks(this.tracksToImport());
                             } else {
@@ -177,7 +180,6 @@ define(["jquery",
                                     annotationsTool.importTracks(annotationsTool.tracksToImport());
                                 });
                             }
-                            this.trigger(this.EVENTS.NOTIFICATION, "Import ended");
                         }
                     }, this);
 
@@ -287,15 +289,16 @@ define(["jquery",
                 },
 
                 /**
-                 * Listen and retrigger timeupdate event from player adapter events in divided frequence (between 1/1 and 1/10)
+                 * Listen and retrigger timeupdate event from player adapter events with added intervals
                  * @alias   annotationsTool.onTimeUpdate
                  */
                 onTimeUpdate: function () {
-                    var currentTime = this.playerAdapter.getCurrentTime(),
-                        i;
+                    var currentPlayerTime = this.playerAdapter.getCurrentTime(),
+                        currentTime = new Date().getTime();
 
                     // Ensure that this is an timeupdate due to normal playback, otherwise reinitialize the interval to 0.
-                    if (_.isUndefined(this.timeUpdateInterval) || (this.playerAdapter.getStatus() !== PlayerAdapter.STATUS.PLAYING) || (currentTime - this.lastTimeUpdate > 50)) {
+                    if (_.isUndefined(this.timeUpdateInterval) || (this.playerAdapter.getStatus() !== PlayerAdapter.STATUS.PLAYING) ||
+                        (currentPlayerTime - this.lastTimeUpdate > 50)) {
                         this.timeUpdateInterval = 1;
                     }
 
@@ -305,12 +308,13 @@ define(["jquery",
                     }
                     
                     // Trigger all the current events
-                    this.trigger(this.EVENTS.TIMEUPDATE, currentTime);
-                    for (i = 1; i <= 10; i++) {
-                        if (this.timeUpdateInterval % i === 0) {
-                            this.trigger(this.EVENTS.TIMEUPDATE + ":" + i, currentTime);
+                    this.trigger(this.EVENTS.TIMEUPDATE, currentPlayerTime);
+                    _.each(this.timeupdateIntervals, function (lastUpdate, interval) {
+                        if ((currentTime - lastUpdate) > parseInt(interval, 10)) {
+                            this.trigger(this.EVENTS.TIMEUPDATE + ":" + interval, currentPlayerTime);
+                            this.timeupdateIntervals[interval] = currentTime;
                         }
-                    }
+                    }, this);
 
                     this.lastTimeUpdate = new Date().getTime();
 
@@ -319,6 +323,27 @@ define(["jquery",
                     } else {
                         this.timeUpdateInterval++;
                     }
+                },
+
+                /**
+                 * Add a timeupdate listener with a certain 
+                 * @alias   annotationsTool.addTimeupdateListener
+                 * @param {Object} callback the listener callback
+                 * @param {Integer} (interval) the interval between each timeupdate event
+                 */
+                addTimeupdateListener: function (callback, interval) {
+                    var timeupdateEvent = annotationsTool.EVENTS.TIMEUPDATE;
+
+                    if (!_.isUndefined(interval)) {
+                        timeupdateEvent += ":" + interval;
+                        this.listenTo(annotationsTool, annotationsTool.EVENTS.TIMEUPDATE, callback);
+                        
+                        if (_.isUndefined(annotationsTool.timeupdateIntervals[interval])) {
+                            annotationsTool.timeupdateIntervals[interval] = 0;
+                        }
+                    }
+
+                    this.listenTo(annotationsTool, timeupdateEvent, callback);
                 },
 
                 ///////////////////////////////////////////////

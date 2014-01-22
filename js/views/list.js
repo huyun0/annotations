@@ -326,15 +326,18 @@ define(["jquery",
              * @alias module:views-list.List#render
              */
             render: function () {
-                var list = this.annotationViews;
+                var list = this.annotationViews,
+                    $listContainer = this.$el.find("#content-list").detach();
 
-                this.$el.find("#content-list").empty();
+                $listContainer.empty();
 
                 list = this.filtersManager.filterAll(list);
 
                 _.each(list, function (annView) {
-                    this.$el.find("#content-list").append(annView.render().$el);
+                    $listContainer.append(annView.render().$el);
                 }, this);
+
+                this.$el.append($listContainer);
 
                 return this;
             },
