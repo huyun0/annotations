@@ -51,7 +51,6 @@ define(["jquery",
         "models/track",
         "models/video",
         "text!templates/categories-legend.tmpl",
-        "backbone-annotations-sync",
         "roles",
         "FiltersManager",
         "backbone",
@@ -62,7 +61,7 @@ define(["jquery",
         "tab"],
 
     function ($, PlayerAdapter, AnnotateView, ListView, TimelineView, LoginView, ScaleEditorView,
-              Annotations, Users, Videos, User, Track, Video, CategoriesLegendTmpl, AnnotationSync, ROLES, FiltersManager, Backbone, Handlebars) {
+              Annotations, Users, Videos, User, Track, Video, CategoriesLegendTmpl, ROLES, FiltersManager, Backbone, Handlebars) {
 
         "use strict";
 
@@ -119,12 +118,7 @@ define(["jquery",
              * @alias module:views-main.MainView#initialize
              * @param {PlainObject} attr Object literal containing the view initialization attributes.
              */
-            initialize: function (playerAdapter) {
-                if ((annotationsTool.isBrowserIE9() && !(playerAdapter.__proto__ instanceof PlayerAdapter)) ||
-                    (!annotationsTool.isBrowserIE9() && !(playerAdapter instanceof PlayerAdapter))) {
-                    throw "The player adapter is not valid! It must has PlayerAdapter as prototype.";
-                }
-
+            initialize: function () {
                 _.bindAll(this, "checkUserAndLogin",
                                 "createViews",
                                 "generateCategoriesLegend",
@@ -136,28 +130,25 @@ define(["jquery",
                                 "ready",
                                 "setLoadingProgress",
                                 "updateTitle");
+                var self = this;
+
+                annotationsTool.bind(annotationsTool.EVENTS.NOTIFICATION, function (message) {
+                    self.setLoadingProgress(this.loadingPercent, message);
+                }, this);
 
                 this.setLoadingProgress(10, "Starting tool.");
 
-                // Load the good storage module
-                if (window.annotationsTool.localStorage) {
-                    // Local storage module
-                    Backbone.sync = Backbone.localSync;
 
+                this.setLoadingProgress(20, "Get users saved locally.");
+                // Create a new users collection and get exciting local user
+                annotationsTool.users = new Users();
+
+                if (annotationsTool.localStorage) {
                     // Remove link for statistics exports, work only with backend implementation
                     this.$el.find("#export").parent().remove();
                 } else {
                     this.$el.find("#export").attr("href", annotationsTool.exportUrl);
-                    // REST annotations storage module
-                    Backbone.sync = AnnotationSync;
                 }
-
-                this.playerAdapter = playerAdapter;
-
-                this.setLoadingProgress(20, "Get users saved locally.");
-
-                // Create a new users collection and get exciting local user
-                annotationsTool.users = new Users();
 
                 Backbone.localSync("read", annotationsTool.users, {
                     success: function (data) {
@@ -183,10 +174,6 @@ define(["jquery",
                     this.loadPlugins(annotationsTool.plugins);
                     this.generateCategoriesLegend(annotationsTool.video.get("categories").toExportJSON(true));
                     this.updateTitle(annotationsTool.video);
-                }, this);
-
-                annotationsTool.bind(annotationsTool.EVENTS.NOTIFICATION, function (message) {
-                    this.setLoadingProgress(this.loadingPercent, message);
                 }, this);
 
                 annotationsTool.onWindowResize = this.onWindowResize;
@@ -239,26 +226,29 @@ define(["jquery",
                 $("#video-container").show();
 
                 this.setLoadingProgress(45, "Start loading video.");
+
+                // Initialize the player
+                annotationsTool.playerAdapter.load();
+                this.setLoadingProgress(50, "Initializing the player.");
                 
                 /**
                  * Loading the video dependant views
                  */
                 var loadVideoDependantView = $.proxy(function () {
-                    $(this.playerAdapter).off(PlayerAdapter.EVENTS.READY + " " + PlayerAdapter.EVENTS.PAUSE, loadVideoDependantView);
 
                     this.setLoadingProgress(60, "Start creating views.");
 
                     if (annotationsTool.getLayoutConfiguration().timeline) {
                         // Create views with Timeline
                         this.setLoadingProgress(70, "Creating timeline.");
-                        this.timelineView = new TimelineView({playerAdapter: this.playerAdapter});
+                        this.timelineView = new TimelineView({playerAdapter: annotationsTool.playerAdapter});
                         annotationsTool.views.timeline = this.timelineView;
                     }
 
                     if (annotationsTool.getLayoutConfiguration().annotate) {
                         // Create view to annotate
                         this.setLoadingProgress(80, "Creating annotate view.");
-                        this.annotateView = new AnnotateView({playerAdapter: this.playerAdapter});
+                        this.annotateView = new AnnotateView({playerAdapter: annotationsTool.playerAdapter});
                         this.listenTo(this.annotateView, "change-layout", this.onWindowResize);
                         this.annotateView.$el.show();
                         annotationsTool.views.annotate = this.annotateView;
@@ -276,15 +266,11 @@ define(["jquery",
                     this.ready();
                 }, this);
 
-                this.playerAdapter.load();
 
-                // Initialize the player
-                this.loadingBox.find(".info").text("Initializing the player.");
-
-                if (this.playerAdapter.getStatus() === PlayerAdapter.STATUS.PAUSED) {
+                if (annotationsTool.playerAdapter.getStatus() === PlayerAdapter.STATUS.PAUSED) {
                     loadVideoDependantView();
                 } else {
-                    $(this.playerAdapter).on(PlayerAdapter.EVENTS.READY + " " + PlayerAdapter.EVENTS.PAUSE, loadVideoDependantView);
+                    $(annotationsTool.playerAdapter).one(PlayerAdapter.EVENTS.READY + " " + PlayerAdapter.EVENTS.PAUSE, loadVideoDependantView);
                 }
                 
             },

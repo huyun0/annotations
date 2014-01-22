@@ -28,6 +28,7 @@
  */
 define(["jquery",
         "backbone",
+        "backbone-annotations-sync",
         "collections/Videos",
         "views/main",
         "views/alert",
@@ -37,7 +38,7 @@ define(["jquery",
         "handlebarsHelpers",
         "roles"],
 
-        function ($, Backbone, Videos, MainView, AlertView, DeleteModalTmpl, DeleteContentTmpl, PlayerAdapter, Handlebars, ROLES) {
+        function ($, Backbone, AnnotationSync, Videos, MainView, AlertView, DeleteModalTmpl, DeleteContentTmpl, PlayerAdapter, Handlebars, ROLES) {
 
             "use strict";
 
@@ -152,28 +153,34 @@ define(["jquery",
                         this.loadVideo();
                     }
 
-                    /**
-                     * Handlebars helper to format a date to the configured format
-                     * @alias module:Handlebars#formatDate
-                     * @param  {date} date The date to format
-                     * @return {string}      The formated date
-                     */
-                    Handlebars.registerHelper("formatDate", config.formatDate);
+                    if ((this.isBrowserIE9() && !(this.playerAdapter.__proto__ instanceof this.PlayerAdapter)) ||
+                        (!this.isBrowserIE9() && !(this.playerAdapter instanceof PlayerAdapter))) {
+                        throw "The player adapter is not valid! It must has PlayerAdapter as prototype.";
+                    }
+
+                    // Load the good storage module
+                    Backbone.sync = this.localStorage ? Backbone.localSync : AnnotationSync;
 
                     this.deleteOperation.start = _.bind(this.deleteOperation.start, this);
                     this.initDeleteModal();
                     $(this.playerAdapter).bind(PlayerAdapter.EVENTS.TIMEUPDATE, this.updateSelectionOnTimeUpdate);
                     this.currentSelection = [];
 
-                    annotationsTool.once(annotationsTool.EVENTS.USER_LOGGED, this.initModels);
-
-                    annotationsTool.once(annotationsTool.EVENTS.MODELS_INITIALIZED, function () {
-                        if (!_.isUndefined(annotationsTool.tracksToImport)) {
+                    this.once(this.EVENTS.USER_LOGGED, this.initModels);
+                    this.once(this.EVENTS.MODELS_INITIALIZED, function () {
+                        if (!_.isUndefined(this.tracksToImport)) {
                             this.trigger(this.EVENTS.NOTIFICATION, "Start import");
-                            this.importTracks(this.tracksToImport());
+                            if (this.playerAdapter.getStatus() === PlayerAdapter.STATUS.PAUSED) {
+                                this.importTracks(this.tracksToImport());
+                            } else {
+                                $(this.playerAdapter).one(PlayerAdapter.EVENTS.READY + " " + PlayerAdapter.EVENTS.PAUSE, function () {
+                                    annotationsTool.importTracks(annotationsTool.tracksToImport());
+                                });
+                            }
                             this.trigger(this.EVENTS.NOTIFICATION, "Import ended");
                         }
                     }, this);
+
                     this.views.main = new MainView(this.playerAdapter);
 
                     $(this.playerAdapter).bind("pa_timeupdate", this.onTimeUpdate);
@@ -621,6 +628,7 @@ define(["jquery",
                  */
                 importTracks: function (tracks) {
                     _.each(tracks, function (track) {
+                        this.trigger(this.EVENTS.NOTIFICATION, "Importing track " + track.name);
                         if (_.isUndefined(this.getTrack(track.id))) {
                             this.createTrack(track);
                         } else {

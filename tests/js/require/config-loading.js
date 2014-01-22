@@ -96,6 +96,10 @@ function (domReady, config, app) {
             };
 
         localStorage.clear();
+        localStorage.Users = "c1";
+        localStorage["Users-c1"] = "{\"user_extid\": \"default\",\"nickname\": \"test\",\"role\": \"user\",\"access\": 1,\"id\": \"c1\",\"created_at\": null,\
+                                    \"updated_at\": null,\"deleted_at\": null,\"email\": \"test@test.ch\"}";
+
         app.start(config);
 
         // if (_.isUndefined(annotationsTool.video)) {

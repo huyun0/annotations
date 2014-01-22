@@ -138,7 +138,7 @@ define(["jquery",
                     duration = annotationsTool.playerAdapter.getDuration(),
                     track,
                     tracks = [],
-                    nbAnnotations = 30, // Number of annotations to generate pro track
+                    nbAnnotations = 20, // Number of annotations to generate pro track
                     nbTrack = 25,       // Number of tracks to generate
                     i,
                     y;

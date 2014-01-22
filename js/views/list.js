@@ -1,5 +1,4 @@
- 
-/**
+ /**
  *  Copyright 2012, Entwine GmbH, Switzerland
  *  Licensed under the Educational Community License, Version 2.0
  *  (the "License"); you may not use this file except in compliance
@@ -331,11 +330,7 @@ define(["jquery",
 
                 this.$el.find("#content-list").empty();
 
-                _.each(this.filtersManager.getFilters(), function (filter) {
-                    if (filter.active) {
-                        list = filter.filter(list);
-                    }
-                });
+                list = this.filtersManager.filterAll(list);
 
                 _.each(list, function (annView) {
                     this.$el.find("#content-list").append(annView.render().$el);

@@ -236,6 +236,7 @@ define(["jquery",
                                "zoomIn",
                                "zoomOut",
                                "stopZoomScrolling",
+                               "timerangeChange",
                                "repaintCustomTime",
                                "redraw",
                                "reset");
@@ -243,6 +244,8 @@ define(["jquery",
                 this.playerAdapter = attr.playerAdapter;
 
                 this.filtersManager = new FiltersManager(annotationsTool.filtersManager);
+                this.filtersManager.filters.timerange.end = attr.playerAdapter.getDuration();
+
                 this.listenTo(this.filtersManager, "switch", this.updateFiltersRender);
 
                 // Type use for delete operation
@@ -254,29 +257,29 @@ define(["jquery",
 
                 // Options for the links timeline
                 this.options = {
-                    width  : "100%",
-                    height : "auto",
-                    style  : "box",
-                    //scale : links.Timeline.StepDate.SCALE.SECOND,
-                    //step  : 30,
-                    showButtonNew   : false,
-                    editable        : true,
-                    start           : this.startDate,
-                    end             : this.endDate,
-                    min             : this.startDate,
-                    max             : this.endDate,
-                    intervalMin     : 5000,
-                    showCustomTime  : true,
-                    showNavigation  : false,
-                    showMajorLabels : false,
-                    snapEvents      : false,
-                    stackEvents     : true,
-                    minHeight       : "200",
-                    axisOnTop       : true,
-                    groupsWidth     : "150px",
-                    animate         : true,
-                    animateZoom     : true,
-                    // cluster: true,
+                    width            : "100%",
+                    height           : "auto",
+                    style            : "box",
+                    //scale          : links.Timeline.StepDate.SCALE.SECOND,
+                    //step           : 30,
+                    showButtonNew    : false,
+                    editable         : true,
+                    start            : this.startDate,
+                    end              : this.endDate,
+                    min              : this.startDate,
+                    max              : this.endDate,
+                    intervalMin      : 5000,
+                    showCustomTime   : true,
+                    showNavigation   : false,
+                    showMajorLabels  : false,
+                    snapEvents       : false,
+                    stackEvents      : true,
+                    minHeight        : "200",
+                    axisOnTop        : true,
+                    groupsWidth      : "150px",
+                    animate          : true,
+                    animateZoom      : true,
+                    cluster          : true,
                     eventMarginAxis  : 0,
                     eventMargin      : 0,
                     dragAreaWidth    : 5,
@@ -294,8 +297,8 @@ define(["jquery",
                 $(window).bind("updateTrack", $.proxy(this.initTrackUpdate, this));
                 $(window).bind("updateTrackAccess", $.proxy(this.onUpdateTrack, this));
 
-                $(this.playerAdapter).bind("pa_timeupdate", this.onPlayerTimeUpdate);
-                //this.listenTo(annotationsTool, annotationsTool.EVENTS.TIMEUPDATE + ":" + 10, this.onPlayerTimeUpdate);
+                //$(this.playerAdapter).bind("pa_timeupdate", this.onPlayerTimeUpdate);
+                this.listenTo(annotationsTool, annotationsTool.EVENTS.TIMEUPDATE + ":" + 4, this.onPlayerTimeUpdate);
 
                 this.$el.find(".timeline-frame > div:first-child").bind("click", function (event) {
                     if ($(event.target).find(".timeline-event").length > 0) {
@@ -308,6 +311,7 @@ define(["jquery",
                 links.events.addListener(this.timeline, "change", this.onTimelineItemChanged);
                 links.events.addListener(this.timeline, "delete", this.onTimelineItemDeleted);
                 links.events.addListener(this.timeline, "add", this.onTimelineItemAdded);
+                //links.events.addListener(this.timeline, "rangechange", this.timerangeChange);
 
                 this.tracks = annotationsTool.video.get("tracks");
                 this.listenTo(this.tracks, "add", this.addTrack);
@@ -319,7 +323,7 @@ define(["jquery",
                 this.timeline.setCustomTime(this.startDate);
 
                 // Overwrite the redraw method
-                this.timeline.redraw = this.redraw;
+                this.timeline.redraw = _.debounce(this.redraw, 300);
                 this.timeline.repaintCustomTime = this.repaintCustomTime;
 
                 // Add findGroup method to the timeline if missing
@@ -378,6 +382,20 @@ define(["jquery",
 
                 // Remove the popover div from old track elements
                 $("div.popover.fade.right.in").remove();
+            },
+
+
+            timerangeChange: function () {
+                var timerange = this.timeline.getVisibleChartRange(),
+                    start = this.getTimeInSeconds(timerange.start),
+                    end = this.getTimeInSeconds(timerange.end);
+
+                this.filtersManager.filters.timerange.start = start;
+                this.filtersManager.filters.timerange.end = end;
+
+                this.filteredItems = this.filtersManager.filters.timerange.filter(this.filterItems());
+
+                this.timeline.redraw();
             },
 
             /**
@@ -863,11 +881,7 @@ define(["jquery",
             filterItems: function () {
                 var tempList = _.values(this.allItems);
 
-                _.each(this.filtersManager.getFilters(), function (filter) {
-                    if (filter.active) {
-                        tempList = filter.filter(tempList);
-                    }
-                });
+                tempList = this.filtersManager.filterAll(tempList);
 
                 this.filteredItems = _.sortBy(tempList, function (item) {
                     return _.isUndefined(item.model) ? 0 : item.model.get("name");

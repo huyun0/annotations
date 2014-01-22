@@ -53,22 +53,61 @@ define(["backbone", "access"], function (Backbone, ACCESS) {
          */
         filters: {
             mine: {
-                active: false,
-                filter: function (list) {
+                active   : false,
+                condition: function (item) {
+                    return _.isUndefined(item.model) || item.model.get("isMine");
+                },
+                filter   : function (list) {
                     return _.filter(list, function (item) {
-                        return _.isUndefined(item.model) || item.model.get("isMine");
+                        return this.condition(item);
                     }, this);
                 }
             },
             public: {
-                active: false,
-                filter: function (list) {
+                active   : false,
+                condition: function (item) {
+                    return _.isUndefined(item.model) || item.model.get("isPublic") || (item.model.get("access") === ACCESS.PUBLIC);
+                },
+                filter   : function (list) {
                     return _.filter(list, function (item) {
-                        return _.isUndefined(item.model) || item.model.get("isPublic") || (item.model.get("access") === ACCESS.PUBLIC);
+                        return this.condition(item);
+                    }, this);
+                }
+            },
+            timerange: {
+                active   : false,
+                start    : 0,
+                end      : 0,
+                condition: function (item) {
+                    if (_.isUndefined(item.model)) {
+                        return true;
+                    }
+
+                    var itemStart = item.model.get("start"),
+                        itemDuration = item.model.get("duration");
+
+                    return _.isUndefined(itemStart) && itemStart >= this.start &&
+                           _.isUndefined(itemDuration) && (itemDuration + itemStart) < this.end;
+                },
+                filter   : function (list) {
+                    return _.filter(list, function (item) {
+                        return this.condition(item);
                     }, this);
                 }
             }
+        },
 
+        /**
+         * Filter the given with all the active filter
+         * @param  {Object} list   The list of elements to filter
+         * @return {Object} the filtered list 
+         */
+        filterAll: function (list) {
+            return _.filter(list, function (item) {
+                        return  _.every(this.filters, function (filter) {
+                                    return filter.active ? filter.condition(item) : true;
+                                }, this);
+                    }, this);
         },
 
         /**

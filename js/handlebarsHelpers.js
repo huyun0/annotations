@@ -61,5 +61,15 @@ define(["handlebars", "roles"], function (Handlebars, ROLES) {
         }
     });
 
+    /**
+     * Handlebars helper to format a date to the configured format
+     * @alias module:Handlebars#formatDate
+     * @param  {date} date The date to format
+     * @return {string}      The formated date
+     */
+    Handlebars.registerHelper("formatDate", function (date) {
+        return annotationsTool.formatDate(date);
+    });
+
     return Handlebars;
 });
