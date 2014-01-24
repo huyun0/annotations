@@ -13,6 +13,7 @@ require.config({
         "handlebarsHelpers"             : "handlebarsHelpers",
         "jquery.colorPicker"            : "libs/jquery.colorPicker.min",
         "jquery.FileReader"             : "libs/jquery.FileReader",
+        "jquery.appear"                 : "libs/jquery.appear",
         "localstorage"                  : "libs/backbone/backbone.localStorage-1.0",
         "jquery"                        : "libs/jquery-1.7.2.min",
         "popover"                       : "libs/bootstrap/popover",
@@ -59,6 +60,11 @@ require.config({
         "jquery.colorPicker": {
             deps: ["jquery"],
             exports: "jQuery.fn.colorPicker"
+        },
+
+        "jquery.appear": {
+            deps: ["jquery"],
+            exports: "jQuery.fn.appear"
         },
 
         "bootstrap": ["jquery"],

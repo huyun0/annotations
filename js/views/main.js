@@ -236,6 +236,11 @@ define(["jquery",
                  */
                 var loadVideoDependantView = $.proxy(function () {
 
+                    if (this.loadingPercent === 100) {
+                        console.log("Annotations-tool already ready");
+                        return;
+                    }
+
                     this.setLoadingProgress(60, "Start creating views.");
 
                     if (annotationsTool.getLayoutConfiguration().timeline) {
@@ -311,10 +316,10 @@ define(["jquery",
                     if (annotationsTool.modelsInitialized) {
                         this.createViews();
                     } else {
-                        annotationsTool.on(annotationsTool.EVENTS.MODELS_INITIALIZED, this.createViews, this);
+                        annotationsTool.once(annotationsTool.EVENTS.MODELS_INITIALIZED, this.createViews, this);
                     }
                 } else {
-                    annotationsTool.on(annotationsTool.EVENTS.MODELS_INITIALIZED, this.createViews, this);
+                    annotationsTool.once(annotationsTool.EVENTS.MODELS_INITIALIZED, this.createViews, this);
                     this.loginView.show();
                 }
             },

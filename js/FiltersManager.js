@@ -32,6 +32,8 @@ define(["backbone", "access"], function (Backbone, ACCESS) {
     var FiltersManager = function (master) {
         _.extend(this, Backbone.Events);
 
+        this._cloneFilters();
+
         if (master instanceof FiltersManager) {
             this.master = master;
             this.isBindedToMaster = true;
@@ -97,13 +99,32 @@ define(["backbone", "access"], function (Backbone, ACCESS) {
         },
 
         /**
+         * Clone the default filters
+         * @return {Object} The cloned filters list
+         */
+        _cloneFilters: function () {
+            var filters = {};
+
+            _.each(this.filters, function (filter, id) {
+                filters[id] = _.clone(filter);
+            }, this);
+
+            this.filters = filters;
+
+            return filters;
+        },
+
+        /**
          * Filter the given with all the active filter
          * @param  {Object} list   The list of elements to filter
+         * @params {Object} (filters) The list of filters to use 
          * @return {Object} the filtered list 
          */
-        filterAll: function (list) {
+        filterAll: function (list, filters) {
+            var activeFilters = _.isUndefined(filters) ? this.filters : filters;
+
             return _.filter(list, function (item) {
-                        return  _.every(this.filters, function (filter) {
+                        return  _.every(activeFilters, function (filter) {
                                     return filter.active ? filter.condition(item) : true;
                                 }, this);
                     }, this);

@@ -12,9 +12,10 @@ require.config({
         "handlebarsHelpers"              : "handlebarsHelpers",
         "jquery.colorPicker"             : "libs/jquery.colorPicker.min",
         "jquery.FileReader"              : "libs/jquery.FileReader",
+        "jquery.appear"                  : "libs/jquery.appear",
         "localstorage"                   : "libs/backbone/backbone.localStorage-1.0",
         "jquery"                         : "libs/jquery-1.7.2.min",
-        "popover"                       : "libs/bootstrap/popover",
+        "popover"                        : "libs/bootstrap/popover",
         "scrollspy"                      : "libs/bootstrap/scrollspy",
         "sinon"                          : "libs/tests/sinon-1.7.3",
         "slider"                         : "libs/bootstrap/bootstrap-slider",
@@ -24,6 +25,7 @@ require.config({
         "text"                           : "libs/require/config/text",
         "tooltip"                        : "libs/bootstrap/tooltip",
         "timeline"                       : "libs/timeline-min",
+        "waypoints"                      : "libs/waypoints.min",
         "underscore"                     : "libs/underscore-min-1.4.3"
     },
     waitSeconds: 10,
@@ -62,6 +64,11 @@ require.config({
             exports: "jQuery.fn.colorPicker"
         },
 
+        "jquery.appear": {
+            deps: ["jquery"],
+            exports: "jQuery.fn.appear"
+        },
+
         "bootstrap": ["jquery"],
         "scrollspy": ["bootstrap"],
         "carousel" : ["bootstrap"],
@@ -76,26 +83,27 @@ require(["domReady", "annotations-tool-configuration", "annotations-tool"],
 function (domReady, config, app) {
     domReady(function () {
 
-        var lastUpdate = 0,
-            i = 0,
-            nbFrame = 20,
-            lastValuesSum = 0,
-            targetFPS = $("#fps #value"),
-            calculateFPS = function () {
-                var currentTime = (new Date()).getTime();
+        // var lastUpdate = 0,
+        //     i = 0,
+        //     nbFrame = 20,
+        //     lastValuesSum = 0,
+        //     targetFPS = $("#fps #value"),
+        //     calculateFPS = function () {
+        //         var currentTime = (new Date()).getTime();
 
-                lastValuesSum += (currentTime - lastUpdate);
+        //         lastValuesSum += (currentTime - lastUpdate);
 
-                if (++i === nbFrame) {
-                    targetFPS.html(1000 / (lastValuesSum / nbFrame));
-                    i = 0;
-                    lastValuesSum = 0;
-                }
+        //         if (++i === nbFrame) {
+        //             targetFPS.html(1000 / (lastValuesSum / nbFrame));
+        //             i = 0;
+        //             lastValuesSum = 0;
+        //         }
 
-                lastUpdate = currentTime;
-            };
+        //         lastUpdate = currentTime;
+        //     };
 
         localStorage.clear();
+
         localStorage.Users = "c1";
         localStorage["Users-c1"] = "{\"user_extid\": \"default\",\"nickname\": \"test\",\"role\": \"user\",\"access\": 1,\"id\": \"c1\",\"created_at\": null,\
                                     \"updated_at\": null,\"deleted_at\": null,\"email\": \"test@test.ch\"}";

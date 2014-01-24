@@ -172,12 +172,20 @@ define(["jquery",
 
                     this.once(this.EVENTS.USER_LOGGED, this.initModels);
                     this.once(this.EVENTS.MODELS_INITIALIZED, function () {
+                        var trackImported = false;
+
                         if (!_.isUndefined(this.tracksToImport)) {
                             if (this.playerAdapter.getStatus() === PlayerAdapter.STATUS.PAUSED) {
                                 this.importTracks(this.tracksToImport());
+                                trackImported = true;
                             } else {
                                 $(this.playerAdapter).one(PlayerAdapter.EVENTS.READY + " " + PlayerAdapter.EVENTS.PAUSE, function () {
+                                    if (trackImported) {
+                                        //return false;
+                                    }
+                                    
                                     annotationsTool.importTracks(annotationsTool.tracksToImport());
+                                    trackImported = true;
                                 });
                             }
                         }
