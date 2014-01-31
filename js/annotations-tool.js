@@ -29,7 +29,7 @@
 define(["jquery",
         "backbone",
         "backbone-annotations-sync",
-        "collections/Videos",
+        "collections/videos",
         "views/main",
         "views/alert",
         "text!templates/delete-modal.tmpl",
@@ -135,6 +135,7 @@ define(["jquery",
                                     "getAnnotation",
                                     "getSelection",
                                     "getTrack",
+                                    "getTracks",
                                     "getSelectedTrack",
                                     "initModels",
                                     "importTracks",
@@ -181,7 +182,7 @@ define(["jquery",
                             } else {
                                 $(this.playerAdapter).one(PlayerAdapter.EVENTS.READY + " " + PlayerAdapter.EVENTS.PAUSE, function () {
                                     if (trackImported) {
-                                        //return false;
+                                        return false;
                                     }
                                     
                                     annotationsTool.importTracks(annotationsTool.tracksToImport());
@@ -304,33 +305,30 @@ define(["jquery",
                     var currentPlayerTime = this.playerAdapter.getCurrentTime(),
                         currentTime = new Date().getTime();
 
-                    // Ensure that this is an timeupdate due to normal playback, otherwise reinitialize the interval to 0.
-                    if (_.isUndefined(this.timeUpdateInterval) || (this.playerAdapter.getStatus() !== PlayerAdapter.STATUS.PLAYING) ||
-                        (currentPlayerTime - this.lastTimeUpdate > 50)) {
-                        this.timeUpdateInterval = 1;
-                    }
+                    // Ensure that this is an timeupdate due to normal playback, otherwise trigger timeupdate event for all intervals
+                    if ((_.isUndefined(this.lastTimeUpdate)) || (this.playerAdapter.getStatus() !== PlayerAdapter.STATUS.PLAYING) ||
+                        (currentTime - this.lastTimeUpdate > 1000)) {
 
-                    // Ensure that the timestamp from the last update is set
-                    if (_.isUndefined(this.lastTimeUpdate)) {
-                        this.lastTimeUpdate = 1;
-                    }
-                    
-                    // Trigger all the current events
-                    this.trigger(this.EVENTS.TIMEUPDATE, currentPlayerTime);
-                    _.each(this.timeupdateIntervals, function (lastUpdate, interval) {
-                        if ((currentTime - lastUpdate) > parseInt(interval, 10)) {
+                        // Ensure that the timestamp from the last update is set
+                        if (_.isUndefined(this.lastTimeUpdate)) {
+                            this.lastTimeUpdate = 1;
+                        }
+                        _.each(this.timeupdateIntervals, function (lastUpdate, interval) {
                             this.trigger(this.EVENTS.TIMEUPDATE + ":" + interval, currentPlayerTime);
                             this.timeupdateIntervals[interval] = currentTime;
-                        }
-                    }, this);
+                        }, this);
+                    } else {
+                        // Trigger all the current events
+                        this.trigger(this.EVENTS.TIMEUPDATE + ":all", currentPlayerTime);
+                        _.each(this.timeupdateIntervals, function (lastUpdate, interval) {
+                            if ((currentTime - lastUpdate) > parseInt(interval, 10)) {
+                                this.trigger(this.EVENTS.TIMEUPDATE + ":" + interval, currentPlayerTime);
+                                this.timeupdateIntervals[interval] = currentTime;
+                            }
+                        }, this);
+                    }
 
                     this.lastTimeUpdate = new Date().getTime();
-
-                    if (this.timeUpdateInterval > 10) {
-                        this.timeUpdateInterval = 1;
-                    } else {
-                        this.timeUpdateInterval++;
-                    }
                 },
 
                 /**
@@ -597,6 +595,19 @@ define(["jquery",
                         console.warn("No video present in the annotations tool. Either the tool is not completely loaded or an error happend during video loading.");
                     } else {
                         return this.video.getTrack(id);
+                    }
+                },
+
+                /**
+                 * Get all the tracks
+                 * @alias   annotationsTool.getTracks
+                 * @return {Object}    The list of the tracks
+                 */
+                getTracks: function () {
+                    if (_.isUndefined(this.video)) {
+                        console.warn("No video present in the annotations tool. Either the tool is not completely loaded or an error happend during video loading.");
+                    } else {
+                        return this.video.get("tracks");
                     }
                 },
 

@@ -34,7 +34,7 @@ module.exports = function (grunt) {
              
             integration: {
                 sources : '',
-                target  : '~/Documents/Projects/Entwine/Matterhorn/lib/local/entwine-annotations-tool-1.5-SNAPSHOT/ui',
+                target  : '../Matterhorn/lib/local/entwine-annotations-tool-1.5-SNAPSHOT/ui',
                 config  : 'build/profiles/integration/annotations-tool-configuration.js'
             },
 
@@ -62,17 +62,17 @@ module.exports = function (grunt) {
             // Watch Javascript files
             js: {
                 files: ['<%= srcPath.js %>', '<%= srcPath.test_js %>'],
-                tasks: ['jshint:all', 'copy:local']
+                tasks: ['jshint:all', 'copy:target']
             },
             // Watch Templates files
             handlebars: {
                 files: ['<%= srcPath.tmpl %>'],
-                tasks: ['copy:local']
+                tasks: ['copy:target']
             },
             // Watch HTML files
             html: {
                 files: ['<%= srcPath.html %>'],
-                tasks: ['copy:local']
+                tasks: ['copy:index']
             },
             // Watch LESS files
             less: {
@@ -83,7 +83,7 @@ module.exports = function (grunt) {
             // Use it for single core processor. It could stop working with an important number of files
             multiple: {
                 files: ['<%= srcPath.less %>', '<%= srcPath.js %>', '<%= srcPath.html %>', '<%= srcPath.tmpl %>'],
-                tasks: ['copy:local']
+                tasks: ['copy:target']
             },
             // Watch file on web server for live reload
             www: {
@@ -128,15 +128,13 @@ module.exports = function (grunt) {
 
         /** Copy .. */
         copy: {
-
-
             // ... a single file locally
-            'local': {
+            'target': {
                 files: [{
                     flatten : false,
                     expand  : true,
                     src     : '<%= currentWatchFile %>',
-                    dest    : '<%= webServerDir %>',
+                    dest    : '<%= currentProfile.target %>',
                     filter  : 'isFile'
                 }]
             },
@@ -157,7 +155,7 @@ module.exports = function (grunt) {
                 }]
             },
             // ... the index locally 
-            'local-index': { 
+            'local-index': {
                 options: {
                     processContent: function (content) {
                         return grunt.template.process(content);

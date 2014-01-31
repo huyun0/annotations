@@ -158,6 +158,10 @@ define(["backbone", "access"], function (Backbone, ACCESS) {
          * @param  {boolean} active Define if the filter must be active or not
          */
         _switchFilterLocally: function (id, active) {
+            if (_.isUndefined(this.filters[id])) {
+                return;
+            }
+            
             this.filters[id].active = active;
             this.trigger("switch", {id: id, active: active});
         },

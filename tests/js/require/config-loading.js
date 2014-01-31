@@ -25,7 +25,6 @@ require.config({
         "text"                           : "libs/require/config/text",
         "tooltip"                        : "libs/bootstrap/tooltip",
         "timeline"                       : "libs/timeline-min",
-        "waypoints"                      : "libs/waypoints.min",
         "underscore"                     : "libs/underscore-min-1.4.3"
     },
     waitSeconds: 10,

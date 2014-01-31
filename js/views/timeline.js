@@ -200,6 +200,8 @@ define(["jquery",
              */
             initialize: function (attr) {
 
+                var self = this;
+
                 _.bindAll(this, "addTrack",
                                "addTracksList",
                                "createTrack",
@@ -298,7 +300,7 @@ define(["jquery",
                     groupsWidth      : "150px",
                     animate          : true,
                     animateZoom      : true,
-                    cluster          : true,
+                    // cluster          : true,
                     eventMarginAxis  : 0,
                     eventMargin      : 0,
                     dragAreaWidth    : 5,
@@ -320,7 +322,7 @@ define(["jquery",
                 $(window).bind("updateTrackAccess", $.proxy(this.onUpdateTrack, this));
 
 
-                annotationsTool.addTimeupdateListener(this.onPlayerTimeUpdate, 900);
+                annotationsTool.addTimeupdateListener(this.onPlayerTimeUpdate, 1000);
 
                 this.$el.find(".timeline-frame > div:first-child").bind("click", function (event) {
                     if ($(event.target).find(".timeline-event").length > 0) {
@@ -359,9 +361,12 @@ define(["jquery",
                 }, true);
 
                 this.timerangeChange();
-                this.redraw();
                 this.$timeline.scroll(this.updateHeader);
                 this.onPlayerTimeUpdate();
+
+                setTimeout(function () {
+                    self.redraw();
+                }, 500);
             },
 
 
@@ -387,54 +392,74 @@ define(["jquery",
              * Add an annotation to the timeline
              * @alias module:views-timeline.TimelineView#redraw
              */
-            redraw: _.debounce(function () {
-                var tracks = this.filtersManager.filters.visibleTracks.tracks,
-                    visibles = _.without(_.values(tracks), false),
+            redraw: function () {
+                var visibleTracksFilter = this.filtersManager.filters.visibleTracks,
+                    tracks,
+                    $tracks,
+                    timelineHeight,
                     self = this;
-
-                console.log("Number of visible elements: " + visibles.length);
-                console.log("Number of elements to draw: " + this.filteredItems.length);
 
                 //this.$timeline.detach();
 
                 this.timeline.draw(this.filteredItems, this.option);
 
                 //this.$navbar.after(this.$timeline);
+                
+                // If no tracks have been added to the tracks filters (if enable), we search which one are visisble
+                if (!_.isUndefined(visibleTracksFilter) && visibleTracksFilter.active && _.size(visibleTracksFilter.tracks) === 0) {
+                    tracks = visibleTracksFilter.tracks;
 
-                if (annotationsTool.hasSelection()) {
-                    this.onSelectionUpdate(annotationsTool.getSelection());
-                    this.updateDraggingCtrl();
-                }
+                    timelineHeight = this.$timeline.height();
 
-                if (annotationsTool.selectedTrack) {
-                    this.onTrackSelected(null, annotationsTool.selectedTrack.id);
-                }
+                    console.log("Timeline height: " + timelineHeight);
 
-                // Remove the popover div from old track elements
-                $("div.popover.fade.right.in").remove();
+                    _.each(annotationsTool.getTracks().slice(0, (timelineHeight / 60).toFixed()), function (track) {
+                        tracks[track.get("id")] = true;
+                    }, this);
 
-                this.$timeline.find(".timeline-groups-text").appear({context: this.$timeline});
-
-                this.$timeline.find(".timeline-groups-text").on("appear", _.debounce(function () {
-                    var id = $(this).find(".track-id").text();
-                    if (!tracks[id]) {
-                        console.log("Add track " + id);
-                        tracks[id] = true;
-                        self.filteredItems = self.filterItems();
-                        self.redraw();
+                    self.filteredItems = self.filterItems();
+                    self.redraw();
+                } else {
+                    if (annotationsTool.hasSelection()) {
+                        this.onSelectionUpdate(annotationsTool.getSelection());
+                        this.updateDraggingCtrl();
                     }
-                }, 200));
 
-                this.$timeline.find(".timeline-groups-text").on("disappear", _.debounce(function () {
-                    var id = $(this).find(".track-id").text();
-                    if (tracks[id]) {
-                        console.log("Remove track " + id);
-                        tracks[id] = false;
-                        self.filteredItems = self.filterItems();
-                        self.redraw();
+                    if (annotationsTool.selectedTrack) {
+                        this.onTrackSelected(null, annotationsTool.selectedTrack.id);
                     }
-                }, 200));
-            }, 200),
+
+                    // Remove the popover div from old track elements
+                    $("div.popover.fade.right.in").remove();
+
+                    // If the visisble tracks filter is enable, we check where tracks are visible
+                    if (!_.isUndefined(visibleTracksFilter) && visibleTracksFilter.active) {
+                        tracks = visibleTracksFilter.tracks;
+
+                        $tracks = this.$timeline.find(".timeline-groups-text").appear({context: this.$timeline});
+
+                        $tracks.on("appear", _.debounce(function () {
+                            var id = $(this).find(".track-id").text();
+                            if (!tracks[id]) {
+                                console.log("Add track " + id);
+                                tracks[id] = true;
+                                self.filteredItems = self.filterItems();
+                                self.redraw();
+                            }
+                        }, 200));
+
+                        $tracks.on("disappear", _.debounce(function () {
+                            var id = $(this).find(".track-id").text();
+                            if (tracks[id]) {
+                                console.log("Remove track " + id);
+                                tracks[id] = false;
+                                self.filteredItems = self.filterItems();
+                                self.redraw();
+                            }
+                        }, 200));
+                    }
+                }
+            },
 
             /**
              * Update the timerange filter with the timerange
@@ -446,8 +471,7 @@ define(["jquery",
                 this.filtersManager.filters.timerange.start = new Date(timerange.start).getTime();
                 this.filtersManager.filters.timerange.end = new Date(timerange.end).getTime();
 
-                this.filteredItems = this.filtersManager.filters.timerange.filter(this.filterItems());
-
+                this.filteredItems = this.filterItems();
                 this.redraw();
             },
 
@@ -663,6 +687,10 @@ define(["jquery",
                 annotations.each(annotationWithList, this);
                 annotations.bind("add", proxyToAddAnnotation, this);
                 annotations.bind("change", this.changeItem, this);
+
+                if (!_.isUndefined(this.filtersManager.filters.visibleTracks)) {
+                    this.filtersManager.filters.visibleTracks.tracks[track.get("id")] = true;
+                }
 
                 this.filterItems();
                 this.redraw();
@@ -1020,6 +1048,8 @@ define(["jquery",
              * @alias module:views-timeline.TimelineView#onPlayerTimeUpdate
              */
             onPlayerTimeUpdate: function () {
+                console.log("Player update: " + new Date().getSeconds() + "." + new Date().getMilliseconds());
+
                 var currentTime = this.playerAdapter.getCurrentTime(),
                     newDate = this.getFormatedDate(currentTime);
 

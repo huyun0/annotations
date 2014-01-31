@@ -164,6 +164,7 @@ define(["jquery",
 
                 this.listenTo(annotationsTool, "deleteAnnotation", annotationsTool.deleteAnnotation);
 
+                annotationsTool.onWindowResize = this.onWindowResize;
                 $(window).resize(this.onWindowResize);
                 $(window).bind("keydown", $.proxy(this.onDeletePressed, this));
 
@@ -175,8 +176,6 @@ define(["jquery",
                     this.generateCategoriesLegend(annotationsTool.video.get("categories").toExportJSON(true));
                     this.updateTitle(annotationsTool.video);
                 }, this);
-
-                annotationsTool.onWindowResize = this.onWindowResize;
 
                 this.checkUserAndLogin();
             },
@@ -237,7 +236,6 @@ define(["jquery",
                 var loadVideoDependantView = $.proxy(function () {
 
                     if (this.loadingPercent === 100) {
-                        console.log("Annotations-tool already ready");
                         return;
                     }
 
@@ -296,7 +294,6 @@ define(["jquery",
                     this.timelineView.redraw();
                 }
 
-                console.log("Annotations-tool ready");
                 annotationsTool.trigger(annotationsTool.EVENTS.READY);
             },
 
