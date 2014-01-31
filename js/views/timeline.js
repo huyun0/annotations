@@ -363,10 +363,6 @@ define(["jquery",
                 this.timerangeChange();
                 this.$timeline.scroll(this.updateHeader);
                 this.onPlayerTimeUpdate();
-
-                setTimeout(function () {
-                    self.redraw();
-                }, 500);
             },
 
 
@@ -1048,8 +1044,6 @@ define(["jquery",
              * @alias module:views-timeline.TimelineView#onPlayerTimeUpdate
              */
             onPlayerTimeUpdate: function () {
-                console.log("Player update: " + new Date().getSeconds() + "." + new Date().getMilliseconds());
-
                 var currentTime = this.playerAdapter.getCurrentTime(),
                     newDate = this.getFormatedDate(currentTime);
 
