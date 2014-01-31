@@ -661,6 +661,35 @@ define(["jquery",
                     }
                 },
 
+                /**
+                 * Get an array containning all the annotations or only the ones from the given track
+                 * @alias   annotationsTool.getAnnotations
+                 * @param  {String} (trackId)      The track Id (Optional)
+                 * @return {Array}   The annotations
+                 */
+                getAnnotations: function (trackId) {
+                    var track,
+                        tracks,
+                        annotations = [];
+
+                    if (_.isUndefined(this.video)) {
+                        console.warn("No video present in the annotations tool. Either the tool is not completely loaded or an error happend during video loading.");
+                    } else {
+                        if (!_.isUndefined(trackId)) {
+                            track = this.getTrack(trackId);
+                            if (!_.isUndefined(track)) {
+                                annotations = track.get("annotations").toArray();
+                            }
+                        } else {
+                            tracks = this.video.get("tracks");
+                            tracks.each(function (t) {
+                                annotations = _.union(annotations, t.get("annotations").toArray());
+                            }, this);
+                        }
+                    }
+                    return annotations;
+                },
+
                 ////////////////
                 // IMPORTERs  //
                 ////////////////

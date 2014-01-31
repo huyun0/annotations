@@ -171,6 +171,19 @@ define(["jquery",
                 return tracks;
             },
 
+
+            /**
+             * Returns the time interval between each timeupdate event to take into account.
+             * It can improve a bit the performance if the amount of annotations is important. 
+             * @alias module:annotations-tool-configuration.Configuration.getTimeupdateIntervalForTimeline
+             * @return {number} The interval
+             */
+            getTimeupdateIntervalForTimeline: function () {
+                // TODO Check if this function should be linear
+                return Math.max(500, annotationsTool.getAnnotations().length * 3);
+
+            },
+
             /**
              * Formats the given date in 
              * @alias module:annotations-tool-configuration.Configuration.formatDate

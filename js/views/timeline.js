@@ -322,7 +322,7 @@ define(["jquery",
                 $(window).bind("updateTrackAccess", $.proxy(this.onUpdateTrack, this));
 
 
-                annotationsTool.addTimeupdateListener(this.onPlayerTimeUpdate, 1000);
+                annotationsTool.addTimeupdateListener(this.onPlayerTimeUpdate, annotationsTool.getTimeupdateIntervalForTimeline());
 
                 this.$el.find(".timeline-frame > div:first-child").bind("click", function (event) {
                     if ($(event.target).find(".timeline-event").length > 0) {
