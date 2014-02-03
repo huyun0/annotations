@@ -32,6 +32,8 @@ define(["backbone", "access"], function (Backbone, ACCESS) {
     var FiltersManager = function (master) {
         _.extend(this, Backbone.Events);
 
+        this._cloneFilters();
+
         if (master instanceof FiltersManager) {
             this.master = master;
             this.isBindedToMaster = true;
@@ -53,22 +55,79 @@ define(["backbone", "access"], function (Backbone, ACCESS) {
          */
         filters: {
             mine: {
-                active: false,
-                filter: function (list) {
+                active   : false,
+                condition: function (item) {
+                    return _.isUndefined(item.model) || item.model.get("isMine");
+                },
+                filter   : function (list) {
                     return _.filter(list, function (item) {
-                        return _.isUndefined(item.model) || item.model.get("isMine");
+                        return this.condition(item);
                     }, this);
                 }
             },
             public: {
-                active: false,
-                filter: function (list) {
+                active   : false,
+                condition: function (item) {
+                    return _.isUndefined(item.model) || item.model.get("isPublic") || (item.model.get("access") === ACCESS.PUBLIC);
+                },
+                filter   : function (list) {
                     return _.filter(list, function (item) {
-                        return _.isUndefined(item.model) || item.model.get("isPublic") || (item.model.get("access") === ACCESS.PUBLIC);
+                        return this.condition(item);
+                    }, this);
+                }
+            },
+            timerange: {
+                active   : false,
+                start    : 0,
+                end      : 0,
+                condition: function (item) {
+                    if (!_.isUndefined(item.voidItem)) {
+                        return true;
+                    } else if (_.isUndefined(item.start) || _.isUndefined(item.end)) {
+                        return false;
+                    }
+
+                    return (item.start >= this.start && item.start < this.end) ||
+                           (item.start <= this.start && item.end >= this.end);
+                },
+                filter   : function (list) {
+                    return _.filter(list, function (item) {
+                        return this.condition(item);
                     }, this);
                 }
             }
+        },
 
+        /**
+         * Clone the default filters
+         * @return {Object} The cloned filters list
+         */
+        _cloneFilters: function () {
+            var filters = {};
+
+            _.each(this.filters, function (filter, id) {
+                filters[id] = _.clone(filter);
+            }, this);
+
+            this.filters = filters;
+
+            return filters;
+        },
+
+        /**
+         * Filter the given with all the active filter
+         * @param  {Object} list   The list of elements to filter
+         * @params {Object} (filters) The list of filters to use 
+         * @return {Object} the filtered list 
+         */
+        filterAll: function (list, filters) {
+            var activeFilters = _.isUndefined(filters) ? this.filters : filters;
+
+            return _.filter(list, function (item) {
+                        return  _.every(activeFilters, function (filter) {
+                                    return filter.active ? filter.condition(item) : true;
+                                }, this);
+                    }, this);
         },
 
         /**
@@ -99,6 +158,10 @@ define(["backbone", "access"], function (Backbone, ACCESS) {
          * @param  {boolean} active Define if the filter must be active or not
          */
         _switchFilterLocally: function (id, active) {
+            if (_.isUndefined(this.filters[id])) {
+                return;
+            }
+            
             this.filters[id].active = active;
             this.trigger("switch", {id: id, active: active});
         },

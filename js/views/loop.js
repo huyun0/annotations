@@ -139,7 +139,7 @@ define(["jquery",
                                     "toggle",
                                     "toggleVisibity",
                                     "typeLoopLength");
-                    var duration;
+                    var annotateView;
 
                     this.playerAdapter = annotationsTool.playerAdapter;
                     this.loops = new Loops([], annotationsTool.video);
@@ -149,8 +149,7 @@ define(["jquery",
                     this.initSlider();
 
                     if (!_.isUndefined(annotationsTool.views.annotate)) {
-                        var annotateView = annotationsTool.views.annotate,
-                            self = this;
+                        annotateView = annotationsTool.views.annotate;
                         annotateView.$el.find(".dropdown-menu").append(this.LAYOUT_MENU_TMPL);
                         annotateView.$el.find(".dropdown-menu #" + this.LAYOUT_MENU_CLASS).bind("click", this.toggleVisibity);
                     }
@@ -181,7 +180,7 @@ define(["jquery",
 
                     if ($(event.target).hasClass("checked")) {
                         if (this.wasEnableBeforeDeactivate) {
-                            this.toggle(true)
+                            this.toggle(true);
                         }
                         this.$el.show();
                     } else {
@@ -205,7 +204,7 @@ define(["jquery",
                             formater: function (value) {
                                 return value + " s";
                             }
-                    });
+                        });
 
                     $("#slider").bind("slideStop", this.changeLoopLength);
                     this.$el.find("#loop-length").val(this.currentLoopLength);
@@ -227,7 +226,9 @@ define(["jquery",
                         $(this.playerAdapter).unbind(PlayerAdapter.EVENTS.TIMEUPDATE, this.checkLoop);
                         this.$el.addClass("disabled");
                         this.resetLoops();
-                        annotationsTool.views.timeline.redraw();
+                        if (annotationsTool.getLayoutConfiguration().timeline) {
+                            annotationsTool.views.timeline.redraw();
+                        }
                     }
 
                     this.isEnable = isEnable;
@@ -378,7 +379,6 @@ define(["jquery",
                 createLoops: function (loopLength) {
                     var duration    = this.playerAdapter.getDuration(),
                         currentTime = this.playerAdapter.getCurrentTime(),
-                        isLimit     = false,
                         endTime,
                         startTime   = currentTime % loopLength,
                         loop;
@@ -427,6 +427,11 @@ define(["jquery",
                  * @alias module:views-loop.Loop#addTimelineItem
                  */
                 addTimelineItem: function (loop, isCurrent) {
+                    if (!annotationsTool.getLayoutConfiguration().timeline) {
+                        // Timeline is not enabled
+                        return;
+                    }
+
                     var timeline    = annotationsTool.views.timeline,
                         loopClass   = isCurrent ? "loop current" : "loop";
 
@@ -448,11 +453,13 @@ define(["jquery",
                  * @alias module:views-loop.Loop#resetLoops
                  */
                 resetLoops: function () {
-                    this.loops.each(function (loop, index) {
-                        annotationsTool.views.timeline.removeItem("loop-" + loop.cid, (index + 1 == this.loops.length));
-                    }, this);
+                    if (annotationsTool.getLayoutConfiguration().timeline) {
+                        this.loops.each(function (loop, index) {
+                            annotationsTool.views.timeline.removeItem("loop-" + loop.cid, (index + 1 == this.loops.length));
+                        }, this);
+                    }
 
-                    this.loops.each(function (loop, index) {
+                    this.loops.each(function (loop) {
                         loop.destroy();
                     });
 

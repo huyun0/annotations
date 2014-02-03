@@ -28,14 +28,17 @@
  */
 define(["jquery",
         "backbone",
+        "backbone-annotations-sync",
+        "collections/videos",
         "views/main",
         "views/alert",
         "text!templates/delete-modal.tmpl",
         "text!templates/delete-warning-content.tmpl",
         "prototypes/player_adapter",
-        "handlebars"],
+        "handlebarsHelpers",
+        "roles"],
 
-        function ($, Backbone, MainView, AlertView, DeleteModalTmpl, DeleteContentTmpl, PlayerAdapter, Handlebars) {
+        function ($, Backbone, AnnotationSync, Videos, MainView, AlertView, DeleteModalTmpl, DeleteContentTmpl, PlayerAdapter, Handlebars, ROLES) {
 
             "use strict";
 
@@ -46,13 +49,20 @@ define(["jquery",
             window.annotationsTool = {
 
                 EVENTS: {
-                    ANNOTATION_SELECTION: "at:annotation-selection",
-                    READY               : "at:ready",
-                    ANNOTATE_TOGGLE_EDIT: "at:annotate-switch-edit-modus",
-                    TIMEUPDATE          : "at:timeupdate"
+                    ANNOTATION_SELECTION : "at:annotation-selection",
+                    ANNOTATE_TOGGLE_EDIT : "at:annotate-switch-edit-modus",
+                    MODELS_INITIALIZED   : "at:models-initialized",
+                    NOTIFICATION         : "at:notification",
+                    READY                : "at:ready",
+                    TIMEUPDATE           : "at:timeupdate",
+                    USER_LOGGED          : "at:logged"
                 },
 
+                timeupdateIntervals: {},
+
                 views: {},
+
+                modelsInitialized: false,
 
                 deleteModalTmpl: Handlebars.compile(DeleteModalTmpl),
 
@@ -66,6 +76,7 @@ define(["jquery",
                      * @param {TargetsType} type Type of the target to be deleted
                      */
                     start: function (target, type, callback) {
+
                         var confirm = function () {
                                 type.destroy(target, callback);
                                 this.deleteModal.modal("toggle");
@@ -75,6 +86,11 @@ define(["jquery",
                                     confirm();
                                 }
                             };
+
+                        if (!target.get("isMine") && this.getUserRole() !== ROLES.ADMINISTRATOR) {
+                            this.alertWarning("You are not authorized to deleted this " + type.name + "!");
+                            return;
+                        }
 
                         confirmWithEnter = _.bind(confirmWithEnter, this);
                         confirm = _.bind(confirm, this);
@@ -114,9 +130,16 @@ define(["jquery",
                  */
                 start: function (config) {
                     _.bindAll(this, "updateSelectionOnTimeUpdate",
+                                    "createTrack",
+                                    "createAnnotation",
                                     "getAnnotation",
                                     "getSelection",
                                     "getTrack",
+                                    "getTracks",
+                                    "getSelectedTrack",
+                                    "initModels",
+                                    "importTracks",
+                                    "importCategories",
                                     "hasSelection",
                                     "onClickSelectionById",
                                     "onDestroyRemoveSelection",
@@ -133,18 +156,41 @@ define(["jquery",
                         this.loadVideo();
                     }
 
-                    /**
-                     * Handlebars helper to format a date to the configured format
-                     * @alias module:Handlebars#formatDate
-                     * @param  {date} date The date to format
-                     * @return {string}      The formated date
-                     */
-                    Handlebars.registerHelper("formatDate", config.formatDate);
+                    if ((this.isBrowserIE9() && !(this.playerAdapter.__proto__ instanceof this.PlayerAdapter)) ||
+                        (!this.isBrowserIE9() && !(this.playerAdapter instanceof PlayerAdapter))) {
+                        throw "The player adapter is not valid! It must has PlayerAdapter as prototype.";
+                    }
+
+                    // Load the good storage module
+                    Backbone.sync = this.localStorage ? Backbone.localSync : AnnotationSync;
 
                     this.deleteOperation.start = _.bind(this.deleteOperation.start, this);
                     this.initDeleteModal();
-                    $(this.playerAdapter).bind(PlayerAdapter.EVENTS.TIMEUPDATE, this.updateSelectionOnTimeUpdate);
+
+                    this.addTimeupdateListener(this.updateSelectionOnTimeUpdate, 900);
+
                     this.currentSelection = [];
+
+                    this.once(this.EVENTS.USER_LOGGED, this.initModels);
+                    this.once(this.EVENTS.MODELS_INITIALIZED, function () {
+                        var trackImported = false;
+
+                        if (!_.isUndefined(this.tracksToImport)) {
+                            if (this.playerAdapter.getStatus() === PlayerAdapter.STATUS.PAUSED) {
+                                this.importTracks(this.tracksToImport());
+                                trackImported = true;
+                            } else {
+                                $(this.playerAdapter).one(PlayerAdapter.EVENTS.READY + " " + PlayerAdapter.EVENTS.PAUSE, function () {
+                                    if (trackImported) {
+                                        return false;
+                                    }
+                                    
+                                    annotationsTool.importTracks(annotationsTool.tracksToImport());
+                                    trackImported = true;
+                                });
+                            }
+                        }
+                    }, this);
 
                     this.views.main = new MainView(this.playerAdapter);
 
@@ -152,6 +198,8 @@ define(["jquery",
 
                     $(window).bind("mousedown", this.onMouseDown);
                     $(window).bind("mouseup", this.onMouseUp);
+
+
                 },
 
                 /**
@@ -250,37 +298,58 @@ define(["jquery",
                 },
 
                 /**
-                 * Listen and retrigger timeupdate event from player adapter events in divided frequence (between 1/1 and 1/10)
+                 * Listen and retrigger timeupdate event from player adapter events with added intervals
                  * @alias   annotationsTool.onTimeUpdate
                  */
                 onTimeUpdate: function () {
-                    var currentTime = this.playerAdapter.getCurrentTime();
+                    var currentPlayerTime = this.playerAdapter.getCurrentTime(),
+                        currentTime = new Date().getTime();
 
-                    // Ensure that this is an timeupdate due to normal playback, otherwise reinitialize the interval to 0.
-                    if (_.isUndefined(this.timeUpdateInterval) || (this.playerAdapter.getStatus() !== PlayerAdapter.STATUS.PLAYING) || (currentTime - this.lastTimeUpdate > 50)) {
-                        this.timeUpdateInterval = 1;
-                    }
+                    // Ensure that this is an timeupdate due to normal playback, otherwise trigger timeupdate event for all intervals
+                    if ((_.isUndefined(this.lastTimeUpdate)) || (this.playerAdapter.getStatus() !== PlayerAdapter.STATUS.PLAYING) ||
+                        (currentTime - this.lastTimeUpdate > 1000)) {
 
-                    // Ensure that the timestamp from the last update is set
-                    if (_.isUndefined(this.lastTimeUpdate)) {
-                        this.lastTimeUpdate = 1;
-                    }
-                    
-                    // Trigger all the current events
-                    this.trigger(this.EVENTS.TIMEUPDATE, currentTime);
-                    for (var i = 1; i <= 10; i++) {
-                        if (this.timeUpdateInterval % i == 0) {
-                            this.trigger(this.EVENTS.TIMEUPDATE + ":" + i, currentTime);
-                        }                        
+                        // Ensure that the timestamp from the last update is set
+                        if (_.isUndefined(this.lastTimeUpdate)) {
+                            this.lastTimeUpdate = 1;
+                        }
+                        _.each(this.timeupdateIntervals, function (lastUpdate, interval) {
+                            this.trigger(this.EVENTS.TIMEUPDATE + ":" + interval, currentPlayerTime);
+                            this.timeupdateIntervals[interval] = currentTime;
+                        }, this);
+                    } else {
+                        // Trigger all the current events
+                        this.trigger(this.EVENTS.TIMEUPDATE + ":all", currentPlayerTime);
+                        _.each(this.timeupdateIntervals, function (lastUpdate, interval) {
+                            if ((currentTime - lastUpdate) > parseInt(interval, 10)) {
+                                this.trigger(this.EVENTS.TIMEUPDATE + ":" + interval, currentPlayerTime);
+                                this.timeupdateIntervals[interval] = currentTime;
+                            }
+                        }, this);
                     }
 
                     this.lastTimeUpdate = new Date().getTime();
+                },
 
-                    if (this.timeUpdateInterval > 10 ) {
-                        this.timeUpdateInterval = 1;
-                    } else {
-                        this.timeUpdateInterval++;
+                /**
+                 * Add a timeupdate listener with a certain 
+                 * @alias   annotationsTool.addTimeupdateListener
+                 * @param {Object} callback the listener callback
+                 * @param {Integer} (interval) the interval between each timeupdate event
+                 */
+                addTimeupdateListener: function (callback, interval) {
+                    var timeupdateEvent = annotationsTool.EVENTS.TIMEUPDATE;
+
+                    if (!_.isUndefined(interval)) {
+                        timeupdateEvent += ":" + interval;
+                        this.listenTo(annotationsTool, annotationsTool.EVENTS.TIMEUPDATE, callback);
+                        
+                        if (_.isUndefined(annotationsTool.timeupdateIntervals[interval])) {
+                            annotationsTool.timeupdateIntervals[interval] = 0;
+                        }
                     }
+
+                    this.listenTo(annotationsTool, timeupdateEvent, callback);
                 },
 
                 ///////////////////////////////////////////////
@@ -303,7 +372,7 @@ define(["jquery",
                     if (!this.isMouseDown && this.timeMouseDown < 300) {
                         this.setSelectionById(selectedIds, moveTo, isManuallySelected);
                     }
-                }, 
+                },
 
                 /**
                  * Listener for destroy event on selected annotation to update the selection
@@ -337,7 +406,7 @@ define(["jquery",
                         tmpAnnotation;
 
                     if (_.isArray(selectedIds) && selectedIds.length > 0) {
-                        _.each(selectedIds, function (selection, key) {
+                        _.each(selectedIds, function (selection) {
                             tmpAnnotation = this.getAnnotation(selection.id, selection.trackId);
                             if (!_.isUndefined(tmpAnnotation)) {
                                 selectionAsArray.push(tmpAnnotation);
@@ -370,7 +439,8 @@ define(["jquery",
                                             if (!_.find(newSelection, function (newAnnotation) {
                                                 return newAnnotation.get("id") === annotation.get("id");
                                             }, this)) {
-                                                return (equal = false);
+                                                equal = false;
+                                                return equal;
                                             }
                                         }, this);
 
@@ -412,7 +482,7 @@ define(["jquery",
                     }, this);
 
                     // if the selection is not empty, we move the playhead to it
-                    if (this.currentSelection.length >0 && moveTo) {
+                    if (this.currentSelection.length > 0 && moveTo) {
                         this.playerAdapter.setCurrentTime(selection[0].get("start"));
                     }
 
@@ -473,40 +543,50 @@ define(["jquery",
                     this.setSelection(selection, false);
                 },
 
-
+                //////////////
+                // CREATORs //
+                //////////////
+                
+                
                 /**
-                 * Delete the annotation with the given id with the track with the given track id
-                 * @alias   annotationsTool.deleteAnnotation
-                 * @param {Integer} annotationId The id of the annotation to delete
-                 * @param {Integer} trackId Id of the track containing the annotation
+                 * Create a new track
+                 * @alias   annotationsTool.createTrack
+                 * @param  {Object} parameters The content of the new track
+                 * @param  {Object} (options) The options for the Backone.js options for the model creation
+                 * @return {Object}  The created track
                  */
-                deleteAnnotation: function (annotationId, trackId) {
-                    var annotation;
+                createTrack: function (parameters, options) {
+                    var defaultOptions = {wait: true}; // TODO define default options for all tracks
 
-                    if (typeof trackId === "undefined") {
-                        annotationsTool.video.get("tracks").each(function (track) {
-                            if (track.get("annotations").get(annotationId)) {
-                                trackId = track.get("id");
-                            }
-                        });
+                    return this.video.get("tracks").create(parameters, (_.isUndefined(options) ? defaultOptions : options));
+                },
+                
+                /**
+                 * Create an annotation on the given track or on the selected Track if no one is given
+                 * @alias   annotationsTool.createAnnotations
+                 * @param  {Object} parameters The content of the new annotation
+                 * @param  {Object} (track) The track on which the annotation should be created
+                 * @param  {Object} (options) The options for the Backone.js options for the model creation
+                 * @return {Object}  The created annotation
+                 */
+                createAnnotation: function (parameters, track, options) {
+                    var parentTrack = _.isUndefined(track) ? this.getSelectedTrack() : track,
+                        defaultOptions = {}; // TODO define default options for all annotations
+
+                    if (_.isUndefined(parentTrack)) {
+                        throw "Annotation with parameters '" + JSON.stringify(parameters) + "' can be created";
                     }
 
-                    annotation = annotationsTool.video.getAnnotation(annotationId, trackId);
-
-                    if (annotation) {
-                        this.deleteOperation.start(annotation, this.deleteOperation.targetTypes.ANNOTATION);
-                    } else {
-                        console.warn("Not able to find annotation %i on track %i", annotationId, trackId);
-                    }
+                    return parentTrack.get("annotations").create(parameters, (_.isUndefined(options) ? defaultOptions : options));
                 },
 
-
-                //////////////////////////////////////
-                // Shortcuts for Getters & Setters  //
-                /////////////////////////////////////
+                /////////////
+                // GETTERs //
+                /////////////
 
                 /**
                  * Get the track with the given Id
+                 * @alias   annotationsTool.getTrack
                  * @param  {String} id The track Id
                  * @return {Object}    The track object or undefined if not found
                  */
@@ -519,7 +599,31 @@ define(["jquery",
                 },
 
                 /**
+                 * Get all the tracks
+                 * @alias   annotationsTool.getTracks
+                 * @return {Object}    The list of the tracks
+                 */
+                getTracks: function () {
+                    if (_.isUndefined(this.video)) {
+                        console.warn("No video present in the annotations tool. Either the tool is not completely loaded or an error happend during video loading.");
+                    } else {
+                        return this.video.get("tracks");
+                    }
+                },
+
+                /**
+                 * Get the track with the given Id
+                 * @alias   annotationsTool.getTrack
+                 * @param  {String} id The track Id
+                 * @return {Object}    The track object or undefined if not found
+                 */
+                getSelectedTrack: function () {
+                    return this.selectedTrack;
+                },
+
+                /**
                  * Get the annotation with the given Id
+                 * @alias   annotationsTool.getAnnotation
                  * @param  {String} annotationId The annotation 
                  * @param  {String} (trackId)      The track Id (Optional)
                  * @return {Object}   The annotation object or undefined if not found
@@ -534,7 +638,7 @@ define(["jquery",
                         track = this.getTrack(trackId);
 
                         if (_.isUndefined(track)) {
-                            console.warn("Not able to find the track with the given Id"); 
+                            console.warn("Not able to find the track with the given Id");
                             return;
                         } else {
                             return track.getAnnotation(annotationId);
@@ -555,9 +659,232 @@ define(["jquery",
                             return tmpAnnotation;
                         }
                     }
-                }
+                },
 
+                /**
+                 * Get an array containning all the annotations or only the ones from the given track
+                 * @alias   annotationsTool.getAnnotations
+                 * @param  {String} (trackId)      The track Id (Optional)
+                 * @return {Array}   The annotations
+                 */
+                getAnnotations: function (trackId) {
+                    var track,
+                        tracks,
+                        annotations = [];
+
+                    if (_.isUndefined(this.video)) {
+                        console.warn("No video present in the annotations tool. Either the tool is not completely loaded or an error happend during video loading.");
+                    } else {
+                        if (!_.isUndefined(trackId)) {
+                            track = this.getTrack(trackId);
+                            if (!_.isUndefined(track)) {
+                                annotations = track.get("annotations").toArray();
+                            }
+                        } else {
+                            tracks = this.video.get("tracks");
+                            tracks.each(function (t) {
+                                annotations = _.union(annotations, t.get("annotations").toArray());
+                            }, this);
+                        }
+                    }
+                    return annotations;
+                },
+
+                ////////////////
+                // IMPORTERs  //
+                ////////////////
+                
+                /**
+                 * Import the given tracks in the tool
+                 * @alias annotationsTool.importTracks
+                 * @param {PlainObject} tracks Object containing the tracks in the tool
+                 */
+                importTracks: function (tracks) {
+                    _.each(tracks, function (track) {
+                        this.trigger(this.EVENTS.NOTIFICATION, "Importing track " + track.name);
+                        if (_.isUndefined(this.getTrack(track.id))) {
+                            this.createTrack(track);
+                        } else {
+                            console.info("Can not import track %s: A track with this ID already exist.", track.id);
+                        }
+                    }, this);
+                },
+
+                /**
+                 * Import the given categories in the tool
+                 * @alias annotationsTool.importCategories
+                 * @param {PlainObject} imported Object containing the .categories and .scales to insert in the tool
+                 * @param {PlainObject} defaultCategoryAttributes The default attributes to use to insert the imported categories (like access)
+                 */
+                importCategories: function (imported, defaultCategoryAttributes) {
+                    var videoCategories = annotationsTool.video.get("categories"),
+                        videoScales = annotationsTool.video.get("scales"),
+                        labelsToAdd,
+                        newCat,
+                        newScale,
+                        scaleValuesToAdd,
+                        scaleOldId,
+                        scalesIdMap = {};
+
+                    if (!imported.categories || imported.categories.length === 0) {
+                        return;
+                    }
+
+                    _.each(imported.scales, function (scale) {
+                        scaleOldId = scale.id;
+                        scaleValuesToAdd = scale.scaleValues;
+                        delete scale.id;
+                        delete scale.scaleValues;
+
+                        newScale = videoScales.create(scale, {async: false});
+                        scalesIdMap[scaleOldId] = newScale.get("id");
+
+                        if (scaleValuesToAdd) {
+                            _.each(scaleValuesToAdd, function (scaleValue) {
+                                scaleValue.scale = newScale;
+                                newScale.get("scaleValues").create(scaleValue);
+                            });
+                        }
+                    });
+
+                    _.each(imported.categories, function (category) {
+                        labelsToAdd = category.labels;
+                        category.scale_id = scalesIdMap[category.scale_id];
+                        delete category.labels;
+                        newCat = videoCategories.create(_.extend(category, defaultCategoryAttributes));
+
+                        if (labelsToAdd) {
+                            _.each(labelsToAdd, function (label) {
+                                label.category = newCat;
+                                newCat.get("labels").create(label);
+                            });
+                        }
+                    });
+                },
+
+                //////////////
+                // DELETERs //
+                //////////////
+
+                /**
+                 * Delete the annotation with the given id with the track with the given track id
+                 * @alias annotationsTool.deleteAnnotation
+                 * @param {Integer} annotationId The id of the annotation to delete
+                 * @param {Integer} trackId Id of the track containing the annotation
+                 */
+                deleteAnnotation: function (annotationId, trackId) {
+                    var annotation,
+                        self = annotationsTool;
+
+                    if (typeof trackId === "undefined") {
+                        annotationsTool.video.get("tracks").each(function (track) {
+                            if (track.get("annotations").get(annotationId)) {
+                                trackId = track.get("id");
+                            }
+                        });
+                    }
+
+                    annotation = self.video.getAnnotation(annotationId, trackId);
+
+                    if (annotation) {
+                        self.deleteOperation.start(annotation, self.deleteOperation.targetTypes.ANNOTATION);
+                    } else {
+                        console.warn("Not able to find annotation %i on track %i", annotationId, trackId);
+                    }
+                },
+
+                /**
+                 * Get all the annotations for the current user
+                 * @alias annotationsTool.initModels
+                 */
+                initModels: function () {
+                    var video,
+                        videos = new Videos(),
+                        tracks,
+                        annotations,
+                        selectedTrack,
+                        remindingFetchingTrack,
+
+                        // function to conclude the retrive of annotations
+                        concludeInitialization = $.proxy(function () {
+
+                            // At least one private track should exist, we select the first one
+                            selectedTrack = tracks.getMine()[0];
+
+                            if (!selectedTrack.get("id")) {
+                                selectedTrack.bind("ready", concludeInitialization(), this);
+                            } else {
+                                annotationsTool.selectedTrack = selectedTrack;
+                            }
+
+                            // Use to know if all the tracks have been fetched
+                            remindingFetchingTrack = tracks.length;
+
+                            // Function to add the different listener to the annotations
+                            tracks.each(function (track) {
+                                annotations = track.get("annotations");
+                                this.listenTo(annotations, "add", this.onWindowResize);
+                                if (--remindingFetchingTrack === 0) {
+                                    annotationsTool.modelsInitialized = true;
+                                    annotationsTool.trigger(annotationsTool.EVENTS.MODELS_INITIALIZED);
+                                }
+                            }, this);
+
+                        }, this),
+
+                        /**
+                         * Create a default track for the current user if no private track is present
+                         */
+                        createDefaultTrack = function () {
+
+                            tracks = annotationsTool.video.get("tracks");
+
+                            if (annotationsTool.localStorage) {
+                                tracks = tracks.getVisibleTracks();
+                            }
+
+                            if (tracks.getMine().length === 0) {
+                                tracks.create({
+                                        name        : "Default " + annotationsTool.user.get("nickname"),
+                                        description : "Default track for user " + annotationsTool.user.get("name")
+                                    },
+                                    {
+                                        wait    : true,
+                                        success : concludeInitialization
+                                    }
+                                );
+                            } else {
+                                concludeInitialization();
+                            }
+                        };
+
+                    // If we are using the localstorage
+                    if (this.localStorage) {
+                        videos.fetch();
+
+                        if (videos.length === 0) {
+                            video = videos.create(this.getVideoParameters(), {wait: true});
+                        } else {
+                            video = videos.at(0);
+                            video.set(this.getVideoParameters());
+                        }
+
+                        this.video = video;
+                        createDefaultTrack();
+                    } else { // With Rest storage
+                        videos.add({video_extid: this.getVideoExtId()});
+                        video = videos.at(0);
+                        this.video = video;
+                        video.save();
+                        if (video.get("ready")) {
+                            createDefaultTrack();
+                        } else {
+                            video.once("ready", createDefaultTrack);
+                        }
+                    }
+                }
             };
+
 
 
             /**
@@ -620,7 +947,7 @@ define(["jquery",
 
                             success: function () {
                                 if (annotationsTool.localStorage) {
-                                     if (target.collection) {
+                                    if (target.collection) {
                                         target.collection.remove(target);
                                     }
 

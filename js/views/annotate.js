@@ -39,7 +39,7 @@ define(["jquery",
         "text!templates/annotate-tab-title.tmpl",
         "roles",
         "access",
-        "handlebars",
+        "handlebarsHelpers",
         "backbone"],
 
     function ($, _, PlayerAdapter, Annotation, Annotations, Categories, AnnotateTab, TabTitleTemplate, ROLES, ACCESS, Handlebars, Backbone) {
@@ -66,14 +66,14 @@ define(["jquery",
                     id        : "public",
                     name      : "Public",
                     filter    : {isPublic: true},
-                    roles     : [ROLES.SUPERVISOR],
+                    roles     : [ROLES.SUPERVISOR, ROLES.ADMINISTRATOR],
                     attributes: {access: ACCESS.PUBLIC}
                 },
                 MINE: {
                     id        : "mine",
                     name      : "Mine",
                     filter    : {isPublic: false},
-                    roles     : [ROLES.SUPERVISOR, ROLES.USER],
+                    roles     : [ROLES.SUPERVISOR, ROLES.USER, ROLES.ADMINISTRATOR],
                     attributes: {access: ACCESS.PRIVATE}
                 }
             },

@@ -89,6 +89,7 @@ div.timeline-groups-text{
         a.content-overlay {
             display: inline-block;
             width: 150px;
+            height: 100%;
         }
 
         div.content{
@@ -101,6 +102,12 @@ div.timeline-groups-text{
 
             &:hover {
                 text-decoration: none!important;
+            }
+
+            &.empty {
+                width: 150px;
+                color: grey;
+                text-transform: none;
             }
         }
     }

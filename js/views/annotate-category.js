@@ -27,7 +27,7 @@
 define(["jquery",
         "views/annotate-label",
         "text!templates/annotate-category.tmpl",
-        "handlebars",
+        "handlebarsHelpers",
         "jquery.colorPicker",
         "backbone"],
 

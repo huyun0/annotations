@@ -248,7 +248,11 @@ define(["jquery",
              * @return {Track}           The track with the given id
              */
             getTrack: function (trackId) {
-                return this.get("tracks").get(trackId);
+                if (_.isUndefined(this.tracks)) {
+                    this.tracks = this.get("tracks");
+                }
+
+                return this.tracks.get(trackId);
             },
 
             /**

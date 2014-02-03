@@ -5,15 +5,15 @@
 
         {{#if created_by}}
         <i class="icon-info-sign" title="added by {{#if created_by_nickname}}{{created_by_nickname}}{{else}}{{nickname created_by}}{{/if}} on {{track}}"></i>
-    {{/if}}
+        {{/if}}
 
         {{#if isMine}}
         <i class="toggle-edit icon-pencil" title="Edit annotation."></i>
         {{/if}}
     
-    {{#if isMine}}
+    {{#canBeDeleted}}
         <i class="delete icon-trash" title="Delete annotation."></i>
-    {{/if}}
+    {{/canBeDeleted}}
 
     </div>
     <div class="left">

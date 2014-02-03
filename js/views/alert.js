@@ -26,7 +26,7 @@ define(["jquery",
         "backbone",
         "text!templates/alert-modal.tmpl",
         "roles",
-        "handlebars"],
+        "handlebarsHelpers"],
 
         function ($, Backbone, AlertTmpl, ROLES, Handlebars) {
 

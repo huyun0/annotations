@@ -45,9 +45,9 @@ define(["jquery",
             LAYOUT_CONFIGURATION: {
                 /** default configuration */
                 DEFAULT: {
-                    timeline: true,
-                    list: true,
-                    annotate: true
+                    timeline : true,
+                    list     : true,
+                    annotate : true
                 }
             },
 
@@ -90,7 +90,7 @@ define(["jquery",
              * @readOnly
              */
             plugins: {
-                Loop: function (callback) {
+                Loop: function () {
                         require(["views/loop"], function (Loop) {
                             annotationsTool.loopView = new Loop();
                         });
@@ -129,6 +129,12 @@ define(["jquery",
             playerAdapter: undefined,
 
             /**
+             * Array of tracks to import by default
+             * @type {module:player-adapter.tracksToImport}
+             */
+            tracksToImport: undefined,
+
+            /**
              * Formats the given date in 
              * @alias module:annotations-tool-configuration.Configuration.formatDate
              * @type {module:player-adapter.formatDate}
@@ -163,6 +169,15 @@ define(["jquery",
             },
 
             /**
+             * Define if the private-only mode is enabled
+             * @alias module:annotations-tool-configuration.Configuration.isPrivateOnly
+             * @return {boolean} True if this mode is enabled
+             */
+            isPrivateOnly: function () {
+                return false;
+            },
+
+            /**
              * Define if the free text annotations are or not enabled
              * @alias module:annotations-tool-configuration.Configuration.isFreeTextEnabled
              * @return {boolean} True if this feature is enabled
@@ -178,7 +193,19 @@ define(["jquery",
              */
             getVideoExtId: function () {
                 return $("video")[0].id;
-            },            
+            },
+
+            /**
+             * Returns the time interval between each timeupdate event to take into account.
+             * It can improve a bit the performance if the amount of annotations is important. 
+             * @alias module:annotations-tool-configuration.Configuration.getTimeupdateIntervalForTimeline
+             * @return {number} The interval
+             */
+            getTimeupdateIntervalForTimeline: function () {
+                // TODO Check if this function should be linear
+                return Math.max(500, annotationsTool.getAnnotations().length * 3);
+
+            },
 
             /**
              * Get the external parameters related to video. The supported parameters are now the following:
@@ -202,7 +229,7 @@ define(["jquery",
                     title: $("video")[0].currentSrc.split("/").pop().split(".")[0],
                     src_owner: $("video").first().attr("data-owner"),
                     src_creation_date:  $("video").first().attr("data-date")
-                }
+                };
             },
 
             /**
@@ -221,6 +248,15 @@ define(["jquery",
              */
             getUserRole: function () {
                 return ROLES.USER;
+            },
+
+            /**
+             * Get the name of the admin role
+             * @alias module:annotations-tool-configuration.Configuration.getAdminRoleName
+             * @return {ROLE} The name of the admin role
+             */
+            getAdminRoleName: function () {
+                return ROLES.ADMINISTRATOR;
             },
 
             /**
