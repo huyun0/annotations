@@ -168,8 +168,8 @@ function ($, PlayerAdapter, Annotation, User, CommentsContainer, Template, Backb
             // Add backbone events to the model
             _.extend(this.model, Backbone.Events);
 
-            this.listenTo(this.model, "change", function () {
-                console.log("List: Render on change.");
+            this.listenTo(this.model, "change", function (model, options) {
+                console.log("List: Render on change. " + model + " " + options);
                 this.render();
             });
             this.listenTo(this.model.get("comments"), "add", function () {

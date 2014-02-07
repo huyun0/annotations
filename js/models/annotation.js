@@ -134,14 +134,31 @@ define(["jquery",
              */
             parse: function (data) {
                 var attr = data.attributes ? data.attributes : data,
+                    parseDate = function (date) {
+                        if (_.isNumber(date)) {
+                            return new Date(date);
+                        } else if (_.isString) {
+                            return Date.parse(date);
+                        } else {
+                            return null;
+                        }
+                    },
                     tempSettings,
                     categories,
                     tempLabel,
                     label;
 
-                attr.created_at = attr.created_at !== null ? Date.parse(attr.created_at): null;
-                attr.updated_at = attr.updated_at !== null ? Date.parse(attr.updated_at): null;
-                attr.deleted_at = attr.deleted_at !== null ? Date.parse(attr.deleted_at): null;
+                if (attr.created_at) {
+                    attr.created_at = parseDate(attr.created_at);
+                }
+
+                if (attr.updated_at) {
+                    attr.updated_at = parseDate(attr.updated_at);
+                }
+
+                if (attr.deleted_at) {
+                    attr.deleted_at = parseDate(attr.deleted_at);
+                }
 
                 // Parse tags if present
                 if (attr.tags) {

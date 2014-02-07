@@ -86,6 +86,8 @@ define(["jquery",
                                "addTrack",
                                "addAnnotation",
                                "addList",
+                               "getPosition",
+                               "insertView",
                                "sortViewsbyTime",
                                "reset",
                                "select",
@@ -95,17 +97,16 @@ define(["jquery",
                                "toggleVisibility",
                                "disableFilter",
                                "expandAll",
-                               "collapseAll");
+                               "collapseAll",
+                               "updateView");
 
                 this.annotationViews = [];
                 this.filtersManager  = new FiltersManager(annotationsTool.filtersManager);
-                this.categories      = annotationsTool.video.get("categories");
                 this.tracks          = annotationsTool.video.get("tracks");
                 this.playerAdapter   = annotationsTool.playerAdapter;
 
                 this.listenTo(this.filtersManager, "switch", this.updateFiltersRender);
-                this.listenTo(this.categories, "change", this.render);
-                this.listenTo(this.tracks, "change", this.render);
+                this.listenTo(this.tracks, "change:access", this.render);
                 this.listenTo(this.tracks, "add", this.addTrack);
                 this.listenTo(annotationsTool, annotationsTool.EVENTS.ANNOTATION_SELECTION, this.select);
 
@@ -132,7 +133,7 @@ define(["jquery",
                 }, this));
 
                 this.listenTo(ann, "destroy", this.removeOne);
-                this.listenTo(ann, "change", this.sortViewsbyTime);
+                this.listenTo(ann, "change:start change:duration", this.updateView);
 
                 this.addList(ann.toArray(), annotationTrack, _.isNumber(index) && index === (this.tracks.length - 1));
             },
@@ -155,14 +156,49 @@ define(["jquery",
                     return;
                 } else {
                     view = new AnnotationView({annotation: annotation, track: track});
-                    this.annotationViews.push(view);
+                    this.insertView(view);
 
                     if (!isPartofList) {
-                        this.sortViewsbyTime();
                         view.selectVisually();
                     }
                 }
 
+            },
+
+            /**
+             * Inserts the given views at the right index in the list
+             * @alias module:views-list.List#insertView
+             * @param  {Object} view The view to add
+             */
+            insertView: function (view) {
+                var index = this.getPosition(view);
+
+                view.index = index;
+
+                this.annotationViews.splice(index, 0, view);
+
+                if (index === 0) {
+                    this.$el.find("#content-list").prepend(view.render().$el);
+                } else {
+                    this.annotationViews[index - 1].$el.after(view.render().$el);
+                }
+
+            },
+
+            /**
+             * Updates the position of view of the given annotation in the list
+             * @alias module:views-list.List#updateView
+             * @param  {Object} annotation The annotation of the view to update
+             */
+            updateView: function (annotation) {
+                var view = this.getViewFromAnnotation(annotation.get("id"));
+
+                // Remove the view in the list if the view index is valid 
+                if (!_.isUndefined(view.index) && this.annotationsViews[view.index] === view) {
+                    this.annotationsViews.splice(view.index, 1);
+                }
+
+                this.insertView(view);
             },
 
             /**
@@ -171,14 +207,10 @@ define(["jquery",
              * @param {Array} annotationsList List of annotations
              * @param {Boolean} sorting Defines if the list should be sorted after the list insertion
              */
-            addList: function (annotationsList, track, sorting) {
+            addList: function (annotationsList, track) {
                 _.each(annotationsList, function (annotation) {
                     this.addAnnotation(annotation, track, true);
                 }, this);
-
-                if (annotationsList.length > 0 && sorting) {
-                    this.sortViewsbyTime();
-                }
             },
 
             /**
@@ -247,7 +279,6 @@ define(["jquery",
                 _.find(this.annotationViews, function (annotationView, index) {
                     if (delAnnotation === annotationView.model) {
                         this.annotationViews.splice(index, 1);
-                        this.render();
                         return;
                     }
                 }, this);
@@ -262,6 +293,21 @@ define(["jquery",
                     return annotationView.model.get("start");
                 });
                 this.render();
+            },
+
+            /**
+             * Returns the index of the given view in the list 
+             * @alias module:views-list.List#getPosition
+             * @param  {Object} view The target view
+             * @return {Integer}      The view index
+             */
+            getPosition: function (view) {
+                // Each view keep the position
+                var index = _.sortedIndex(this.annotationViews, view, function (annotationView) {
+                    return annotationView.model.get("start");
+                }, this);
+
+                return index;
             },
 
             /**
@@ -326,15 +372,21 @@ define(["jquery",
              * @alias module:views-list.List#render
              */
             render: function () {
+                console.log("render list");
+
                 var list = this.annotationViews,
                     $listContainer = this.$el.find("#content-list").detach();
+
+                _.each(list, function (annView) {
+                    annView.render().$el.detach();
+                }, this);
 
                 $listContainer.empty();
 
                 list = this.filtersManager.filterAll(list);
 
                 _.each(list, function (annView) {
-                    $listContainer.append(annView.render().$el);
+                    $listContainer.append(annView.$el);
                 }, this);
 
                 this.$el.append($listContainer);
