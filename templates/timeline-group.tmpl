@@ -1,5 +1,4 @@
-<div class="timeline-group{{#if isMine}} mine{{/if}} track-max-level-{{#if timlineMaxLevel}}{{timelineMaxLevel}}{{else}}0{{/if}}" {{#if isMine}}onclick="$(window).trigger('selectTrack', ['{{id}}'])" ondblclick="$(window).trigger('updateTrack', ['{{id}}'])"{{/if}}>
-    <div class="track-id">{{id}}</div>
+<div class="timeline-group{{#if isMine}} mine{{/if}} track-max-level-{{#if timlineMaxLevel}}{{timelineMaxLevel}}{{else}}0{{/if}}" {{#if isMine}}onclick="$(window).trigger('selectTrack', ['{{id}}'])" ondblclick="$(window).trigger('updateTrack', ['{{id}}'])"{{/if}} data-id="{{id}}">
     <a id="track{{id}}"
        class="content-overlay"
        {{#if isMine}}onclick="$(window).trigger('selectTrack', ['{{id}}'])" ondblclick="$(window).trigger('updateTrack', ['{{id}}'])"{{/if}}

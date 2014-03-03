@@ -204,6 +204,15 @@ module.exports = function (grunt) {
             }
         },
 
+        jsdoc : {
+            dist : {
+                src: ['js/views/*.js', 'js/collections/*.js', 'js/models/*.js', 'js/prototypes/*.js'], 
+                options: {
+                    destination: 'doc'
+                }
+            }
+        },
+
 
         /** Task to run tasks in parrallel */
         concurrent: {
@@ -243,6 +252,18 @@ module.exports = function (grunt) {
                     out                        : 'optimized.js'
                 }
             }
+        },
+
+        // Remove unused CSS across multiple files
+        uncss: {
+          dist: {
+            files: {
+              'dist/css/tidy.css': ['www/index.html']
+              }
+            },
+            options: {
+                timeout: 50000
+            }
         }
     });
 
@@ -256,6 +277,8 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-requirejs');
     grunt.loadNpmTasks('assemble-less');
     grunt.loadNpmTasks('grunt-concurrent');
+    grunt.loadNpmTasks('grunt-jsdoc');
+    grunt.loadNpmTasks('grunt-uncss');
 
 
     /** ================================================

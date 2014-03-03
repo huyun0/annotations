@@ -372,8 +372,6 @@ define(["jquery",
              * @alias module:views-list.List#render
              */
             render: function () {
-                console.log("render list");
-
                 var list = this.annotationViews,
                     $listContainer = this.$el.find("#content-list").detach();
 

@@ -20,6 +20,8 @@
     "white"           : true,
     "expr"            : true,
     "globals"         : {
+        "Blob"            : true,
+        "FileReader"      : true,
         "console"         : true,
         "window"          : true,
         "annotationsTool" : true,
