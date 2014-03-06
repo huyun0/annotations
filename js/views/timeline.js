@@ -314,11 +314,6 @@ define(["jquery",
 
                 // Ensure that the timeline is redraw on window resize
                 $(window).bind("resize", this.onWindowResize);
-                $(window).bind("selectTrack", $.proxy(this.onTrackSelected, this));
-                $(window).bind("deleteTrack", $.proxy(this.onDeleteTrack, this));
-                $(window).bind("updateTrack", $.proxy(this.initTrackUpdate, this));
-                $(window).bind("updateTrackAccess", $.proxy(this.onUpdateTrack, this));
-
 
                 annotationsTool.addTimeupdateListener(this.onPlayerTimeUpdate, 1);
 
@@ -532,19 +527,35 @@ define(["jquery",
                     end               = this.getTimeInSeconds(currentChartRange.end),
                     size              = end - start,
                     currentTime       = this.playerAdapter.getCurrentTime(),
-                    videoDuration     = this.playerAdapter.getDuration();
+                    videoDuration     = this.playerAdapter.getDuration(),
+                    marge             = size / 20,
+                    startInSecond;
                 // popovers = $("div.popover.fade.right.in");
 
-                if ((currentTime - size / 2) < 0) {
-                    start = this.getFormatedDate(0);
-                    end = this.getFormatedDate(size);
-                } else if ((currentTime + size / 2) > videoDuration) {
-                    start = this.getFormatedDate(videoDuration - size);
-                    end = this.getFormatedDate(videoDuration);
+
+                if (annotationsTool.timelineFollowPlayhead) {
+                    if ((currentTime - size / 2) < 0) {
+                        start = this.getFormatedDate(0);
+                        end = this.getFormatedDate(size);
+                    } else if ((currentTime + size / 2) > videoDuration) {
+                        start = this.getFormatedDate(videoDuration - size);
+                        end = this.getFormatedDate(videoDuration);
+                    } else {
+                        start = this.getFormatedDate(currentTime - size / 2);
+                        end = this.getFormatedDate(currentTime + size / 2);
+                    }
                 } else {
-                    start = this.getFormatedDate(currentTime - size / 2);
-                    end = this.getFormatedDate(currentTime + size / 2);
+                    if (((currentTime + marge) >= end && end != videoDuration) || (currentTime > end || currentTime < start)) {
+                        startInSecond = Math.max(currentTime - marge, 0);
+                        start = this.getFormatedDate(startInSecond);
+                        end = this.getFormatedDate(Math.min(startInSecond + size, videoDuration));
+                    } else {
+                        start = this.getFormatedDate(start);
+                        end = this.getFormatedDate(end);
+                    }
                 }
+
+                
 
                 if (currentChartRange.start.getTime() != start.getTime() || currentChartRange.end.getTime() !== end.getTime()) {
                     this.timeline.setVisibleChartRange(start, end);
@@ -1710,10 +1721,6 @@ define(["jquery",
                 links.events.removeListener(this.timeline, "timechanged", this.onTimelineMoved);
                 links.events.removeListener(this.timeline, "change", this.onTimelineItemChanged);
                 links.events.removeListener(this.timeline, "delete", this.onTimelineItemDeleted);
-                $(window).unbind("selectTrack");
-                $(window).unbind("updateTrack");
-                $(window).unbind("deleteTrack");
-                $(window).unbind("deleteAnnotation");
                 $(window).unbind("resize", this.onWindowResize);
 
                 this.undelegateEvents();

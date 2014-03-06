@@ -1,7 +1,7 @@
-<div class="timeline-group{{#if isMine}} mine{{/if}} track-max-level-{{#if timlineMaxLevel}}{{timelineMaxLevel}}{{else}}0{{/if}}" {{#if isMine}}onclick="$(window).trigger('selectTrack', ['{{id}}'])" ondblclick="$(window).trigger('updateTrack', ['{{id}}'])"{{/if}} data-id="{{id}}">
+<div class="timeline-group{{#if isMine}} mine{{/if}} track-max-level-{{#if timlineMaxLevel}}{{timelineMaxLevel}}{{else}}0{{/if}}" data-id="{{id}}">
     <a id="track{{id}}"
        class="content-overlay"
-       {{#if isMine}}onclick="$(window).trigger('selectTrack', ['{{id}}'])" ondblclick="$(window).trigger('updateTrack', ['{{id}}'])"{{/if}}
+       {{#if isMine}}onclick="annotationsTool.views.timeline.onTrackSelected(event,'{{id}}');" ondblclick="annotationsTool.views.timeline.initTrackUpdate(event,'{{id}}');"{{/if}}
        title="{{secure name}}" 
        rel="popover"
        data-trigger="manual" 
@@ -16,14 +16,14 @@
         </div>
     {{#canBeDeleted}}
         <div class="group-edit">
-            <i onclick="$(window).trigger('deleteTrack', ['{{id}}'])" class="delete icon-trash" title="Delete  track"></i>
-            {{#if isMine}}<i onclick="$(window).trigger('updateTrack', ['{{id}}'])" class="update  icon-pencil" title="Update  track"></i>{{/if}}
+            <i onclick="annotationsTool.views.timeline.onDeleteTrack(event,'{{id}}');" class="delete icon-trash" title="Delete  track"></i>
+            {{#if isMine}}<i onclick="annotationsTool.views.timeline.initTrackUpdate(event,'{{id}}');" class="update  icon-pencil" title="Update  track"></i>{{/if}}
             {{#if isMine}}<span class="visibility" 
                   onmouseup="{{#isPrivateOnly}}{{else}}$(this).parent().parent().popover('show');{{/isPrivateOnly}}"
                   onmousedown="{{#isPrivateOnly}}
                                       annotationsTool.alertWarning('Public tracks have been disallowed for this video.');
                               {{else}}
-                                      $(window).trigger('updateTrackAccess', ['{{id}}'])
+                                      annotationsTool.views.timeline.onUpdateTrack(event,'{{id}}');
                               {{/isPrivateOnly}}" 
                   title="{{#isPrivateOnly}}No public track allowed in private-only mode!{{else}}Make {{#if isPublic}}in{{/if}}visible to others{{/isPrivateOnly}}">
                     <i class="icon-dark-grey {{#isPrivateOnly}}icon-private{{else}}{{#if isPublic}}icon-public{{else}}icon-private{{/if}}{{/isPrivateOnly}}"></i> {{#isPrivateOnly}}Private{{else}}{{#if isPublic}}Public{{else}}Private{{/if}}{{/isPrivateOnly}}</span>{{/if}}

@@ -185,6 +185,13 @@ define(["jquery",
             },
 
             /**
+             * Choose the behavior of the timeline. Set true to enable following the timeline
+             * @alias module:annotations-tool-configuration.Configuration.timelineFollowPlayhead
+             * @type {Boolean}
+             */
+            timelineFollowPlayhead: false,
+
+            /**
              * Formats the given date in 
              * @alias module:annotations-tool-configuration.Configuration.formatDate
              * @type {module:player-adapter.formatDate}
