@@ -208,6 +208,13 @@ define(["jquery",
             },
 
             /**
+             * Sets the behavior of the timeline. Enable it to follow the playhead.
+             * @alias module:annotations-tool-configuration.Configuration.timelineFollowPlayhead
+             * @type {Boolean}
+             */
+            timelineFollowPlayhead: true,
+
+            /**
              * Get the external parameters related to video. The supported parameters are now the following:
              *     - video_extid: Required! Same as the value returned by getVideoExtId
              *     - title: The title of the video

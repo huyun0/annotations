@@ -1456,7 +1456,7 @@ define(["jquery",
                 this.tracks.trigger("selected_track", track);
 
                 this.$el.find("div.selected").removeClass("selected");
-                this.$el.find(".timeline-group .track-id:contains(" + trackId + ")").parent().parent().addClass("selected");
+                this.$el.find(".timeline-group[data-id='" + trackId + "']").parent().addClass("selected");
             },
 
             /**

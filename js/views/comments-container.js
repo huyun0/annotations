@@ -105,7 +105,8 @@ define(["jquery",
                           "onAddComment",
                           "insert",
                           "onCancelComment",
-                          "keyupInsertProxy");
+                          "keyupInsertProxy",
+                          "resetViews");
 
                 this.$el.html(this.template({
                     id       : this.annotationId,
@@ -115,18 +116,32 @@ define(["jquery",
 
                 this.commentList = this.$el.find("div#comment-list" + this.annotationId);
 
-                _.each(this.comments.toArray(), function (comment) {
-                    this.addComment(comment);
-                }, this);
 
                 // Add backbone events to the model
                 _.extend(this.comments, Backbone.Events);
 
-
                 this.listenTo(this.comments, "destroy", this.deleteView);
                 this.listenTo(this.comments, "remove", this.deleteView);
+                this.listenTo(this.comments, "reset", this.resetViews);
+
+                this.resetViews();
 
                 return this.render();
+            },
+
+            /**
+             * Reset all the views set
+             * @alias module:views-comments-container.CommentsContainer#resetViews
+             */
+            resetViews: function () {
+                _.each(this.commentViews, function (commentView, index) {
+                    this.commentViews.splice(index, 1);
+                    commentView.deleteView();
+                }, this);
+
+                _.each(this.comments.toArray(), function (comment) {
+                    this.addComment(comment);
+                }, this);
             },
 
             /**
@@ -215,9 +230,9 @@ define(["jquery",
 
                 if (this.comments.length === 1) {
                     this.commentList.append(commentModel.render().$el);
-                } else {
-                    this.$el.find("> span.comments").text(this.comments.length + " Comments");
                 }
+                
+                this.$el.parent().find(".comment-amount").text(this.comments.length);
 
                 this.$el.find("textarea").focus();
             },

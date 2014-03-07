@@ -150,6 +150,7 @@ function ($, PlayerAdapter, Annotation, User, CommentsContainer, Template, Backb
             this.isEditEnable = false;
 
             this.commentContainer = new CommentsContainer({id: this.id, comments: this.model.get("comments"), collapsed: this.collapsed});
+            this.model.fetchComments();
 
             if (this.model.get("label")) {
                 category = this.model.get("label").category;
@@ -566,6 +567,10 @@ function ($, PlayerAdapter, Annotation, User, CommentsContainer, Template, Backb
                 this.$el.find("> div.text-container.in").collapse("hide");
                 this.$el.find("> div.comments-container.in").collapse("hide");
             } else {
+                if (!this.model.areCommentsLoaded()) {
+                    this.model.fetchComments();
+                }
+
                 this.$el.find("> div.text-container.collapse").collapse("show");
                 this.$el.find("> div.comments-container.collapse").collapse("show");
             }

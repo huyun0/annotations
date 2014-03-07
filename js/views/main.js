@@ -327,7 +327,7 @@ define(["jquery",
              */
             logout: function () {
                 // Stop the video
-                this.playerAdapter.pause();
+                annotationsTool.playerAdapter.pause();
 
                  // Hide logout button
                 $("a#logout").hide();

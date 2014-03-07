@@ -185,7 +185,7 @@ define(["jquery",
             },
 
             /**
-             * Choose the behavior of the timeline. Set true to enable following the timeline
+             * Sets the behavior of the timeline. Enable it to follow the playhead.
              * @alias module:annotations-tool-configuration.Configuration.timelineFollowPlayhead
              * @type {Boolean}
              */
