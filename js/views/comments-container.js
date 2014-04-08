@@ -59,7 +59,7 @@ define(["jquery",
             /**
              * View template
              * @alias module:views-comments-container.CommentsContainer#template
-             * @type {Handlebars template}
+             * @type {HandlebarsTemplate}
              */
             template: Handlebars.compile(Template),
 

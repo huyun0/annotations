@@ -9,6 +9,8 @@
     optimizeAllPluginResources: false,
     preserveLicenseComments: false,
     optimize: "uglify",
+    exclude: './../../js/annotations-tool-configuration.js',
+    fileExclusionRegExp: .*configuration.js$/g,
     useStrict: true,
     uglify: {
         no_mangle: false

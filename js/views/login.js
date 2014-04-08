@@ -32,14 +32,14 @@ define(["jquery",
                 /**
                  * Main container of the login modal
                  * @alias module:views-login.Login#el
-                 * @type {DOM Element}
+                 * @type {DOMElement}
                  */
                 el: $("#user-login"),
 
                 /**
                  * Login modal template
                  * @alias module:views-login.Login#groupTemplate
-                 * @type {Handlebars template}
+                 * @type {HandlebarsTemplate}
                  */
                 loginTemplate: Handlebars.compile(LoginTmpl),
 

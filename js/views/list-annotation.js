@@ -65,7 +65,7 @@ function ($, PlayerAdapter, Annotation, User, CommentsContainer, Template, Backb
         /**
          * View template
          * @alias module:views-list-annotation.ListAnnotation#template
-         * @type {Handlebars template}
+         * @type {HandlebarsTemplate}
          */
         template: Handlebars.compile(Template),
 

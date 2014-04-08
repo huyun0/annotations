@@ -77,7 +77,7 @@ define(["jquery",
             /**
              * Main container of the appplication
              * @alias module:views-main.MainView#el
-             * @type {Dom Element}
+             * @type {DOMElement}
              */
             el: $("body"),
 
@@ -91,7 +91,7 @@ define(["jquery",
             /**
              * jQuery element for the loading box
              * @alias module:views-main.MainView#loadingBox
-             * @type {jQuery Object}
+             * @type {DOMElement}
              */
             loadingBox: $("div#loading"),
 
@@ -99,7 +99,7 @@ define(["jquery",
             /**
              * Template for the categories legend
              * @alias module:views-main.MainView#categoriesLegendTmpl
-             * @type {Handlebars template}
+             * @type {HandlebarsTemplate}
              */
             categoriesLegendTmpl: Handlebars.compile(CategoriesLegendTmpl),
 

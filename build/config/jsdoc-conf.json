@@ -4,13 +4,14 @@
     },
     "source": {
         "include": [
-            "../../../js",
-            "../../../js/models",
-            "../../../js/collections",
-            "../../../js/views",
-            "../../../js/prototypes"
+            "build/config/INDEX_DOC.md",
+            "js",
+            "js/models",
+            "js/collections",
+            "js/views",
+            "js/prototypes"
         ],
-        "exclude": ["../../../js/libs"],
+        "exclude": ["js/libs"],
         "includePattern": ".+\\.js(doc)?$",
         "excludePattern": "(^|\\/|\\\\)_"
     },
@@ -20,15 +21,11 @@
         "hardwrap": true
     },
     "templates": {
-        "cleverLinks": false,
-        "monospaceLinks": false,
+        "cleverLinks": true,
+        "monospaceLinks": true,
         "default": {
             "outputSourceFiles": true
         }
-    },
-    "opts": {
-        "destination": "../../../docs",
-        "recurse": false
     },
     "jsVersion": 180
 }

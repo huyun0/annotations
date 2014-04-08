@@ -50,7 +50,7 @@ define(["jquery",
             /**
              * Annotations list container of the appplication
              * @alias module:views-list.List#el
-             * @type {DOM element}
+             * @type {DOMElement}
              */
             el: $("div#list-container"),
 

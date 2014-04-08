@@ -190,7 +190,6 @@ define(["backbone", "access"], function (Backbone, ACCESS) {
 
         /**
          * Bind this instance to its master
-         * @return {[type]} [description]
          */
         bindToMaster: function () {
             this.isBindedToMaster = true;

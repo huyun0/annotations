@@ -105,7 +105,7 @@ define(["jquery",
                 /**
                  * Loop template
                  * @alias module:views-loop.Loop#loopTemplate
-                 * @type {Handlebars template}
+                 * @type {HandlebarsTemplate}
                  */
                 loopTemplate: Handlebars.compile(LoopTmpl),
 
@@ -320,7 +320,7 @@ define(["jquery",
 
                 /**
                  * Set the given loop as the current one
-                 * @param {Object || Integer} loop The new loop object or its index
+                 * @param {Object | Integer} loop The new loop object or its index
                  * @param {Boolean} moveTo Define if yes or no the playhead must be moved at the beginning of the loop
                  * @alias module:views-loop.Loop#setCurrentLoop
                  */

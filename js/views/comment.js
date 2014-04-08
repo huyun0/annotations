@@ -54,14 +54,14 @@ define(["jquery",
             /**
              * View template for read-only modus
              * @alias module:views-comment.Comment#template
-             * @type {Handlebars template}
+             * @type {HandlebarsTemplate}
              */
             template: Handlebars.compile(Template),
 
             /**
              * View template for edit modus
              * @alias module:views-comment.Comment#template
-             * @type {Handlebars template}
+             * @type {HandlebarsTemplate}
              */
             editTemplate: Handlebars.compile(EditTemplate),
 

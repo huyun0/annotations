@@ -83,7 +83,7 @@ define(["jquery",
             /**
              * View template
              * @alias module:views-annotate-category.Category#template
-             * @type {Handlebars template}
+             * @type {HandlebarsTemplate}
              */
             template: Handlebars.compile(Template),
 
@@ -120,7 +120,6 @@ define(["jquery",
                   "addLabel",
                   "render",
                   "switchEditModus",
-                  "onSwitchEditModus",
                   "onChange",
                   "onFocusOut",
                   "onKeyDown",
@@ -169,6 +168,7 @@ define(["jquery",
                 this.el.id = this.ID_PREFIX + attr.category.get("id");
                 this.model = attr.category;
 
+                this.render();
                 this.addLabels(this.model.get("labels"));
 
                 labels = this.model.get("labels");
@@ -178,12 +178,12 @@ define(["jquery",
                 this.listenTo(this.model, "change", this.onChange);
 
                 if (_.contains(this.roles, annotationsTool.user.get("role"))) {
-                    this.listenTo(annotationsTool, annotationsTool.EVENTS.ANNOTATE_TOGGLE_EDIT, this.onSwitchEditModus);
+                    this.listenTo(annotationsTool, annotationsTool.EVENTS.ANNOTATE_TOGGLE_EDIT, this.switchEditModus);
                 }
 
                 $(window).bind("resize", this.updateInputWidth);
 
-                this.render();
+                //this.render();
                 this.nameInput = this.$el.find(".catItem-header input");
                 return this;
             },
@@ -197,10 +197,10 @@ define(["jquery",
                     titleWidth;
 
                 if (this.editModus) {
-                    titleWidth = $headerEl.width() - ($headerEl.find(".colorPicker-picker").outerWidth() 
-                                                       + $headerEl.find(".delete").outerWidth() 
-                                                       + $headerEl.find(".scale").outerWidth()
-                                                       + 30); 
+                    titleWidth = $headerEl.width() - ($headerEl.find(".colorPicker-picker").outerWidth() +
+                                                    $headerEl.find(".delete").outerWidth() +
+                                                    $headerEl.find(".scale").outerWidth() +
+                                                    30);
 
                     $headerEl.find("input").width(titleWidth);
                 }  else {
@@ -210,15 +210,6 @@ define(["jquery",
                 _.each(this.labelViews, function (labelView) {
                     labelView.updateInputWidth();
                 }, this);
-            },
-
-            /**
-             * Listener for edit modus switch.
-             * @alias module:views-annotate-category.CategoryView#onSwitchEditModus
-             * @param {boolean} status The new status
-             */
-            onSwitchEditModus: function (status) {
-                this.switchEditModus(status);
             },
 
             /**
@@ -294,7 +285,7 @@ define(["jquery",
              * @param {Label} label  The label to add
              * @param {boolean} single Define if this is part of a list insertion (false) or a single insertion (true)
              */
-            addLabel: function (label, single) {
+            addLabel: function (label) {
                 var labelView = new LabelView({
                     label        : label,
                     editModus    : this.editModus,
@@ -304,10 +295,12 @@ define(["jquery",
 
                 this.labelViews.push(labelView);
 
+                this.$labelsContainer.append(labelView.render().$el);
+
                 // If unique label added, we redraw all the category view
-                if (single) {
-                    this.render();
-                }
+                // if (single) {
+                //     this.render();
+                // }
             },
 
             /**
@@ -315,7 +308,7 @@ define(["jquery",
              * @alias module:views-annotate-category.CategoryView#onCreateLabel
              */
             onCreateLabel: function () {
-                var label = this.model.get("labels").create({
+                this.model.get("labels").create({
                     value       : "LB",
                     abbreviation: "New",
                     category    : this.model
@@ -323,12 +316,7 @@ define(["jquery",
                   {wait: true}
                 );
 
-                label.save();
-                this.model.save();
-
-                if (annotationsTool.localStorage) {
-                    annotationsTool.video.save();
-                }
+              //  label.save();
             },
 
             /**
@@ -352,7 +340,7 @@ define(["jquery",
              */
             onFocusOut: function () {
                 this.model.set("name", _.escape(this.nameInput.val()), {silent: true});
-                this.model.save();
+                this.model.save({silent: true});
             },
 
             /**
@@ -362,7 +350,7 @@ define(["jquery",
             onKeyDown: function (e) {
                 if (e.keyCode === 13) { // If "return" key
                     this.model.set("name", _.escape(this.nameInput.val()));
-                    this.model.save();
+                    this.model.save({silent: true});
                 } else if (e.keyCode === 39 && this.getCaretPosition(e.target) === e.target.value.length ||
                            e.keyCode === 37 && this.getCaretPosition(e.target) === 0) {
                     // Avoid scrolling through arrows keys
@@ -373,7 +361,7 @@ define(["jquery",
             /**
              * Get the position of the caret in the given input element
              * @alias module:views-annotate-category.CategoryView#getCaretPosition
-             * @param  {DOM Element} inputElement The given element with focus
+             * @param  {DOMElement} inputElement The given element with focus
              * @return {integer}              The posisiton of the carret
              */
             getCaretPosition: function (inputElement) {
@@ -404,7 +392,7 @@ define(["jquery",
              */
             onColorChange: function (id, newValue) {
                 this.model.setColor(newValue);
-                this.model.save();
+                this.model.save({silent: true});
             },
 
             /**
@@ -413,13 +401,21 @@ define(["jquery",
              * @return {CategoryView} this category view
              */
             render: function () {
+                console.log("render category");
+
                 var modelJSON = this.model.toJSON();
                 modelJSON.notEdit = !this.editModus;
 
+                _.each(this.labelViews, function (view) {
+                    view.$el.detach();
+                }, this);
+
                 this.$el.html(this.template(modelJSON));
 
+                this.$labelsContainer = this.$el.find(".catItem-labels");
+
                 _.each(this.labelViews, function (view) {
-                    this.$el.find(".catItem-labels").append(view.render().$el);
+                    this.$labelsContainer.append(view.$el);
                     view.updateInputWidth();
                 }, this);
 
@@ -429,9 +425,10 @@ define(["jquery",
                     pickerDefault: this.model.attributes.settings.color.replace("#", ""),
                     onColorChange: this.onColorChange
                 });
+
                 this.$el.find(".colorPicker-picker").addClass("edit");
 
-                this.$el.width((100/annotationsTool.CATEGORIES_PER_TAB) + "%");
+                this.$el.width((100 / annotationsTool.CATEGORIES_PER_TAB) + "%");
 
                 this.updateInputWidth();
 

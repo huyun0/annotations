@@ -46,7 +46,7 @@ define(["jquery",
                 /**
                  * Alert template
                  * @alias module:views-alert.Alert#alertTemplate
-                 * @type {Handlebars template}
+                 * @type {HandlebarsTemplate}
                  */
                 alertTemplate: Handlebars.compile(AlertTmpl),
 
@@ -92,7 +92,7 @@ define(["jquery",
                  * Display the modal with the given message as the given alert type
                  * @alias module:views-alert.Alert#show
                  * @param  {String} message The message to display
-                 * @param  {String or Object} type The name of the alert type or the type object itself, see {@link module:views-alert.Alert#TYPES}
+                 * @param  {String | Object} type The name of the alert type or the type object itself, see {@link module:views-alert.Alert#TYPES}
                  */
                 show: function (message, type) {
                     var params;

@@ -107,7 +107,7 @@ define(["jquery",
                  * Method to send a POST request to the given url with the given resource
                  * @method
                  * @alias module:backbone-annotations-sync.AnnotationsSync#create
-                 * @param {Model, Collection} resource The resource to persist
+                 * @param {Model | Collection} resource The resource to persist
                  */
                 create = function (resource) {
                     $.ajax(_.extend(_.clone(options), {
@@ -140,7 +140,7 @@ define(["jquery",
                  * Method to send a POST request to the given url with the given resource for copy
                  * @inner
                  * @alias module:backbone-annotations-sync.AnnotationsSync#copy
-                 * @param {Model, Collection} resource The resource to copy
+                 * @param {Model | Collection} resource The resource to copy
                  */
                 copy = function (resource) {
                     $.ajax(_.extend(_.clone(options), {

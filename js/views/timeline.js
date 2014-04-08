@@ -80,42 +80,42 @@ define(["jquery",
             /**
              * Main container of the timeline
              * @alias module:views-timeline.TimelineView#el
-             * @type {DOM Element}
+             * @type {DOMElement}
              */
             el: $("div#timeline-container")[0],
 
             /**
              * Group template
              * @alias module:views-timeline.TimelineView#groupTemplate
-             * @type {Handlebars template}
+             * @type {HandlebarsTemplate}
              */
             groupTemplate: Handlebars.compile(GroupTmpl),
 
             /**
              * Empty group template
              * @alias module:views-timeline.TimelineView#groupEmptyTemplate
-             * @type {Handlebars template}
+             * @type {HandlebarsTemplate}
              */
             groupEmptyTemplate: Handlebars.compile(GroupEmptyTmpl),
 
             /**
              * Item template
              * @alias module:views-timeline.TimelineView#itemTemplate
-             * @type {Handlebars template}
+             * @type {HandlebarsTemplate}
              */
             itemTemplate: Handlebars.compile(ItemTmpl),
 
             /**
              * Modal template for group insertion
              * @alias module:views-timeline.TimelineView#modalAddGroupTemplate
-             * @type {Handlebars template}
+             * @type {HandlebarsTemplate}
              */
             modalAddGroupTemplate: Handlebars.compile(ModalAddGroupTmpl),
 
             /**
              * Modal template for group update
              * @alias module:views-timeline.TimelineView#modalUpdateGroupTemplate
-             * @type {Handlebars template}
+             * @type {HandlebarsTemplate}
              */
             modalUpdateGroupTemplate: Handlebars.compile(ModalUpdateGroupTmpl),
 
@@ -704,7 +704,7 @@ define(["jquery",
             /**
              * Add a list of tracks, creating a view for each of them
              * @alias module:views-timeline.TimelineView#addTracksList
-             * @param {Array or List} tracks The list of tracks to add
+             * @param {Array | List} tracks The list of tracks to add
              */
             addTracksList: function (tracks) {
                 tracks.each(this.addTrack, this);

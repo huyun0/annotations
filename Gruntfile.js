@@ -16,6 +16,8 @@ module.exports = function (grunt) {
         /** Local directory for the tests */
         webServerDir: 'www',
 
+        buildDir: 'target',
+
         /** Paths for the different types of ressource */
         srcPath: {
             js      : 'js/**/*.js',
@@ -34,20 +36,29 @@ module.exports = function (grunt) {
              
             integration: {
                 sources : '',
-                target  : '../Matterhorn/lib/local/entwine-annotations-tool-1.5-SNAPSHOT/ui',
+                //target  : '../Matterhorn/lib/local/entwine-annotations-tool-1.5-SNAPSHOT/ui',
+                target  : '../Matterhorn/modules/entwine-annotations-tool/src/main/resources/ui',
                 config  : 'build/profiles/integration/annotations-tool-configuration.js'
             },
 
             local: {
-                sources: '<source src=\"resources/aav1.mp4\" type=\"video/mp4\" />\n \
-                          <source src=\"resources/aav1.webm\" type=\"video/webm\" />\n \
-                          <source src=\"resources/aav1.ogv\" type=\"video/ogg\" /> ',
+                sources: '<source src=\"/resources/aav1.mp4\" type=\"video/mp4\" />\n \
+                          <source src=\"/resources/aav1.webm\" type=\"video/webm\" />\n \
+                          <source src=\"/resources/aav1.ogv\" type=\"video/ogg\" /> ',
                 target : 'www',
-                config : 'js/annotations-tool-configuration.js'
+                config : 'build/profiles/local/annotations-tool-configuration.js'
+            },
+
+            build: {
+                sources: '<source src=\"/resources/Annotations_Video.mp4\" type=\"video/mp4\" />\n \
+                          <source src=\"/resources/Annotations_Video.webm\" type=\"video/webm\" />\n \
+                          <source src=\"/resources/Annotations_Video.theora.ogv\" type=\"video/ogg\" /> ',
+                target : '<%= buildDir %>',
+                config : 'build/profiles/local/annotations-tool-configuration.js'
             }
         },
 
-        currentProfile: undefined,
+        currentProfile: {sources: 'test'},
 
         jshint: {
             all     : '<%= currentWatchFile %>',
@@ -109,7 +120,7 @@ module.exports = function (grunt) {
                     }
                 },
                 files: {
-                    "style/style.css": "style/style.less"
+                    'style/style.css': 'style/style.less'
                 }
             }
         },
@@ -144,7 +155,7 @@ module.exports = function (grunt) {
                     flatten : false,
                     expand  : true,
                     src     : ['js/**/*', 'img/**/*', 'style/**/*.png', 'style/**/*.css', 'templates/*', 'resources/*', 'tests/**/*'],
-                    dest    : '<%= webServerDir %>',
+                    dest    : '<%= currentProfile.target %>',
                 }]
             },
             // ... the stylesheet locally
@@ -170,6 +181,15 @@ module.exports = function (grunt) {
                     flatten: false,
                     expand: true,
                     src: ['js/**/*', 'img/**/*', 'style/**/*.png', 'style/**/*.css', 'templates/*', 'resources/*', 'tests/**/*'],
+                    dest: '<%= currentProfile.target %>',
+                }]
+            },
+            // ... all the files for an optimized build
+            'build': {
+                files: [{
+                    flatten: false,
+                    expand: true,
+                    src: ['img/**/*', 'style/**/*.png', 'style/**/*.css', 'resources/*', 'js/libs/**/*'],
                     dest: '<%= currentProfile.target %>',
                 }]
             },
@@ -206,9 +226,11 @@ module.exports = function (grunt) {
 
         jsdoc : {
             dist : {
-                src: ['js/views/*.js', 'js/collections/*.js', 'js/models/*.js', 'js/prototypes/*.js'], 
+                src: ['js/views/*.js', 'js/collections/*.js', 'js/models/*.js', 'js/prototypes/*.js'],
                 options: {
-                    destination: 'doc'
+                    destination: '<%= currentProfile.target %>/doc',
+                    template: 'node_modules/grunt-jsdoc/node_modules/ink-docstrap/template',
+                    configure: 'build/config/jsdoc-conf.json'
                 }
             }
         },
@@ -217,7 +239,7 @@ module.exports = function (grunt) {
         /** Task to run tasks in parrallel */
         concurrent: {
             dev: {
-                tasks: ['watch:js', 'watch:html', 'watch:less', 'watch:www', 'connect'],
+                tasks: ['watch:js', 'watch:html', 'watch:less', 'watch:www', 'connect:dev'],
                 options: {
                     logConcurrentOutput: true,
                     limit: 5
@@ -227,12 +249,41 @@ module.exports = function (grunt) {
 
         /** Web server */
         connect: {
-            server: {
+            dev: {
                 options: {
                     port: 9001,
                     base: '<%= webServerDir %>',
                     keepalive: true,
                     livereload: true
+                }
+            },
+            build: {
+                options: {
+                    port: 9001,
+                    base: '<%= buildDir %>',
+                    keepalive: true,
+                    livereload: true
+                }
+            }
+        },
+
+        /** Preprocess file with right context */
+        processhtml: {
+            options: {
+                data: {
+                    version: '<%= pkg.version %>',
+                    sources: '<%= currentProfile.sources %>'
+                },
+                process: true
+            },
+            dev: {
+                files: {
+                    '<%= currentProfile.target %>/index.html': ['index.html']
+                }
+            },
+            build: {
+                files: {
+                    '<%= currentProfile.target %>/index.html': ['index.html']
                 }
             }
         },
@@ -249,20 +300,8 @@ module.exports = function (grunt) {
                     preserveLicenseComments    : false,
                     optimize                   : 'uglify',
                     useStrict                  : true,
-                    out                        : 'optimized.js'
+                    out                        : '<%= currentProfile.target %>/optimized.js'
                 }
-            }
-        },
-
-        // Remove unused CSS across multiple files
-        uncss: {
-          dist: {
-            files: {
-              'dist/css/tidy.css': ['www/index.html']
-              }
-            },
-            options: {
-                timeout: 50000
             }
         }
     });
@@ -275,10 +314,11 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-connect');
     grunt.loadNpmTasks('grunt-contrib-handlebars');
     grunt.loadNpmTasks('grunt-contrib-requirejs');
+    grunt.loadNpmTasks('grunt-preprocess');
     grunt.loadNpmTasks('assemble-less');
     grunt.loadNpmTasks('grunt-concurrent');
     grunt.loadNpmTasks('grunt-jsdoc');
-    grunt.loadNpmTasks('grunt-uncss');
+    grunt.loadNpmTasks('grunt-processhtml');
 
 
     /** ================================================
@@ -287,37 +327,42 @@ module.exports = function (grunt) {
 
     // Default task
     grunt.registerTask('default', ['jshint:all', 'less-all', 'copy:local-all', 'copy:local-index']);
-    grunt.registerTask('baseDev', ['less:annotation', 'copy:all', 'copy:index', 'copy:config', 'concurrent:dev']);
+    grunt.registerTask('baseDEV', ['less:annotation', 'copy:all', 'processhtml:dev', 'copy:config', 'concurrent:dev']);
+    grunt.registerTask('baseBUILD', ['blanket_qunit', 'jsdoc', 'less:annotation', 'copy:build', 'processhtml:build', 'copy:config', 'requirejs']);
 
-    // Development workflow with profiles (grunt dev [--profile=PROFILE_NAME])
-    grunt.registerTask('dev', 'Development workflow', function () {
+    grunt.registerTaskWithProfile = function (name, description, defaultProfile) {
+        grunt.registerTask(name, description, function () {
+            var profileName = grunt.option('profile') || defaultProfile,
+                profileConfig;
 
-        var profileName = grunt.option('profile'),
-            profileConfig;
+            // If no profile name given, use the default one
+            if (typeof profileName == 'undefined') {
+                profileName = grunt.config.get('profiles.default');
+                grunt.option('profile', profileName);
+                grunt.log.writeln('No profile name given as option, use default one.');
+            }
 
-        // If no profile name given, use the default one
-        if (typeof profileName == 'undefined') {
-            profileName = grunt.config.get('profiles.default');
-            grunt.option('profile', profileName);
-            grunt.log.writeln('No profile name given as option, use default one.');
-        }
+            // Get the profile configuration
+            profileConfig = grunt.config.get('profiles.' + profileName);
 
-        // Get the profile configuration
-        profileConfig = grunt.config.get('profiles.' + profileName);
+            // Check if the profile exist
+            if (typeof profileConfig == 'undefined') {
+                grunt.fail.fatal('The profile "' + profileName + '" does not exist in the Gruntfile.');
+            }
 
-        // Check if the profile exist
-        if (typeof profileConfig == 'undefined') {
-            grunt.fail.fatal('The profile "' + profileName + '" does not exist in the Gruntfile.');
-        }
+            grunt.log.writeln(name + ' task with profile "' + profileName + '" started! ');
 
-        grunt.log.writeln('Develop task with profile "' + profileName + '" started! ');
+            // Configure the tasks with given profiles
+            grunt.config.set('currentProfile', profileConfig);
 
-        // Configure the tasks with given profiles
-        grunt.config.set('currentProfile', profileConfig);
+            // Run the tasks
+            grunt.task.run('base' + name.toUpperCase());
+        });
+    };
 
-        // Run the tasks
-        grunt.task.run('baseDev'); 
-    });
+    grunt.registerTaskWithProfile('build', 'Build task', 'build');
+    grunt.registerTaskWithProfile('dev', 'Development workflow');
+
 
     /** ================================================
      *  Listerers 

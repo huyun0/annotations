@@ -88,9 +88,9 @@ define(["jquery",
             Annotate = Backbone.View.extend({
 
                 /**
-                 * Main container of the timeline
-                 * @alias module:views-timeline.TimelineView#el
-                 * @type {DOM Element}
+                 * Main container of the annotate view
+                 * @alias module:views-annotate.Annotate#el
+                 * @type {DOMElement}
                  */
                 el: $("div#annotate-container"),
 
@@ -116,21 +116,21 @@ define(["jquery",
                 /**
                  * Template for tabs button
                  * @alias module:views-annotate.Category#tabsButtonTemplate
-                 * @type {Handlebars template}
+                 * @type {HandlebarsTemplate}
                  */
                 tabsButtonTemplate: Handlebars.compile(TabTitleTemplate),
 
                 /**
                  * Element containing the tabs buttons
                  * @alias module:views-annotate.Category#tabsButtonsElement
-                 * @type {DOM Element}
+                 * @type {DOMElement}
                  */
                 tabsButtonsElement: $("ul#label-tabs-buttons"),
 
                 /**
                  * Element containing the tabs contents
                  * @alias module:views-annotate.Category#tabsContainerElement
-                 * @type {DOM Element}
+                 * @type {DOMElement}
                  */
                 tabsContainerElement: $("div#label-tabs-contents"),
 

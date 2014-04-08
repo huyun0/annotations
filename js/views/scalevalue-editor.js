@@ -44,7 +44,7 @@ define(["jquery",
                 /**
                  * Scale value editor template
                  * @alias module:views-scalevalue-editor.ScaleValueEditor#ScaleValueEditorTemplate
-                 * @type {Handlebars template}
+                 * @type {HandlebarsTemplate}
                  */
                 scaleValueEditorTemplate: Handlebars.compile(ScaleValueEditorTmpl),
 

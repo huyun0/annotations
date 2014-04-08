@@ -75,28 +75,28 @@ define(["jquery",
                 /**
                  * Main container of the editor modal
                  * @alias module:views-login.Login#el
-                 * @type {DOM Element}
+                 * @type {DOMElement}
                  */
                 el: $("#scale-editor"),
 
                 /**
                  * Main template for the scale editor
                  * @alias module:views-login.Login#scaleEditorTemplate
-                 * @type {Handlebars template}
+                 * @type {HandlebarsTemplate}
                  */
                 scaleEditorTemplate: Handlebars.compile(ScaleEditorTmpl),
 
                 /**
                  * Template for the select element of the editor
                  * @alias module:views-login.Login#scaleEditorSelectTemplate
-                 * @type {Handlebars template}
+                 * @type {HandlebarsTemplate}
                  */
                 scaleEditorSelectTemplate: Handlebars.compile(ScaleEditorSelectTmpl),
 
                 /**
                  * Template for the editor content
                  * @alias module:views-login.Login#scaleEditorContentTemplate
-                 * @type {Handlebars template}
+                 * @type {HandlebarsTemplate}
                  */
                 scaleEditorContentTemplate: Handlebars.compile(ScaleEditorContentTmpl),
 

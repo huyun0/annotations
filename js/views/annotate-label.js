@@ -98,7 +98,7 @@ define(["jquery",
             /**
              * View template
              * @alias module:views-annotate-label.Category#template
-             * @type {Handlebars template}
+             * @type {HandlebarsTemplate}
              */
             template: Handlebars.compile(Template),
 
@@ -332,7 +332,7 @@ define(["jquery",
             /**
              * Get the position of the caret in the given input element
              * @alias module:views-annotate-label.LabelView#getCaretPosition
-             * @param  {DOM Element} inputElement The given element with focus
+             * @param  {DOMElement} inputElement The given element with focus
              * @return {integer}              The posisiton of the carret
              */
             getCaretPosition: function (inputElement) {
