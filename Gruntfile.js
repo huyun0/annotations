@@ -30,7 +30,6 @@ module.exports = function (grunt) {
         },
 
         profiles: {
-
             // Default profile if no one is given
             default: 'local',
              
@@ -83,7 +82,7 @@ module.exports = function (grunt) {
             // Watch HTML files
             html: {
                 files: ['<%= srcPath.html %>'],
-                tasks: ['copy:index']
+                tasks: ['processhtml:dev']
             },
             // Watch LESS files
             less: {
@@ -94,6 +93,10 @@ module.exports = function (grunt) {
             // Use it for single core processor. It could stop working with an important number of files
             multiple: {
                 files: ['<%= srcPath.less %>', '<%= srcPath.js %>', '<%= srcPath.html %>', '<%= srcPath.tmpl %>'],
+                tasks: ['copy:target']
+            },
+            templates: {
+                files: ['<%= srcPath.tmpl %>'],
                 tasks: ['copy:target']
             },
             // Watch file on web server for live reload
@@ -239,10 +242,10 @@ module.exports = function (grunt) {
         /** Task to run tasks in parrallel */
         concurrent: {
             dev: {
-                tasks: ['watch:js', 'watch:html', 'watch:less', 'watch:www', 'connect:dev'],
+                tasks: ['watch:js', 'watch:html', 'watch:less', 'watch:templates', 'watch:www', 'connect:dev'],
                 options: {
                     logConcurrentOutput: true,
-                    limit: 5
+                    limit: 6
                 }
             }
         },
@@ -382,13 +385,12 @@ module.exports = function (grunt) {
             // we manage the tasks to run following the touched file extension
             var ext = filepath.split('.').pop();
 
+
+
             switch (ext) {
                 case 'js':
                     grunt.task.run('jshint');
                     grunt.task.run('blanket_qunit');
-                    break;
-                case 'tmpl':
-                    grunt.task.run('handlebars');
                     break;
                 case 'less':
                     grunt.task.run('less:annotation');

@@ -87,6 +87,7 @@ define(["jquery",
                                "addAnnotation",
                                "addList",
                                "getPosition",
+                               "getViewFromAnnotation",
                                "insertView",
                                "sortViewsbyTime",
                                "reset",
@@ -104,6 +105,8 @@ define(["jquery",
                 this.filtersManager  = new FiltersManager(annotationsTool.filtersManager);
                 this.tracks          = annotationsTool.video.get("tracks");
                 this.playerAdapter   = annotationsTool.playerAdapter;
+
+                this.$list = this.$el.find("#content-list-scroll table#content-list");
 
                 this.listenTo(this.filtersManager, "switch", this.updateFiltersRender);
                 this.listenTo(this.tracks, "change:access", this.render);
@@ -178,7 +181,7 @@ define(["jquery",
                 this.annotationViews.splice(index, 0, view);
 
                 if (index === 0) {
-                    this.$el.find("#content-list").prepend(view.render().$el);
+                    this.$list.prepend(view.render().$el);
                 } else {
                     this.annotationViews[index - 1].$el.after(view.render().$el);
                 }
@@ -373,7 +376,7 @@ define(["jquery",
              */
             render: function () {
                 var list = this.annotationViews,
-                    $listContainer = this.$el.find("#content-list").detach();
+                    $listContainer = this.$list.detach();
 
                 _.each(list, function (annView) {
                     annView.render().$el.detach();
@@ -387,7 +390,7 @@ define(["jquery",
                     $listContainer.append(annView.$el);
                 }, this);
 
-                this.$el.append($listContainer);
+                this.$el.find("#content-list-scroll").append($listContainer);
 
                 return this;
             },

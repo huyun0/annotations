@@ -53,14 +53,7 @@ function ($, PlayerAdapter, Annotation, User, CommentsContainer, Template, Backb
          * @alias module:views-list-annotation.ListAnnotation#tagName
          * @type {string}
          */
-        tagName: "div",
-
-        /**
-         * Class name from the view element
-         * @alias module:views-list-annotation.ListAnnotation#className
-         * @type {String}
-         */
-        className: "annotation",
+        tagName: "tbody",
 
         /**
          * View template
@@ -90,7 +83,7 @@ function ($, PlayerAdapter, Annotation, User, CommentsContainer, Template, Backb
         events: {
             "click"                      : "onSelect",
             "click .toggle-edit"         : "switchEditModus",
-            "click .proxy-anchor"        : "stopPropagation",
+            "click .proxy-anchor "        : "stopPropagation",
             "click .freetext textarea"   : "stopPropagation",
             "click .scaling select"      : "stopPropagation",
             "click .end-value"           : "stopPropagation",
@@ -353,9 +346,9 @@ function ($, PlayerAdapter, Annotation, User, CommentsContainer, Template, Backb
                     return;
                 }
 
-                $target.parent().find(".text-container span").show();
+                $target.parent().parent().find("tr.text-container span").show();
                 this.model.set("duration", Math.round(seconds - this.model.get("start")));
-                this.model.save({siltent: true});
+                this.model.save({silent: true});
             }
 
             if (!this.isEditEnable) {
@@ -373,12 +366,15 @@ function ($, PlayerAdapter, Annotation, User, CommentsContainer, Template, Backb
                 value = $target.val(),
                 radix = 10, // Radix is 10 for decimal
                 values,
+                duration,
                 seconds;
 
             // If keydown event but not enter, value must not be saved
             if (event.type === "keydown" && event.keyCode !== 13) {
                 return;
             }
+
+            duration = this.model.get("duration");
 
             $target.removeClass("error");
 
@@ -396,7 +392,7 @@ function ($, PlayerAdapter, Annotation, User, CommentsContainer, Template, Backb
                     seconds = parseInt(values[0], radix);
                 }
 
-                if ((this.model.get("duration") + this.model.get("start")) < seconds) {
+                if (duration > 0 && (duration + this.model.get("start")) < seconds) {
                     $target.addClass("error");
                     return;
                 }
@@ -406,7 +402,7 @@ function ($, PlayerAdapter, Annotation, User, CommentsContainer, Template, Backb
                     start   : seconds,
                     duration: Math.round(this.model.get("duration") + this.model.get("start") - seconds)
                 });
-                this.model.save();
+                this.model.save({silent: true});
             }
 
             if (!this.isEditEnable) {
@@ -491,6 +487,8 @@ function ($, PlayerAdapter, Annotation, User, CommentsContainer, Template, Backb
             modelJSON.numberOfComments = this.model.get("comments").length;
 
             this.$el.html(this.template(modelJSON));
+
+            this.el = this.$el[0];
             this.$el.attr("id", this.id);
 
             // Hack for Firefox, add an button over it
@@ -500,10 +498,9 @@ function ($, PlayerAdapter, Annotation, User, CommentsContainer, Template, Backb
                 }
                 this.$el.find(".start").append("<span class=\"start-btn\" title=\"Double click to edit\">&nbsp;</span>");
             }
-
-            this.$el.find("div#text-container" + this.id).after(this.commentContainer.render().$el);
-
+            this.$el.find("tr#text-container" + this.id).after(this.commentContainer.render().$el);
             this.delegateEvents(this.events);
+
             return this;
         },
 
@@ -561,18 +558,17 @@ function ($, PlayerAdapter, Annotation, User, CommentsContainer, Template, Backb
 
             this.collapsed = !this.collapsed;
 
-            this.$el.find("> .header-container > div > a.collapse > i").toggleClass("icon-chevron-right").toggleClass("icon-chevron-down");
+            this.$el.find("a.collapse > i").toggleClass("icon-chevron-right").toggleClass("icon-chevron-down");
 
             if (this.collapsed) {
-                this.$el.find("> div.text-container.in").collapse("hide");
-                this.$el.find("> div.comments-container.in").collapse("hide");
+                this.$el.find("#text-container" + this.id).hide();
+                this.$el.find("tr.comments-container").hide();
             } else {
                 if (!this.model.areCommentsLoaded()) {
                     this.model.fetchComments();
                 }
-
-                this.$el.find("> div.text-container.collapse").collapse("show");
-                this.$el.find("> div.comments-container.collapse").collapse("show");
+                this.$el.find("#text-container" + this.id).show();
+                this.$el.find("tr.comments-container").show();
             }
         }
     });

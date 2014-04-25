@@ -10,7 +10,7 @@
  
 
 #list-container{
-    
+
     @min-height: 300px;
 
     .navbar .dropdown {
@@ -24,10 +24,21 @@
         }
     }
 
+    tr.collapse {
+        display: none;
+    }
+
+    #content-list-scroll {
+        overflow-y: auto;
+        overflow-x: hidden;
+        background-color: black;
+    }
+
     #content-list{
         overflow-y: auto;
         overflow-x: hidden;
         min-height: 55px;
+        width: 100%; 
     }
     
     a.proxy-anchor{
@@ -42,71 +53,78 @@
         visibility: visible;
     }
     
-    div.annotation{
+    tbody {
         background-color: @white;
-        margin-top: 2px;
         border-left: 1px solid @gray;      
-        border-right: 1px solid @gray;      
+        border-right: 1px solid @gray;    
+        border-bottom: 1px solid @gray; 
+        border-top: 1px solid @gray; 
+
+
+        /* Layout of headerbar*/
+        @headerHeight: 16px; 
+        @headerPadding: 2px;
+        @headerSumHeight: @headerHeight + (2 * @headerPadding);
+
+        margin: 0;
+        height: @headerSumHeight;
+        line-height: @headerSumHeight;
+        padding: 0 5px;
+        background-color: @grayLighter;
+
+        tr:nth-child(2) {
+            background-color: white;
+        }
+
 
         .creator {
             display: none;
-        }
-
-                
-        &:first-child {
-            border-top: none;
-        }
+        }       
                        
         &:hover{
           cursor: pointer;   
         }
                
-        &.selected {
-            border: 1px solid @red;      
-                    
-            .header-container{
-                        background-image: url("../img/annotation/pattern.png");
-                background-repeat: repeat-x;
-                background-position: top;
-            }
+        &.first-child {
+            border-top: none;
         }
 
-        /* Layout of headerbar*/
+        &.selected{
 
-        @headerHeight: 16px; 
-        @headerPadding: 2px;
-        @headerSumHeight: @headerHeight+(2*@headerPadding);
-      
-        .header-container {
-            margin: 0;
+            tr:first-child {
+                background-position: top;
+                background-image: url("../img/annotation/pattern.png");
+                background-repeat: repeat-x;
+            }
+
+            border: 1px solid @red;      
+            border-bottom: 2px solid @red;    
+            border-top: 2px solid @red;    
+        }
+
+        .right {
+            width: 40%;
             height: @headerSumHeight;
-            line-height: @headerSumHeight;
-            padding: 0 5px;
-            background-color: @grayLighter;
-
-            .right {
-                float: right;
-                padding: 0;
-                height: @headerSumHeight;   
-                margin-right: 10px
-            }   
-            
-            .left {
-                overflow:hidden;
-                text-overflow: ellipsis;
-                white-space: nowrap;
-                height: @headerSumHeight;
-            }               
-            
-            button {
-                  height: @headerSumHeight;
-                  border: 1px solid @btnBorder;
-                  .box-sizing(border-box);
-                  padding: @headerPadding;
-                  vertical-align: top;
-                  line-height: headerHeight;        
-            }           
+            text-align: right;
+            padding-right: 10px
         }   
+        
+        .left {
+            overflow:hidden;
+            width: 60%;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            height: @headerSumHeight;
+        }               
+        
+        button {
+            height: @headerSumHeight;
+            border: 1px solid @btnBorder;
+            .box-sizing(border-box);
+            padding: @headerPadding;
+            vertical-align: top;
+            line-height: headerHeight;        
+        }           
                 
                 
         /* Content Elements in headerbar*/
@@ -210,7 +228,7 @@
                 }
             }
 
-            .start-btn, .end-btn {
+            .start-btn, .end-button {
                 position: absolute;
                 left: 0%;
                 right: 0%;
@@ -269,35 +287,35 @@
             
         span.text{
             display: block;
-          margin: 5px;
-          background-color: white;
+            margin: 5px;
+            background-color: white;
         }
 
         span.freetext {
             textarea {
-            width: 97.5%;
-            resize:vertical;
-          }
+                width: 97.5%;
+                resize:vertical;
+            }
         }
        
         span.track{
             display:none;
-          background-color: lighten(#005580,20%);
-          color: white;
-          padding: 3px;
-          font-size: 0.90em;  
+            background-color: lighten(#005580,20%);
+            color: white;
+            padding: 3px;
+            font-size: 0.90em;  
         }
         
         span.user{
             display:none;
-          font-style: italic;
-          font-weight: bold;
+            font-style: italic;
+            font-weight: bold;
         }
     }
 
 
 
-    div.comments-container {
+    tr.comments-container {
       background-color: @grayLight;
       color: @black;
       overflow: hidden;

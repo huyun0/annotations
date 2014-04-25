@@ -457,12 +457,12 @@ define(["jquery",
                 // TODO: improve this part with a better layout management, more generic
 
                 if (this.annotateView && this.listView) {
-                    listContent = this.listView.$el.find("#content-list");
-                    listContent.css("max-height", windowHeight - $("#annotate-container").height() - 100);
+                    listContent = this.listView.$el.find("#content-list-scroll");
+                    listContent.css("max-height", windowHeight - $("#annotate-container").height() - 120);
                 }
 
                 if (this.timelineView) {
-                    rest = !_.isUndefined(annotationsTool.loopFunction) && annotationsTool.loopFunction.isVisible() ? annotationsTool.loopFunction.$el.height() + 160 : 125;
+                    rest = !_.isUndefined(annotationsTool.loopFunction) && annotationsTool.loopFunction.isVisible() ? annotationsTool.loopFunction.$el.height() + 180 : 145;
                     this.timelineView.$el.find("#timeline").css("max-height", windowHeight - ($("#video-container").height() + rest));
                 }
             },
