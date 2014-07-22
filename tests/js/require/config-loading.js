@@ -82,40 +82,22 @@ require(["domReady", "annotations-tool-configuration", "annotations-tool"],
 function (domReady, config, app) {
     domReady(function () {
 
-        // var lastUpdate = 0,
-        //     i = 0,
-        //     nbFrame = 20,
-        //     lastValuesSum = 0,
-        //     targetFPS = $("#fps #value"),
-        //     calculateFPS = function () {
-        //         var currentTime = (new Date()).getTime();
+        var getURLParameter = function (name) {
+                                return decodeURIComponent((new RegExp("[?|&]" + name + "=" + "([^&;]+?)(&|#|;|$)").exec(location.search) ||
+                                    [,""])[1].replace(/\+/g, "%20")) || null;
+                            };
 
-        //         lastValuesSum += (currentTime - lastUpdate);
-
-        //         if (++i === nbFrame) {
-        //             targetFPS.html(1000 / (lastValuesSum / nbFrame));
-        //             i = 0;
-        //             lastValuesSum = 0;
-        //         }
-
-        //         lastUpdate = currentTime;
-        //     };
-
-        localStorage.clear();
+        if (getURLParameter("reset") !== null) {
+            localStorage.clear();
+        } else {
+            config.tracksToImport = undefined;
+        }
 
         localStorage.Users = "c1";
         localStorage["Users-c1"] = "{\"user_extid\": \"default\",\"nickname\": \"test\",\"role\": \"user\",\"access\": 1,\"id\": \"c1\",\"created_at\": null,\
                                     \"updated_at\": null,\"deleted_at\": null,\"email\": \"test@test.ch\"}";
 
         app.start(config);
-
-        // if (_.isUndefined(annotationsTool.video)) {
-        //     annotationsTool.bind(annotationsTool.EVENTS.READY, function () {
-        //         annotationsTool.bind(annotationsTool.EVENTS.TIMEUPDATE, calculateFPS);
-        //     });
-        // } else {
-        //     annotationsTool.bind(annotationsTool.EVENTS.TIMEUPDATE, calculateFPS);
-        // }
 
     });
 });
