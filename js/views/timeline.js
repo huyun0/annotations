@@ -1085,7 +1085,7 @@ define(["jquery",
                 var data = this.filteredItems;
 
                 // If no selection, we unselected elements currently selected and return
-                if (!annotationsTool.hasSelection()) {
+                if (selection.length === 0) {
                     this.timeline.unselectItem();
                     return;
                 }

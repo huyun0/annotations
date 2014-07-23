@@ -513,6 +513,8 @@ define(["jquery",
                         this.listenTo(item, "destroy", this.onDestroyRemoveSelection);
                     }
 
+                    this.currentSelection = currentSelection;
+
                     // if the selection is not empty, we move the playhead to it
                     if (currentSelection.length > 0 && moveTo) {
                         this.playerAdapter.setCurrentTime(selection[0].get("start"));
