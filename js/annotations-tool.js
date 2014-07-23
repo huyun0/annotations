@@ -398,13 +398,18 @@ define(["jquery",
                  * @param  {Object} annotation The destroyed annotation
                  */
                 onDestroyRemoveSelection: function (annotation) {
-                    _.each(this.currentSelection, function (item, index) {
+                    var currentSelection = this.currentSelection,
+                        item,
+                        i;
+
+                    for (i = 0; i < currentSelection.length; i++) {
+                        item = currentSelection[i];
                         if (item.get("id") == annotation.get("id")) {
-                            this.currentSelection.splice(index, 1);
-                            this.trigger(this.EVENTS.ANNOTATION_SELECTION, this.currentSelection);
+                            currentSelection.splice(i, 1);
+                            this.trigger(this.EVENTS.ANNOTATION_SELECTION, currentSelection);
                             return;
                         }
-                    }, this);
+                    }
                 },
                 
                 /**
@@ -446,24 +451,31 @@ define(["jquery",
                  */
                 setSelection: function (selection, moveTo, isManuallySelected) {
 
-                    var isEqual =   _.bind(function (newSelection) {
-                                        var equal = true;
+                    var currentSelection = this.currentSelection,
+                        isEqual =   function (newSelection) {
+                                        var equal = true,
+                                            annotation,
+                                            findAnnotation = function (newAnnotation) {
+                                                        return newAnnotation.get("id") === annotation.get("id");
+                                                    },
+                                            i;
 
-                                        if (this.currentSelection.length !== newSelection.length) {
+                                        if (currentSelection.length !== newSelection.length) {
                                             return false;
                                         }
 
-                                        _.each(this.currentSelection, function (annotation) {
-                                            if (!_.find(newSelection, function (newAnnotation) {
-                                                return newAnnotation.get("id") === annotation.get("id");
-                                            }, this)) {
+                                        for (i = 0; i < currentSelection.length; i++) {
+                                            annotation = currentSelection[i];
+                                            if (!_.find(newSelection, findAnnotation)) {
                                                 equal = false;
                                                 return equal;
                                             }
-                                        }, this);
+                                        }
 
                                         return equal;
-                                    }, this);
+                                    },
+                        item,
+                        i;
 
                     this.isManuallySelected = isManuallySelected;
 
@@ -472,10 +484,11 @@ define(["jquery",
                             if (isManuallySelected) {
                                 // If the selection is the same, we unselect it if this is a manual selection
                                 // Remove listener for destroy event (unselect);
-                                _.each(this.currentSelection, function (item) {
+                                for (i = 0; i < currentSelection.length; i++) {
+                                    item = currentSelection[i];
                                     this.stopListening(item, "destroy", this.onDestroyRemoveSelection);
-                                }, this);
-                                this.currentSelection = [];
+                                }
+                                currentSelection = [];
                                 this.isManuallySelected = false;
                             } else {
                                 // If the selection is not done manually we don't need to reselect it
@@ -483,7 +496,7 @@ define(["jquery",
                             }
                         } else {
                             // else we set the new selection
-                            this.currentSelection = selection;
+                            currentSelection = selection;
                         }
                     } else {
                         // If there is already no selection, no more work to do
@@ -491,21 +504,22 @@ define(["jquery",
                             return;
                         }
 
-                        this.currentSelection = [];
+                        currentSelection = [];
                     }
 
                     // Add listener for destroy event (unselect);
-                    _.each(this.currentSelection, function (item) {
+                    for (i = 0; i < currentSelection.length; i++) {
+                        item = currentSelection[i];
                         this.listenTo(item, "destroy", this.onDestroyRemoveSelection);
-                    }, this);
+                    }
 
                     // if the selection is not empty, we move the playhead to it
-                    if (this.currentSelection.length > 0 && moveTo) {
+                    if (currentSelection.length > 0 && moveTo) {
                         this.playerAdapter.setCurrentTime(selection[0].get("start"));
                     }
 
                     // Trigger the selection event
-                    this.trigger(this.EVENTS.ANNOTATION_SELECTION, this.currentSelection);
+                    this.trigger(this.EVENTS.ANNOTATION_SELECTION, currentSelection);
                 },
 
                 /**
@@ -534,9 +548,11 @@ define(["jquery",
                     var currentTime = this.playerAdapter.getCurrentTime(),
                         selection = [],
                         annotations = [],
+                        annotation,
                         start,
                         duration,
-                        end;
+                        end,
+                        i;
 
                     if (typeof this.video === "undefined" || (this.isManuallySelected && this.hasSelection())) {
                         return;
@@ -546,7 +562,8 @@ define(["jquery",
                         annotations = annotations.concat(track.get("annotations").models);
                     }, this);
 
-                    _.each(annotations, function (annotation) {
+                    for (i = 0; i < annotations.length; i++) {
+                        annotation = annotations[i];
 
                         start    = annotation.get("start");
                         duration = annotation.get("duration");
@@ -556,7 +573,7 @@ define(["jquery",
                             selection.push(annotation);
                         }
 
-                    }, this);
+                    }
 
                     this.setSelection(selection, false);
                 },
