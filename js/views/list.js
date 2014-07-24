@@ -211,9 +211,13 @@ define(["jquery",
              * @param {Boolean} sorting Defines if the list should be sorted after the list insertion
              */
             addList: function (annotationsList, track) {
-                _.each(annotationsList, function (annotation) {
+                var annotation,
+                    i;
+
+                for (i = 0; i < annotationsList.length; i++) {
+                    annotation = annotationsList[i];
                     this.addAnnotation(annotation, track, true);
-                }, this);
+                }
             },
 
             /**
@@ -222,11 +226,15 @@ define(["jquery",
              * @param  {Annotation} annotations The annotation to select
              */
             select: function (annotations) {
-                var view;
+                var view,
+                    annotation,
+                    i;
 
                 this.unselect();
 
-                _.each(annotations, function (annotation, index) {
+                for (i = 0; i < annotations.length; i++) {
+                    annotation = annotations[i];
+
                     view = this.getViewFromAnnotation(annotation.get("id"));
 
                     if (view) {
@@ -234,11 +242,11 @@ define(["jquery",
                         view.isSelected = true;
 
                         // Only scroll the list to the first item of the selection
-                        if (index === 0) {
+                        if (i === 0) {
                             location.hash = "#" + view.id;
                         }
                     }
-                }, this);
+                }
             },
 
             /**
@@ -351,11 +359,16 @@ define(["jquery",
              * @alias module:views-list.List#expandAll
              */
             expandAll: function () {
-                _.each(this.annotationViews, function (annView) {
+                var list = this.annotationViews,
+                    annView,
+                    i;
+
+                for (i = 0; i < list.length; i++) {
+                    annView = list[i];
                     if (annView.collapsed) {
                         annView.onCollapse();
                     }
-                }, this);
+                }
             },
 
             /**
@@ -363,11 +376,16 @@ define(["jquery",
              * @alias module:views-list.List#collapseAll
              */
             collapseAll: function () {
-                _.each(this.annotationViews, function (annView) {
-                    if (!annView.collapsed) {
+                var list = this.annotationViews,
+                    annView,
+                    i;
+
+                for (i = 0; i < list.length; i++) {
+                    annView = list[i];
+                    if (annView.collapsed) {
                         annView.onCollapse();
                     }
-                }, this);
+                }
             },
 
             /**
@@ -376,19 +394,24 @@ define(["jquery",
              */
             render: function () {
                 var list = this.annotationViews,
-                    $listContainer = this.$list.detach();
+                    $listContainer = this.$list.detach(),
+                    annView,
+                    i;
 
-                _.each(list, function (annView) {
+                for (i = 0; i < list.length; i++) {
+                    annView = list[i];
                     annView.render().$el.detach();
-                }, this);
+                }
+
 
                 $listContainer.empty();
 
                 list = this.filtersManager.filterAll(list);
 
-                _.each(list, function (annView) {
+                for (i = 0; i < list.length; i++) {
+                    annView = list[i];
                     $listContainer.append(annView.$el);
-                }, this);
+                }
 
                 this.$el.find("#content-list-scroll").append($listContainer);
 
