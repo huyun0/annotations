@@ -61,6 +61,23 @@ define(["jquery",
              */
             annotationViews: [],
 
+            /**
+             * List of views of selected annotation
+             * @type {Array}
+             */
+            selectedAnnotations: [],
+
+            /**
+             * Old list of views of selected annotation
+             * @type {Array}
+             */
+            oldSelectedAnnotations: [],
+
+            /**
+             * Define if the selection have been updated
+             * @type {Boolean}
+             */
+            selectionUpdated: false,
 
             /**
              * Events to handle
@@ -92,12 +109,12 @@ define(["jquery",
                                "sortViewsbyTime",
                                "reset",
                                "select",
-                               "unselect",
                                "switchFilter",
                                "updateFiltersRender",
                                "toggleVisibility",
                                "disableFilter",
                                "expandAll",
+                               "renderSelect",
                                "collapseAll",
                                "updateView");
 
@@ -118,7 +135,11 @@ define(["jquery",
                 // Add backbone events to the model
                 _.extend(this, Backbone.Events);
 
-                return this.render();
+                this.render();
+
+                window.requestAnimationFrame(this.renderSelect);
+
+                return this;
             },
 
             /**
@@ -226,47 +247,65 @@ define(["jquery",
              * @param  {Annotation} annotations The annotation to select
              */
             select: function (annotations) {
-                var view,
-                    annotation,
-                    i;
+                var annotation,
+                    i,
+                    view,
+                    selectedAnnotations = new Array(annotations.length);
 
-                this.unselect();
+                // only remove the annotations
 
                 for (i = 0; i < annotations.length; i++) {
                     annotation = annotations[i];
-
-                    view = this.getViewFromAnnotation(annotation.get("id"));
-
-                    if (view) {
-                        view.selectVisually();
-                        view.isSelected = true;
-
-                        // Only scroll the list to the first item of the selection
-                        if (i === 0) {
-                            location.hash = "#" + view.id;
+                    if (annotation) {
+                        view = this.getViewFromAnnotation(annotation.get("id"));
+                        if (!_.isUndefined(view)) {
+                            selectedAnnotations[i] = view;
+                        } else {
+                            console.error("Can not find annotation view with id '" + annotation.get("id") + "'");
                         }
                     }
                 }
+
+                this.oldSelectedAnnotations = this.selectedAnnotations;
+                this.selectedAnnotations = selectedAnnotations;
+
+                this.selectionUpdated = true;
             },
 
             /**
-             * Unselect all annotation views
-             * @alias module:views-list.List#unselect
+             * Render the annotations selection on the list
+             * @alias module:views-list.List#renderSelect
              */
-            unselect: function ()  {
-                var id,
+            renderSelect: function () {
+                var annotations = this.selectedAnnotations,
+                    oldAnnotations = this.oldSelectedAnnotations,
                     view,
-                    self = this;
+                    i;
 
-                this.$el.find(".selected").each(function () {
-                        id = $(this).attr("id"),
-                        view = self.getViewFromAnnotation(id);
-                        $(this).removeClass("selected");
+                // Display selection only if it has been updated
+                if (this.selectionUpdated) {
 
-                        if (view) {
-                            view.isSelected = false;
+                    for (i = 0; i < oldAnnotations.length; i++) {
+                        view = oldAnnotations[i];
+                        view.$el.removeClass("selected");
+                        view.isSelected = false;
+                    }
+
+                    for (i = 0; i < annotations.length; i++) {
+                        view = annotations[i];
+                        view.$el.add.addClass("selected");
+                        view.isSelected = true;
+
+                        // Only scroll the list to the first item of the selection
+                         if (i === 0) {
+                             location.hash = "#" + view.id;
                         }
-                    });
+                    }
+
+                    this.selectionUpdated = false;
+                }
+
+                window.requestAnimationFrame(this.renderSelect);
             },
 
             /**
@@ -276,9 +315,16 @@ define(["jquery",
              * @return {ListAnnotation}            The view representing the annotation
              */
             getViewFromAnnotation: function (id) {
-                return _.find(this.annotationViews, function (view) {
-                            return view.model.get("id") == id;
-                        }, this);
+                var annotationViews = this.annotationViews,
+                    view,
+                    i;
+
+                for (i = 0; i < annotationViews.length; i++) {
+                    view = annotationViews[i];
+                    if (view.model.get("id") === id) {
+                        return view;
+                    }
+                }
             },
 
             /**
