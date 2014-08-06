@@ -23,7 +23,8 @@ require.config({
         "text"                          : "libs/require/config/text",
         "tooltip"                       : "libs/bootstrap/tooltip",
         "timeline"                      : "libs/timeline-min",
-        "underscore"                    : "libs/underscore-min-1.4.3"
+        "underscore"                    : "libs/underscore-min-1.4.3",
+        "raf"                           : "libs/rAF"
     },
     waitSeconds: 10,
 
@@ -75,7 +76,7 @@ require.config({
 });
 
 // Bootstrap function for main app
-require(["domReady", "annotations-tool-configuration", "annotations-tool"],
+require(["domReady", "annotations-tool-configuration", "annotations-tool", "raf"],
 
 function (domReady, config, app) {
     domReady(function () {

@@ -83,7 +83,7 @@ function ($, PlayerAdapter, Annotation, User, CommentsContainer, Template, Backb
         events: {
             "click"                      : "onSelect",
             "click .toggle-edit"         : "switchEditModus",
-            "click .proxy-anchor "        : "stopPropagation",
+            "click .proxy-anchor "       : "stopPropagation",
             "click .freetext textarea"   : "stopPropagation",
             "click .scaling select"      : "stopPropagation",
             "click .end-value"           : "stopPropagation",

@@ -452,18 +452,20 @@ define(["jquery",
             onWindowResize: function () {
                 var listContent,
                     windowHeight = $(window).height(),
-                    rest;
+                    annotationsContainerHeight = $("#annotate-container").height(),
+                    loopFunctionHeight = !_.isUndefined(annotationsTool.loopFunction) && annotationsTool.loopFunction.isVisible() ?
+                                            annotationsTool.loopFunction.$el.height() + 180 : 145,
+                    videoContainerHeight = $("#video-container").height();
+
 
                 // TODO: improve this part with a better layout management, more generic
-
                 if (this.annotateView && this.listView) {
                     listContent = this.listView.$el.find("#content-list-scroll");
-                    listContent.css("max-height", windowHeight - $("#annotate-container").height() - 120);
+                    listContent.css("max-height", windowHeight - annotationsContainerHeight - 120);
                 }
 
                 if (this.timelineView) {
-                    rest = !_.isUndefined(annotationsTool.loopFunction) && annotationsTool.loopFunction.isVisible() ? annotationsTool.loopFunction.$el.height() + 180 : 145;
-                    this.timelineView.$el.find("#timeline").css("max-height", windowHeight - ($("#video-container").height() + rest));
+                    this.timelineView.$el.find("#timeline").css("max-height", windowHeight - (videoContainerHeight + loopFunctionHeight));
                 }
             },
             /**

@@ -270,6 +270,13 @@ define(["jquery",
                 this.selectedAnnotations = selectedAnnotations;
 
                 this.selectionUpdated = true;
+
+                if (this.scheduledAnimationFrame) {
+                    return;
+                }
+
+                this.scheduledAnimationFrame = true;
+                window.requestAnimationFrame(this.renderSelect);
             },
 
             /**
@@ -293,19 +300,19 @@ define(["jquery",
 
                     for (i = 0; i < annotations.length; i++) {
                         view = annotations[i];
-                        view.$el.add.addClass("selected");
+                        view.$el.addClass("selected");
                         view.isSelected = true;
 
                         // Only scroll the list to the first item of the selection
-                         if (i === 0) {
-                             location.hash = "#" + view.id;
+                        if (i === 0) {
+                            location.hash = "#" + view.id;
                         }
                     }
 
                     this.selectionUpdated = false;
                 }
 
-                window.requestAnimationFrame(this.renderSelect);
+                this.scheduledAnimationFrame = false;
             },
 
             /**
