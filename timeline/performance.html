@@ -1,0 +1,136 @@
+
+<!-- saved from url=(0075)http://visjs.org/examples/timeline/14_a_lot_of_grouped_data.html?count=1000 -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>Timeline | Performance tests</title>
+
+  <script src="./Timeline   A lot of grouped data_files/vis.js"></script>
+  <link href="./Timeline   A lot of grouped data_files/vis.css" rel="stylesheet" type="text/css">
+
+  <style type="text/css">
+    body {
+      color: #4D4D4D;
+      font: 10pt arial;
+    }
+  </style>
+<style>[touch-action="none"]{ -ms-touch-action: none; touch-action: none; }[touch-action="pan-x"]{ -ms-touch-action: pan-x; touch-action: pan-x; }[touch-action="pan-y"]{ -ms-touch-action: pan-y; touch-action: pan-y; }[touch-action="scroll"],[touch-action="pan-x pan-y"],[touch-action="pan-y pan-x"]{ -ms-touch-action: pan-x pan-y; touch-action: pan-x pan-y; }</style><style id="style-1-cropbar-clipper">/* Copyright 2014 Evernote Corporation. All rights reserved. */
+.en-markup-crop-options {
+    top: 18px !important;
+    left: 50% !important;
+    margin-left: -90px !important;
+    width: 180px !important;
+    border: 2px rgba(255,255,255,.38) solid !important;
+    border-radius: 4px !important;
+}
+
+.en-markup-crop-options div div:first-of-type {
+    margin-left: 0px !important;
+}
+</style></head>
+
+<body onresize="/*timeline.checkResize();*/" cz-shortcut-listen="true">
+<h1>Timeline performance</h1>
+
+<p>
+  Choose a number of items per track:
+  <select onChange="update(parseInt(this.value))">
+    <option value="10">10</option>
+    <option value="100" selected>100</option>
+    <option value="500">500</option>
+    <option value="1000">1000</option>
+    <option value="5000">5000</option>
+    <option value="10000">10000</option>
+  </select>
+</p><p>
+<p>
+  Choose a number of tracks:
+
+  <select onChange="update(undefined, parseInt(this.value))">
+    <option value="1">1</option>
+    <option value="5">5</option>
+    <option value="10" selected>10</option>
+    <option value="20">20</option>
+    <option value="50">50</option>
+  </select>
+</p><p>
+  Current number of items: <span id="count">1000</span>
+</p>
+
+<div id="mytimeline"></div>
+
+<script>
+  var titems = 100,
+      tracks = 10;
+
+  function update(newItems, newTracks) {
+    titems = newItems || titems;
+    tracks = newTracks || tracks;
+    createTimeline();
+  }
+
+  function createTimeline() {
+        // get selected item count from url parameter
+    var count = titems * tracks;
+
+    var groupsArray = [];
+    for (var i=1; i <= tracks; i++) {
+      groupsArray.push({id: i, content: 'Truck&nbsp;' + i});
+    }
+    // create groups
+    var groups = new vis.DataSet(groupsArray);
+
+    // create items
+    var items = new vis.DataSet();
+
+    var order = 1;
+    var truck = 1;
+    for (var j = 0; j < tracks; j++) {
+      var date = new Date();
+      for (var i = 0; i < titems; i++) {
+        date.setHours(date.getHours() +  4 * (Math.random() < 0.2));
+        var start = new Date(date);
+
+        date.setHours(date.getHours() + 2 + Math.floor(Math.random()*4));
+        var end = new Date(date);
+
+        items.add({
+          id: order,
+          group: truck,
+          start: start,
+          end: end,
+          content: 'Order ' + order
+        });
+
+        order++;
+      }
+      truck++;
+    }
+
+    // specify options
+    var options = {
+      stack: false,
+      start: new Date(),
+      end: new Date(1000*60*60*24 + (new Date()).valueOf()),
+      editable: true,
+      margin: {
+        item: 10, // minimal margin between items
+        axis: 5   // minimal margin between items and the axis
+      },
+      orientation: 'top'
+    };
+
+    // create a Timeline
+    var container = document.getElementById('mytimeline');
+    container.innerHTML = "";
+    timeline = new vis.Timeline(container, null, options);
+    timeline.setGroups(groups);
+    timeline.setItems(items);
+
+    document.getElementById('count').innerHTML = count;
+  }
+
+  createTimeline();
+</script>
+
+
+
+</body></html>
