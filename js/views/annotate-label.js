@@ -26,11 +26,11 @@
  */
 define(["jquery",
         "models/annotation",
-        "text!templates/annotate-label.tmpl",
-        "handlebarsHelpers",
-        "backbone"],
+        "templates/annotate-label",
+        "backbone",
+        "handlebarsHelpers"],
 
-    function ($, Annotation, Template, Handlebars, Backbone) {
+    function ($, Annotation, Template, Backbone) {
 
         "use strict";
 
@@ -100,7 +100,7 @@ define(["jquery",
              * @alias module:views-annotate-label.Category#template
              * @type {HandlebarsTemplate}
              */
-            template: Handlebars.compile(Template),
+            template: Template,
 
             /**
              * Events to handle by the annotate-label view

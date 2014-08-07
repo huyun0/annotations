@@ -50,7 +50,7 @@ define(["jquery",
         "models/user",
         "models/track",
         "models/video",
-        "text!templates/categories-legend.tmpl",
+        "templates/categories-legend",
         "roles",
         "FiltersManager",
         "backbone",
@@ -61,7 +61,7 @@ define(["jquery",
         "tab"],
 
     function ($, PlayerAdapter, AnnotateView, ListView, TimelineView, LoginView, ScaleEditorView,
-              Annotations, Users, Videos, User, Track, Video, CategoriesLegendTmpl, ROLES, FiltersManager, Backbone, Handlebars) {
+              Annotations, Users, Videos, User, Track, Video, CategoriesLegendTmpl, ROLES, FiltersManager, Backbone) {
 
         "use strict";
 
@@ -101,7 +101,7 @@ define(["jquery",
              * @alias module:views-main.MainView#categoriesLegendTmpl
              * @type {HandlebarsTemplate}
              */
-            categoriesLegendTmpl: Handlebars.compile(CategoriesLegendTmpl),
+            categoriesLegendTmpl: CategoriesLegendTmpl,
 
             /**
              * Events to handle by the main view

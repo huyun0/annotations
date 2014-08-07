@@ -13,10 +13,10 @@ define(["jquery",
         "backbone",
         "models/user",
         "collections/users",
-        "text!templates/user-login.tmpl",
+        "templates/user-login",
         "roles",
         "handlebars"],
-        function ($, Backbone, User, Users, LoginTmpl, ROLES, Handlebars) {
+        function ($, Backbone, User, Users, LoginTemplate, ROLES) {
 
             "use strict";
 
@@ -41,7 +41,7 @@ define(["jquery",
                  * @alias module:views-login.Login#groupTemplate
                  * @type {HandlebarsTemplate}
                  */
-                loginTemplate: Handlebars.compile(LoginTmpl),
+                loginTemplate: LoginTemplate,
 
                 /**
                  * Events to handle

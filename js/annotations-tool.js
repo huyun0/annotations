@@ -32,8 +32,8 @@ define(["jquery",
         "collections/videos",
         "views/main",
         "views/alert",
-        "text!templates/delete-modal.tmpl",
-        "text!templates/delete-warning-content.tmpl",
+        "templates/delete-modal",
+        "templates/delete-warning-content",
         "prototypes/player_adapter",
         "handlebarsHelpers",
         "roles"],
@@ -64,9 +64,9 @@ define(["jquery",
 
                 modelsInitialized: false,
 
-                deleteModalTmpl: Handlebars.compile(DeleteModalTmpl),
+                deleteModalTmpl: DeleteModalTmpl,
 
-                deleteContentTmpl: Handlebars.compile(DeleteContentTmpl),
+                deleteContentTmpl: DeleteContentTmpl,
 
                 deleteOperation: {
                     /**

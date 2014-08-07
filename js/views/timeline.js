@@ -36,11 +36,11 @@ define(["jquery",
         "prototypes/player_adapter",
         "models/annotation",
         "collections/annotations",
-        "text!templates/timeline-group.tmpl",
-        "text!templates/timeline-group-empty.tmpl",
-        "text!templates/timeline-item.tmpl",
-        "text!templates/timeline-modal-add-group.tmpl",
-        "text!templates/timeline-modal-update-group.tmpl",
+        "templates/timeline-group",
+        "templates/timeline-group-empty",
+        "templates/timeline-item",
+        "templates/timeline-modal-add-group",
+        "templates/timeline-modal-update-group",
         "access",
         "roles",
         "FiltersManager",
@@ -89,35 +89,35 @@ define(["jquery",
              * @alias module:views-timeline.TimelineView#groupTemplate
              * @type {HandlebarsTemplate}
              */
-            groupTemplate: Handlebars.compile(GroupTmpl),
+            groupTemplate: GroupTmpl,
 
             /**
              * Empty group template
              * @alias module:views-timeline.TimelineView#groupEmptyTemplate
              * @type {HandlebarsTemplate}
              */
-            groupEmptyTemplate: Handlebars.compile(GroupEmptyTmpl),
+            groupEmptyTemplate: GroupEmptyTmpl,
 
             /**
              * Item template
              * @alias module:views-timeline.TimelineView#itemTemplate
              * @type {HandlebarsTemplate}
              */
-            itemTemplate: Handlebars.compile(ItemTmpl),
+            itemTemplate: ItemTmpl,
 
             /**
              * Modal template for group insertion
              * @alias module:views-timeline.TimelineView#modalAddGroupTemplate
              * @type {HandlebarsTemplate}
              */
-            modalAddGroupTemplate: Handlebars.compile(ModalAddGroupTmpl),
+            modalAddGroupTemplate: ModalAddGroupTmpl,
 
             /**
              * Modal template for group update
              * @alias module:views-timeline.TimelineView#modalUpdateGroupTemplate
              * @type {HandlebarsTemplate}
              */
-            modalUpdateGroupTemplate: Handlebars.compile(ModalUpdateGroupTmpl),
+            modalUpdateGroupTemplate: ModalUpdateGroupTmpl,
 
             /**
              * Events to handle by the timeline view

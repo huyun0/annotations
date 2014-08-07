@@ -24,11 +24,10 @@
  */
 define(["jquery",
         "backbone",
-        "text!templates/alert-modal.tmpl",
-        "roles",
+        "templates/alert-modal",
         "handlebarsHelpers"],
 
-        function ($, Backbone, AlertTmpl, ROLES, Handlebars) {
+        function ($, Backbone, AlertTemplate) {
 
             "use strict";
 
@@ -48,7 +47,7 @@ define(["jquery",
                  * @alias module:views-alert.Alert#alertTemplate
                  * @type {HandlebarsTemplate}
                  */
-                alertTemplate: Handlebars.compile(AlertTmpl),
+                alertTemplate: AlertTemplate,
 
                 /**
                  * Events to handle

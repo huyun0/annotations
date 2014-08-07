@@ -36,13 +36,13 @@ define(["jquery",
         "collections/annotations",
         "collections/categories",
         "views/annotate-tab",
-        "text!templates/annotate-tab-title.tmpl",
+        "templates/annotate-tab-title",
         "roles",
         "access",
         "handlebarsHelpers",
         "backbone"],
 
-    function ($, _, PlayerAdapter, Annotation, Annotations, Categories, AnnotateTab, TabTitleTemplate, ROLES, ACCESS, Handlebars, Backbone) {
+    function ($, _, PlayerAdapter, Annotation, Annotations, Categories, AnnotateTab, TabsButtonTemplate, ROLES, ACCESS, Handlebars, Backbone) {
 
         "use strict";
 
@@ -118,7 +118,7 @@ define(["jquery",
                  * @alias module:views-annotate.Category#tabsButtonTemplate
                  * @type {HandlebarsTemplate}
                  */
-                tabsButtonTemplate: Handlebars.compile(TabTitleTemplate),
+                tabsButtonTemplate: TabsButtonTemplate,
 
                 /**
                  * Element containing the tabs buttons
