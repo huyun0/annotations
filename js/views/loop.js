@@ -26,11 +26,11 @@ define(["jquery",
         "collections/loops",
         "prototypes/player_adapter",
         "backbone",
-        "text!templates/loop-control.tmpl",
+        "templates/loop-control",
         "handlebars",
         "slider"],
 
-        function ($, Loops, PlayerAdapter, Backbone, LoopTmpl, Handlebars) {
+        function ($, Loops, PlayerAdapter, Backbone, LoopTemplate, Handlebars) {
 
             "use strict";
 
@@ -107,7 +107,7 @@ define(["jquery",
                  * @alias module:views-loop.Loop#loopTemplate
                  * @type {HandlebarsTemplate}
                  */
-                loopTemplate: Handlebars.compile(LoopTmpl),
+                loopTemplate: LoopTemplate,
 
                 /**
                  * Events to handle

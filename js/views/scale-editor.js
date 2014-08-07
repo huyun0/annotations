@@ -32,12 +32,12 @@ define(["jquery",
         "models/scale",
         "collections/scales",
         "views/scalevalue-editor",
-        "text!templates/scale-editor.tmpl",
-        "text!templates/scale-editor-select.tmpl",
-        "text!templates/scale-editor-content.tmpl",
+        "templates/scale-editor",
+        "templates/scale-editor-select",
+        "templates/scale-editor-content",
         "access",
         "handlebars"],
-        function ($, Backbone, Scale, Scales, ScaleValueEditorView, ScaleEditorTmpl, ScaleEditorSelectTmpl, ScaleEditorContentTmpl, ACCESS, Handlebars) {
+        function ($, Backbone, Scale, Scales, ScaleValueEditorView, ScaleEditorTemplate, ScaleEditorSelectTemplate, ScaleEditorContentTemplate) {
 
             "use strict";
 
@@ -84,21 +84,21 @@ define(["jquery",
                  * @alias module:views-login.Login#scaleEditorTemplate
                  * @type {HandlebarsTemplate}
                  */
-                scaleEditorTemplate: Handlebars.compile(ScaleEditorTmpl),
+                scaleEditorTemplate: ScaleEditorTemplate,
 
                 /**
                  * Template for the select element of the editor
                  * @alias module:views-login.Login#scaleEditorSelectTemplate
                  * @type {HandlebarsTemplate}
                  */
-                scaleEditorSelectTemplate: Handlebars.compile(ScaleEditorSelectTmpl),
+                scaleEditorSelectTemplate: ScaleEditorSelectTemplate,
 
                 /**
                  * Template for the editor content
                  * @alias module:views-login.Login#scaleEditorContentTemplate
                  * @type {HandlebarsTemplate}
                  */
-                scaleEditorContentTemplate: Handlebars.compile(ScaleEditorContentTmpl),
+                scaleEditorContentTemplate: ScaleEditorContentTemplate,
 
                 /**
                  * Events to handle

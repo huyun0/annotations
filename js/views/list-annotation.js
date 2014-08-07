@@ -31,11 +31,11 @@ define(["jquery",
         "models/annotation",
         "models/user",
         "views/comments-container",
-        "text!templates/list-annotation.tmpl",
+        "templates/list-annotation",
         "backbone",
         "handlebarsHelpers"],
 
-function ($, PlayerAdapter, Annotation, User, CommentsContainer, Template, Backbone, Handlebars) {
+function ($, PlayerAdapter, Annotation, User, CommentsContainer, Template, Backbone) {
 
     "use strict";
 
@@ -60,7 +60,7 @@ function ($, PlayerAdapter, Annotation, User, CommentsContainer, Template, Backb
          * @alias module:views-list-annotation.ListAnnotation#template
          * @type {HandlebarsTemplate}
          */
-        template: Handlebars.compile(Template),
+        template: Template,
 
         /**
          * Define if the view has been or not deleted

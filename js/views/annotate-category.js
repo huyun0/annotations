@@ -26,13 +26,13 @@
  */
 define(["jquery",
         "views/annotate-label",
-        "text!templates/annotate-category.tmpl",
+        "templates/annotate-category",
         "handlebarsHelpers",
         "jquery.colorPicker",
         "backbone"],
 
 
-    function ($, LabelView, Template, Handlebars) {
+    function ($, LabelView, Template) {
 
         "use strict";
 
@@ -85,7 +85,7 @@ define(["jquery",
              * @alias module:views-annotate-category.Category#template
              * @type {HandlebarsTemplate}
              */
-            template: Handlebars.compile(Template),
+            template: Template,
 
             /**
              * Events to handle by the annotate-category view

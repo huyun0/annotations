@@ -25,7 +25,7 @@
  */
 define(["jquery",
         "views/comment",
-        "text!templates/comments-container.tmpl",
+        "templates/comments-container",
         "handlebars",
         "backbone"],
 
@@ -61,7 +61,7 @@ define(["jquery",
              * @alias module:views-comments-container.CommentsContainer#template
              * @type {HandlebarsTemplate}
              */
-            template: Handlebars.compile(Template),
+            template: Template,
 
             /**
              * Define if the view is or not collapsed

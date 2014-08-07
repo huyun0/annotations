@@ -26,8 +26,8 @@
  */
 define(["jquery",
         "underscore",
-        "text!templates/comment.tmpl",
-        "text!templates/edit-comment.tmpl",
+        "templates/comment",
+        "templates/edit-comment",
         "handlebars",
         "backbone"],
 
@@ -56,14 +56,14 @@ define(["jquery",
              * @alias module:views-comment.Comment#template
              * @type {HandlebarsTemplate}
              */
-            template: Handlebars.compile(Template),
+            template: Template,
 
             /**
              * View template for edit modus
              * @alias module:views-comment.Comment#template
              * @type {HandlebarsTemplate}
              */
-            editTemplate: Handlebars.compile(EditTemplate),
+            editTemplate: EditTemplate,
 
             /**
              * Events to handle
@@ -156,7 +156,7 @@ define(["jquery",
              * Listener for the click on the cancel button
              * @alias module:views-comment.Comment#onCancel
              */
-            onCancel: function () {
+            onCancel: function (event) {
                 event.stopImmediatePropagation();
                 this.cancel();
             },

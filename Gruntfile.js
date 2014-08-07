@@ -75,9 +75,9 @@ module.exports = function (grunt) {
                 tasks: ['jshint:all', 'copy:target']
             },
             // Watch Templates files
-            handlebars: {
+            templates: {
                 files: ['<%= srcPath.tmpl %>'],
-                tasks: ['copy:target']
+                tasks: ['handlebars:target']
             },
             // Watch HTML files
             html: {
@@ -93,10 +93,6 @@ module.exports = function (grunt) {
             // Use it for single core processor. It could stop working with an important number of files
             multiple: {
                 files: ['<%= srcPath.less %>', '<%= srcPath.js %>', '<%= srcPath.html %>', '<%= srcPath.tmpl %>'],
-                tasks: ['copy:target']
-            },
-            templates: {
-                files: ['<%= srcPath.tmpl %>'],
                 tasks: ['copy:target']
             },
             // Watch file on web server for live reload
@@ -130,14 +126,34 @@ module.exports = function (grunt) {
 
         /** Pre-compile the handlebars templates */
         handlebars: {
-            compile: {
-                options: {
-                    amd: true
-                },
-                files: {
-                    'js/Templates.js': '<%= srcPath.tmpl %>'
-                }
-            }
+          target: {
+            options: {
+              namespace: false,
+              amd: true
+            },
+            files: [{
+                ext: '.js',
+                flatten : false,
+                expand  : true,
+                src: '<%= currentWatchFile %>',
+                dest: '<%= currentProfile.target %>',
+                filter: 'isFile'
+            }]
+          }, 
+
+          all: {
+            options: {
+              namespace: false,
+              amd: true
+            },
+            files: [{
+                ext: '.js',
+                flatten : false,
+                expand  : true,
+                src: 'templates/*.tmpl',
+                dest: '<%= currentProfile.target %>'
+            }]
+          },
         },
 
         /** Copy .. */
@@ -157,7 +173,7 @@ module.exports = function (grunt) {
                 files: [{
                     flatten : false,
                     expand  : true,
-                    src     : ['js/**/*', 'img/**/*', 'style/**/*.png', 'style/**/*.css', 'templates/*', 'resources/*', 'tests/**/*'],
+                    src     : ['js/**/*', 'img/**/*', 'style/**/*.png', 'style/**/*.css', 'resources/*', 'tests/**/*'],
                     dest    : '<%= currentProfile.target %>',
                 }]
             },
@@ -183,7 +199,7 @@ module.exports = function (grunt) {
                 files: [{
                     flatten: false,
                     expand: true,
-                    src: ['js/**/*', 'img/**/*', 'style/**/*.png', 'style/**/*.css', 'templates/*', 'resources/*', 'tests/**/*'],
+                    src: ['js/**/*', 'img/**/*', 'style/**/*.png', 'style/**/*.css', 'resources/*', 'tests/**/*'],
                     dest: '<%= currentProfile.target %>',
                 }]
             },
@@ -330,7 +346,7 @@ module.exports = function (grunt) {
 
     // Default task
     grunt.registerTask('default', ['jshint:all', 'less-all', 'copy:local-all', 'copy:local-index']);
-    grunt.registerTask('baseDEV', ['less:annotation', 'copy:all', 'processhtml:dev', 'copy:config', 'concurrent:dev']);
+    grunt.registerTask('baseDEV', ['handlebars:all', 'less:annotation', 'copy:all', 'processhtml:dev', 'copy:config', 'concurrent:dev']);
     grunt.registerTask('baseBUILD', ['blanket_qunit', 'jsdoc', 'less:annotation', 'copy:build', 'processhtml:build', 'copy:config', 'requirejs']);
 
     grunt.registerTaskWithProfile = function (name, description, defaultProfile) {

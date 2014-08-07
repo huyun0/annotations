@@ -50,7 +50,7 @@ define(["jquery",
         "collections/labels",
         "collections/scalevalues",
         "views/annotate-category",
-        "text!templates/annotate-tab.tmpl",
+        "templates/annotate-tab",
         "default_scale_set",
         "handlebarsHelpers",
         "backbone",
@@ -121,7 +121,7 @@ define(["jquery",
              * @alias module:views-annotate-tab.AnnotateTab#template
              * @type {HandlebarsTemplate}
              */
-            template: Handlebars.compile(Template),
+            template: Template,
 
             /**
              * Template for the carousel items
