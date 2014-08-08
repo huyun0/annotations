@@ -250,7 +250,7 @@ define(["jquery",
                 var annotation,
                     i,
                     view,
-                    selectedAnnotations = new Array(annotations.length);
+                    selectedAnnotations = [];
 
                 // only remove the annotations
 
@@ -258,10 +258,10 @@ define(["jquery",
                     annotation = annotations[i];
                     if (annotation) {
                         view = this.getViewFromAnnotation(annotation.get("id"));
+
+                        // If view not found, annotation has been newly created
                         if (!_.isUndefined(view)) {
                             selectedAnnotations[i] = view;
-                        } else {
-                            console.error("Can not find annotation view with id '" + annotation.get("id") + "'");
                         }
                     }
                 }
