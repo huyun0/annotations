@@ -35,7 +35,9 @@
 define(["jquery",
         "prototypes/player_adapter",
         "models/annotation",
+        "models/track",
         "collections/annotations",
+        "collections/tracks",
         "templates/timeline-group",
         "templates/timeline-group-empty",
         "templates/timeline-item",
@@ -52,7 +54,7 @@ define(["jquery",
         "jquery.appear"
     ],
 
-    function ($, PlayerAdapter, Annotation, Annotations, GroupTmpl,
+    function ($, PlayerAdapter, Annotation, Track, Annotations, Tracks, GroupTmpl,
         GroupEmptyTmpl, ItemTmpl, ModalAddGroupTmpl, ModalUpdateGroupTmpl, ACCESS, ROLES, FiltersManager, Backbone, Handlebars) {
 
         "use strict";
@@ -331,12 +333,12 @@ define(["jquery",
                 links.events.addListener(this.timeline, "rangechange", this.timerangeChange);
 
                 this.tracks = annotationsTool.video.get("tracks");
-                this.listenTo(this.tracks, "add", this.addTrack);
+                this.listenTo(this.tracks, Tracks.EVENTS.VISIBILITY, this.addTracksList);
                 this.listenTo(this.tracks, "change", this.changeTrack);
                 this.listenTo(annotationsTool, annotationsTool.EVENTS.ANNOTATION_SELECTION, this.onSelectionUpdate);
 
                 this.$el.show();
-                this.addTracksList(this.tracks);
+                this.addTracksList(this.tracks.getVisibleTracks());
                 this.timeline.setCustomTime(this.startDate);
 
                 // Overwrite the redraw method
@@ -707,7 +709,8 @@ define(["jquery",
              * @param {Array | List} tracks The list of tracks to add
              */
             addTracksList: function (tracks) {
-                tracks.each(this.addTrack, this);
+                this.allItems = {};
+                _.each(tracks, this.addTrack, this);
             },
 
             /**
@@ -1379,6 +1382,11 @@ define(["jquery",
              * @param  {PlainObject} [options] Options like silent: true to avoid a redraw (optionnal)
              */
             changeTrack: function (track, options) {
+                // If the track is not visible, we do nothing
+                if (!track.get(Track.FIELDS.VISIBLE)) {
+                    return;
+                }
+
                 var newGroup,
                     trackJSON = track.toJSON(),
                     redrawRequired = false;

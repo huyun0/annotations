@@ -199,7 +199,6 @@ define(["jquery",
                     $(window).bind("mousedown", this.onMouseDown);
                     $(window).bind("mouseup", this.onMouseUp);
 
-
                 },
 
                 /**
@@ -877,7 +876,7 @@ define(["jquery",
                             tracks = annotationsTool.video.get("tracks");
 
                             if (annotationsTool.localStorage) {
-                                tracks = tracks.getVisibleTracks();
+                                tracks = tracks.getTracksForLocalStorage();
                             }
 
                             if (tracks.getMine().length === 0) {
@@ -891,6 +890,7 @@ define(["jquery",
                                     }
                                 );
                             } else {
+                                tracks.showTracks(tracks.first(annotationsTool.MAX_VISIBLE_TRACKS));
                                 concludeInitialization();
                             }
                         };

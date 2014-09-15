@@ -29,12 +29,13 @@ define(["jquery",
         "prototypes/player_adapter",
         "models/annotation",
         "collections/annotations",
+        "collections/tracks",
         "views/list-annotation",
         "backbone",
         "FiltersManager",
         "scrollspy"],
 
-    function ($, PlayerAdapter, Annotation, Annotations, AnnotationView, Backbone, FiltersManager) {
+    function ($, PlayerAdapter, Annotation, Annotations, Tracks, AnnotationView, Backbone, FiltersManager) {
 
         "use strict";
 
@@ -100,6 +101,7 @@ define(["jquery",
             initialize: function () {
                 // Bind functions to the good context
                 _.bindAll(this, "render",
+                               "addTrackList",
                                "addTrack",
                                "addAnnotation",
                                "addList",
@@ -127,10 +129,10 @@ define(["jquery",
 
                 this.listenTo(this.filtersManager, "switch", this.updateFiltersRender);
                 this.listenTo(this.tracks, "change:access", this.render);
-                this.listenTo(this.tracks, "add", this.addTrack);
+                this.listenTo(this.tracks, Tracks.EVENTS.VISIBILITY, this.addTrackList);
                 this.listenTo(annotationsTool, annotationsTool.EVENTS.ANNOTATION_SELECTION, this.select);
 
-                this.tracks.each(this.addTrack, this);
+                this.addTrackList(this.tracks.getVisibleTracks());
 
                 // Add backbone events to the model
                 _.extend(this, Backbone.Events);
@@ -140,6 +142,15 @@ define(["jquery",
                 window.requestAnimationFrame(this.renderSelect);
 
                 return this;
+            },
+
+            /**
+             * Tracks bulk insertion
+             * @param {array} tracks Tracks to insert
+             */
+            addTrackList: function (tracks) {
+                this.annotationsViews = [];
+                _.each(tracks, this.addTrack, this);
             },
 
             /**

@@ -66,15 +66,23 @@ define(["jquery",
                  * @param {boolean} withId Define if the id has to be included in the URI
                  */
                 this.getURI = function (resource, withId) {
+                    var tempUrl = "";
+
                     // If the resource has an id, it means that it's a model
                     if (typeof resource.collection !== "undefined") {
                         if (withId && (typeof resource.id !== "undefined")) {
-                            return resource.url();
+                            tempUrl = resource.url();
                         } else {
-                            return resource.collection.url;
+                            tempUrl = resource.collection.url;
                         }
                     } else {
-                        return _.isFunction(resource.url) ? resource.url() : resource.url;
+                        tempUrl = _.isFunction(resource.url) ? resource.url() : resource.url;
+                    }
+
+                    if (_.isUndefined(options.paging)) {
+                        return tempUrl;
+                    } else {
+                        return tempUrl + options.paging;
                     }
                 };
 

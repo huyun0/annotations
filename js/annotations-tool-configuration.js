@@ -68,6 +68,12 @@ define(["jquery",
             CATEGORIES_PER_TAB: 7,
 
             /**
+             * The maximal number of tracks visible in the timeline at the same time
+             * @type {Number}
+             */
+            MAX_VISIBLE_TRACKS: 2,
+
+            /**
              * Define if the localStorage should be used or not
              * @alias module:annotations-tool-configuration.Configuration.localStorage
              * @type {boolean}

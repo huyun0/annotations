@@ -59,11 +59,17 @@ define(["jquery",
              */
             initialize: function (attr) {
 
-                _.bindAll(this, "getAnnotation");
+                _.bindAll(this,
+                        "getAnnotation",
+                        "fetchAnnotations");
 
                 if (!attr || _.isUndefined(attr.name)) {
                     throw "'name' attribute is required";
                 }
+
+                // the tack is not visible at initialisation
+                attr.visible = false;
+                attr.annotationsLoaded = false;
 
                 // Check if the track has been initialized
                 if (!attr.id) {
@@ -147,7 +153,7 @@ define(["jquery",
                     data = attr;
                 }
 
-                this.on("change:access")
+                this.on("change:access");
 
                 return data;
             },
@@ -159,8 +165,7 @@ define(["jquery",
              * @return {string}  If the validation failed, an error message will be returned.
              */
             validate: function (attr) {
-                var tmpCreated,
-                    annotations;
+                var tmpCreated;
 
                 if (attr.id) {
                     if (this.get("id") !== attr.id) {
@@ -170,12 +175,6 @@ define(["jquery",
                         this.setUrl();
                         this.attributes.ready = true;
                         this.trigger("ready", this);
-
-                        annotations = this.get("annotations");
-
-                        if (annotations && (annotations.length) === 0) {
-                            annotations.fetch({async: false, add: true});
-                        }
                     }
                 }
 
@@ -217,6 +216,32 @@ define(["jquery",
 
                 if (attr.deleted_at && !_.isNumber(attr.deleted_at)) {
                     return "'deleted_at' attribute must be a number!";
+                }
+            },
+
+            /**
+             * Method to fetch the annotations
+             * @alias module:models-track.Track#fetchAnnotations
+             */
+            fetchAnnotations: function (optSuccess) {
+                var self = this,
+                    annotations = this.get("annotations"),
+                    success = function () {
+                        if (!_.isUndefined(optSuccess)) {
+                            optSuccess();
+                        }
+
+                        self.set("annotationsLoaded", true);
+                    };
+                
+                if (!this.get("ready")) {
+                    this.once("ready", this.fetchAnnotations);
+                }
+
+                if (annotations && (annotations.length) === 0) {
+                    annotations.fetch({async: false, 
+                                       add: true,
+                                       success: success});
                 }
             },
 
@@ -288,6 +313,10 @@ define(["jquery",
                 }
 
                 return parameter;
+            }
+        }, {
+            FIELDS: {
+                VISIBLE: "visible"
             }
         });
 
