@@ -137,7 +137,7 @@ define(["jquery",
                                     "getTrack",
                                     "getTracks",
                                     "getSelectedTrack",
-                                    "initModels",
+                                    "fetchData",
                                     "importTracks",
                                     "importCategories",
                                     "hasSelection",
@@ -171,7 +171,7 @@ define(["jquery",
 
                     this.currentSelection = [];
 
-                    this.once(this.EVENTS.USER_LOGGED, this.initModels);
+                    this.once(this.EVENTS.USER_LOGGED, this.fetchData);
                     this.once(this.EVENTS.MODELS_INITIALIZED, function () {
                         var trackImported = false;
 
@@ -831,17 +831,18 @@ define(["jquery",
 
                 /**
                  * Get all the annotations for the current user
-                 * @alias annotationsTool.initModels
+                 * @alias annotationsTool.fetchData
                  */
-                initModels: function () {
+                fetchData: function () {
                     var video,
                         videos = new Videos(),
                         tracks,
+                        self = this,
                         annotations,
                         selectedTrack,
                         remindingFetchingTrack,
 
-                        // function to conclude the retrive of annotations
+                        // function to conclude the retrieve of annotations
                         concludeInitialization = $.proxy(function () {
 
                             // At least one private track should exist, we select the first one
@@ -856,16 +857,8 @@ define(["jquery",
                             // Use to know if all the tracks have been fetched
                             remindingFetchingTrack = tracks.length;
 
-                            // Function to add the different listener to the annotations
-                            tracks.each(function (track) {
-                                annotations = track.get("annotations");
-                                this.listenTo(annotations, "add", this.onWindowResize);
-                                if (--remindingFetchingTrack === 0) {
-                                    annotationsTool.modelsInitialized = true;
-                                    annotationsTool.trigger(annotationsTool.EVENTS.MODELS_INITIALIZED);
-                                }
-                            }, this);
-
+                            annotationsTool.modelsInitialized = true;
+                            annotationsTool.trigger(annotationsTool.EVENTS.MODELS_INITIALIZED);
                         }, this),
 
                         /**
@@ -897,16 +890,19 @@ define(["jquery",
 
                     // If we are using the localstorage
                     if (this.localStorage) {
-                        videos.fetch();
+                        videos.fetch({
+                            success: function () {
+                                if (videos.length === 0) {
+                                    video = videos.create(self.getVideoParameters(), {wait: true});
+                                } else {
+                                    video = videos.at(0);
+                                    video.set(self.getVideoParameters());
+                                }
 
-                        if (videos.length === 0) {
-                            video = videos.create(this.getVideoParameters(), {wait: true});
-                        } else {
-                            video = videos.at(0);
-                            video.set(this.getVideoParameters());
-                        }
+                                self.video = video;
+                            }
+                        });
 
-                        this.video = video;
                         createDefaultTrack();
                     } else { // With Rest storage
                         videos.add({video_extid: this.getVideoExtId()});

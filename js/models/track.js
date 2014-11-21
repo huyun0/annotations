@@ -96,9 +96,6 @@ define(["jquery",
 
                 delete attr.annotations;
 
-                if (attr.id) {
-                    this.get("annotations").fetch({async: false});
-                }
 
                 if (attr.tags) {
                     attr.tags = this.parseJSONString(attr.tags);
@@ -239,7 +236,7 @@ define(["jquery",
                 }
 
                 if (annotations && (annotations.length) === 0) {
-                    annotations.fetch({async: false, 
+                    annotations.fetch({async: false,
                                        add: true,
                                        success: success});
                 }

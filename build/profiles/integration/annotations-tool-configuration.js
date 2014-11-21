@@ -70,6 +70,12 @@ define(["jquery",
                 CATEGORIES_PER_TAB: 7,
 
                 /**
+                * The maximal number of tracks visible in the timeline at the same time
+                * @type {Number}
+                */
+                MAX_VISIBLE_TRACKS: 2,
+
+                /**
                  * Define if the localStorage should be used or not
                  * @alias module:annotations-tool-configuration.Configuration.localStorage
                  * @type {boolean}
@@ -240,7 +246,7 @@ define(["jquery",
                             async: false,
                             dataType: "json",
                             success: function (data) {
-                                annotationsTool.userExtId = data.username;
+                                annotationsTool.userExtId = data.user.username;
                             },
                             error: function () {
                                 console.warn("Error getting user information from Matterhorn!");
@@ -312,10 +318,10 @@ define(["jquery",
 
                     // Get the mediapackage and fill the player element with the videos
                     $.ajax({
-                        url: "/search/episode.json",
+                        url: "/archive/episode.json",
                         async: false,
                         crossDomain: true,
-                        data: "id=" + mediaPackageId,
+                        data: "id=" + mediaPackageId + "&limit=1",
                         dataType: "json",
                         success: function (data) {
                             var result = data["search-results"].result,
