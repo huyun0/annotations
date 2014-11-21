@@ -183,7 +183,7 @@ define(["jquery",
                     this.insertView(view);
 
                     if (!isPartofList) {
-                        view.selectVisually();
+                        this.select([annotation]);
                     }
                 }
 
