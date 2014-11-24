@@ -136,9 +136,7 @@ define(["jquery",
                     var max = annotationsTool.MAX_VISIBLE_TRACKS,
                         self = this,
                         showTrack = function (track) {
-                            if (!track.get("visible")) {
-                                track.set(Track.FIELDS.VISIBLE, true);
-                            }
+                            track.set(Track.FIELDS.VISIBLE, true);
                             self.visibleTracks.push(track);
                         };
 
@@ -152,27 +150,22 @@ define(["jquery",
                     }
 
                     // Remove the current visible track
-                    _.each(this.visibleTracks, function (track, index) {
-                        if (_.contains(tracks, track)) {
-                            return;
-                        }
-
-                        this.visibleTracks.splice(index, 1);
+                    _.each(this.visibleTracks, function (track) {
                         track.set(Track.FIELDS.VISIBLE, false);
                     }, this);
-
+                    this.visibleTracks = [];
 
                     _.each(tracks, function (track) {
-                        if (!track.get("annotationsLoaded")) {
-
-                            if (annotationsTool.localStorage) {
-                                showTrack(track);
-                            } else {
+                        if (annotationsTool.localStorage) {
+                            showTrack(track);
+                        } else {
+                            if (!track.get("annotationsLoaded")) {
                                 track.fetchAnnotations(function () {
                                     showTrack(track);
                                 });
+                            } else {
+                                showTrack(track);
                             }
-
                         }
                     }, this);
 

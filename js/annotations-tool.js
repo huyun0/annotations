@@ -199,6 +199,7 @@ define(["jquery",
                     $(window).bind("mousedown", this.onMouseDown);
                     $(window).bind("mouseup", this.onMouseUp);
 
+                    return this;
                 },
 
                 /**
@@ -853,9 +854,6 @@ define(["jquery",
                             } else {
                                 annotationsTool.selectedTrack = selectedTrack;
                             }
-
-                            // Use to know if all the tracks have been fetched
-                            remindingFetchingTrack = tracks.length;
 
                             annotationsTool.modelsInitialized = true;
                             annotationsTool.trigger(annotationsTool.EVENTS.MODELS_INITIALIZED);

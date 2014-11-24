@@ -90,8 +90,10 @@ define(["jquery",
                  * Errors callback for jQuery Ajax method.
                  */
                 this.setError = function (XMLHttpRequest, textStatus, errorThrown) {
-                    console.warn("Error during " + method + " of resource, " + XMLHttpRequest.status + ", " + textStatus);
-                    options.error(textStatus + ", " + errorThrown);
+                    //console.warn("Error during " + method + " of resource, " + XMLHttpRequest.status + ", " + textStatus);
+                    if (!_.isUndefined(options.error)) {
+                        options.error(textStatus + ", " + errorThrown);
+                    }
                 };
 
                 /**
