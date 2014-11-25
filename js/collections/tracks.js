@@ -138,7 +138,8 @@ define(["jquery",
                         showTrack = function (track) {
                             track.set(Track.FIELDS.VISIBLE, true);
                             self.visibleTracks.push(track);
-                        };
+                        },
+                        i;
 
                     if (!_.isArray(tracks)) {
                         tracks = [tracks];
@@ -147,13 +148,14 @@ define(["jquery",
                     if (tracks.length > max) {
                         console.warn("The list of tracks to show is higher than the maximum number of visible tracks. \
                                       Only the first " + max + " will be displayed.");
+                        
+                        for (i = tracks.length - 1; i >= max; i--) {
+                            tracks.splice(i, 1);
+                        }
                     }
 
                     // Remove the current visible track
-                    _.each(this.visibleTracks, function (track) {
-                        track.set(Track.FIELDS.VISIBLE, false);
-                    }, this);
-                    this.visibleTracks = [];
+                    this.hideTracks(this.visibleTracks);
 
                     _.each(tracks, function (track) {
                         if (annotationsTool.localStorage) {
@@ -173,12 +175,26 @@ define(["jquery",
                 },
 
                 hideTracks: function (tracks) {
-                    _.each(tracks, function (track, index) {
-                        if (_.contains(tracks, track)) {
+                    var newVisibleTracks = [],
+                        idsToRemove = [];
+
+                    if (!_.isArray(tracks)) {
+                        tracks = [tracks];
+                    }
+
+                    _.each(tracks, function (track) {
+                        idsToRemove.push(track.id);
+                    }, this);
+
+                    _.each(this.visibleTracks, function (track) {
+                        if (_.contains(idsToRemove, track.id)) {
                             track.set(Track.FIELDS.VISIBLE, false);
-                            this.visibleTracks.splice(index, 1);
+                        } else {
+                            newVisibleTracks.push(track);
                         }
                     }, this);
+
+                    this.visibleTracks = newVisibleTracks;
                 },
 
                 /**

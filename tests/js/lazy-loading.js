@@ -174,6 +174,7 @@ require(["jquery",
                 module("Models",  {
 
                         setup: function () {
+
                             server = sinon.fakeServer.create();
 
                             server.respondWith("PUT",  baseUrl + "/videos", [200, contentJSON, JSON.stringify(videoJSON)]);
@@ -184,15 +185,21 @@ require(["jquery",
                             server.respondWith("GET",  baseUrl + "/videos/1/categories", [200, contentJSON, JSON.stringify(categoriesJSON)]);
                             server.respondWith("GET",  baseUrl + "/videos/1/tracks/1/annotations", [200, contentJSON, JSON.stringify(annotationsJSON)]);
                             server.respondWith("GET",  baseUrl + "/videos/1/tracks/2/annotations", [200, contentJSON, JSON.stringify(annotationsJSON)]);
+                            server.respondWith("GET",  baseUrl + "/videos/1/tracks/3/annotations", [200, contentJSON, JSON.stringify(annotationsJSON)]);
+                            server.respondWith("GET",  baseUrl + "/videos/1/tracks/4/annotations", [200, contentJSON, JSON.stringify(annotationsJSON)]);
                             server.autoRespond = true;
 
-                            if (!window.annotationsTool.started) {
-                                window.annotationsTool.start(Configuration);
-                                window.annotationsTool.started = true;
+                            if (!annotationsTool.started) {
+                                annotationsTool.start(Configuration);
+                                annotationsTool.started = true;
                             }
+
                         },
 
                         teardown: function () {
+                            annotationsTool.MAX_VISIBLE_TRACKS = 2;
+
+                            annotationsTool.fetchData();
                             server.restore();
                         }
 
@@ -200,36 +207,139 @@ require(["jquery",
 
                 asyncTest("Load two tracks", function (assert) {
                     expect(3);
-                    
-                    window.annotationsTool.fetchData();
+
+                    annotationsTool.fetchData();
 
                     setTimeout(function () {
-                        assert.equal(window.annotationsTool.getTracks().size(), 4, "The video should have a total of 4 tracks.");
-                        assert.equal(window.annotationsTool.getAnnotations().length, 8, "Only the annotations of the first two tracks should be loaded.");
-                        assert.equal(window.annotationsTool.getTracks().visibleTracks.length, 2, "Only the first two tracks should be loaded.");
+                        assert.equal(annotationsTool.getTracks().size(), 4, "The video should have a total of 4 tracks.");
+                        assert.equal(annotationsTool.getAnnotations().length, 8, "Only the annotations of the first two tracks should be loaded.");
+                        assert.equal(annotationsTool.getTracks().visibleTracks.length, 2, "Only the first two tracks should be loaded.");
                         QUnit.start();
-                    }, 2000);
+                    }, 100);
                 });
 
 
                 asyncTest("Load one tracks", function (assert) {
                     expect(3);
                     
-                    window.annotationsTool.MAX_VISIBLE_TRACKS = 1;
+                    annotationsTool.MAX_VISIBLE_TRACKS = 1;
 
-                    window.annotationsTool.fetchData();
+                    annotationsTool.fetchData();
+
+                    setTimeout(function () {
+                        assert.equal(annotationsTool.getTracks().size(), 4, "The video should have a total of 4 tracks.");
+                        assert.equal(annotationsTool.getAnnotations().length, 4, "Only the annotations of the first two tracks should be loaded.");
+                        assert.equal(annotationsTool.getTracks().visibleTracks.length, 1, "Only the first two tracks should be loaded.");
+                        QUnit.start();
+                    }, 100);
+                });
+
+                test("Try to display more tracks than the maximum set (tracks 2,3,4 when MAX_VISIBLE_TRACKS is 2)", function () {
+                    var tracksToShow = [],
+                        tracks = annotationsTool.getTracks(),
+                        visibleTracks = [];
+
+                    tracksToShow.push(tracks.get(2));
+                    tracksToShow.push(tracks.get(3));
+                    tracksToShow.push(tracks.get(4));
+
+                    tracks.showTracks(tracksToShow);
+
+                    _.each(tracks.getVisibleTracks(), function (track) {
+                        visibleTracks.push(track.id);
+                    });
+
+                    QUnit.equal(visibleTracks.length, 2, "Two tracks should be visible");
+                    QUnit.ok(_.contains(visibleTracks, 2), "The second track should be visible");
+                    QUnit.ok(_.contains(visibleTracks, 3), "The third track should be visible");
+                    QUnit.ok(!_.contains(visibleTracks, 4), "The fourth track should be not visible");
+                    QUnit.ok(!_.contains(visibleTracks, 1), "The first track should be not visible");
+
+                });
+
+                test("Display tracks 3 and 4", function () {
+                    var tracksToShow = [],
+                        tracks = annotationsTool.getTracks(),
+                        visibleTracks = [];
+
+                    tracksToShow.push(tracks.get(3));
+                    tracksToShow.push(tracks.get(4));
+
+                    tracks.showTracks(tracksToShow);
+
+                    _.each(tracks.getVisibleTracks(), function (track) {
+                        visibleTracks.push(track.id);
+                    });
+
+                    QUnit.equal(visibleTracks.length, 2, "Two tracks should be visible");
+                    QUnit.ok(_.contains(visibleTracks, 3), "The third track should be visible");
+                    QUnit.ok(_.contains(visibleTracks, 4), "The fourth track should be visible");
+                    QUnit.ok(!_.contains(visibleTracks, 1), "The first track should be not visible");
+                    QUnit.ok(!_.contains(visibleTracks, 2), "The second track should be not visible");
+                });
+
+                test("Display single track (4)", function () {
+                    var tracks = annotationsTool.getTracks(),
+                        visibleTracks = [];
+
+                    tracks.showTracks(tracks.get(4));
+
+                    _.each(tracks.getVisibleTracks(), function (track) {
+                        visibleTracks.push(track.id);
+                    });
+
+                    QUnit.equal(visibleTracks.length, 1, "Four tracks should be visible");
+                    QUnit.ok(_.contains(visibleTracks, 4), "The fourth track should be visible");
+                    QUnit.ok(!_.contains(visibleTracks, 3), "The third track should be not visible");
+                    QUnit.ok(!_.contains(visibleTracks, 1), "The first track should be not visible");
+                    QUnit.ok(!_.contains(visibleTracks, 2), "The second track should be not visible");
+                });
+
+                test("Hide tracks 1 and 2", function () {
+                    var tracksToHide = [],
+                        tracks = annotationsTool.getTracks(),
+                        visibleTracks = [];
+
+                    tracksToHide.push(tracks.get(1));
+                    tracksToHide.push(tracks.get(2));
+
+                    tracks.hideTracks(tracksToHide);
+
+                    _.each(tracks.getVisibleTracks(), function (track) {
+                        visibleTracks.push(track.id);
+                    });
 
                     _.forEach(server.requests, function (request) {
                         console.log(request);
                     });
 
+                    QUnit.equal(visibleTracks.length, 0, "Zero track should be visible");
+                    QUnit.ok(!_.contains(visibleTracks, 1), "The first track should be not visible");
+                    QUnit.ok(!_.contains(visibleTracks, 1), "The first track should be not visible");
+                    QUnit.ok(!_.contains(visibleTracks, 2), "The second track should be not visible");
+                    QUnit.ok(!_.contains(visibleTracks, 3), "The third track should be not visible");
+                    QUnit.ok(!_.contains(visibleTracks, 4), "The fourth track should be not visible");
+                });
 
-                    setTimeout(function () {
-                        assert.equal(window.annotationsTool.getTracks().size(), 4, "The video should have a total of 4 tracks.");
-                        assert.equal(window.annotationsTool.getAnnotations().length, 4, "Only the annotations of the first two tracks should be loaded.");
-                        assert.equal(window.annotationsTool.getTracks().visibleTracks.length, 1, "Only the first two tracks should be loaded.");
-                        QUnit.start();
-                    }, 2000);
+                test("Hide single track (2)", function () {
+                    var tracks = annotationsTool.getTracks(),
+                        visibleTracks = [];
+
+                    tracks.hideTracks([tracks.get(2)]);
+
+                    _.each(tracks.getVisibleTracks(), function (track) {
+                        visibleTracks.push(track.id);
+                    });
+
+                    _.forEach(server.requests, function (request) {
+                        console.log(request);
+                    });
+
+                    QUnit.equal(visibleTracks.length, 1, "First track should be visible");
+                    QUnit.ok(_.contains(visibleTracks, 1), "The first track should be visible");
+                    QUnit.ok(!_.contains(visibleTracks, 2), "The second track should be not visible");
+                    QUnit.ok(!_.contains(visibleTracks, 3), "The third track should be not visible");
+                    QUnit.ok(!_.contains(visibleTracks, 4), "The fourth track should be not visible");
                 });
 
 

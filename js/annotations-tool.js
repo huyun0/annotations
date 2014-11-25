@@ -46,7 +46,7 @@ define(["jquery",
              * The main object of the annotations tool
              * @namespace annotationsTool
              */
-            window.annotationsTool = {
+            window.annotationsTool = _.extend({
 
                 EVENTS: {
                     ANNOTATION_SELECTION : "at:annotation-selection",
@@ -150,7 +150,7 @@ define(["jquery",
                                     "setSelectionById",
                                     "updateSelectionOnTimeUpdate");
 
-                    _.extend(this, config, _.clone(Backbone.Events));
+                    _.extend(this, config);
 
                     if (this.loadVideo) {
                         this.loadVideo();
@@ -839,9 +839,7 @@ define(["jquery",
                         videos = new Videos(),
                         tracks,
                         self = this,
-                        annotations,
                         selectedTrack,
-                        remindingFetchingTrack,
 
                         // function to conclude the retrieve of annotations
                         concludeInitialization = $.proxy(function () {
@@ -914,7 +912,7 @@ define(["jquery",
                         }
                     }
                 }
-            };
+            }, _.clone(Backbone.Events));
 
 
 
