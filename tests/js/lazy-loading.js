@@ -205,45 +205,30 @@ require(["jquery",
 
                     });
 
-                asyncTest("Load two tracks", function (assert) {
-                    expect(3);
-
+                test("Load two tracks", function () {
                     annotationsTool.fetchData();
 
-                    setTimeout(function () {
-                        assert.equal(annotationsTool.getTracks().size(), 4, "The video should have a total of 4 tracks.");
-                        assert.equal(annotationsTool.getAnnotations().length, 8, "Only the annotations of the first two tracks should be loaded.");
-                        assert.equal(annotationsTool.getTracks().visibleTracks.length, 2, "Only the first two tracks should be loaded.");
-                        QUnit.start();
-                    }, 100);
+                    equal(annotationsTool.getTracks().size(), 4, "The video should have a total of 4 tracks.");
+                    equal(annotationsTool.getAnnotations().length, 8, "Only the annotations of the first two tracks should be loaded.");
+                    equal(annotationsTool.getTracks().visibleTracks.length, 2, "Only the first two tracks should be loaded.");
                 });
 
 
-                asyncTest("Load one tracks", function (assert) {
-                    expect(3);
-                    
+                test("Load one tracks", function () {
                     annotationsTool.MAX_VISIBLE_TRACKS = 1;
 
                     annotationsTool.fetchData();
 
-                    setTimeout(function () {
-                        assert.equal(annotationsTool.getTracks().size(), 4, "The video should have a total of 4 tracks.");
-                        assert.equal(annotationsTool.getAnnotations().length, 4, "Only the annotations of the first two tracks should be loaded.");
-                        assert.equal(annotationsTool.getTracks().visibleTracks.length, 1, "Only the first two tracks should be loaded.");
-                        QUnit.start();
-                    }, 100);
+                    equal(annotationsTool.getTracks().size(), 4, "The video should have a total of 4 tracks.");
+                    equal(annotationsTool.getAnnotations().length, 4, "Only the annotations of the first two tracks should be loaded.");
+                    equal(annotationsTool.getTracks().visibleTracks.length, 1, "Only the first two tracks should be loaded.");
                 });
 
                 test("Try to display more tracks than the maximum set (tracks 2,3,4 when MAX_VISIBLE_TRACKS is 2)", function () {
-                    var tracksToShow = [],
-                        tracks = annotationsTool.getTracks(),
+                    var tracks = annotationsTool.getTracks(),
                         visibleTracks = [];
 
-                    tracksToShow.push(tracks.get(2));
-                    tracksToShow.push(tracks.get(3));
-                    tracksToShow.push(tracks.get(4));
-
-                    tracks.showTracks(tracksToShow);
+                    tracks.showTracksById([2, 3, 4]);
 
                     _.each(tracks.getVisibleTracks(), function (track) {
                         visibleTracks.push(track.id);
@@ -258,14 +243,10 @@ require(["jquery",
                 });
 
                 test("Display tracks 3 and 4", function () {
-                    var tracksToShow = [],
-                        tracks = annotationsTool.getTracks(),
+                    var tracks = annotationsTool.getTracks(),
                         visibleTracks = [];
 
-                    tracksToShow.push(tracks.get(3));
-                    tracksToShow.push(tracks.get(4));
-
-                    tracks.showTracks(tracksToShow);
+                    tracks.showTracksById([3, 4]);
 
                     _.each(tracks.getVisibleTracks(), function (track) {
                         visibleTracks.push(track.id);
@@ -296,14 +277,10 @@ require(["jquery",
                 });
 
                 test("Hide tracks 1 and 2", function () {
-                    var tracksToHide = [],
-                        tracks = annotationsTool.getTracks(),
+                    var tracks = annotationsTool.getTracks(),
                         visibleTracks = [];
 
-                    tracksToHide.push(tracks.get(1));
-                    tracksToHide.push(tracks.get(2));
-
-                    tracks.hideTracks(tracksToHide);
+                    tracks.hideTracksById([1, 2]);
 
                     _.each(tracks.getVisibleTracks(), function (track) {
                         visibleTracks.push(track.id);
@@ -325,7 +302,7 @@ require(["jquery",
                     var tracks = annotationsTool.getTracks(),
                         visibleTracks = [];
 
-                    tracks.hideTracks([tracks.get(2)]);
+                    tracks.hideTracks(tracks.get(2));
 
                     _.each(tracks.getVisibleTracks(), function (track) {
                         visibleTracks.push(track.id);

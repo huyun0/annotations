@@ -105,6 +105,7 @@ define(["jquery",
                                "addTrack",
                                "addAnnotation",
                                "addList",
+                               "clearList",
                                "getPosition",
                                "getViewFromAnnotation",
                                "insertView",
@@ -149,7 +150,7 @@ define(["jquery",
              * @param {array} tracks Tracks to insert
              */
             addTrackList: function (tracks) {
-                this.annotationsViews = [];
+                this.clearList();
                 _.each(tracks, this.addTrack, this);
             },
 
@@ -482,6 +483,16 @@ define(["jquery",
                 return this;
             },
 
+            clearList: function () {
+                _.each(this.annotationViews, function (annView) {
+                    annView.undelegateEvents();
+                    annView.stopListening();
+                }, this);
+
+                this.annotationViews = [];
+                this.$el.find("#content-list").empty();
+            },
+
             /**
              * Reset the view
              * @alias module:views-list.List#reset
@@ -489,15 +500,9 @@ define(["jquery",
             reset: function () {
                 this.$el.hide();
 
-                _.each(this.annotationViews, function (annView) {
-                    annView.undelegateEvents();
-                    annView.stopListening();
-                }, this);
-
                 this.stopListening();
 
-                this.annotationViews = [];
-                this.$el.find("#content-list").empty();
+                this.clearList();
 
                 delete this.annotationViews;
                 delete this.tracks;

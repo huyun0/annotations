@@ -70,6 +70,7 @@ define(["jquery",
                 initialize: function (models, video) {
                     _.bindAll(this, "setUrl",
                                     "showTracks",
+                                    "showTracksById",
                                     "hideTracks",
                                     "getTracksForLocalStorage");
                     this.setUrl(video);
@@ -129,6 +130,20 @@ define(["jquery",
                 },
 
                 /**
+                 * Displays the tracks  with the given Ids and hide the current displayed tracks.
+                 * @param  {array} tracks an array containing the tracks ids to display
+                 */
+                showTracksById: function (ids) {
+                    var tracks = [];
+
+                    _.each(ids, function (id) {
+                        tracks.push(this.get(id));
+                    }, this);
+
+                    this.showTracks(tracks);
+                },
+
+                /**
                  * Displays the given tracks and hide the current displayed tracks.
                  * @param  {array} tracks an array containing the tracks to display
                  */
@@ -141,7 +156,9 @@ define(["jquery",
                         },
                         i;
 
-                    if (!_.isArray(tracks)) {
+                    if (_.isUndefined(tracks)) {
+                        return;
+                    } else if (!_.isArray(tracks)) {
                         tracks = [tracks];
                     }
 
@@ -171,14 +188,35 @@ define(["jquery",
                         }
                     }, this);
 
-                    this.trigger(EVENTS.VISIBILITY);
+                    this.trigger(EVENTS.VISIBILITY, this.visibleTracks);
                 },
 
+                /**
+                 * Hides the tracks with the given ids.
+                 * @param  {array} tracks an array containing the tracks ids to hide.
+                 */
+                hideTracksById: function (ids) {
+                    var tracks = [];
+
+                    _.each(ids, function (id) {
+                        tracks.push(this.get(id));
+                    }, this);
+
+                    this.hideTracks(tracks);
+                },
+
+
+                /**
+                 * Hides the given tracks.
+                 * @param  {array} tracks an array containing the tracks to hide.
+                 */
                 hideTracks: function (tracks) {
                     var newVisibleTracks = [],
                         idsToRemove = [];
 
-                    if (!_.isArray(tracks)) {
+                    if (_.isUndefined(tracks)) {
+                        return;
+                    } else if (!_.isArray(tracks)) {
                         tracks = [tracks];
                     }
 
