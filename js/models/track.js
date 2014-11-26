@@ -69,7 +69,11 @@ define(["jquery",
 
                 // the tack is not visible at initialisation
                 attr.visible = false;
-                attr.annotationsLoaded = false;
+                if (attr.annotationsLoaded) {
+                    this.set("annotationsLoaded", true);
+                } else {
+                    this.set("annotationsLoaded", false);
+                }
 
                 // Check if the track has been initialized
                 if (!attr.id) {

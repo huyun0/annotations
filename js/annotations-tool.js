@@ -593,7 +593,9 @@ define(["jquery",
                  * @return {Object}  The created track
                  */
                 createTrack: function (parameters, options) {
-                    var defaultOptions = {wait: true}; // TODO define default options for all tracks
+                    var defaultOptions = {
+                        wait: true
+                    }; // TODO define default options for all tracks
 
                     return this.video.get("tracks").create(parameters, (_.isUndefined(options) ? defaultOptions : options));
                 },
