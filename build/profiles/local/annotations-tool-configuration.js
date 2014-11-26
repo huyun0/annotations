@@ -55,7 +55,7 @@ define(["jquery",
              * The maximal number of tracks visible in the timeline at the same time
              * @type {Number}
              */
-            MAX_VISIBLE_TRACKS: 2,
+            MAX_VISIBLE_TRACKS: 1,
 
             /**
              * The minmal duration used for annotation representation on timeline
