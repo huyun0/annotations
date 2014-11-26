@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>Documentation Source: models/video.js</title>
+
+	<!--[if lt IE 9]>
+	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+	<link type="text/css" rel="stylesheet" href="styles/sunlight.default.css">
+
+	
+	<link type="text/css" rel="stylesheet" href="styles/site.simplex.css">
+	
+</head>
+
+<body>
+<div class="container-fluid">
+	<div class="navbar navbar-fixed-top ">
+		<div class="navbar-inner">
+			<a class="brand" href="index.html">Documentation</a>
+			<ul class="nav">
+				
+				<li class="dropdown">
+					<a href="namespaces.list.html" class="dropdown-toggle" data-toggle="dropdown">Namespaces<b
+						class="caret"></b></a>
+
+					<ul class="dropdown-menu ">
+						
+						<li>
+							<a href="annotationsTool.html">annotationsTool</a>
+						</li>
+						
+
+					</ul>
+				</li>
+				
+				<li class="dropdown">
+					<a href="modules.list.html" class="dropdown-toggle" data-toggle="dropdown">Modules<b
+						class="caret"></b></a>
+
+					<ul class="dropdown-menu ">
+						
+						<li>
+							<a href="module-ACCESS.html">ACCESS</a>
+						</li>
+						
+						<li>
+							<a href="module-annotations-tool.html">annotations-tool</a>
+						</li>
+						
+						<li>
+							<a href="module-annotations-tool-configuration.html">annotations-tool-configuration</a>
+						</li>
+						
+						<li>
+							<a href="module-backbone-annotations-sync.html">backbone-annotations-sync</a>
+						</li>
+						
+						<li>
+							<a href="module-collections-annotations.html">collections-annotations</a>
+						</li>
+						
+						<li>
+							<a href="module-collections-categories.html">collections-categories</a>
+						</li>
+						
+						<li>
+							<a href="module-collections-comments.html">collections-comments</a>
+						</li>
+						
+						<li>
+							<a href="module-collections-labels.html">collections-labels</a>
+						</li>
+						
+						<li>
+							<a href="module-collections-loops.html">collections-loops</a>
+						</li>
+						
+						<li>
+							<a href="module-collections-scales.html">collections-scales</a>
+						</li>
+						
+						<li>
+							<a href="module-collections-scalevalues.html">collections-scalevalues</a>
+						</li>
+						
+						<li>
+							<a href="module-collections-tracks.html">collections-tracks</a>
+						</li>
+						
+						<li>
+							<a href="module-collections-users.html">collections-users</a>
+						</li>
+						
+						<li>
+							<a href="module-collections-videos.html">collections-videos</a>
+						</li>
+						
+						<li>
+							<a href="module-filters-manager.html">filters-manager</a>
+						</li>
+						
+						<li>
+							<a href="module-models-annotation.html">models-annotation</a>
+						</li>
+						
+						<li>
+							<a href="module-models-category.html">models-category</a>
+						</li>
+						
+						<li>
+							<a href="module-models-comment.html">models-comment</a>
+						</li>
+						
+						<li>
+							<a href="module-models-label.html">models-label</a>
+						</li>
+						
+						<li>
+							<a href="module-models-loop.html">models-loop</a>
+						</li>
+						
+						<li>
+							<a href="module-models-scale.html">models-scale</a>
+						</li>
+						
+						<li>
+							<a href="module-models-scalevalue.html">models-scalevalue</a>
+						</li>
+						
+						<li>
+							<a href="module-models-track.html">models-track</a>
+						</li>
+						
+						<li>
+							<a href="module-models-user.html">models-user</a>
+						</li>
+						
+						<li>
+							<a href="module-models-video.html">models-video</a>
+						</li>
+						
+						<li>
+							<a href="module-player-adapter.html">player-adapter</a>
+						</li>
+						
+						<li>
+							<a href="module-player-adapter-HTML5.html">player-adapter-HTML5</a>
+						</li>
+						
+						<li>
+							<a href="module-ROLES.html">ROLES</a>
+						</li>
+						
+						<li>
+							<a href="module-views-alert.html">views-alert</a>
+						</li>
+						
+						<li>
+							<a href="module-views-annotate.html">views-annotate</a>
+						</li>
+						
+						<li>
+							<a href="module-views-annotate-category.html">views-annotate-category</a>
+						</li>
+						
+						<li>
+							<a href="module-views-annotate-label.html">views-annotate-label</a>
+						</li>
+						
+						<li>
+							<a href="module-views-annotate-tab.html">views-annotate-tab</a>
+						</li>
+						
+						<li>
+							<a href="module-views-comment.html">views-comment</a>
+						</li>
+						
+						<li>
+							<a href="module-views-comments-container.html">views-comments-container</a>
+						</li>
+						
+						<li>
+							<a href="module-views-list.html">views-list</a>
+						</li>
+						
+						<li>
+							<a href="module-views-list-annotation.html">views-list-annotation</a>
+						</li>
+						
+						<li>
+							<a href="module-views-login.html">views-login</a>
+						</li>
+						
+						<li>
+							<a href="module-views-loop.html">views-loop</a>
+						</li>
+						
+						<li>
+							<a href="module-views-main.html">views-main</a>
+						</li>
+						
+						<li>
+							<a href="module-views-scale-editor.html">views-scale-editor</a>
+						</li>
+						
+						<li>
+							<a href="module-views-scalevalue-editor.html">views-scalevalue-editor</a>
+						</li>
+						
+						<li>
+							<a href="module-views-timeline.html">views-timeline</a>
+						</li>
+						
+
+					</ul>
+				</li>
+				
+				<li class="dropdown">
+					<a href="classes.list.html" class="dropdown-toggle" data-toggle="dropdown">Classes<b
+						class="caret"></b></a>
+
+					<ul class="dropdown-menu ">
+						
+						<li>
+							<a href="module-backbone-annotations-sync.AnnotationsSync.html">AnnotationsSync</a>
+						</li>
+						
+						<li>
+							<a href="module-collections-annotations.Annotations.html">Annotations</a>
+						</li>
+						
+						<li>
+							<a href="module-collections-categories.Categories.html">Categories</a>
+						</li>
+						
+						<li>
+							<a href="module-collections-comments.Comments.html">Comments</a>
+						</li>
+						
+						<li>
+							<a href="module-collections-labels.Labels.html">Labels</a>
+						</li>
+						
+						<li>
+							<a href="module-collections-loops.Loops.html">Loops</a>
+						</li>
+						
+						<li>
+							<a href="module-collections-scales.Scales.html">Scales</a>
+						</li>
+						
+						<li>
+							<a href="module-collections-scalevalues.ScaleValues.html">ScaleValues</a>
+						</li>
+						
+						<li>
+							<a href="module-collections-tracks.Tracks.html">Tracks</a>
+						</li>
+						
+						<li>
+							<a href="module-collections-users.User.html">User</a>
+						</li>
+						
+						<li>
+							<a href="module-collections-videos.Videos.html">Videos</a>
+						</li>
+						
+						<li>
+							<a href="module-filters-manager.FiltersManager.html">FiltersManager</a>
+						</li>
+						
+						<li>
+							<a href="module-models-annotation.Annotation.html">Annotation</a>
+						</li>
+						
+						<li>
+							<a href="module-models-category.Category.html">Category</a>
+						</li>
+						
+						<li>
+							<a href="module-models-comment.Comment.html">Comment</a>
+						</li>
+						
+						<li>
+							<a href="module-models-label.Label.html">Label</a>
+						</li>
+						
+						<li>
+							<a href="module-models-loop.Loop.html">Loop</a>
+						</li>
+						
+						<li>
+							<a href="module-models-scale.Scale.html">Scale</a>
+						</li>
+						
+						<li>
+							<a href="module-models-scalevalue.Scalevalue.html">Scalevalue</a>
+						</li>
+						
+						<li>
+							<a href="module-models-track.Track.html">Track</a>
+						</li>
+						
+						<li>
+							<a href="module-models-user.User.html">User</a>
+						</li>
+						
+						<li>
+							<a href="module-models-video.Video.html">Video</a>
+						</li>
+						
+						<li>
+							<a href="module-player-adapter.PlayerAdapter.html">PlayerAdapter</a>
+						</li>
+						
+						<li>
+							<a href="module-player-adapter-HTML5.PlayerAdapterHTML5.html">PlayerAdapterHTML5</a>
+						</li>
+						
+						<li>
+							<a href="module-views-alert.Alert.html">Alert</a>
+						</li>
+						
+						<li>
+							<a href="module-views-annotate.Annotate.html">Annotate</a>
+						</li>
+						
+						<li>
+							<a href="module-views-annotate-category.CategoryView.html">CategoryView</a>
+						</li>
+						
+						<li>
+							<a href="module-views-annotate-label.LabelView.html">LabelView</a>
+						</li>
+						
+						<li>
+							<a href="module-views-annotate-tab.AnnotateTab.html">AnnotateTab</a>
+						</li>
+						
+						<li>
+							<a href="module-views-comment.Comment.html">Comment</a>
+						</li>
+						
+						<li>
+							<a href="module-views-comments-container.CommentsContainer.html">CommentsContainer</a>
+						</li>
+						
+						<li>
+							<a href="module-views-list.List.html">List</a>
+						</li>
+						
+						<li>
+							<a href="module-views-list-annotation.ListAnnotation.html">ListAnnotation</a>
+						</li>
+						
+						<li>
+							<a href="module-views-login.Login.html">Login</a>
+						</li>
+						
+						<li>
+							<a href="module-views-loop.Loop.html">Loop</a>
+						</li>
+						
+						<li>
+							<a href="module-views-main.MainView.html">MainView</a>
+						</li>
+						
+						<li>
+							<a href="module-views-scale-editor.ScaleEditor.html">ScaleEditor</a>
+						</li>
+						
+						<li>
+							<a href="module-views-scalevalue-editor.ScaleValueEditor.html">ScaleValueEditor</a>
+						</li>
+						
+						<li>
+							<a href="module-views-timeline.TimelineView.html">TimelineView</a>
+						</li>
+						
+
+					</ul>
+				</li>
+				
+			</ul>
+		</div>
+	</div>
+
+	<div class="row-fluid">
+
+		
+			<div class="span12">
+				
+				<div id="main">
+					
+
+
+		<h1 class="page-title">Source: models/video.js</h1>
+    
+    <section>
+        <article>
+            <pre class="sunlight-highlight-javascript ">/**
+ *  Copyright 2012, Entwine GmbH, Switzerland
+ *  Licensed under the Educational Community License, Version 2.0
+ *  (the "License"); you may not use this file except in compliance
+ *  with the License. You may obtain a copy of the License at
+ *
+ *  http://www.osedu.org/licenses/ECL-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing,
+ *  software distributed under the License is distributed on an "AS IS"
+ *  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ *  or implied. See the License for the specific language governing
+ *  permissions and limitations under the License.
+ *
+ */
+
+/**
+ * A module representing the video model
+ * @module models-video
+ * @requires collections-categories
+ * @requires collections-scales
+ * @requires ACCESS
+ * @requires backbone.js
+ */
+define(["jquery",
+        "collections/tracks",
+        "collections/categories",
+        "collections/scales",
+        "access",
+        "backbone"],
+
+    function ($, Tracks, Categories, Scales, ACCESS, Backbone) {
+
+        "use strict";
+
+        /**
+         * @constructor
+         * @see {@link http://www.backbonejs.org/#Model}
+         * @augments module:Backbone.Model
+         * @memberOf module:models-video
+         * @alias module:models-video.Video
+         */
+        var Video = Backbone.Model.extend({
+
+            /**
+             * Default models value
+             * @alias module:models-video.Video#defaults
+             */
+            defaults: {
+                access: ACCESS.PUBLIC
+            },
+
+            /**
+             * Constructor
+             * @alias module:models-video.Video#initialize
+             * @param {object} attr Object literal containing the model initialion attribute.
+             */
+            initialize: function (attr) {
+
+                _.bindAll(this, "getTrack", "getAnnotation");
+
+                // Check if the video has been initialized
+                if (!attr.id) {
+                    // If local storage, we set the cid as id
+                    if (window.annotationsTool.localStorage) {
+                        attr.id = this.cid;
+                    }
+                    this.toCreate = true;
+                }
+
+                // Check if tracks are given
+                if (attr.tracks && _.isArray(attr.tracks)) {
+                    this.set({tracks: new Tracks(attr.tracks, this)});
+                }  else {
+                    this.set({tracks: new Tracks([], this)});
+                }
+
+                // Check if supported categories are given
+                if (attr.categories && _.isArray(attr.categories)) {
+                    this.set({categories: new Categories(attr.categories, this)});
+                } else {
+                    this.set({categories: new Categories([], this)});
+                }
+
+                // Check if the possible video scales are given
+                if (attr.scales && _.isArray(attr.scales)) {
+                    this.set({scales: new Scales(attr.scales, this)});
+                } else {
+                    this.set({scales: new Scales([], this)});
+                }
+
+                if (attr.tags) {
+                    this.set({tags: this.parseJSONString(attr.tags)});
+                }
+
+                if (attr.id) {
+                    this.get("categories").fetch({async: false});
+                    this.get("tracks").fetch({async: false});
+                    this.get("scales").fetch({async: false});
+                }
+
+                // Add backbone events to the model
+                _.extend(this, Backbone.Events);
+
+                // Define that all post operation have to been done through PUT method
+                this.noPOST = true;
+            },
+
+            /**
+             * Parse the attribute list passed to the model
+             * @alias module:models-video.Video#parse
+             * @param  {object} data Object literal containing the model attribute to parse.
+             * @return {object}  The object literal with the list of parsed model attribute.
+             */
+            parse: function (data) {
+                var attr = data.attributes ? data.attributes : data;
+
+                attr.created_at = attr.created_at !== null ? Date.parse(attr.created_at): null;
+                attr.updated_at = attr.updated_at !== null ? Date.parse(attr.updated_at): null;
+                attr.deleted_at = attr.deleted_at !== null ? Date.parse(attr.deleted_at): null;
+                attr.settings   = this.parseJSONString(attr.settings);
+
+                // Parse tags if present
+                if (attr.tags) {
+                    attr.tags = this.parseJSONString(attr.tags);
+                }
+
+                if (data.attributes) {
+                    data.attributes = attr;
+                } else {
+                    data = attr;
+                }
+
+                return data;
+            },
+
+            /**
+             * Validate the attribute list passed to the model
+             * @alias module:models-video.Video#validate
+             * @param  {object} data Object literal containing the model attribute to validate.
+             * @return {string}  If the validation failed, an error message will be returned.
+             */
+            validate: function (attr) {
+
+                var tmpCreated,
+                    categories,
+                    tracks,
+                    scales,
+                    self = this;
+
+                if (attr.id) {
+                    if (this.get("id") !== attr.id) {
+                        this.id = attr.id;
+                        this.attributes.id = attr.id;
+                        this.setUrl();
+
+                        categories = this.attributes.categories;
+                        tracks     = this.attributes.tracks;
+                        scales     = this.attributes.scales;
+
+                        if (tracks && (tracks.length) === 0) {
+                            tracks.fetch({
+                                async  : false,
+                                success: function () {
+                                    self.tracksReady = true;
+
+                                    if (self.tracksReady && self.categoriesReady && self.scalesReady) {
+                                        self.trigger("ready");
+                                        self.attributes.ready = true;
+                                    }
+                                }
+                            });
+                        }
+
+                        if (scales && (scales.length) === 0) {
+                            scales.fetch({
+                                async: false,
+                                success: function () {
+                                    self.scalesReady = true;
+                                    if (categories && (categories.length) === 0) {
+                                        categories.fetch({
+                                            async: false,
+                                            success: function () {
+                                                self.categoriesReady = true;
+                                                if (self.tracksReady && self.categoriesReady && self.scalesReady) {
+                                                    self.trigger("ready");
+                                                    self.attributes.ready = true;
+                                                }
+                                            }
+                                        });
+                                    } else if (self.tracksReady && self.categoriesReady && self.scalesReady) {
+                                        self.trigger("ready");
+                                        self.attributes.ready = true;
+                                    }
+                                }
+                            });
+                        }
+                    }
+                }
+                if (attr.tracks && !(attr.tracks instanceof Tracks)) {
+                    return "'tracks' attribute must be an instance of 'Tracks'";
+                }
+
+                if (attr.tags && _.isUndefined(this.parseJSONString(attr.tags))) {
+                    return "'tags' attribute must be a string or a JSON object";
+                }
+                if (attr.created_at) {
+                    if ((tmpCreated = this.get("created_at")) && tmpCreated !== attr.created_at) {
+                        return "'created_at' attribute can not be modified after initialization!";
+                    } else if (!_.isNumber(attr.created_at)) {
+                        return "'created_at' attribute must be a number!";
+                    }
+                }
+                if (attr.updated_at) {
+                    if (!_.isNumber(attr.updated_at)) {
+                        return "'updated_at' attribute must be a number!";
+                    }
+                }
+
+                if (attr.deleted_at) {
+                    if (!_.isNumber(attr.deleted_at)) {
+                        return "'deleted_at' attribute must be a number!";
+                    }
+                }
+            },
+            /**
+             * Modify the current url for the tracks collection
+             * @alias module:models-video.Video#setUrl
+             */
+            setUrl: function () {
+                if (this.attributes.tracks) {
+                    this.attributes.tracks.setUrl(this);
+                }
+
+                if (this.attributes.categories) {
+                    this.attributes.categories.setUrl(this);
+                }
+
+                if (this.attributes.scales) {
+                    this.attributes.scales.setUrl(this);
+                }
+            },
+
+            /**
+             * Get the track with the given id
+             * @alias module:models-video.Video#getTrack
+             * @param  {integer} trackId The id from the wanted track
+             * @return {Track}           The track with the given id
+             */
+            getTrack: function (trackId) {
+                if (_.isUndefined(this.tracks)) {
+                    this.tracks = this.get("tracks");
+                }
+
+                return this.tracks.get(trackId);
+            },
+
+            /**
+             * Get the annotation with the given id on the given track
+             * @alias module:models-video.Video#getAnnotation
+             * @param  {integer} annotationId The id from the wanted annotation
+             * @param  {integer} trackId      The id from the track containing the annotation
+             * @return {Track}                The annotation with the given id
+             */
+            getAnnotation: function (annotationId, trackId) {
+                var track = this.getTrack(trackId),
+                    tmpAnnotation;
+
+                if (track) {
+                    return track.getAnnotation(annotationId);
+                } else {
+                    this.get("tracks").each(function (trackItem) {
+                        tmpAnnotation = trackItem.getAnnotation(annotationId);
+                        if (!_.isUndefined(tmpAnnotation)) {
+                            return tmpAnnotation;
+                        }
+                    }, this);
+                    return tmpAnnotation;
+                }
+            },
+
+            /**
+             * Parse the given parameter to JSON if given as String
+             * @alias module:models-video.Video#parseJSONString
+             * @param  {string} parameter the parameter as String
+             * @return {JSON} parameter as JSON object
+             */
+            parseJSONString: function (parameter) {
+                if (parameter && _.isString(parameter)) {
+                    try {
+                        parameter = JSON.parse(parameter);
+                    } catch (e) {
+                        console.warn("Can not parse parameter '" + parameter + "': " + e);
+                        return undefined;
+                    }
+                } else if (!_.isObject(parameter) || _.isFunction(parameter)) {
+                    return undefined;
+                }
+
+                return parameter;
+            },
+
+            /**
+             * Override the default toJSON function to ensure complete JSONing.
+             * @alias module:models-video.Video#toJSON
+             * @return {JSON} JSON representation of the instane
+             */
+            toJSON: function () {
+                var json = $.proxy(Backbone.Model.prototype.toJSON, this)();
+                if (json.tags) {
+                    json.tags = JSON.stringify(json.tags);
+                }
+                delete json.tracks;
+                delete json.categories;
+                delete json.scales;
+
+                return json;
+            }
+        });
+        return Video;
+    }
+);</pre>
+        </article>
+    </section>
+
+
+
+
+
+				</div>
+
+				<div class="clearfix"></div>
+				<footer>
+					
+					
+		<span class="jsdoc-message">
+		Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a>
+		on Tue Apr 08 2014 10:59:13 GMT+0200 (CEST) using the <a href="https://github.com/terryweiss/docstrap">DocStrap template</a>.
+		</span>
+				</footer>
+			</div>
+
+			
+			<br clear="both">
+		</div>
+
+	</div>
+	<script src="scripts/sunlight.js"></script>
+	<script src="scripts/sunlight.javascript.js"></script>
+	<script src="scripts/sunlight-plugin.doclinks.js"></script>
+	<script src="scripts/sunlight-plugin.linenumbers.js"></script>
+	<script src="scripts/sunlight-plugin.menu.js"></script>
+	<script src="scripts/jquery.min.js"></script>
+	<script src="scripts/jquery.scrollTo.js"></script>
+	<script src="scripts/jquery.localScroll.js"></script>
+	<script src="scripts/bootstrap-dropdown.js"></script>
+	<script src="scripts/toc.js"></script>
+
+
+	<script>  Sunlight.highlightAll({lineNumbers:,  showMenu: true, enableDoclinks :true}); </script>
+
+	<script>
+		$( function () {
+			$( "#toc" ).toc( {
+				selectors   : "h1,h2,h3,h4",
+				showAndHide : false,
+				scrollTo    : 60
+			} );
+			$( "#toc>ul" ).addClass( "nav nav-pills nav-stacked" );
+			$( "#main span[id^='toc']" ).addClass( "toc-shim" );
+
+		} );
+	</script>
+
+	
+
+</body>
+</html>
