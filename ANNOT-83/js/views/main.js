@@ -223,13 +223,15 @@ define(["jquery",
 
             generateTracksSelector: function () {
                 var selector = this.$el.find("div#select-tracks select"),
+                    tracks = annotationsTool.getTracks(),
                     selection;
 
                 selector.html(this.trackSelectorTmpl(annotationsTool.getTracks()));
+                tracks.on("visiblity", function () {
+                    selector.html(this.trackSelectorTmpl(annotationsTool.getTracks()));
+                }, this);
 
                 selector.change(function () {
-                    var tracks = annotationsTool.getTracks();
-
                     if (_.isArray($(this).val()) && $(this).val().length > annotationsTool.MAX_VISIBLE_TRACKS) {
                         console.warn("You can only choose " + annotationsTool.MAX_VISIBLE_TRACKS + "!");
                         //selection.splice(0, 1);
