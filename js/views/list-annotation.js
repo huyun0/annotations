@@ -53,7 +53,7 @@ function ($, PlayerAdapter, Annotation, User, CommentsContainer, Template, Backb
          * @alias module:views-list-annotation.ListAnnotation#tagName
          * @type {string}
          */
-        tagName: "tbody",
+        //tagName: "tbody",
 
         /**
          * View template
@@ -84,27 +84,27 @@ function ($, PlayerAdapter, Annotation, User, CommentsContainer, Template, Backb
             "click"                      : "onSelect",
             "click .toggle-edit"         : "switchEditModus",
             "click .proxy-anchor "       : "stopPropagation",
-            "click .freetext textarea"   : "stopPropagation",
-            "click .scaling select"      : "stopPropagation",
+            //"click .freetext textarea"   : "stopPropagation",
+            //"click .scaling select"      : "stopPropagation",
             "click .end-value"           : "stopPropagation",
             "click .start-value"         : "stopPropagation",
-            "click i.delete"             : "deleteFull",
+            //"click i.delete"             : "deleteFull",
             "click .select"              : "onSelect",
-            "click button.in"            : "setCurrentTimeAsStart",
-            "click button.out"           : "setCurrentTimeAsEnd",
-            "click a.collapse"           : "onCollapse",
-            "click i.icon-comment-amount": "onCollapse",
+            //"click button.in"            : "setCurrentTimeAsStart",
+            //"click button.out"           : "setCurrentTimeAsEnd",
+            //"click a.collapse"           : "onCollapse",
+            //"click i.icon-comment-amount": "onCollapse",
             "dblclick .start"            : "startEdit",
             "dblclick .end"              : "startEdit",
             "dblclick .end-btn"          : "startEdit",
             "dblclick .start-btn"        : "startEdit",
             "keydown .start-value"       : "saveStart",
             "keydown .end-value"         : "saveEnd",
-            "keydown .freetext textarea" : "saveFreeText",
+            //"keydown .freetext textarea" : "saveFreeText",
             "focusout .start-value"      : "saveStart",
-            "focusout .end-value"        : "saveEnd",
-            "focusout .freetext textarea": "saveFreeText",
-            "change .scaling select"     : "saveScaling"
+            "focusout .end-value"        : "saveEnd"
+            //"focusout .freetext textarea": "saveFreeText",
+            //"change .scaling select"     : "saveScaling"
         },
 
         /**
@@ -486,7 +486,7 @@ function ($, PlayerAdapter, Annotation, User, CommentsContainer, Template, Backb
             modelJSON.isEditEnable = this.isEditEnable;
             modelJSON.numberOfComments = this.model.get("comments").length;
 
-            this.$el.html(this.template(modelJSON));
+            this.$el = $(this.template(modelJSON));
 
             this.el = this.$el[0];
             this.$el.attr("id", this.id);

@@ -107,6 +107,7 @@ define(["jquery",
 
             trackSelectorTmpl: trackSelectorTmpl,
 
+
             /**
              * Events to handle by the main view
              * @alias module:views-main.MainView#event

@@ -1,10 +1,6 @@
 <tr class="header-container" {{#if label.category}}style="background-color:{{label.category.settings.color}}"{{/if}} title="{{#if label}}{{label.abbreviation}} - {{label.value}}{{else}}{{text}}{{/if}} {{#if isEditEnable}}edit-on{{/if}}">
     <td class="left">
         <a href="#{{id}}" class="proxy-anchor"></a>
-        <a class="collapse" title="collapse">
-         <i class="{{#if collapsed}}icon-chevron-right{{else}}icon-chevron-down{{/if}}"></i>
-        </a>
-        <button class="btn in edit" title="Set the video playhead as start point.">IN</button>
         <span class="start">
                 <input title="Start time{{#if isMine}} (double-click to edit){{/if}}" id="start-{{id}}" class="start-value" type="text" value="{{time start}}" {{#if isEditEnable}} {{else}}disabled{{/if}}></input>
         </span>
@@ -12,26 +8,6 @@
         <span class="end {{#if duration}}has-duration{{else}}no-duration{{/if}}">
                 <input title="End time{{#if isMine}} (double-click to edit){{/if}}" id="end-{{id}}" class="end-value" type="text" value="{{end start duration}}" {{#if isEditEnable}} {{else}}disabled{{/if}}></input>
         </span>
-        <button class="btn out edit" title="Set the video playhead as end point.">OUT</button>
-
-        {{#if scalevalues}}
-        <span class="scaling">
-                {{#if isMine}}
-                <select class="edit">
-                        {{#each scalevalues}}
-                        <option value="{{this.id}}" {{#if this.isSelected}}selected="selected"{{/if}}>{{this.name}}</option>
-                        {{/each}}
-                </select>
-                {{/if}} 
-                {{#if scalevalue}}
-                <span class="read-only" title="{{scalevalue.name}}">{{scalevalue.name}}</span>
-                {{/if}} 
-        </span>
-        {{/if}} 
-        
-        {{#if isMine}}
-        <i class="private icon-user" title="You own this annotation"></i>
-        {{/if}}
 
         <span class="category-print print">{{#if label}}{{label.category.name}}{{else}}Free-text{{/if}}</span>
 
@@ -50,35 +26,5 @@
                     <span class="no-label">{{text}}</span>
                 {{/if}}
         </span>
-    </td>
-
-    <td class="right">
-        <i class="icon-comment-amount" title="{{numberOfComments}} Comment(s)"><span class="comment-amount">{{numberOfComments}}</span></i>
-
-        {{#if created_by}}
-        <i class="icon-info-sign" title="added by {{#if created_by_nickname}}{{created_by_nickname}}{{else}}{{nickname created_by}}{{/if}} on {{track}}"></i>
-        {{/if}}
-
-        {{#if isMine}}
-        <i class="toggle-edit icon-pencil" title="Edit annotation."></i>
-        {{/if}}
-
-        {{#canBeDeleted}}
-        <i class="delete icon-trash" title="Delete annotation."></i>
-        {{/canBeDeleted}}
-    </td>
-</tr>
-<tr id="text-container{{id}}" class="{{#if collapsed}}collapse{{else}}in{{/if}} text-container {{#if isEditEnable}}edit-on{{/if}}">
-    <td colspan="2">
-        {{#if label}} {{else}} 
-        <span class="text">
-                <span class="freetext">
-                    {{#if isMine}}
-                    <textarea class="edit" placeholder="free text...">{{text}}</textarea>
-                    {{/if}}
-                    <span class="read-only">{{{textReadOnly}}}</span>
-                </span>
-        </span>
-        {{/if}}
     </td>
 </tr>
