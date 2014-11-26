@@ -51,6 +51,7 @@ define(["jquery",
         "models/track",
         "models/video",
         "templates/categories-legend",
+        "templates/track-selector",
         "roles",
         "FiltersManager",
         "backbone",
@@ -61,7 +62,7 @@ define(["jquery",
         "tab"],
 
     function ($, PlayerAdapter, AnnotateView, ListView, TimelineView, LoginView, ScaleEditorView,
-              Annotations, Users, Videos, User, Track, Video, CategoriesLegendTmpl, ROLES, FiltersManager, Backbone) {
+              Annotations, Users, Videos, User, Track, Video, CategoriesLegendTmpl, trackSelectorTmpl, ROLES, FiltersManager, Backbone) {
 
         "use strict";
 
@@ -103,6 +104,9 @@ define(["jquery",
              */
             categoriesLegendTmpl: CategoriesLegendTmpl,
 
+
+            trackSelectorTmpl: trackSelectorTmpl,
+
             /**
              * Events to handle by the main view
              * @alias module:views-main.MainView#event
@@ -122,6 +126,7 @@ define(["jquery",
                 _.bindAll(this, "checkUserAndLogin",
                                 "createViews",
                                 "generateCategoriesLegend",
+                                "generateTracksSelector",
                                 "logout",
                                 "loadPlugins",
                                 "onDeletePressed",
@@ -174,6 +179,7 @@ define(["jquery",
                 annotationsTool.once(annotationsTool.EVENTS.READY, function () {
                     this.loadPlugins(annotationsTool.plugins);
                     this.generateCategoriesLegend(annotationsTool.video.get("categories").toExportJSON(true));
+                    this.generateTracksSelector();
                     this.updateTitle(annotationsTool.video);
                 }, this);
 
@@ -213,6 +219,26 @@ define(["jquery",
              */
             generateCategoriesLegend: function (categories) {
                 this.$el.find("#categories-legend").html(this.categoriesLegendTmpl(categories));
+            },
+
+            generateTracksSelector: function () {
+                var selector = this.$el.find("div#select-tracks select"),
+                    selection;
+
+                selector.html(this.trackSelectorTmpl(annotationsTool.getTracks()));
+
+                selector.change(function () {
+                    var tracks = annotationsTool.getTracks();
+
+                    if (_.isArray($(this).val()) && $(this).val().length > annotationsTool.MAX_VISIBLE_TRACKS) {
+                        console.warn("You can only choose " + annotationsTool.MAX_VISIBLE_TRACKS + "!");
+                        //selection.splice(0, 1);
+                        $(this).val(selection);
+                    } else {
+                        selection = $(this).val();
+                        tracks.showTracksById([selection]);
+                    }
+                });
             },
 
             /**

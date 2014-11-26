@@ -32,7 +32,8 @@ define(["jquery",
         "use strict";
 
         var EVENTS = {
-                VISIBILITY: "visiblity"
+                VISIBILITY : "visiblity",
+                SELECTED   : "selected_track"
             },
 
             /**
@@ -72,8 +73,17 @@ define(["jquery",
                                     "showTracks",
                                     "showTracksById",
                                     "hideTracks",
+                                    "isTrackVisible",
                                     "getTracksForLocalStorage");
                     this.setUrl(video);
+
+                    this.on("add", function (track) {
+                        // Show the new track
+                        this.showTracks(track, true);
+                        
+                        // Select the new track
+                        annotationsTool.selectedTrack = track;
+                    });
                 },
 
                 /**
@@ -146,14 +156,17 @@ define(["jquery",
                 /**
                  * Displays the given tracks and hide the current displayed tracks.
                  * @param  {array} tracks an array containing the tracks to display
+                 * @param  {boolean} keepPrevious define if the previous visible tracks should be kept if enough place
                  */
-                showTracks: function (tracks) {
+                showTracks: function (tracks, keepPrevious) {
                     var max = annotationsTool.MAX_VISIBLE_TRACKS,
                         self = this,
+                        selectedTrack = annotationsTool.selectedTrack,
                         showTrack = function (track) {
                             track.set(Track.FIELDS.VISIBLE, true);
                             self.visibleTracks.push(track);
                         },
+                        tracksToHide = this.visibleTracks,
                         i;
 
                     if (_.isUndefined(tracks)) {
@@ -171,24 +184,34 @@ define(["jquery",
                         }
                     }
 
+                    if (keepPrevious && tracks.length < max) {
+                        tracksToHide = [];
+                        for (i = 0; i < ((this.visibleTracks.length - max) + tracks.length); i++) {
+                            tracksToHide.push(this.visibleTracks[i]);
+                        }
+                    }
+
                     // Remove the current visible track
-                    this.hideTracks(this.visibleTracks);
+                    this.hideTracks(tracksToHide);
 
                     _.each(tracks, function (track) {
-                        if (annotationsTool.localStorage) {
-                            showTrack(track);
-                        } else {
-                            if (!track.get("annotationsLoaded")) {
-                                track.fetchAnnotations(function () {
-                                    showTrack(track);
-                                });
-                            } else {
-                                showTrack(track);
-                            }
+                        if (!track.get("annotationsLoaded")) {
+                            track.fetchAnnotations();
                         }
+                        showTrack(track);
                     }, this);
 
+                    if (!_.isUndefined(selectedTrack) && !selectedTrack.get(Track.FIELDS.VISIBLE)) {
+                        annotationsTool.selectedTrack = this.visibleTracks[0];
+                    }
+
                     this.trigger(EVENTS.VISIBILITY, this.visibleTracks);
+                },
+
+                isTrackVisible: function (id) {
+                    return !_.isUndefined(_.find(this.visibleTracks, function (track) {
+                        return track.id === id;
+                    }, this));
                 },
 
                 /**

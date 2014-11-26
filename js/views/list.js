@@ -133,10 +133,10 @@ define(["jquery",
                 this.listenTo(this.tracks, Tracks.EVENTS.VISIBILITY, this.addTrackList);
                 this.listenTo(annotationsTool, annotationsTool.EVENTS.ANNOTATION_SELECTION, this.select);
 
-                this.addTrackList(this.tracks.getVisibleTracks());
-
                 // Add backbone events to the model
                 _.extend(this, Backbone.Events);
+
+                this.addTrackList(this.tracks.getVisibleTracks());
 
                 this.render();
 
@@ -163,6 +163,8 @@ define(["jquery",
             addTrack: function (track, index) {
                 var ann = track.get("annotations"),
                     annotationTrack = track;
+
+                this.stopListening(ann);
 
                 this.listenTo(ann, "add", $.proxy(function (newAnnotation) {
                     this.addAnnotation(newAnnotation, annotationTrack);
@@ -484,6 +486,16 @@ define(["jquery",
             },
 
             clearList: function () {
+                this.tracks.each(function (track) {
+                    track.get("annotations").each(function (annotations) {
+                        this.stopListening(annotations);
+                        annotations.stopListening();
+                    }, this);
+                    this.stopListening(track);
+                    track.stopListening();
+                }, this);
+                //this.stopListening(this.tracks);
+
                 _.each(this.annotationViews, function (annView) {
                     annView.undelegateEvents();
                     annView.stopListening();

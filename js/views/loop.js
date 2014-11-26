@@ -144,7 +144,7 @@ define(["jquery",
                     this.playerAdapter = annotationsTool.playerAdapter;
                     this.loops = new Loops([], annotationsTool.video);
 
-                    $("#video-container").after(this.loopTemplate());
+                    $("#select-tracks").after(this.loopTemplate());
                     this.setElement($("#loop")[0]);
                     this.initSlider();
 

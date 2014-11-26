@@ -813,11 +813,10 @@ define(["jquery",
                     wait: true
                 });
 
-                // Select the new track
-                annotationsTool.selectedTrack = track;
 
-                this.redraw();
-                this.onTrackSelected(null, annotationsTool.selectedTrack.id);
+
+                //this.redraw();
+                //this.onTrackSelected(null, annotationsTool.selectedTrack.id);
             },
 
             /**
@@ -1522,7 +1521,6 @@ define(["jquery",
                     newTrack;
 
                 if (_.isUndefined(annotation) || _.isUndefined(this.allItems[annotation.get("id")])) {
-                    console.warn("No annotation selected!");
                     return;
                 }
 
