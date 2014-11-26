@@ -145,8 +145,8 @@ define(["jquery",
                     track,
                     tracks = [],
                     nbAnnotations = 0, // Number of annotations to generate pro track
-                    diff = 10,
-                    nbTrack = 2,       // Number of tracks to generate
+                    diff = 50,
+                    nbTrack = 25,       // Number of tracks to generate
                     i,
                     y;
 
