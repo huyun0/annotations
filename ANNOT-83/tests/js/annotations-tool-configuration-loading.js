@@ -144,15 +144,15 @@ define(["jquery",
                     duration = annotationsTool.playerAdapter.getDuration(),
                     track,
                     tracks = [],
-                    nbAnnotations = 0, // Number of annotations to generate pro track
                     diff = 50,
-                    nbTrack = 25,       // Number of tracks to generate
+                    nbTracks = 10,       // Number of tracks to generate
+                    nbAnnotations = diff * nbTracks, // Number of annotations to generate pro track
                     i,
                     y;
 
                 // Generate tracks
-                for (i = 0; i < nbTrack; i++) {
-                    nbAnnotations += diff;
+                for (i = nbTracks; i > 1; i--) {
+                    nbAnnotations -= diff;
 
                     track = {
                         id          : "testtrack" + i,
@@ -161,7 +161,7 @@ define(["jquery",
                         access      : Math.round(Math.random()),
                         annotations : [],
                         visible: false,
-                        annotationsLoaded: false
+                        annotationsLoaded: true
                     };
 
                     // Generate  annotations

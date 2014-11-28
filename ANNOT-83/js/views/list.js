@@ -308,12 +308,18 @@ define(["jquery",
 
                     for (i = 0; i < oldAnnotations.length; i++) {
                         view = oldAnnotations[i];
+                        if (_.isUndefined(view)) {
+                            continue;
+                        }
                         view.$el.removeClass("selected");
                         view.isSelected = false;
                     }
 
                     for (i = 0; i < annotations.length; i++) {
                         view = annotations[i];
+                        if (_.isUndefined(view)) {
+                            continue;
+                        }
                         view.$el.addClass("selected");
                         view.isSelected = true;
 
