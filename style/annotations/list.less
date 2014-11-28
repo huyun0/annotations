@@ -72,14 +72,6 @@
         padding: 0 5px;
         background-color: @grayLighter;
 
-        tr {
-            border: solid 1px;
-
-            &.selected {
-                border: 1px solid red;
-            }
-        }
-
         tr:nth-child(2) {
             background-color: white;
         }
@@ -105,7 +97,7 @@
             //     background-repeat: repeat-x;
             // }
             
-            background-color: red; 
+            background-color: red !important; 
             
 
             // border: 1px solid @red;      
@@ -203,7 +195,6 @@
         
 
         .start,.end{
-            cursor: text;
             display: inline-block;
             position: relative;
             color: @black;
@@ -230,7 +221,8 @@
                     background:transparent;
                     z-index: 100;
                     border: none;
-                    cursor: text;
+                    //cursor: text;
+                    cursor: pointer;
                 }
 
                 &.error {

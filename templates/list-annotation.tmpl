@@ -1,11 +1,11 @@
 <td class="left">
     <a href="#{{id}}" class="proxy-anchor"></a>
     <span class="start">
-            <input title="Start time{{#if isMine}} (double-click to edit){{/if}}" id="start-{{id}}" class="start-value" type="text" value="{{time start}}" {{#if isEditEnable}} {{else}}disabled{{/if}}></input>
+            <input title="Start time{{#if isMine}} (double-click to edit){{/if}}" id="start-{{id}}" class="start-value" type="text" value="{{time start}}" disabled></input>
     </span>
 
     <span class="end {{#if duration}}has-duration{{else}}no-duration{{/if}}">
-            <input title="End time{{#if isMine}} (double-click to edit){{/if}}" id="end-{{id}}" class="end-value" type="text" value="{{end start duration}}" {{#if isEditEnable}} {{else}}disabled{{/if}}></input>
+            <input title="End time{{#if isMine}} (double-click to edit){{/if}}" id="end-{{id}}" class="end-value" type="text" value="{{end start duration}}" disabled></input>
     </span>
 
     <span class="category-print print">{{#if label}}{{label.category.name}}{{else}}Free-text{{/if}}</span>

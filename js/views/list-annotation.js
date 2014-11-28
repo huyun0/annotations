@@ -84,7 +84,7 @@ function ($, PlayerAdapter, Annotation, User, CommentsContainer, Template, Backb
          */
         events: {
             "click"                      : "onSelect",
-            "click .toggle-edit"         : "switchEditModus",
+            //"click .toggle-edit"         : "switchEditModus",
             "click .proxy-anchor "       : "stopPropagation",
             //"click .freetext textarea"   : "stopPropagation",
             //"click .scaling select"      : "stopPropagation",
@@ -96,15 +96,15 @@ function ($, PlayerAdapter, Annotation, User, CommentsContainer, Template, Backb
             //"click button.out"           : "setCurrentTimeAsEnd",
             //"click a.collapse"           : "onCollapse",
             //"click i.icon-comment-amount": "onCollapse",
-            "dblclick .start"            : "startEdit",
-            "dblclick .end"              : "startEdit",
-            "dblclick .end-btn"          : "startEdit",
-            "dblclick .start-btn"        : "startEdit",
-            "keydown .start-value"       : "saveStart",
-            "keydown .end-value"         : "saveEnd",
+            //"dblclick .start"            : "startEdit",
+            //"dblclick .end"              : "startEdit",
+            //"dblclick .end-btn"          : "startEdit",
+            //"dblclick .start-btn"        : "startEdit",
+            //"keydown .start-value"       : "saveStart",
+            //"keydown .end-value"         : "saveEnd",
             //"keydown .freetext textarea" : "saveFreeText",
-            "focusout .start-value"      : "saveStart",
-            "focusout .end-value"        : "saveEnd"
+            //"focusout .start-value"      : "saveStart",
+            //"focusout .end-value"        : "saveEnd"
             //"focusout .freetext textarea": "saveFreeText",
             //"change .scaling select"     : "saveScaling"
         },
@@ -497,7 +497,7 @@ function ($, PlayerAdapter, Annotation, User, CommentsContainer, Template, Backb
             if (!_.isUndefined(modelJSON.label)) {
                 title = modelJSON.label.abbreviation + " - " + modelJSON.label.value;
                 if (!_.isUndefined(modelJSON.label.category)) {
-                    this.$el.css("background-color", modelJSON.label.category.setting.color);
+                    this.$el.css("background-color", modelJSON.label.category.settings.color);
                 }
             } else {
                 title = modelJSON.text;
