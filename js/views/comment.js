@@ -129,7 +129,7 @@ define(["jquery",
              */
             onEditComment: function () {
                 if (!this.isEditEnable) {
-                    this.$el.append(this.editTemplate({text: this.model.get("text")}));
+                    this.$el.html(this.editTemplate({text: this.model.get("text")}));
                     this.isEditEnable = true;
                 }
             },

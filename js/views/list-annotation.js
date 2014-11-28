@@ -32,10 +32,11 @@ define(["jquery",
         "models/user",
         "views/comments-container",
         "templates/list-annotation",
+        "templates/list-annotation-edit",
         "backbone",
         "handlebarsHelpers"],
 
-function ($, PlayerAdapter, Annotation, User, CommentsContainer, Template, Backbone) {
+function ($, PlayerAdapter, Annotation, User, CommentsContainer, Template, TemplateEdit, Backbone) {
 
     "use strict";
 
@@ -53,7 +54,7 @@ function ($, PlayerAdapter, Annotation, User, CommentsContainer, Template, Backb
          * @alias module:views-list-annotation.ListAnnotation#tagName
          * @type {string}
          */
-        tagName: "tr",
+        tagName: "tbody",
 
         className: "header-container",
 
@@ -63,6 +64,14 @@ function ($, PlayerAdapter, Annotation, User, CommentsContainer, Template, Backb
          * @type {HandlebarsTemplate}
          */
         template: Template,
+
+
+        /**
+         * View template for edit purpose
+         * @alias module:views-list-annotation.ListAnnotation#templateEdit
+         * @type {HandlebarsTemplate}
+         */
+        templateEdit: TemplateEdit,
 
         /**
          * Define if the view has been or not deleted
@@ -84,34 +93,34 @@ function ($, PlayerAdapter, Annotation, User, CommentsContainer, Template, Backb
          */
         events: {
             "click"                      : "onSelect",
-            //"click .toggle-edit"         : "switchEditModus",
+            "click .toggle-edit"         : "switchEditModus",
             "click .proxy-anchor "       : "stopPropagation",
-            //"click .freetext textarea"   : "stopPropagation",
-            //"click .scaling select"      : "stopPropagation",
+            "click .freetext textarea"   : "stopPropagation",
+            "click .scaling select"      : "stopPropagation",
             "click .end-value"           : "stopPropagation",
             "click .start-value"         : "stopPropagation",
-            //"click i.delete"             : "deleteFull",
+            "click i.delete"             : "deleteFull",
             "click .select"              : "onSelect",
-            //"click button.in"            : "setCurrentTimeAsStart",
-            //"click button.out"           : "setCurrentTimeAsEnd",
+            "click button.in"            : "setCurrentTimeAsStart",
+            "click button.out"           : "setCurrentTimeAsEnd",
             //"click a.collapse"           : "onCollapse",
             //"click i.icon-comment-amount": "onCollapse",
-            //"dblclick .start"            : "startEdit",
-            //"dblclick .end"              : "startEdit",
-            //"dblclick .end-btn"          : "startEdit",
-            //"dblclick .start-btn"        : "startEdit",
-            //"keydown .start-value"       : "saveStart",
-            //"keydown .end-value"         : "saveEnd",
-            //"keydown .freetext textarea" : "saveFreeText",
-            //"focusout .start-value"      : "saveStart",
-            //"focusout .end-value"        : "saveEnd"
-            //"focusout .freetext textarea": "saveFreeText",
-            //"change .scaling select"     : "saveScaling"
+            "dblclick .start"            : "startEdit",
+            "dblclick .end"              : "startEdit",
+            "dblclick .end-btn"          : "startEdit",
+            "dblclick .start-btn"        : "startEdit",
+            "keydown .start-value"       : "saveStart",
+            "keydown .end-value"         : "saveEnd",
+            "keydown .freetext textarea" : "saveFreeText",
+            "focusout .start-value"      : "saveStart",
+            "focusout .end-value"        : "saveEnd",
+            "focusout .freetext textarea": "saveFreeText",
+            "change .scaling select"     : "saveScaling"
         },
 
         /**
          * constructor
-         * @alias module:views-comments-container.CommentsContainer#initialize
+         * @alias module:views-list-annotation.ListAnnotation#initialize
          */
         initialize: function (attr) {
             var category;
@@ -144,7 +153,7 @@ function ($, PlayerAdapter, Annotation, User, CommentsContainer, Template, Backb
 
             this.isEditEnable = false;
 
-            this.commentContainer = new CommentsContainer({id: this.id, comments: this.model.get("comments"), collapsed: this.collapsed});
+            this.commentContainer = new CommentsContainer({id: this.id, comments: this.model.get("comments")});
             this.model.fetchComments();
 
             if (this.model.get("label")) {
@@ -228,14 +237,18 @@ function ($, PlayerAdapter, Annotation, User, CommentsContainer, Template, Backb
                 this.startEdit({currentTarget: this.$el.find(".start")[0]});
                 this.startEdit({currentTarget: this.$el.find(".end")[0]});
 
-                if (this.collapsed) {
-                    this.onCollapse();
+                //if (this.collapsed) {
+                //    this.onCollapse();
+                //}
+
+                if (!this.isSelected) {
+                    this.onSelect();
                 }
             } else {
                 this.$el.find(".start input").attr("disabled", "disabled");
                 this.$el.find(".end input").attr("disabled", "disabled");
-                this.render();
             }
+            this.render();
         },
 
         /**
@@ -489,7 +502,11 @@ function ($, PlayerAdapter, Annotation, User, CommentsContainer, Template, Backb
             modelJSON.isEditEnable = this.isEditEnable;
             modelJSON.numberOfComments = this.model.get("comments").length;
 
-            this.$el.html($(this.template(modelJSON)));
+            if (this.isEditEnable) {
+                this.$el.html($(this.templateEdit(modelJSON)));
+            } else {
+                this.$el.html($(this.template(modelJSON)));
+            }
 
             this.el = this.$el[0];
             this.$el.attr("id", this.id);

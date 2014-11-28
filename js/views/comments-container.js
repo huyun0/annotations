@@ -54,7 +54,7 @@ define(["jquery",
              * @alias module:views-comments-container.CommentsContainer#className
              * @type {string}
              */
-            className: "comments-container collapse",
+            className: "comments-container",
 
             /**
              * View template
