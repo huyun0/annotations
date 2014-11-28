@@ -53,7 +53,9 @@ function ($, PlayerAdapter, Annotation, User, CommentsContainer, Template, Backb
          * @alias module:views-list-annotation.ListAnnotation#tagName
          * @type {string}
          */
-        //tagName: "tbody",
+        tagName: "tr",
+
+        className: "header-container",
 
         /**
          * View template
@@ -449,7 +451,8 @@ function ($, PlayerAdapter, Annotation, User, CommentsContainer, Template, Backb
             var modelJSON,
                 scaleValues,
                 category,
-                selectedScaleValue;
+                selectedScaleValue,
+                title;
 
             if (this.deleted) {
                 return "";
@@ -486,10 +489,25 @@ function ($, PlayerAdapter, Annotation, User, CommentsContainer, Template, Backb
             modelJSON.isEditEnable = this.isEditEnable;
             modelJSON.numberOfComments = this.model.get("comments").length;
 
-            this.$el = $(this.template(modelJSON));
+            this.$el.html($(this.template(modelJSON)));
 
             this.el = this.$el[0];
             this.$el.attr("id", this.id);
+
+            if (!_.isUndefined(modelJSON.label)) {
+                title = modelJSON.label.abbreviation + " - " + modelJSON.label.value;
+                if (!_.isUndefined(modelJSON.label.category)) {
+                    this.$el.css("background-color", modelJSON.label.category.setting.color);
+                }
+            } else {
+                title = modelJSON.text;
+            }
+
+            if (this.isEditEnable) {
+                title += " edit-on";
+            }
+            this.$el.attr("title", title);
+
 
             // Hack for Firefox, add an button over it
             if ($.browser.mozilla) {
