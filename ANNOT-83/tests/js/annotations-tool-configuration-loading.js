@@ -161,7 +161,7 @@ define(["jquery",
                         access      : Math.round(Math.random()),
                         annotations : [],
                         visible: false,
-                        annotationsLoaded: true
+                        annotationsLoaded: false
                     };
 
                     // Generate  annotations
