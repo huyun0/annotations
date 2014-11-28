@@ -1,4 +1,4 @@
-<tr class="header-container" {{#if label.category}}style="background-color:{{label.category.settings.color}}"{{/if}} title="{{#if label}}{{label.abbreviation}} - {{label.value}}{{else}}{{text}}{{/if}} {{#if isEditEnable}}edit-on{{/if}}">
+<tr class="header-container" {{#if label.category}}style="background-color:{{label.category.settings.color}}"{{/if}} title="{{#if label}}{{label.abbreviation}} - {{label.value}}{{else}}{{text}}{{/if}}">
     <td class="left">
         <a href="#{{id}}" class="proxy-anchor"></a>
         <span class="start read-only">
@@ -20,12 +20,6 @@
         {{#if isMine}}
         <i class="private icon-user" title="You own this annotation"></i>
         {{/if}}
-
-        <span class="category-print print">{{#if label}}{{label.category.name}}{{else}}Free-text{{/if}}</span>
-
-        <div class="creator">{{created_by_nickname}}</div>
-
-        <div class="creation-date print">{{formatDate created_at}}</div>
         
         <span class="category" {{#if label}}title="{{label.category.name}} - {{label.value}} ({{label.abbreviation}})"{{/if}}>
                 {{#if label}}
