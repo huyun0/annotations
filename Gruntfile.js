@@ -36,7 +36,7 @@ module.exports = function (grunt) {
             integration: {
                 sources : '',
                 //target  : '../Matterhorn/lib/local/entwine-annotations-tool-1.5-SNAPSHOT/ui',
-                target  : '../Matterhorn/modules/entwine-annotations-tool/src/main/resources/ui',
+                target  : '/Users/xavierbutty/Documents/Projects/Entwine/System/vagrant/share/matterhorn/lib/local/entwine-annotations-tool-1.6-SNAPSHOT/ui',
                 config  : 'build/profiles/integration/annotations-tool-configuration.js'
             },
 

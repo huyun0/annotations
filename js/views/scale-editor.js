@@ -58,8 +58,7 @@ define(["jquery",
                 TITLES: {
                     CATEGORY_EDIT  : "Edit category scale",
                     STANDALONE_EDIT: "Edit scales",
-                    SAVE_BUTTON    : "Save",
-                    CREATE_BUTTON  : "Create"
+                    SAVE_BUTTON    : "Save"
                 },
 
                 /**
@@ -255,16 +254,12 @@ define(["jquery",
                             description: description
                         });
 
-                        if (!this.currentScale.collection) {
-                            annotationsTool.video.get("scales").add(this.currentScale);
-                            this.currentScale.save({async: false});
-                            this.currentScale.setUrl();
-                            this.currentScale.get("scaleValues").each(function (scaleValue) {
-                                scaleValue.save();
-                            });
-                            this.currentScaleId = this.currentScale.get("id");
-                            this.$el.find("select#scale-id").removeAttr("disabled");
-                        }
+                        this.currentScale.save({async: false});
+                        this.currentScale.get("scaleValues").each(function (scaleValue) {
+                            scaleValue.save();
+                        });
+                        this.currentScaleId = this.currentScale.get("id");
+
                         this.isInEditMode = false;
                         this.renderScaleSelect();
                         this.changeScale();
@@ -337,13 +332,24 @@ define(["jquery",
                  */
                 createScale: function () {
                     this.isInEditMode = true;
-                    this.$el.find("a#save-scale").text(this.TITLES.CREATE_BUTTON);
+
                     this.currentScale = new Scale({
                         name  : "New scale",
                         access: this.currentCategory.get("access")
                     });
+
+                    this.$el.find("a#save-scale").text(this.TITLES.SAVE_BUTTON);
+
+                    annotationsTool.video.get("scales").add(this.currentScale);
+                    this.currentScale.save({async: false});
+                    this.currentScale.setUrl();
+                    this.currentScale.get("scaleValues").each(function (scaleValue) {
+                        scaleValue.save();
+                    });
+                    this.currentScaleId = this.currentScale.get("id");
+                    this.$el.find("select#scale-id").removeAttr("disabled");
+
                     this.renderEditContent(this.currentScale);
-                    this.$el.find("select#scale-id").attr("disabled", "disabled");
                     this.$el.find(".modal-body").show();
                 },
 

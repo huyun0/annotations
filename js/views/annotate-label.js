@@ -271,12 +271,6 @@ define(["jquery",
              */
             switchEditModus: function (status) {
                 this.editModus = status;
-
-                // if (status) {
-                //     this.$el.find("input[disabled='disabled']").removeAttr("disabled");
-                // } else {
-                //     this.$el.find("input").attr("disabled", "disabled");
-                // }
             },
 
             /**
@@ -383,6 +377,8 @@ define(["jquery",
                 }
                 
                 this.$el.find("input.item-value").width(width);
+
+                this.delegateEvents(this.events);
             },
 
             /**
@@ -412,8 +408,6 @@ define(["jquery",
                     this.$el.removeClass(this.CLASS_SCALE.ENABLED);
                     this.$el.addClass(this.CLASS_SCALE.DISABLED);
                 }
-
-                this.delegateEvents(this.events);
 
                 this.updateInputWidth();
                 return this;

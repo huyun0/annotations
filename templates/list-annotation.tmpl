@@ -9,7 +9,7 @@
                {{end start duration}}
         </span>
 
-        {{#if scalevalues}}
+        {{#if scalevalue}}
         <span class="scaling">
                 {{#if scalevalue}}
                 <span class="read-only" title="{{scalevalue.name}}">{{scalevalue.name}}</span>
@@ -37,9 +37,9 @@
     <td class="right">
         <i class="icon-comment-amount" title="{{numberOfComments}} Comment(s)"><span class="comment-amount">{{numberOfComments}}</span></i>
 
-        {{#if created_by}}
+        <!--  {{#if created_by}}
         <i class="icon-info-sign" title="added by {{#if created_by_nickname}}{{created_by_nickname}}{{else}}{{nickname created_by}}{{/if}} on {{track}}"></i>
-        {{/if}}
+        {{/if}} -->
 
         {{#if isMine}}
         <i class="toggle-edit icon-pencil" title="Edit annotation."></i>
