@@ -264,8 +264,7 @@ define(["jquery",
              * @alias module:views-comments-container.CommentsContainer#cancel
              */
             cancel: function () {
-                this.$el.find("textarea").hide().val("");
-                this.$el.find("button").addClass("hide");
+                this.$el.find("textarea").val("");
             }
         });
         return CommentsContainer;
