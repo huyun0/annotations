@@ -87,6 +87,14 @@ function ($, PlayerAdapter, Annotation, User, CommentsContainer, Template, Templ
          */
         collapsed: true,
 
+
+        /**
+         * Define if the comments container is currently visible
+         * @alias module:views-list-annotation.ListAnnotation#commentsVisible
+         * @type {Boolean}
+         */
+        commentsVisible: false,
+
         /** Events to handle
          * @alias module:views-list-annotation.ListAnnotation#events
          * @type {object}
@@ -104,7 +112,7 @@ function ($, PlayerAdapter, Annotation, User, CommentsContainer, Template, Templ
             "click button.in"            : "setCurrentTimeAsStart",
             "click button.out"           : "setCurrentTimeAsEnd",
             //"click a.collapse"           : "onCollapse",
-            //"click i.icon-comment-amount": "onCollapse",
+            "click i.icon-comment-amount": "showComments",
             "dblclick .start"            : "startEdit",
             "dblclick .end"              : "startEdit",
             "dblclick .end-btn"          : "startEdit",
@@ -145,7 +153,8 @@ function ($, PlayerAdapter, Annotation, User, CommentsContainer, Template, Templ
                             "stopPropagation",
                             "switchEditModus",
                             "setCurrentTimeAsStart",
-                            "setCurrentTimeAsEnd");
+                            "setCurrentTimeAsEnd",
+                            "showComments");
 
             this.model = attr.annotation;
 
@@ -174,7 +183,7 @@ function ($, PlayerAdapter, Annotation, User, CommentsContainer, Template, Templ
             _.extend(this.model, Backbone.Events);
 
             this.listenTo(this.model, "change", this.render);
-            this.listenTo(this.model.get("comments"), "add", this.render);
+            //this.listenTo(this.model.get("comments"), "add", this.render);
             this.listenTo(this.model.get("comments"), "change", this.render);
             this.listenTo(this.model.get("comments"), "remove", this.render);
             this.listenTo(this.model, "destroy", this.deleteView);
@@ -511,7 +520,7 @@ function ($, PlayerAdapter, Annotation, User, CommentsContainer, Template, Templ
             this.el = this.$el[0];
             this.$el.attr("id", this.id);
 
-            if (!_.isUndefined(modelJSON.label)) {
+            if (!_.isUndefined(modelJSON.label) && !_.isNull(modelJSON.label)) {
                 title = modelJSON.label.abbreviation + " - " + modelJSON.label.value;
                 if (!_.isUndefined(modelJSON.label.category)) {
                     this.$el.css("background-color", modelJSON.label.category.settings.color);
@@ -533,7 +542,13 @@ function ($, PlayerAdapter, Annotation, User, CommentsContainer, Template, Templ
                 }
                 this.$el.find(".start").append("<span class=\"start-btn\" title=\"Double click to edit\">&nbsp;</span>");
             }
-            this.$el.find("tr#text-container" + this.id).after(this.commentContainer.render().$el);
+
+            this.$el.find("tr:last").after(this.commentContainer.render().$el);
+
+            if (!this.commentsVisible) {
+                this.commentContainer.$el.css("display", "none");
+            }
+
             this.delegateEvents(this.events);
 
             return this;
@@ -605,6 +620,19 @@ function ($, PlayerAdapter, Annotation, User, CommentsContainer, Template, Templ
                 this.$el.find("#text-container" + this.id).show();
                 this.$el.find("tr.comments-container").show();
             }
+        },
+
+        showComments: function () {
+            if (this.commentsVisible) {
+                this.$el.find("tr.comments-container").hide();
+            } else {
+                if (!this.model.areCommentsLoaded()) {
+                    this.model.fetchComments();
+                }
+                this.$el.find("tr.comments-container").show();
+            }
+
+            this.commentsVisible = !this.commentsVisible;
         }
     });
     return ListAnnotation;

@@ -184,10 +184,6 @@ define(["jquery",
                     attr.tags = this.parseJSONString(attr.tags);
                 }
 
-                if (attr.category) {
-                    attr.category = this.parseJSONString(attr.category.settings);
-                }
-
                 if (attr.tags) {
                     attr.tags = this.parseJSONString(attr.tags);
                 }
@@ -414,6 +410,7 @@ define(["jquery",
             save: function (options) {
                 this.attributes.settings = JSON.stringify(this.attributes.settings);
                 Backbone.Model.prototype.save.call(this, options);
+                this.attributes.settings = this.parseJSONString(this.attributes.settings);
             }
         });
         return Category;

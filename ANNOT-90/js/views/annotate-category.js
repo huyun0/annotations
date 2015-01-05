@@ -210,6 +210,8 @@ define(["jquery",
                 _.each(this.labelViews, function (labelView) {
                     labelView.updateInputWidth();
                 }, this);
+
+                this.delegateEvents(this.events);
             },
 
             /**
@@ -401,8 +403,6 @@ define(["jquery",
              * @return {CategoryView} this category view
              */
             render: function () {
-                console.log("render category");
-
                 var modelJSON = this.model.toJSON();
                 modelJSON.notEdit = !this.editModus;
 
@@ -421,6 +421,10 @@ define(["jquery",
 
                 this.nameInput = this.$el.find(".catItem-header input");
 
+                if (_.isString(this.model.attributes.settings)) {
+                    this.model.attributes.settings = this.model.parseJSONString(this.model.attributes.settings);
+                }
+
                 this.$el.find(".colorpicker").colorPicker({
                     pickerDefault: this.model.attributes.settings.color.replace("#", ""),
                     onColorChange: this.onColorChange
@@ -431,8 +435,6 @@ define(["jquery",
                 this.$el.width((100 / annotationsTool.CATEGORIES_PER_TAB) + "%");
 
                 this.updateInputWidth();
-
-                this.delegateEvents(this.events);
 
                 return this;
             }

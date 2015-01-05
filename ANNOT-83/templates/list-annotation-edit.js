@@ -295,10 +295,10 @@ function program45(depth0,data) {
   if (helper = helpers.numberOfComments) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.numberOfComments); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "</span></i>\n\n        <!-- ";
+    + "</span></i>\n\n        ";
   stack1 = helpers['if'].call(depth0, (depth0 && depth0.created_by), {hash:{},inverse:self.noop,fn:self.program(35, program35, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += " -->\n\n        ";
+  buffer += "\n\n        ";
   options={hash:{},inverse:self.noop,fn:self.program(40, program40, data),data:data}
   if (helper = helpers.canBeDeleted) { stack1 = helper.call(depth0, options); }
   else { helper = (depth0 && depth0.canBeDeleted); stack1 = typeof helper === functionType ? helper.call(depth0, options) : helper; }
