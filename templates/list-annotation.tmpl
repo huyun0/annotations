@@ -1,6 +1,11 @@
 <tr class="header-container" {{#if label.category}}style="background-color:{{label.category.settings.color}}"{{/if}} title="{{#if label}}{{label.abbreviation}} - {{label.value}}{{else}}{{text}}{{/if}}">
     <td class="left">
         <a href="#{{id}}" class="proxy-anchor"></a>
+
+        <a class="collapse" title="collapse">
+            <i class="{{#if collapsed}}icon-chevron-right{{else}}icon-chevron-down{{/if}}"></i>
+        </a>
+
         <span class="start read-only">
             {{time start}}
         </span>
@@ -35,11 +40,9 @@
     </td>
 
     <td class="right">
-        <i class="icon-comment-amount" title="{{numberOfComments}} Comment(s)"><span class="comment-amount">{{numberOfComments}}</span></i>
-
-        <!--  {{#if created_by}}
-        <i class="icon-info-sign" title="added by {{#if created_by_nickname}}{{created_by_nickname}}{{else}}{{nickname created_by}}{{/if}} on {{track}}"></i>
-        {{/if}} -->
+        <i class="icon-comment-amount" title="{{numberOfComments}} Comment(s)">
+            <span class="comment-amount">{{numberOfComments}}</span>
+        </i>
 
         {{#if isMine}}
         <i class="toggle-edit icon-pencil" title="Edit annotation."></i>

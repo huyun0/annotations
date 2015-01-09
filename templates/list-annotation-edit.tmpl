@@ -1,4 +1,4 @@
-<tr class="header-container" {{#if label.category}}style="background-color:{{label.category.settings.color}}"{{/if}} title="{{#if label}}{{label.abbreviation}} - {{label.value}}{{else}}{{text}}{{/if}} {{#if isEditEnable}}edit-on{{/if}}">
+<tr class="header-container" {{#if label.category}}style="background-color:{{label.category.settings.color}}"{{/if}} title="{{#if label}}{{label.abbreviation}} - {{label.value}}{{else}}{{text}}{{/if}}">
     <td class="left">
         <a href="#{{id}}" class="proxy-anchor"></a>
         <button class="btn in edit" title="Set the video playhead as start point.">IN</button>
@@ -46,10 +46,6 @@
     <td class="right">
         <i class="icon-comment-amount" title="{{numberOfComments}} Comment(s)"><span class="comment-amount">{{numberOfComments}}</span></i>
 
-        <!-- {{#if created_by}}
-        <i class="icon-info-sign" title="added by {{#if created_by_nickname}}{{created_by_nickname}}{{else}}{{nickname created_by}}{{/if}} on {{track}}"></i>
-        {{/if}} -->
-
         {{#canBeDeleted}}
         <i class="delete icon-trash" title="Delete annotation."></i>
         {{/canBeDeleted}}
@@ -69,6 +65,10 @@
                     {{/if}}
                     <span class="read-only">{{{textReadOnly}}}</span>
                 </span>
+                <div class="button-bar">
+                    <button type="button" class="btn">Cancel</button>
+                    <button type="submit" class="btn btn-primary">OK</button>
+                </div>
         </span>
         {{/if}}
     </td>
