@@ -82,6 +82,8 @@ define(["jquery",
                 "click button[type=button]" : "onCancelComment"
             },
 
+            addState: false,
+
             /**
              * constructor
              * @alias module:views-comments-container.CommentsContainer#initialize
@@ -106,7 +108,8 @@ define(["jquery",
                           "insert",
                           "onCancelComment",
                           "keyupInsertProxy",
-                          "resetViews");
+                          "resetViews",
+                          "toggleAddState");
 
                 this.$el.html(this.template({
                     id       : this.annotationId,
@@ -127,6 +130,10 @@ define(["jquery",
                 this.resetViews();
 
                 return this.render();
+            },
+
+            toggleAddState: function () {
+                this.addState = !this.addState;
             },
 
             /**
