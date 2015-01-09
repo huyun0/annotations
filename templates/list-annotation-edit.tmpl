@@ -1,7 +1,12 @@
 <tr class="header-container" {{#if label.category}}style="background-color:{{label.category.settings.color}}"{{/if}} title="{{#if label}}{{label.abbreviation}} - {{label.value}}{{else}}{{text}}{{/if}}">
     <td class="left">
         <a href="#{{id}}" class="proxy-anchor"></a>
-        <button class="btn in edit" title="Set the video playhead as start point.">IN</button>
+
+        <a class="collapse" title="collapse">
+            <i class="icon-chevron-down"></i>
+        </a>
+
+        <button class="btn in" title="Set the video playhead as start point.">IN</button>
         <span class="start">
                 <input title="Start time{{#if isMine}} (double-click to edit){{/if}}" id="start-{{id}}" class="start-value" type="text" value="{{time start}}" {{#if isEditEnable}} {{else}}disabled{{/if}}></input>
         </span>
@@ -9,12 +14,12 @@
         <span class="end {{#if duration}}has-duration{{else}}no-duration{{/if}}">
                 <input title="End time{{#if isMine}} (double-click to edit){{/if}}" id="end-{{id}}" class="end-value" type="text" value="{{end start duration}}" {{#if isEditEnable}} {{else}}disabled{{/if}}></input>
         </span>
-        <button class="btn out edit" title="Set the video playhead as end point.">OUT</button>
+        <button class="btn out" title="Set the video playhead as end point.">OUT</button>
 
         {{#if scalevalues}}
         <span class="scaling">
                 {{#if isMine}}
-                <select class="edit">
+                <select>
                         {{#each scalevalues}}
                         <option value="{{this.id}}" {{#if this.isSelected}}selected="selected"{{/if}}>{{this.name}}</option>
                         {{/each}}
@@ -44,8 +49,6 @@
     </td>
 
     <td class="right">
-        <i class="icon-comment-amount" title="{{numberOfComments}} Comment(s)"><span class="comment-amount">{{numberOfComments}}</span></i>
-
         {{#canBeDeleted}}
         <i class="delete icon-trash" title="Delete annotation."></i>
         {{/canBeDeleted}}
@@ -53,17 +56,18 @@
         {{#if isMine}}
         <i class="toggle-edit icon-pencil" title="Edit annotation."></i>
         {{/if}}
+
+        <i class="icon-comment-amount" title="{{numberOfComments}} Comment(s)">
+            <span class="comment-amount">{{numberOfComments}}</span>
+        </i>
     </td>
 </tr>
-<tr id="text-container{{id}}" class="in text-container {{#if isEditEnable}}edit-on{{/if}}">
+<tr id="text-container{{id}}" class="in text-container">
     <td colspan="2">
         {{#if label}} {{else}} 
         <span class="text">
                 <span class="freetext">
-                    {{#if isMine}}
-                    <textarea class="edit" placeholder="free text...">{{text}}</textarea>
-                    {{/if}}
-                    <span class="read-only">{{{textReadOnly}}}</span>
+                    <textarea placeholder="free text...">{{text}}</textarea>
                 </span>
                 <div class="button-bar">
                     <button type="button" class="btn">Cancel</button>
