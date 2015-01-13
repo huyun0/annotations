@@ -660,7 +660,6 @@ define(["jquery",
                 if (!isList) {
                     this.filterItems();
                     this.redraw();
-                    annotationsTool.setSelection([annotation], false);
                     this.onPlayerTimeUpdate();
                 }
 

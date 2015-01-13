@@ -76,13 +76,13 @@ define(["jquery",
              * @type {object}
              */
             events: {
-                "click a.add-comment"       : "onAddComment",
-                "keyup textarea"            : "keyupInsertProxy",
-                "click button[type=submit]" : "insert",
-                "click button[type=button]" : "onCancelComment"
+                "click a.add-comment"                      : "onAddComment",
+                "keyup textarea"                           : "keyupInsertProxy",
+                "click button[type=submit].add-comment"    : "insert",
+                "click button[type=button].cancel-comment" : "onCancelComment"
             },
 
-            addState: false,
+            currentState: false,
 
             /**
              * constructor
@@ -93,13 +93,14 @@ define(["jquery",
                 if (typeof attr.collapsed !== "undefined") {
                     this.collapsed = attr.collapsed;
                 }
-
-                this.annotationId   = attr.id;
-                this.id             = "comments-container" + attr.id;
-                this.el.id          = this.id;
-                this.comments       = attr.comments;
-                this.commentViews   = [];
-                this.cancelCallback = attr.cancel;
+                
+                this.annotationId        = attr.id;
+                this.id                  = "comments-container" + attr.id;
+                this.el.id               = this.id;
+                this.comments            = attr.comments;
+                this.commentViews        = [];
+                this.cancelCallback      = attr.cancel;
+                this.editCommentCallback = attr.edit;
 
                 // Bind function to the good context
                 _.bindAll(this,
@@ -112,14 +113,6 @@ define(["jquery",
                           "resetViews",
                           "toggleAddState");
 
-                this.$el.html(this.template({
-                    id       : this.annotationId,
-                    comments : this.comments.models,
-                    collapsed: this.collapsed
-                }));
-
-                this.commentList = this.$el.find("div#comment-list" + this.annotationId);
-
                 // Add backbone events to the model
                 _.extend(this.comments, Backbone.Events);
 
@@ -127,12 +120,27 @@ define(["jquery",
                 this.listenTo(this.comments, "remove", this.deleteView);
                 this.listenTo(this.comments, "reset", this.resetViews);
 
+                this.currentState = CommentsContainer.STATES.READ;
+
                 this.resetViews();
 
                 return this.render();
             },
 
+            setState: function (state) {
+                this.currentState = state;
+                console.log("Change comments state to " + state);
+            },
+
             toggleAddState: function (state) {
+                if (!_.isUndefined(state)) {
+                    this.currentState = state;
+                } else {
+                    this.currentState = !this.addState;
+                }
+            },
+
+            toggleEditState: function (state) {
                 if (!_.isUndefined(state)) {
                     this.addState = state;
                 } else {
@@ -162,10 +170,9 @@ define(["jquery",
              */
             render: function () {
                 this.$el.html(this.template({
-                    id: this.annotationId,
-                    comments: this.comments.models,
-                    collapsed: this.collapsed,
-                    addState: this.addState
+                    id        : this.annotationId,
+                    comments  : this.comments.models,
+                    addState  : this.currentState === CommentsContainer.STATES.ADD
                 }));
 
                 this.commentList = this.$el.find("div#comment-list" + this.annotationId);
@@ -247,14 +254,17 @@ define(["jquery",
                     commentModel = new CommentView({
                         model: comment,
                         cancel: function () {
-                            self.toggleAddState(true);
+                            self.setState(CommentsContainer.STATES.ADD);
+                            self.cancelCallback();
                             self.render();
                         },
                         edit: function () {
-                            self.toggleAddState(false);
+                            self.setState(CommentsContainer.STATES.EDIT);
+                            self.editCommentCallback();
                             self.render();
                         }
                     });
+
                 this.commentViews.push(commentModel);
                 this.$el.find("div#comment-list" + this.annotationId).append(commentModel.render().$el);
 
@@ -296,6 +306,12 @@ define(["jquery",
             cancel: function () {
                 this.$el.find("textarea").val("");
                 this.cancelCallback();
+            }
+        }, {
+            STATES: {
+                READ : "read",
+                ADD  : "add-comment",
+                EDIT : "edit-comment"
             }
         });
         return CommentsContainer;

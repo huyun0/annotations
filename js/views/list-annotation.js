@@ -41,70 +41,6 @@ function ($, PlayerAdapter, Annotation, User, CommentsContainer, TmplCollapsed, 
 
     "use strict";
 
-    var STATES = {
-            COLLAPSED: {
-                render: TmplCollapsed,
-                withComments: false,
-                id: "collapsed",
-                events: {
-                    "click"                      : "onSelect",
-                    "click .proxy-anchor "       : "stopPropagation",
-                    "click a.collapse"           : "toggleCollapsedState",
-                    "click i.icon-comment-amount": "toggleCommentsState"
-                }
-            },
-            EXPANDED: {
-                render: TmplExpanded,
-                withComments: true,
-                id: "expanded",
-                events: {
-                    "click"                      : "onSelect",
-                    "click .proxy-anchor "       : "stopPropagation",
-                    "click a.collapse"           : "toggleCollapsedState",
-                    "click i.icon-comment-amount": "toggleCommentsState",
-                    "click .toggle-edit"         : "toggleEditState"
-                }
-            },
-            EDIT: {
-                render: TmplEdit,
-                withComments: true,
-                id: "edit-annotation",
-                events: {
-                    "click"                      : "onSelect",
-                    "click .proxy-anchor "       : "stopPropagation",
-                    "click a.collapse"           : "toggleCollapsedState",
-                    "click i.icon-comment-amount": "toggleCommentsState",
-                    "click .toggle-edit"         : "toggleEditState",
-                    "click .freetext textarea"   : "stopPropagation",
-                    "click .scaling select"      : "stopPropagation",
-                    "click .end-value"           : "stopPropagation",
-                    "click .start-value"         : "stopPropagation",
-                    "click i.delete"             : "deleteFull",
-                    "click button.in"            : "setCurrentTimeAsStart",
-                    "click button.out"           : "setCurrentTimeAsEnd",
-                    "keydown .start-value"       : "saveStart",
-                    "keydown .end-value"         : "saveEnd",
-                    "keydown .freetext textarea" : "saveFreeText",
-                    "focusout .start-value"      : "saveStart",
-                    "focusout .end-value"        : "saveEnd",
-                    "focusout .freetext textarea": "saveFreeText",
-                    "change .scaling select"     : "saveScaling"
-                }
-            },
-            COMMENTS: {
-                render: TmplExpanded,
-                withComments: true,
-                id: "add-comment",
-                events: {
-                    "click"                      : "onSelect",
-                    "click .proxy-anchor "       : "stopPropagation",
-                    "click a.collapse"           : "toggleCollapsedState",
-                    "click i.icon-comment-amount": "toggleCommentsState",
-                    "click .toggle-edit"         : "toggleEditState"
-                }
-            }
-        },
-
     /**
      * @constructor
      * @see {@link http://www.backbonejs.org/#View}
@@ -112,7 +48,7 @@ function ($, PlayerAdapter, Annotation, User, CommentsContainer, TmplCollapsed, 
      * @memberOf module:views-list-annotation
      * @alias module:views-list-annotation.ListAnnotation
      */
-        ListAnnotation = Backbone.View.extend({
+    var ListAnnotation = Backbone.View.extend({
 
             /**
              * Tag name from the view element
@@ -149,16 +85,22 @@ function ($, PlayerAdapter, Annotation, User, CommentsContainer, TmplCollapsed, 
              * @alias module:views-list-annotation.ListAnnotation#events
              * @type {object}
              */
-            events: STATES.COLLAPSED.events,
+            events: undefined,
 
-            currentState: STATES.COLLAPSED,
+            /**
+             * The current view {@link ListAnnotation.STATES} of the annotation view
+             * @alias module:views-list-annotation.ListAnnotation#currentStates
+             * @type {ListAnnotation.STATES}
+             */
+            currentState: undefined,
 
             /**
              * constructor
              * @alias module:views-list-annotation.ListAnnotation#initialize
              */
             initialize: function (attr) {
-                var category;
+                var category,
+                    self = this;
 
                 if (!attr.annotation) {
                     throw "The annotations have to be given to the annotate view.";
@@ -169,8 +111,6 @@ function ($, PlayerAdapter, Annotation, User, CommentsContainer, TmplCollapsed, 
                                 "deleteFull",
                                 "deleteView",
                                 "onSelect",
-                                "onSelected",
-                                "selectVisually",
                                 "startEdit",
                                 "saveStart",
                                 "saveEnd",
@@ -195,7 +135,11 @@ function ($, PlayerAdapter, Annotation, User, CommentsContainer, TmplCollapsed, 
                 this.commentContainer = new CommentsContainer({
                     id       : this.id,
                     comments : this.model.get("comments"),
-                    cancel   : this.toggleCommentsState
+                    cancel   : this.toggleCommentsState,
+                    edit     : function () {
+                        self.setState(ListAnnotation.STATES.COMMENTS, ListAnnotation.STATES.EXPANDED);
+                        self.render();
+                    }
                 });
 
                 this.model.fetchComments();
@@ -232,28 +176,33 @@ function ($, PlayerAdapter, Annotation, User, CommentsContainer, TmplCollapsed, 
                     this.track = annotationsTool.selectedTrack;
                 }
 
+                this.currentState = ListAnnotation.STATES.COLLAPSED;
+
                 return this.render();
             },
 
             /**
-             * [setState description]
-             * @param {[type]} newState [description]
+             * Set the state to the given newState or the fallbackState if newState is already set
+             * @alias module:views-list-annotation.ListAnnotation#setState
+             * @param {State} newState The new state to set if not already activated
+             * @param {State} fallbackState The fallback state if the new state is already set
              */
             setState: function (newState, fallbackState) {
                 console.log("From " + this.currentState.id + "...");
 
-                if (_.isUndefined(fallbackState) || this.getState() !== newState) {
-                    this.currentState = newState;
-                } else {
+                if (!_.isUndefined(fallbackState) && this.getState() === newState) {
                     this.currentState = fallbackState;
+                } else {
+                    this.currentState = newState;
                 }
 
                 console.log("to " + this.currentState.id + ".");
             },
 
             /**
-             * [getState description]
-             * @return {[type]} [description]
+             * Returns the state of the list annotation view
+             * @alias module:views-list-annotation.ListAnnotation#setState
+             * @return {State} The current state of the list annotation view
              */
             getState: function () {
                 return this.currentState;
@@ -336,6 +285,8 @@ function ($, PlayerAdapter, Annotation, User, CommentsContainer, TmplCollapsed, 
                 if (event.type === "keydown") {
                     $(event.currentTarget).blur();
                 }
+
+                this.toggleEditState(event);
             },
 
             /**
@@ -542,6 +493,7 @@ function ($, PlayerAdapter, Annotation, User, CommentsContainer, TmplCollapsed, 
                 modelJSON.state = this.getState().id;
                 
                 this.$el.html($(this.currentState.render(modelJSON)));
+
                 this.el = this.$el[0];
                 this.$el.attr("id", this.id);
 
@@ -596,31 +548,12 @@ function ($, PlayerAdapter, Annotation, User, CommentsContainer, TmplCollapsed, 
             },
 
             /**
-             * Listener for selection done on this annotation
-             * @alias module:views-list-annotation.ListAnnotation#onSelected
-             */
-            onSelected: function () {
-                if (!this.$el.hasClass("selected")) {
-                    this.$el.parent().find(".selected").removeClass("selected");
-                    this.selectVisually();
-                }
-            },
-
-            /**
              * Stop the propagation of the given event
              * @alias module:views-list-annotation.ListAnnotation#stopPropagation
              * @param  {event} event Event object
              */
             stopPropagation: function (event) {
                 event.stopImmediatePropagation();
-            },
-
-            /**
-             * Display the annotation selection on its presentation
-             * @alias module:views-list-annotation.ListAnnotation#selectVisually
-             */
-            selectVisually: function () {
-                this.$el.addClass("selected");
             },
 
             /**
@@ -632,8 +565,8 @@ function ($, PlayerAdapter, Annotation, User, CommentsContainer, TmplCollapsed, 
                 event.stopImmediatePropagation();
 
                 this.isEditEnable = !this.isEditEnable;
-                this.commentContainer.toggleAddState(false);
-                this.setState(STATES.EDIT, STATES.EXPANDED);
+                this.commentContainer.setState(CommentsContainer.ListAnnotation.STATES.READ);
+                this.setState(ListAnnotation.STATES.EDIT, ListAnnotation.STATES.EXPANDED);
 
                 if (this.isEditEnable) {
                     if (!this.isSelected) {
@@ -646,36 +579,136 @@ function ($, PlayerAdapter, Annotation, User, CommentsContainer, TmplCollapsed, 
 
             /**
              * Toggle the visibility of the text container
+             * @alias module:views-list-annotation.ListAnnotation#toggleCollapsedState
+             * @param  {event} event Event object
+             * @param  {boolean} force Force to collapse state
+             */
+            toggleCollapsedState: function (event, force) {
+                event.stopImmediatePropagation();
+
+                this.collapsed = !this.collapsed;
+                this.commentContainer.setState(CommentsContainer.ListAnnotation.STATES.READ);
+                if (force) {
+                    this.setState(ListAnnotation.STATES.COLLAPSED);
+                } else {
+                    this.setState(ListAnnotation.STATES.COLLAPSED, ListAnnotation.STATES.EXPANDED);
+                }
+                this.render();
+            },
+
+            /**
+             * Toggle the visibility of the text container
              * @alias module:views-list-annotation.ListAnnotation#toggleExpandedState
              * @param  {event} event Event object
+             * @param  {boolean} force Force to expand state 
              */
-            toggleExpandedState: function (event) {
-                if (event) {
-                    event.stopImmediatePropagation();
-                }
+            toggleExpandedState: function (event, force) {
+                event.stopImmediatePropagation();
+
                 this.collapsed = !this.collapsed;
-                this.commentContainer.toggleAddState(false);
-                this.setState(STATES.EXPANDED, STATES.COLLAPSED);
+                this.commentContainer.setState(CommentsContainer.ListAnnotation.STATES.READ);
+                if (force) {
+                    this.setState(ListAnnotation.STATES.EXPANDED);
+                } else {
+                    this.setState(ListAnnotation.STATES.EXPANDED, ListAnnotation.STATES.COLLAPSED);
+                }
                 this.render();
             },
 
-            toggleCollapsedState: function (event) {
-                if (event) {
-                    event.stopImmediatePropagation();
-                }
-                this.collapsed = !this.collapsed;
-                this.commentContainer.toggleAddState(false);
-                this.setState(STATES.COLLAPSED, STATES.EXPANDED);
-                this.render();
-            },
-
+            /**
+             * Toggle the comments state
+             * @alias module:views-list-annotation.ListAnnotation#toggleCommentsState
+             * @param  {event} event Event object
+             */
             toggleCommentsState: function (event) {
-                if (event) {
+                if (!_.isUndefined(event)) {
                     event.stopImmediatePropagation();
                 }
-                this.setState(STATES.COMMENTS, STATES.EXPANDED);
-                this.commentContainer.toggleAddState(this.getState() === STATES.COMMENTS);
+
+                if (this.getState() !== ListAnnotation.STATES.COMMENTS) {
+                    this.commentContainer.setState(CommentsContainer.ListAnnotation.STATES.ADD);
+                } else {
+                    this.commentContainer.setState(CommentsContainer.ListAnnotation.STATES.READ);
+                }
+
+                this.setState(ListAnnotation.STATES.COMMENTS, ListAnnotation.STATES.EXPANDED);
                 this.render();
+            }
+        }, {
+
+            /**
+             * List of the different states existing for 
+             * the annotation view in the list
+             */
+            STATES: {
+                COLLAPSED: {
+                    render: TmplCollapsed,
+                    withComments: false,
+                    id: "collapsed",
+                    events: {
+                        "click"                      : "onSelect",
+                        "click .proxy-anchor "       : "stopPropagation",
+                        "click a.collapse"           : "toggleCollapsedState",
+                        "click i.icon-comment-amount": "toggleCommentsState",
+                        "dblclick span.category"     : "toggleEditState"
+                    }
+                },
+                EXPANDED: {
+                    render: TmplExpanded,
+                    withComments: true,
+                    id: "expanded",
+                    events: {
+                        "click"                      : "onSelect",
+                        "click .proxy-anchor "       : "stopPropagation",
+                        "click a.collapse"           : "toggleCollapsedState",
+                        "click i.icon-comment-amount": "toggleCommentsState",
+                        "click .toggle-edit"         : "toggleEditState",
+                        "dblclick span.text"         : "toggleEditState",
+                        "dblclick span.category"     : "toggleEditState"
+                    }
+                },
+                EDIT: {
+                    render: TmplEdit,
+                    withComments: true,
+                    id: "edit-annotation",
+                    events: {
+                        "click"                      : "onSelect",
+                        "click .proxy-anchor "       : "stopPropagation",
+                        "click a.collapse"           : "toggleCollapsedState",
+                        "click i.icon-comment-amount": "toggleCommentsState",
+                        "click .toggle-edit"         : "toggleEditState",
+                        "click .freetext textarea"   : "stopPropagation",
+                        "click .scaling select"      : "stopPropagation",
+                        "click .end-value"           : "stopPropagation",
+                        "click .start-value"         : "stopPropagation",
+                        "click i.delete"             : "deleteFull",
+                        "click button.in"            : "setCurrentTimeAsStart",
+                        "click button.out"           : "setCurrentTimeAsEnd",
+                        "keydown .start-value"       : "saveStart",
+                        "keydown .end-value"         : "saveEnd",
+                        "keydown .freetext textarea" : "saveFreeText",
+                        "focusout .start-value"      : "saveStart",
+                        "focusout .end-value"        : "saveEnd",
+                        "click button[type=submit]"  : "saveFreeText",
+                        "click button[type=button]"  : "toggleEditState",
+                        "focusout .freetext textarea": "saveFreeText",
+                        "change .scaling select"     : "saveScaling"
+                    }
+                },
+                COMMENTS: {
+                    render: TmplExpanded,
+                    withComments: true,
+                    id: "add-comment",
+                    events: {
+                        "click"                      : "onSelect",
+                        "click .proxy-anchor "       : "stopPropagation",
+                        "click a.collapse"           : "toggleCollapsedState",
+                        "click i.icon-comment-amount": "toggleCommentsState",
+                        "click .toggle-edit"         : "toggleEditState",
+                        "dblclick span.text"         : "toggleEditState",
+                        "dblclick span.category"     : "toggleEditState"
+                    }
+                }
             }
         });
     return ListAnnotation;

@@ -197,7 +197,7 @@ define(["jquery",
                     this.insertView(view);
 
                     if (!isPartofList) {
-                        this.select([annotation]);
+                        annotationsTool.setSelection([annotation], false);
                     }
                 }
 
@@ -267,7 +267,6 @@ define(["jquery",
                     selectedAnnotations = [];
 
                 // only remove the annotations
-
                 for (i = 0; i < annotations.length; i++) {
                     annotation = annotations[i];
                     if (annotation) {
@@ -431,16 +430,14 @@ define(["jquery",
              * Expand all annotations in the list
              * @alias module:views-list.List#expandAll
              */
-            expandAll: function () {
+            expandAll: function (event) {
                 var list = this.annotationViews,
                     annView,
                     i;
 
                 for (i = 0; i < list.length; i++) {
                     annView = list[i];
-                    if (annView.collapsed) {
-                        annView.onCollapse();
-                    }
+                    annView.toggleExpandedState(event, true);
                 }
             },
 
@@ -448,16 +445,14 @@ define(["jquery",
              * Collapse all annotations in the list
              * @alias module:views-list.List#collapseAll
              */
-            collapseAll: function () {
+            collapseAll: function (event) {
                 var list = this.annotationViews,
                     annView,
                     i;
 
                 for (i = 0; i < list.length; i++) {
                     annView = list[i];
-                    if (annView.collapsed) {
-                        annView.onCollapse();
-                    }
+                    annView.toggleCollapsedState(event, true);
                 }
             },
 

@@ -72,6 +72,7 @@ define(["jquery",
              */
             events: {
                 "click i.delete-comment"    : "onDeleteComment",
+                "dblclick span.comment"        : "onEditComment",
                 "click i.edit-comment"      : "onEditComment",
                 "click button[type=submit]" : "onSubmit",
                 "click button[type=button]" : "onCancel"
