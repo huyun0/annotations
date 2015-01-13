@@ -76,7 +76,6 @@
             background-color: white;
         }
 
-
         .creator {
             display: none;
         }       
@@ -140,7 +139,12 @@
             line-height: 10px;
             text-align: center;
             width: 15px;
-            font-style:normal;                  
+            font-style:normal;   
+        }
+
+        .add-comment .icon-comment-amount, &:hover {
+            background-color: lightgray;
+            border-radius: none;
         }
 
         &.edit-on {
@@ -165,6 +169,13 @@
 
             .read-only {
                 display: none;
+            }
+        }
+
+        .edit-annotation {
+            i.toggle-edit, i.toggle-edit:hover {
+                background-color: lightgray;
+                border-radius: 0px;
             }
         }
         

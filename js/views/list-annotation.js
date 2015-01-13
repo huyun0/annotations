@@ -49,8 +49,8 @@ function ($, PlayerAdapter, Annotation, User, CommentsContainer, TmplCollapsed, 
                 events: {
                     "click"                      : "onSelect",
                     "click .proxy-anchor "       : "stopPropagation",
-                    "click a.collapse"           : "toggleExpandedState",
-                    "click i.icon-comment-amount": "toggleAddCommentState"
+                    "click a.collapse"           : "toggleCollapsedState",
+                    "click i.icon-comment-amount": "toggleCommentsState"
                 }
             },
             EXPANDED: {
@@ -60,20 +60,20 @@ function ($, PlayerAdapter, Annotation, User, CommentsContainer, TmplCollapsed, 
                 events: {
                     "click"                      : "onSelect",
                     "click .proxy-anchor "       : "stopPropagation",
-                    "click a.collapse"           : "toggleExpandedState",
-                    "click i.icon-comment-amount": "toggleAddCommentState",
+                    "click a.collapse"           : "toggleCollapsedState",
+                    "click i.icon-comment-amount": "toggleCommentsState",
                     "click .toggle-edit"         : "toggleEditState"
                 }
             },
             EDIT: {
                 render: TmplEdit,
                 withComments: true,
-                id: "edit",
+                id: "edit-annotation",
                 events: {
                     "click"                      : "onSelect",
                     "click .proxy-anchor "       : "stopPropagation",
-                    "click a.collapse"           : "toggleExpandedState",
-                    "click i.icon-comment-amount": "toggleAddCommentState",
+                    "click a.collapse"           : "toggleCollapsedState",
+                    "click i.icon-comment-amount": "toggleCommentsState",
                     "click .toggle-edit"         : "toggleEditState",
                     "click .freetext textarea"   : "stopPropagation",
                     "click .scaling select"      : "stopPropagation",
@@ -91,27 +91,15 @@ function ($, PlayerAdapter, Annotation, User, CommentsContainer, TmplCollapsed, 
                     "change .scaling select"     : "saveScaling"
                 }
             },
-            ADD_COMMENT: {
+            COMMENTS: {
                 render: TmplExpanded,
                 withComments: true,
-                id: "add_comment",
+                id: "add-comment",
                 events: {
                     "click"                      : "onSelect",
                     "click .proxy-anchor "       : "stopPropagation",
-                    "click a.collapse"           : "toggleExpandedState",
-                    "click i.icon-comment-amount": "toggleAddCommentState",
-                    "click .toggle-edit"         : "toggleEditState"
-                }
-            },
-            EDIT_COMMENT: {
-                render: TmplExpanded,
-                withComments: true,
-                id: "edit_comment",
-                events: {
-                    "click"                      : "onSelect",
-                    "click .proxy-anchor "       : "stopPropagation",
-                    "click a.collapse"           : "toggleExpandedState",
-                    "click i.icon-comment-amount": "toggleAddCommentState",
+                    "click a.collapse"           : "toggleCollapsedState",
+                    "click i.icon-comment-amount": "toggleCommentsState",
                     "click .toggle-edit"         : "toggleEditState"
                 }
             }
@@ -183,7 +171,6 @@ function ($, PlayerAdapter, Annotation, User, CommentsContainer, TmplCollapsed, 
                                 "onSelect",
                                 "onSelected",
                                 "selectVisually",
-                                "toggleExpandedState",
                                 "startEdit",
                                 "saveStart",
                                 "saveEnd",
@@ -191,13 +178,13 @@ function ($, PlayerAdapter, Annotation, User, CommentsContainer, TmplCollapsed, 
                                 "saveScaling",
                                 "stopPropagation",
                                 "toggleEditState",
-                                "toggleAddCommentState",
-                                "toggleEditCommentState",
+                                "toggleCollapsedState",
+                                "toggleExpandedState",
+                                "toggleCommentsState",
                                 "setCurrentTimeAsStart",
                                 "setCurrentTimeAsEnd",
                                 "setState",
-                                "getState",
-                                "showComments");
+                                "getState");
 
                 this.model = attr.annotation;
 
@@ -205,7 +192,12 @@ function ($, PlayerAdapter, Annotation, User, CommentsContainer, TmplCollapsed, 
 
                 this.isEditEnable = false;
 
-                this.commentContainer = new CommentsContainer({id: this.id, comments: this.model.get("comments")});
+                this.commentContainer = new CommentsContainer({
+                    id       : this.id,
+                    comments : this.model.get("comments"),
+                    cancel   : this.toggleCommentsState
+                });
+
                 this.model.fetchComments();
 
                 if (this.model.get("label")) {
@@ -226,7 +218,6 @@ function ($, PlayerAdapter, Annotation, User, CommentsContainer, TmplCollapsed, 
                 _.extend(this.model, Backbone.Events);
 
                 this.listenTo(this.model, "change", this.render);
-                //this.listenTo(this.model.get("comments"), "add", this.render);
                 this.listenTo(this.model.get("comments"), "change", this.render);
                 this.listenTo(this.model.get("comments"), "remove", this.render);
                 this.listenTo(this.model, "destroy", this.deleteView);
@@ -249,11 +240,15 @@ function ($, PlayerAdapter, Annotation, User, CommentsContainer, TmplCollapsed, 
              * @param {[type]} newState [description]
              */
             setState: function (newState, fallbackState) {
+                console.log("From " + this.currentState.id + "...");
+
                 if (_.isUndefined(fallbackState) || this.getState() !== newState) {
                     this.currentState = newState;
                 } else {
                     this.currentState = fallbackState;
                 }
+
+                console.log("to " + this.currentState.id + ".");
             },
 
             /**
@@ -292,27 +287,6 @@ function ($, PlayerAdapter, Annotation, User, CommentsContainer, TmplCollapsed, 
              */
             jumpTo: function () {
                 annotationsTool.setSelection([this.model], true);
-            },
-
-            /**
-             * Switch in/out edit modus
-             * @alias module:views-list-annotation.ListAnnotation#toggleEditState
-             * @param  {event} event Event object
-             */
-            toggleEditState: function (event) {
-                event.stopImmediatePropagation();
-
-                this.isEditEnable = !this.isEditEnable;
-                
-                this.setState(STATES.EDIT, STATES.EXPANDED);
-
-                if (this.isEditEnable) {
-                    if (!this.isSelected) {
-                        this.onSelect();
-                    }
-                }
-
-                this.render();
             },
 
             /**
@@ -565,7 +539,7 @@ function ($, PlayerAdapter, Annotation, User, CommentsContainer, TmplCollapsed, 
 
                 modelJSON.isEditEnable = this.isEditEnable;
                 modelJSON.numberOfComments = this.model.get("comments").length;
-
+                modelJSON.state = this.getState().id;
                 
                 this.$el.html($(this.currentState.render(modelJSON)));
                 this.el = this.$el[0];
@@ -650,6 +624,27 @@ function ($, PlayerAdapter, Annotation, User, CommentsContainer, TmplCollapsed, 
             },
 
             /**
+             * Switch in/out edit modus
+             * @alias module:views-list-annotation.ListAnnotation#toggleEditState
+             * @param  {event} event Event object
+             */
+            toggleEditState: function (event) {
+                event.stopImmediatePropagation();
+
+                this.isEditEnable = !this.isEditEnable;
+                this.commentContainer.toggleAddState(false);
+                this.setState(STATES.EDIT, STATES.EXPANDED);
+
+                if (this.isEditEnable) {
+                    if (!this.isSelected) {
+                        this.onSelect();
+                    }
+                }
+
+                this.render();
+            },
+
+            /**
              * Toggle the visibility of the text container
              * @alias module:views-list-annotation.ListAnnotation#toggleExpandedState
              * @param  {event} event Event object
@@ -658,35 +653,29 @@ function ($, PlayerAdapter, Annotation, User, CommentsContainer, TmplCollapsed, 
                 if (event) {
                     event.stopImmediatePropagation();
                 }
-
                 this.collapsed = !this.collapsed;
-
+                this.commentContainer.toggleAddState(false);
                 this.setState(STATES.EXPANDED, STATES.COLLAPSED);
-
                 this.render();
             },
 
-            toggleEditCommentState: function () {
-                this.setState(STATES.EDIT_COMMENT, STATES.EXPANDED);
-                this.render();
-            },
-
-            toggleAddCommentState: function () {
-                this.setState(STATES.ADD_COMMENT, STATES.EXPANDED);
-                this.render();
-            },
-
-            showComments: function () {
-                if (this.commentsVisible) {
-                    this.$el.find("tr.comments-container").hide();
-                } else {
-                    if (!this.model.areCommentsLoaded()) {
-                        this.model.fetchComments();
-                    }
-                    this.$el.find("tr.comments-container").show();
+            toggleCollapsedState: function (event) {
+                if (event) {
+                    event.stopImmediatePropagation();
                 }
+                this.collapsed = !this.collapsed;
+                this.commentContainer.toggleAddState(false);
+                this.setState(STATES.COLLAPSED, STATES.EXPANDED);
+                this.render();
+            },
 
-                this.commentsVisible = !this.commentsVisible;
+            toggleCommentsState: function (event) {
+                if (event) {
+                    event.stopImmediatePropagation();
+                }
+                this.setState(STATES.COMMENTS, STATES.EXPANDED);
+                this.commentContainer.toggleAddState(this.getState() === STATES.COMMENTS);
+                this.render();
             }
         });
     return ListAnnotation;

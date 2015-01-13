@@ -6,25 +6,16 @@
             <i class="icon-chevron-down"></i>
         </a>
 
-        <button class="btn in" title="Set the video playhead as start point.">IN</button>
-        <span class="start">
-                <input title="Start time{{#if isMine}} (double-click to edit){{/if}}" id="start-{{id}}" class="start-value" type="text" value="{{time start}}" {{#if isEditEnable}} {{else}}disabled{{/if}}></input>
+        <span class="start read-only">
+            {{time start}}
         </span>
 
-        <span class="end {{#if duration}}has-duration{{else}}no-duration{{/if}}">
-                <input title="End time{{#if isMine}} (double-click to edit){{/if}}" id="end-{{id}}" class="end-value" type="text" value="{{end start duration}}" {{#if isEditEnable}} {{else}}disabled{{/if}}></input>
+        <span class="end {{#if duration}}has-duration{{else}}no-duration{{/if}} read-only">
+               {{end start duration}}
         </span>
-        <button class="btn out" title="Set the video playhead as end point.">OUT</button>
 
-        {{#if scalevalues}}
+        {{#if scalevalue}}
         <span class="scaling">
-                {{#if isMine}}
-                <select>
-                        {{#each scalevalues}}
-                        <option value="{{this.id}}" {{#if this.isSelected}}selected="selected"{{/if}}>{{this.name}}</option>
-                        {{/each}}
-                </select>
-                {{/if}} 
                 {{#if scalevalue}}
                 <span class="read-only" title="{{scalevalue.name}}">{{scalevalue.name}}</span>
                 {{/if}} 
@@ -49,10 +40,6 @@
     </td>
 
     <td class="right">
-        {{#canBeDeleted}}
-        <i class="delete icon-trash" title="Delete annotation."></i>
-        {{/canBeDeleted}}
-
         {{#if isMine}}
         <i class="toggle-edit icon-pencil" title="Edit annotation."></i>
         {{/if}}
@@ -62,18 +49,14 @@
         </i>
     </td>
 </tr>
-<tr id="text-container{{id}}" class="in text-container">
+{{#if label}} {{else}} 
+<tr id="text-container{{id}}" class="text-container">
     <td colspan="2">
-        {{#if label}} {{else}} 
         <span class="text">
                 <span class="freetext">
-                    <textarea placeholder="free text...">{{text}}</textarea>
+                    <span class="read-only">{{{textReadOnly}}}</span>
                 </span>
-                <div class="button-bar">
-                    <button type="button" class="btn">Cancel</button>
-                    <button type="submit" class="btn btn-primary">OK</button>
-                </div>
         </span>
-        {{/if}}
     </td>
 </tr>
+{{/if}}

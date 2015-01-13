@@ -83,12 +83,16 @@ define(["jquery",
              * @param {PlainObject} attr Object literal containing the view initialization attributes.
              */
             initialize: function (attr) {
-                this.model     = attr.model;
-                this.commentId = attr.model.get("id");
-                this.id        = "comment" + this.commentId;
-                this.el.id     = this.id;
+                this.model          = attr.model;
+                this.commentId      = attr.model.get("id");
+                this.id             = "comment" + this.commentId;
+                this.el.id          = this.id;
+                this.cancelCallback = attr.cancel;
+                this.editCallback   = attr.edit;
+
                 // Bind function to the good context
                 _.bindAll(this,
+                          "cancel",
                           "deleteView",
                           "onDeleteComment",
                           "onEditComment",
@@ -128,6 +132,7 @@ define(["jquery",
              * @alias module:views-comment.Comment#onEditComment
              */
             onEditComment: function () {
+                this.editCallback();
                 if (!this.isEditEnable) {
                     this.$el.html(this.editTemplate({text: this.model.get("text")}));
                     this.isEditEnable = true;
@@ -149,7 +154,6 @@ define(["jquery",
                 this.model.save();
 
                 this.cancel();
-                this.render();
             },
 
             /**
@@ -167,8 +171,10 @@ define(["jquery",
              */
             cancel: function () {
                 this.isEditEnable = false;
-                this.$el.find("textarea").remove();
-                this.$el.find("button").remove();
+                this.render();
+                if (!_.isUndefined(this.cancelCallback)) {
+                    this.cancelCallback();
+                }
             },
 
             /**

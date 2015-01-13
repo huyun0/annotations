@@ -94,11 +94,12 @@ define(["jquery",
                     this.collapsed = attr.collapsed;
                 }
 
-                this.annotationId = attr.id;
-                this.id           = "comments-container" + attr.id;
-                this.el.id        = this.id;
-                this.comments     = attr.comments;
-                this.commentViews = [];
+                this.annotationId   = attr.id;
+                this.id             = "comments-container" + attr.id;
+                this.el.id          = this.id;
+                this.comments       = attr.comments;
+                this.commentViews   = [];
+                this.cancelCallback = attr.cancel;
 
                 // Bind function to the good context
                 _.bindAll(this,
@@ -119,7 +120,6 @@ define(["jquery",
 
                 this.commentList = this.$el.find("div#comment-list" + this.annotationId);
 
-
                 // Add backbone events to the model
                 _.extend(this.comments, Backbone.Events);
 
@@ -132,8 +132,13 @@ define(["jquery",
                 return this.render();
             },
 
-            toggleAddState: function () {
-                this.addState = !this.addState;
+            toggleAddState: function (state) {
+                if (!_.isUndefined(state)) {
+                    this.addState = state;
+                } else {
+                    this.addState = !this.addState;
+                }
+                console.log("Change state to " + state);
             },
 
             /**
@@ -156,10 +161,17 @@ define(["jquery",
              * @alias module:views-comments-container.CommentsContainer#render
              */
             render: function () {
-                this.$el.html(this.template({id: this.annotationId, comments: this.comments.models, collapsed: this.collapsed}));
+                this.$el.html(this.template({
+                    id: this.annotationId,
+                    comments: this.comments.models,
+                    collapsed: this.collapsed,
+                    addState: this.addState
+                }));
+
                 this.commentList = this.$el.find("div#comment-list" + this.annotationId);
 
                 this.commentList.empty();
+
                 _.each(this.commentViews, function (commentView) {
                     this.commentList.append(commentView.render().$el);
                 }, this);
@@ -231,7 +243,18 @@ define(["jquery",
              * @param {Comment} comment Comment to add
              */
             addComment: function (comment) {
-                var commentModel = new CommentView({model: comment});
+                var self = this,
+                    commentModel = new CommentView({
+                        model: comment,
+                        cancel: function () {
+                            self.toggleAddState(true);
+                            self.render();
+                        },
+                        edit: function () {
+                            self.toggleAddState(false);
+                            self.render();
+                        }
+                    });
                 this.commentViews.push(commentModel);
                 this.$el.find("div#comment-list" + this.annotationId).append(commentModel.render().$el);
 
@@ -272,6 +295,7 @@ define(["jquery",
              */
             cancel: function () {
                 this.$el.find("textarea").val("");
+                this.cancelCallback();
             }
         });
         return CommentsContainer;
