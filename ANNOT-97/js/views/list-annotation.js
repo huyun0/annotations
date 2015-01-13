@@ -565,7 +565,7 @@ function ($, PlayerAdapter, Annotation, User, CommentsContainer, TmplCollapsed, 
                 event.stopImmediatePropagation();
 
                 this.isEditEnable = !this.isEditEnable;
-                this.commentContainer.setState(CommentsContainer.ListAnnotation.STATES.READ);
+                this.commentContainer.setState(CommentsContainer.STATES.READ);
                 this.setState(ListAnnotation.STATES.EDIT, ListAnnotation.STATES.EXPANDED);
 
                 if (this.isEditEnable) {
@@ -587,7 +587,7 @@ function ($, PlayerAdapter, Annotation, User, CommentsContainer, TmplCollapsed, 
                 event.stopImmediatePropagation();
 
                 this.collapsed = !this.collapsed;
-                this.commentContainer.setState(CommentsContainer.ListAnnotation.STATES.READ);
+                this.commentContainer.setState(CommentsContainer.STATES.READ);
                 if (force) {
                     this.setState(ListAnnotation.STATES.COLLAPSED);
                 } else {
@@ -606,7 +606,7 @@ function ($, PlayerAdapter, Annotation, User, CommentsContainer, TmplCollapsed, 
                 event.stopImmediatePropagation();
 
                 this.collapsed = !this.collapsed;
-                this.commentContainer.setState(CommentsContainer.ListAnnotation.STATES.READ);
+                this.commentContainer.setState(CommentsContainer.STATES.READ);
                 if (force) {
                     this.setState(ListAnnotation.STATES.EXPANDED);
                 } else {
@@ -626,9 +626,9 @@ function ($, PlayerAdapter, Annotation, User, CommentsContainer, TmplCollapsed, 
                 }
 
                 if (this.getState() !== ListAnnotation.STATES.COMMENTS) {
-                    this.commentContainer.setState(CommentsContainer.ListAnnotation.STATES.ADD);
+                    this.commentContainer.setState(CommentsContainer.STATES.ADD);
                 } else {
-                    this.commentContainer.setState(CommentsContainer.ListAnnotation.STATES.READ);
+                    this.commentContainer.setState(CommentsContainer.STATES.READ);
                 }
 
                 this.setState(ListAnnotation.STATES.COMMENTS, ListAnnotation.STATES.EXPANDED);
