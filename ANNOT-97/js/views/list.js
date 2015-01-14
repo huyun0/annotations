@@ -108,6 +108,7 @@ define(["jquery",
                                "clearList",
                                "getPosition",
                                "getViewFromAnnotation",
+                               "editAnnotationCallback",
                                "insertView",
                                "sortViewsbyTime",
                                "reset",
@@ -126,7 +127,7 @@ define(["jquery",
                 this.tracks          = annotationsTool.video.get("tracks");
                 this.playerAdapter   = annotationsTool.playerAdapter;
 
-                this.$list = this.$el.find("#content-list-scroll table#content-list");
+                this.$list = this.$el.find("#content-list-scroll div#content-list");
 
                 this.listenTo(this.filtersManager, "switch", this.updateFiltersRender);
                 this.listenTo(this.tracks, "change:access", this.render);
@@ -194,6 +195,7 @@ define(["jquery",
                     return;
                 } else {
                     view = new AnnotationView({annotation: annotation, track: track});
+                    this.listenTo(view, "edit", this.editAnnotationCallback);
                     this.insertView(view);
 
                     if (!isPartofList) {
@@ -221,6 +223,19 @@ define(["jquery",
                     this.annotationViews[index - 1].$el.after(view.render().$el);
                 }
 
+            },
+
+            editAnnotationCallback: function (editView) {
+                _.each(this.annotationViews, function (view) {
+                    if (view.id !== editView.id) {
+                        var state = view.getState();
+                        if (state === AnnotationView.STATES.EDIT) {
+                            view.toggleEditState();
+                        } else if (state === AnnotationView.STATES.COMMENTS) {
+                            view.toggleCommentsState();
+                        }
+                    }
+                }, this);
             },
 
             /**

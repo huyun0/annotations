@@ -26,6 +26,15 @@ define(["handlebars", "roles"], function (Handlebars, ROLES) {
         }
     });
 
+    Handlebars.registerHelper("greater", function (value1, value2, options) {
+        console.log(value1 + " type " + typeof value1);
+        if (value1 > value2) {
+            return options.fn(this);
+        } else {
+            return options.inverse(this);
+        }
+    });
+
     /**
      * Handlebars helper to secure the text field
      * @alias module:Handlebars#time

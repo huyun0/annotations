@@ -55,9 +55,9 @@ function ($, PlayerAdapter, Annotation, User, CommentsContainer, TmplCollapsed, 
              * @alias module:views-list-annotation.ListAnnotation#tagName
              * @type {string}
              */
-            tagName: "tbody",
+            tagName: "div",
 
-            className: "header-container",
+            className: "annotation",
 
             /**
              * Define if the view has been or not deleted
@@ -65,14 +65,6 @@ function ($, PlayerAdapter, Annotation, User, CommentsContainer, TmplCollapsed, 
              * @type {boolean}
              */
             deleted: false,
-
-            /**
-             * Define if the view is or not collapsed
-             * @alias module:views-list-annotation.ListAnnotation#collapsed
-             * @type {boolean}
-             */
-            collapsed: true,
-
 
             /**
              * Define if the comments container is currently visible
@@ -124,7 +116,8 @@ function ($, PlayerAdapter, Annotation, User, CommentsContainer, TmplCollapsed, 
                                 "setCurrentTimeAsStart",
                                 "setCurrentTimeAsEnd",
                                 "setState",
-                                "getState");
+                                "getState",
+                                "handleEsc");
 
                 this.model = attr.annotation;
 
@@ -137,6 +130,7 @@ function ($, PlayerAdapter, Annotation, User, CommentsContainer, TmplCollapsed, 
                     comments : this.model.get("comments"),
                     cancel   : this.toggleCommentsState,
                     edit     : function () {
+                        self.trigger("edit", self);
                         self.setState(ListAnnotation.STATES.COMMENTS, ListAnnotation.STATES.EXPANDED);
                         self.render();
                     }
@@ -272,6 +266,7 @@ function ($, PlayerAdapter, Annotation, User, CommentsContainer, TmplCollapsed, 
              * @param  {event} event Event object
              */
             saveFreeText: function (event) {
+                console.log("SAVE");
                 var newValue = this.$el.find(".freetext textarea").val();
 
                 // If keydown event but not enter, value must not be saved
@@ -354,10 +349,6 @@ function ($, PlayerAdapter, Annotation, User, CommentsContainer, TmplCollapsed, 
                     this.model.set("duration", Math.round(seconds - this.model.get("start")));
                     this.model.save({silent: true});
                 }
-
-                if (!this.isEditEnable) {
-                    $target.attr("disabled", "disabled");
-                }
             },
 
             /**
@@ -408,10 +399,6 @@ function ($, PlayerAdapter, Annotation, User, CommentsContainer, TmplCollapsed, 
                     });
                     this.model.save({silent: true});
                 }
-
-                if (!this.isEditEnable) {
-                    $target.attr("disabled", "disabled");
-                }
             },
 
             /**
@@ -460,11 +447,11 @@ function ($, PlayerAdapter, Annotation, User, CommentsContainer, TmplCollapsed, 
                     return "";
                 }
 
-                this.model.set({collapsed: this.collapsed}, {silent: true});
                 modelJSON = this.model.toJSON();
                 modelJSON.track = this.track.get("name");
                 modelJSON.textReadOnly = _.escape(modelJSON.text).replace(/\n/g, "<br/>");
                 modelJSON.duration = (modelJSON.duration || 0.0);
+                modelJSON.textHeight = $("span.freetext").height();
 
                 if (modelJSON.isMine && this.scale && modelJSON.label.category.scale_id) {
                     category = annotationsTool.video.get("categories").get(this.model.get("label").category.id);
@@ -525,7 +512,7 @@ function ($, PlayerAdapter, Annotation, User, CommentsContainer, TmplCollapsed, 
                     if (!this.model.areCommentsLoaded()) {
                         this.model.fetchComments();
                     }
-                    this.$el.find("tr:last").after(this.commentContainer.render().$el);
+                    this.$el.find("> div:last").after(this.commentContainer.render().$el);
                 }
 
                 this.delegateEvents(this.getState().events);
@@ -562,13 +549,18 @@ function ($, PlayerAdapter, Annotation, User, CommentsContainer, TmplCollapsed, 
              * @param  {event} event Event object
              */
             toggleEditState: function (event) {
-                event.stopImmediatePropagation();
+                if (!_.isUndefined(event)) {
+                    event.stopImmediatePropagation();
+                }
 
                 this.isEditEnable = !this.isEditEnable;
                 this.commentContainer.setState(CommentsContainer.STATES.READ);
                 this.setState(ListAnnotation.STATES.EDIT, ListAnnotation.STATES.EXPANDED);
 
                 if (this.isEditEnable) {
+                    this.trigger("edit", this);
+
+
                     if (!this.isSelected) {
                         this.onSelect();
                     }
@@ -586,7 +578,6 @@ function ($, PlayerAdapter, Annotation, User, CommentsContainer, TmplCollapsed, 
             toggleCollapsedState: function (event, force) {
                 event.stopImmediatePropagation();
 
-                this.collapsed = !this.collapsed;
                 this.commentContainer.setState(CommentsContainer.STATES.READ);
                 if (force) {
                     this.setState(ListAnnotation.STATES.COLLAPSED);
@@ -605,7 +596,6 @@ function ($, PlayerAdapter, Annotation, User, CommentsContainer, TmplCollapsed, 
             toggleExpandedState: function (event, force) {
                 event.stopImmediatePropagation();
 
-                this.collapsed = !this.collapsed;
                 this.commentContainer.setState(CommentsContainer.STATES.READ);
                 if (force) {
                     this.setState(ListAnnotation.STATES.EXPANDED);
@@ -627,12 +617,25 @@ function ($, PlayerAdapter, Annotation, User, CommentsContainer, TmplCollapsed, 
 
                 if (this.getState() !== ListAnnotation.STATES.COMMENTS) {
                     this.commentContainer.setState(CommentsContainer.STATES.ADD);
+                    this.trigger("edit", this);
                 } else {
                     this.commentContainer.setState(CommentsContainer.STATES.READ);
                 }
 
                 this.setState(ListAnnotation.STATES.COMMENTS, ListAnnotation.STATES.EXPANDED);
                 this.render();
+            },
+
+            /**
+             * Proxy function for leaving edit mode through 'esc' keypress
+             * @alias module:views-list-annotation.ListAnnotation#handleEsc
+             * @param {event} event Event object
+             */
+            handleEsc: function (event) {
+                // If enter is pressed and shit not, we insert a new annotation
+                if (event.keyCode === 27 && !event.shiftKey && this.getState() === ListAnnotation.STATES.EDIT) {
+                    this.toggleExpandedState(event, true);
+                }
             }
         }, {
 
@@ -650,7 +653,8 @@ function ($, PlayerAdapter, Annotation, User, CommentsContainer, TmplCollapsed, 
                         "click .proxy-anchor "       : "stopPropagation",
                         "click a.collapse"           : "toggleCollapsedState",
                         "click i.icon-comment-amount": "toggleCommentsState",
-                        "dblclick span.category"     : "toggleEditState"
+                        "click i.icon-comment"       : "toggleCommentsState",
+                        "dblclick"                   : "toggleEditState"
                     }
                 },
                 EXPANDED: {
@@ -662,8 +666,11 @@ function ($, PlayerAdapter, Annotation, User, CommentsContainer, TmplCollapsed, 
                         "click .proxy-anchor "       : "stopPropagation",
                         "click a.collapse"           : "toggleCollapsedState",
                         "click i.icon-comment-amount": "toggleCommentsState",
+                        "click i.icon-comment"       : "toggleCommentsState",
                         "click .toggle-edit"         : "toggleEditState",
                         "dblclick span.text"         : "toggleEditState",
+                        "dblclick span.start"        : "toggleEditState",
+                        "dblclick span.end"          : "toggleEditState",
                         "dblclick span.category"     : "toggleEditState"
                     }
                 },
@@ -676,6 +683,7 @@ function ($, PlayerAdapter, Annotation, User, CommentsContainer, TmplCollapsed, 
                         "click .proxy-anchor "       : "stopPropagation",
                         "click a.collapse"           : "toggleCollapsedState",
                         "click i.icon-comment-amount": "toggleCommentsState",
+                        "click i.icon-comment"       : "toggleCommentsState",
                         "click .toggle-edit"         : "toggleEditState",
                         "click .freetext textarea"   : "stopPropagation",
                         "click .scaling select"      : "stopPropagation",
@@ -692,7 +700,8 @@ function ($, PlayerAdapter, Annotation, User, CommentsContainer, TmplCollapsed, 
                         "click button[type=submit]"  : "saveFreeText",
                         "click button[type=button]"  : "toggleEditState",
                         "focusout .freetext textarea": "saveFreeText",
-                        "change .scaling select"     : "saveScaling"
+                        "change .scaling select"     : "saveScaling",
+                        "keyup"                      : "handleEsc"
                     }
                 },
                 COMMENTS: {
@@ -704,6 +713,7 @@ function ($, PlayerAdapter, Annotation, User, CommentsContainer, TmplCollapsed, 
                         "click .proxy-anchor "       : "stopPropagation",
                         "click a.collapse"           : "toggleCollapsedState",
                         "click i.icon-comment-amount": "toggleCommentsState",
+                        "click i.icon-comment"       : "toggleCommentsState",
                         "click .toggle-edit"         : "toggleEditState",
                         "dblclick span.text"         : "toggleEditState",
                         "dblclick span.category"     : "toggleEditState"
