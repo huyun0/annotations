@@ -13,6 +13,13 @@
 
     @min-height: 300px;
 
+    .iconStateSelected(@color1: fade(@black,20%),@color2: fade(@blue,70%),@cursor: pointer,@radius: 3px) {
+        background-color: @color1;
+        box-shadow: 0 0 1px @color2 inset;
+        border-radius: @radius;
+        cursor: @cursor;
+    }   
+
     .navbar .dropdown {
         visibility: hidden;
     }
@@ -24,7 +31,7 @@
         }
     }
 
-    tr.collapse {
+    div.collapse {
         display: none;
     }
 
@@ -53,28 +60,27 @@
         visibility: visible;
     }
     
-    tbody {
-        background-color: @white;
-        border-left: 1px solid @gray;      
-        border-right: 1px solid @gray;    
-        //border-bottom: 1px solid @gray; 
-        border-top: 1px solid @gray; 
-
-
-        /* Layout of headerbar*/
+    div.annotation {
         @headerHeight: 16px; 
         @headerPadding: 2px;
         @headerSumHeight: @headerHeight + (2 * @headerPadding);
 
+        > div:first-child {
+            /* Layout of headerbar*/
+            height: @headerSumHeight;
+            line-height: @headerSumHeight;
+        }
+
+        background-color: @white;
+        border-left: 1px solid @gray;      
+        border-right: 1px solid @gray;    
+        border-top: 1px solid @gray; 
+
+
         margin: 0;
-        height: @headerSumHeight;
-        line-height: @headerSumHeight;
         padding: 0 5px;
         background-color: @grayLighter;
 
-        tr:nth-child(2) {
-            background-color: white;
-        }
 
         .creator {
             display: none;
@@ -103,15 +109,16 @@
         }
 
         .right {
-            width: 40%;
+            float: right;
+            width: 30%;
             height: @headerSumHeight;
             text-align: right;
-            padding-right: 10px
         }   
         
         .left {
+            float: left;
             overflow:hidden;
-            width: 60%;
+            width: 68%;
             text-overflow: ellipsis;
             white-space: nowrap;
             height: @headerSumHeight;
@@ -142,40 +149,15 @@
             font-style:normal;   
         }
 
-        .add-comment .icon-comment-amount, &:hover {
-            background-color: lightgray;
-            border-radius: none;
-        }
-
-        &.edit-on {
-
-            i.toggle-edit{
-
-                .icon-ok(); 
-            }
-
-            span.label {
-                display: block;
-                height: 20px;
-                line-height: 20px;
-            }
-
-            .start,.end  {
-                background:@white;
-                &.no-duration {
-                    display: inline-block;
-                }
-            }
-
-            .read-only {
-                display: none;
+        .add-comment {
+            .icon-comment-amount, .icon-comment {
+                .iconStateSelected();
             }
         }
 
         .edit-annotation {
             i.toggle-edit, i.toggle-edit:hover {
-                background-color: lightgray;
-                border-radius: 0px;
+                .iconStateSelected();
             }
         }
         
@@ -185,7 +167,7 @@
             }
             
             //Highlight clickable icons on mouseover           
-            &.icon-chevron-down, &.icon-chevron-right, &.icon-trash, &.icon-pencil {
+            &.icon-chevron-down, &.icon-chevron-right, &.icon-trash, &.icon-pencil, &.icon-comment, &.icon-comment-amount {
                 &:hover {
                     .iconHover();
                 }
@@ -287,7 +269,6 @@
 
                     span.abbreviation {
                         color: @black;
-                        font-weight: bold;
                     } 
 
                     span.category-name {
@@ -301,6 +282,7 @@
             display: block;
             margin: 5px;
             background-color: white;
+            word-wrap: break-word;
         }
 
         span.freetext {
@@ -333,10 +315,10 @@
     }
 
 
-    tr.comments-container {
+    div.comments-container {
       background-color: @grayLight;
       color: @black;
-      overflow: hidden;
+      clear: both;
 
       
       textarea { 

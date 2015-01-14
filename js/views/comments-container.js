@@ -47,7 +47,7 @@ define(["jquery",
              * @alias module:views-comments-container.CommentsContainer#tagName
              * @type {string}
              */
-            tagName: "tr",
+            tagName: "div",
 
             /**
              * Class name from the view element

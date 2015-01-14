@@ -71,6 +71,7 @@ define(["jquery",
              * @type {object}
              */
             events: {
+                "click"                     : "stopPropagation",
                 "click i.delete-comment"    : "onDeleteComment",
                 "dblclick span.comment"     : "onEditComment",
                 "click i.edit-comment"      : "onEditComment",
@@ -99,12 +100,22 @@ define(["jquery",
                           "onEditComment",
                           "onSubmit",
                           "onCancel",
+                          "stopPropagation",
                           "render");
 
                 // Type use for delete operation
                 this.typeForDelete = annotationsTool.deleteOperation.targetTypes.COMMENT;
 
                 return this;
+            },
+
+            /**
+             * Stop the propagation of the given event
+             * @alias module:views-comment.Comment#stopPropagation
+             * @param  {event} event Event object
+             */
+            stopPropagation: function (event) {
+                event.stopImmediatePropagation();
             },
 
             /**
@@ -122,9 +133,10 @@ define(["jquery",
              * @alias module:views-comment.Comment#onDeleteComment
              */
             onDeleteComment: function (event) {
-                if (event) {
+                if (!_.isUndefined(event)) {
                     event.stopImmediatePropagation();
                 }
+
                 annotationsTool.deleteOperation.start(this.model, this.typeForDelete);
             },
 
@@ -132,19 +144,27 @@ define(["jquery",
              * Switch in edit modus
              * @alias module:views-comment.Comment#onEditComment
              */
-            onEditComment: function () {
-                this.editCallback();
-                if (!this.isEditEnable) {
-                    this.$el.html(this.editTemplate({text: this.model.get("text")}));
-                    this.isEditEnable = true;
+            onEditComment: function (event) {
+                if (!_.isUndefined(event)) {
+                    event.stopImmediatePropagation();
                 }
+
+                this.editCallback();
+   
+                this.$el.html(this.editTemplate({text: this.model.get("text")}));
+                this.delegateEvents(this.events);
+                this.isEditEnable = true;
             },
 
             /**
              * Submit the modifications on the comment
              * @alias module:views-comment.Comment#onSubmit
              */
-            onSubmit: function () {
+            onSubmit: function (event) {
+                if (!_.isUndefined(event)) {
+                    event.stopImmediatePropagation();
+                }
+
                 var textValue = this.$el.find("textarea").val();
 
                 if (textValue === "") {

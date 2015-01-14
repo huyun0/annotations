@@ -1,5 +1,5 @@
-<tr class="header-container" {{#if label.category}}style="background-color:{{label.category.settings.color}}"{{/if}} title="{{#if label}}{{label.abbreviation}} - {{label.value}}{{else}}{{text}}{{/if}}">
-    <td class="left">
+<div>
+    <div class="left">
         <a href="#{{id}}" class="proxy-anchor"></a>
 
         <a class="collapse" title="collapse">
@@ -14,16 +14,16 @@
                {{end start duration}}
         </span>
 
+        {{#if isMine}}
+        <i class="private icon-user" title="You own this annotation"></i>
+        {{/if}}
+
         {{#if scalevalue}}
         <span class="scaling">
                 {{#if scalevalue}}
                 <span class="read-only" title="{{scalevalue.name}}">{{scalevalue.name}}</span>
                 {{/if}} 
         </span>
-        {{/if}} 
-        
-        {{#if isMine}}
-        <i class="private icon-user" title="You own this annotation"></i>
         {{/if}}
         
         <span class="category" {{#if label}}title="{{label.category.name}} - {{label.value}} ({{label.abbreviation}})"{{/if}}>
@@ -37,11 +37,13 @@
                     <span class="no-label">{{text}}</span>
                 {{/if}}
         </span>
-    </td>
+    </div>
 
-    <td class="right">
-        <i class="icon-comment-amount" title="{{numberOfComments}} Comment(s)">
+    <div class="right">
+        <i class="{{#if numberOfComments}}icon-comment-amount{{else}}icon-comment{{/if}}" title="{{numberOfComments}} Comment(s)">
+            {{#if numberOfComments}}
             <span class="comment-amount">{{numberOfComments}}</span>
+            {{/if}}
         </i>
-    </td>
-</tr>
+    </div>
+</div>

@@ -54,6 +54,13 @@ module.exports = function (grunt) {
                           <source src=\"/resources/Annotations_Video.theora.ogv\" type=\"video/ogg\" /> ',
                 target : '<%= buildDir %>',
                 config : 'build/profiles/local/annotations-tool-configuration.js'
+            },            
+
+            demo: {
+                sources: '<source src=\"/annotations/resources/sinteltrailer.mp4\" type=\"video/mp4\" />\n \
+                          <source src=\"/annotations/resources/sinteltrailer.ogv\" type=\"video/ogg\" /> ',
+                target : '<%= buildDir %>',
+                config : 'build/profiles/local/annotations-tool-configuration.js'
             }
         },
 
@@ -212,6 +219,15 @@ module.exports = function (grunt) {
                     dest: '<%= currentProfile.target %>',
                 }]
             },
+            // ... all the files for the demo
+            'demo': {
+                files: [{
+                    flatten: false,
+                    expand: true,
+                    src: ['js/**/*', 'img/**/*', 'style/**/*.png', 'style/**/*.css', 'tests/**/*'],
+                    dest: '<%= currentProfile.target %>',
+                }]  
+            },
             // ... the index locally 
             'index': {
                 options: {
@@ -304,6 +320,18 @@ module.exports = function (grunt) {
                 files: {
                     '<%= currentProfile.target %>/index.html': ['index.html']
                 }
+            },         
+            demo: {
+                options: {
+                    data: {
+                        version: '<%= pkg.version %>',
+                        sources: '<%= currentProfile.sources %>'
+                    },
+                    process: true
+                },
+                files: {
+                    '<%= currentProfile.target %>/index.html': ['index.html']
+                }
             }
         },
 
@@ -347,12 +375,17 @@ module.exports = function (grunt) {
     // Default task
     grunt.registerTask('default', ['jshint:all', 'less:annotation', 'copy:local-all', 'copy:local-index']);
     grunt.registerTask('baseDEV', ['handlebars:all', 'less:annotation', 'copy:all', 'processhtml:dev', 'copy:config', 'concurrent:dev']);
+    grunt.registerTask('baseDEMO', ['handlebars:all', 'less:annotation', 'copy:demo', 'processhtml:dev', 'copy:config', 'concurrent:dev']);
     grunt.registerTask('baseBUILD', ['blanket_qunit', 'jsdoc', 'less:annotation', 'copy:build', 'processhtml:build', 'copy:config', 'requirejs']);
 
     grunt.registerTaskWithProfile = function (name, description, defaultProfile) {
         grunt.registerTask(name, description, function () {
             var profileName = grunt.option('profile') || defaultProfile,
                 profileConfig;
+
+            if (grunt.option('v')) {
+                grunt.config.set('pkg.version', grunt.option('v'));
+            }
 
             // If no profile name given, use the default one
             if (typeof profileName == 'undefined') {
@@ -380,6 +413,7 @@ module.exports = function (grunt) {
     };
 
     grunt.registerTaskWithProfile('build', 'Build task', 'build');
+    grunt.registerTaskWithProfile('demo', 'Generate build for demo', 'demo');
     grunt.registerTaskWithProfile('dev', 'Development workflow');
 
 

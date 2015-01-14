@@ -1,5 +1,5 @@
-<tr class="header-container {{state}}" {{#if label.category}}style="background-color:{{label.category.settings.color}}"{{/if}} title="{{#if label}}{{label.abbreviation}} - {{label.value}}{{else}}{{text}}{{/if}}">
-    <td class="left">
+<div class="{{state}}">
+    <div class="left">
         <a href="#{{id}}" class="proxy-anchor"></a>
 
         <a class="collapse" title="collapse">
@@ -14,6 +14,10 @@
                {{end start duration}}
         </span>
 
+        {{#if isMine}}
+        <i class="private icon-user" title="You own this annotation"></i>
+        {{/if}}
+        
         {{#if scalevalue}}
         <span class="scaling">
                 {{#if scalevalue}}
@@ -22,9 +26,6 @@
         </span>
         {{/if}} 
         
-        {{#if isMine}}
-        <i class="private icon-user" title="You own this annotation"></i>
-        {{/if}}
         
         <span class="category" {{#if label}}title="{{label.category.name}} - {{label.value}} ({{label.abbreviation}})"{{/if}}>
                 {{#if label}}
@@ -37,26 +38,27 @@
                     <span class="no-label">{{text}}</span>
                 {{/if}}
         </span>
-    </td>
+    </div>
 
-    <td class="right">
+    <div class="right">
         {{#if isMine}}
         <i class="toggle-edit icon-pencil" title="Edit annotation."></i>
         {{/if}}
 
-        <i class="icon-comment-amount" title="{{numberOfComments}} Comment(s)">
+        <i class="{{#if numberOfComments}}icon-comment-amount{{else}}icon-comment{{/if}}" title="{{numberOfComments}} Comment(s)">
+            {{#if numberOfComments}}
             <span class="comment-amount">{{numberOfComments}}</span>
+            {{/if}}
         </i>
-    </td>
-</tr>
-{{#if label}} {{else}} 
-<tr id="text-container{{id}}" class="text-container">
-    <td colspan="2">
-        <span class="text">
-                <span class="freetext">
-                    <span class="read-only">{{{textReadOnly}}}</span>
-                </span>
-        </span>
-    </td>
-</tr>
-{{/if}}
+    </div>
+</div>
+
+<div id="text-container{{id}}" class="text-container">
+    {{#if label}} 
+
+    {{else}} 
+    <span class="text freetext read-only">
+        {{{textReadOnly}}}
+    </span>
+    {{/if}}
+</div>

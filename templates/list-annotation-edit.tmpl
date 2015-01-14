@@ -1,5 +1,5 @@
-<tr class="header-container {{state}}" {{#if label.category}}style="background-color:{{label.category.settings.color}}"{{/if}} title="{{#if label}}{{label.abbreviation}} - {{label.value}}{{else}}{{text}}{{/if}}">
-    <td class="left">
+<div class="{{state}}">
+    <div class="left">
         <a href="#{{id}}" class="proxy-anchor"></a>
 
         <a class="collapse" title="collapse">
@@ -16,6 +16,10 @@
         </span>
         <button class="btn out" title="Set the video playhead as end point.">OUT</button>
 
+        {{#if isMine}}
+        <i class="private icon-user" title="You own this annotation"></i>
+        {{/if}}
+
         {{#if scalevalues}}
         <span class="scaling">
                 {{#if isMine}}
@@ -31,10 +35,6 @@
         </span>
         {{/if}} 
         
-        {{#if isMine}}
-        <i class="private icon-user" title="You own this annotation"></i>
-        {{/if}}
-        
         <span class="category" {{#if label}}title="{{label.category.name}} - {{label.value}} ({{label.abbreviation}})"{{/if}}>
                 {{#if label}}
                     <span class="abbreviation">{{label.abbreviation}}</span>
@@ -46,9 +46,9 @@
                     <span class="no-label">{{text}}</span>
                 {{/if}}
         </span>
-    </td>
+    </div>
 
-    <td class="right">
+    <div class="right">
         {{#canBeDeleted}}
         <i class="delete icon-trash" title="Delete annotation."></i>
         {{/canBeDeleted}}
@@ -57,23 +57,24 @@
         <i class="toggle-edit icon-pencil" title="Edit annotation."></i>
         {{/if}}
 
-        <i class="icon-comment-amount" title="{{numberOfComments}} Comment(s)">
+        <i class="{{#if numberOfComments}}icon-comment-amount{{else}}icon-comment{{/if}}" title="{{numberOfComments}} Comment(s)">
+            {{#if numberOfComments}}
             <span class="comment-amount">{{numberOfComments}}</span>
+            {{/if}}
         </i>
-    </td>
-</tr>
-<tr id="text-container{{id}}" class="in text-container">
-    <td colspan="2">
-        {{#if label}} {{else}} 
-        <span class="text">
-                <span class="freetext">
-                    <textarea placeholder="free text...">{{text}}</textarea>
-                </span>
-                <div class="button-bar">
-                    <button type="button" class="btn">Cancel</button>
-                    <button type="submit" class="btn btn-primary">OK</button>
-                </div>
-        </span>
-        {{/if}}
-    </td>
-</tr>
+    </div>
+</div>
+
+{{#if label}} {{else}} 
+<div id="text-container{{id}}" class="in text-container">
+    <span class="text">
+            <span class="freetext">
+                <textarea placeholder="free text..." style="height: {{textHeight}}px">{{text}}</textarea>
+            </span>
+            <div class="button-bar">
+                <button type="button" class="btn">Cancel</button>
+                <button type="submit" class="btn btn-primary">OK</button>
+            </div>
+    </span>
+</div>
+{{/if}}
