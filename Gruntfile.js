@@ -59,7 +59,7 @@ module.exports = function (grunt) {
             demo: {
                 sources: '<source src=\"/annotations/resources/sinteltrailer.mp4\" type=\"video/mp4\" />\n \
                           <source src=\"/annotations/resources/sinteltrailer.ogv\" type=\"video/ogg\" /> ',
-                target : '/Users/xavierbutty/Sites/DEMO_ANNOT/ANNOT-97',
+                target : '/Users/xavierbutty/Sites/DEMO_ANNOT/',
                 config : 'build/profiles/local/annotations-tool-configuration.js'
             }
         },
@@ -404,6 +404,10 @@ module.exports = function (grunt) {
 
             // Configure the tasks with given profiles
             grunt.config.set('currentProfile', profileConfig);
+
+            if (name.toUpperCase() === "DEMO") {
+                grunt.config.set('currentProfile.target', grunt.config.get('currentProfile.target') + grunt.config.get('pkg.version'));
+            }
 
             // Run the tasks
             grunt.task.run('base' + name.toUpperCase());
