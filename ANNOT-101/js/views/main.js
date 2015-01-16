@@ -53,7 +53,6 @@ define(["jquery",
         "templates/categories-legend",
         "templates/track-selector",
         "roles",
-        "FiltersManager",
         "backbone",
         "handlebars",
         "localstorage",
@@ -62,7 +61,7 @@ define(["jquery",
         "tab"],
 
     function ($, PlayerAdapter, AnnotateView, ListView, TimelineView, LoginView, ScaleEditorView,
-              Annotations, Users, Videos, User, Track, Video, CategoriesLegendTmpl, trackSelectorTmpl, ROLES, FiltersManager, Backbone) {
+              Annotations, Users, Videos, User, Track, Video, CategoriesLegendTmpl, trackSelectorTmpl, ROLES, Backbone) {
 
         "use strict";
 
@@ -116,7 +115,8 @@ define(["jquery",
             events: {
                 "click #logout"              : "logout",
                 "click #print"               : "print",
-                "click .opt-layout" : "layoutUpdate"
+                "click .opt-layout"          : "layoutUpdate",
+                "click .opt-tracks"          : "tracksSelection"
             },
 
             /**
@@ -136,6 +136,7 @@ define(["jquery",
                                 "onWindowResize",
                                 "print",
                                 "ready",
+                                "tracksSelection",
                                 "setLoadingProgress",
                                 "updateTitle");
                 var self = this;
@@ -176,7 +177,6 @@ define(["jquery",
                 $(window).resize(this.onWindowResize);
                 $(window).bind("keydown", $.proxy(this.onDeletePressed, this));
 
-                annotationsTool.filtersManager   = new FiltersManager();
                 annotationsTool.importCategories = this.importCategories;
 
                 annotationsTool.once(annotationsTool.EVENTS.READY, function () {
@@ -438,6 +438,31 @@ define(["jquery",
                 }
             },
 
+            /**
+             * Filter the tracks following the option selected in the menu
+             * @alias module:views-main.MainView#tracksSelection
+             */
+            tracksSelection: function (event) {
+                var enabled = !$(event.target).hasClass("checked"),
+                    tracksFilter = event.currentTarget.id.replace("opt-tracks-", "");
+
+                if (tracksFilter === "public") {
+                    annotationsTool.getTracks().showAllPublic();
+                } else if (tracksFilter === "mine") {
+                    annotationsTool.getTracks().showMyTracks();
+                }
+
+                $(".opt-tracks").removeClass("checked");
+                
+                if (enabled) {
+                    $(event.target).addClass("checked");
+                }
+            },
+
+            /**
+             * Set the layout of the tools following the option selected in the menu
+             * @alias module:views-main.MainView#layoutUpdate
+             */
             layoutUpdate: function (event) {
 
                 var enabled = !$(event.target).hasClass("checked"),

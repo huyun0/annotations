@@ -36,9 +36,10 @@ define(["jquery",
         "templates/delete-warning-content",
         "prototypes/player_adapter",
         "handlebarsHelpers",
+        "FiltersManager",
         "roles"],
 
-        function ($, Backbone, AnnotationSync, Videos, MainView, AlertView, DeleteModalTmpl, DeleteContentTmpl, PlayerAdapter, Handlebars, ROLES) {
+        function ($, Backbone, AnnotationSync, Videos, MainView, AlertView, DeleteModalTmpl, DeleteContentTmpl, PlayerAdapter, Handlebars, FiltersManager, ROLES) {
 
             "use strict";
 
@@ -191,6 +192,9 @@ define(["jquery",
                             }
                         }
                     }, this);
+
+                    this.filtersManager   = new FiltersManager();
+                    this.tracksFiltersManager   = new FiltersManager();
 
                     this.views.main = new MainView(this.playerAdapter);
 
@@ -881,7 +885,7 @@ define(["jquery",
                                     }
                                 );
                             } else {
-                                tracks.showTracks(tracks.first(annotationsTool.MAX_VISIBLE_TRACKS));
+                                tracks.showTracks(tracks.first(annotationsTool.MAX_VISIBLE_TRACKS || Number.MAX_VALUE));
                                 concludeInitialization();
                             }
                         };

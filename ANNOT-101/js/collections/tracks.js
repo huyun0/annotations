@@ -24,10 +24,11 @@
  */
 define(["jquery",
         "models/track",
+        "access",
         "backbone",
         "localstorage"],
 
-    function ($, Track, Backbone) {
+    function ($, Track, ACCESS, Backbone) {
 
         "use strict";
 
@@ -74,7 +75,8 @@ define(["jquery",
                                     "showTracksById",
                                     "hideTracks",
                                     "isTrackVisible",
-                                    "getTracksForLocalStorage");
+                                    "getTracksForLocalStorage",
+                                    "showMyTracks");
                     this.setUrl(video);
 
                     this.on("add", function (track) {
@@ -140,6 +142,22 @@ define(["jquery",
                 },
 
                 /**
+                 * Shows only the tracks of the current user
+                 * @alias module:collections-tracks.Tracks#showMyTracks
+                 */
+                showMyTracks: function () {
+                    this.showTracks(this.getMine(), false);
+                },
+
+                /**
+                 * Shows all the publics tracks
+                 * @alias module:collections-tracks.Tracks#showAllPublic
+                 */
+                showAllPublic: function () {
+                    this.showTracks(this.where({access: ACCESS.PUBLIC}), false);
+                },
+
+                /**
                  * Displays the tracks  with the given Ids and hide the current displayed tracks.
                  * @param  {array} tracks an array containing the tracks ids to display
                  */
@@ -159,7 +177,7 @@ define(["jquery",
                  * @param  {boolean} keepPrevious define if the previous visible tracks should be kept if enough place
                  */
                 showTracks: function (tracks, keepPrevious) {
-                    var max = annotationsTool.MAX_VISIBLE_TRACKS,
+                    var max = annotationsTool.MAX_VISIBLE_TRACKS || Number.MAX_VALUE,
                         self = this,
                         selectedTrack = annotationsTool.selectedTrack,
                         showTrack = function (track) {
@@ -237,16 +255,19 @@ define(["jquery",
                     var newVisibleTracks = [],
                         idsToRemove = [];
 
+                    // Check if the given tracks are valid
                     if (_.isUndefined(tracks)) {
                         return;
                     } else if (!_.isArray(tracks)) {
                         tracks = [tracks];
                     }
 
+                    // Create a list of tracks id to remove
                     _.each(tracks, function (track) {
                         idsToRemove.push(track.id);
                     }, this);
 
+                    // Go through the list of tracks to see which one has to be removed
                     _.each(this.visibleTracks, function (track) {
                         if (_.contains(idsToRemove, track.id)) {
                             track.set(Track.FIELDS.VISIBLE, false);
@@ -254,6 +275,7 @@ define(["jquery",
                             newVisibleTracks.push(track);
                         }
                     }, this);
+
 
                     this.visibleTracks = newVisibleTracks;
                 },
