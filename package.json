@@ -17,6 +17,7 @@
     "grunt-uncss": "~0.1.9",
     "grunt-jsdoc": "~0.5.1",
     "grunt-preprocess": "^4.0.0",
-    "grunt-processhtml": "^0.3.0"
+    "grunt-processhtml": "^0.3.0",
+    "grunt-mkdir": "^0.1.2"
   }
 }

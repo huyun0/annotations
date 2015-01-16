@@ -58,7 +58,6 @@ define(["jquery",
              * @param {Object} attr Object literal containing the model initialion attributes.
              */
             initialize: function (attr) {
-
                 _.bindAll(this,
                         "getAnnotation",
                         "fetchAnnotations");
@@ -150,8 +149,6 @@ define(["jquery",
                 } else {
                     data = attr;
                 }
-
-                this.on("change:access");
 
                 return data;
             },

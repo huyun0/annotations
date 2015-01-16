@@ -86,10 +86,9 @@ define(["jquery",
                  * @type {String}
                  * @alias module:views-loop.Loop#LAYOUT_MENU_TMPL
                  */
-                LAYOUT_MENU_TMPL:   "<li class=\"divider\"></li>\
-                                     <li>\
+                LAYOUT_MENU_TMPL:   "<li>\
                                          <a id=\"enableLoops\" href=\"#\" class=\"checked\">\
-                                             <i class=\"check icon-check\"></i> Loop function\
+                                             <i class=\"check icon-check\"></i> Loop Controller\
                                          </a>\
                                      </li>",
 
@@ -139,7 +138,8 @@ define(["jquery",
                                     "toggle",
                                     "toggleVisibity",
                                     "typeLoopLength");
-                    var annotateView;
+                    var mainView,
+                        defaultVisiblity = annotationsTool.getLayoutConfiguration().loop;
 
                     this.playerAdapter = annotationsTool.playerAdapter;
                     this.loops = new Loops([], annotationsTool.video);
@@ -148,10 +148,10 @@ define(["jquery",
                     this.setElement($("#loop")[0]);
                     this.initSlider();
 
-                    if (!_.isUndefined(annotationsTool.views.annotate)) {
-                        annotateView = annotationsTool.views.annotate;
-                        annotateView.$el.find(".dropdown-menu").append(this.LAYOUT_MENU_TMPL);
-                        annotateView.$el.find(".dropdown-menu #" + this.LAYOUT_MENU_CLASS).bind("click", this.toggleVisibity);
+                    if (!_.isUndefined(annotationsTool.views.main)) {
+                        mainView = annotationsTool.views.main;
+                        mainView.$el.find("#menu-plugins").append(this.LAYOUT_MENU_TMPL);
+                        mainView.$el.find("#menu-plugins #" + this.LAYOUT_MENU_CLASS).bind("click", this.toggleVisibity);
                     }
 
                     this.toggle(false);
@@ -159,6 +159,10 @@ define(["jquery",
                     annotationsTool.loopFunction = this;
 
                     annotationsTool.onWindowResize();
+
+                    if (!_.isUndefined(defaultVisiblity) && !defaultVisiblity) {
+                        this.toggleVisibity({target: mainView.$el.find("#menu-plugins #" + this.LAYOUT_MENU_CLASS)[0]});
+                    }
                 },
 
                 /**

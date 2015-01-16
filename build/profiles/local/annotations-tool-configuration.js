@@ -47,7 +47,8 @@ define(["jquery",
                 DEFAULT: {
                     timeline : true,
                     list     : true,
-                    annotate : true
+                    annotate : true,
+                    loop     : false
                 }
             },
 

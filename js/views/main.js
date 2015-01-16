@@ -114,8 +114,9 @@ define(["jquery",
              * @type {Map}
              */
             events: {
-                "click #logout": "logout",
-                "click #print" : "print"
+                "click #logout"              : "logout",
+                "click #print"               : "print",
+                "click .opt-layout" : "layoutUpdate"
             },
 
             /**
@@ -124,7 +125,8 @@ define(["jquery",
              * @param {PlainObject} attr Object literal containing the view initialization attributes.
              */
             initialize: function () {
-                _.bindAll(this, "checkUserAndLogin",
+                _.bindAll(this, "layoutUpdate",
+                                "checkUserAndLogin",
                                 "createViews",
                                 "generateCategoriesLegend",
                                 "generateTracksSelector",
@@ -182,6 +184,15 @@ define(["jquery",
                     this.generateCategoriesLegend(annotationsTool.video.get("categories").toExportJSON(true));
                     this.generateTracksSelector();
                     this.updateTitle(annotationsTool.video);
+
+                    if (!annotationsTool.isFreeTextEnabled()) {
+                        $("#opt-annotate-text").parent().hide();
+                    }
+
+                    if (!annotationsTool.isStructuredAnnotationEnabled()) {
+                        $("#opt-annotate-categories").parent().hide();
+                    }
+
                 }, this);
 
                 this.checkUserAndLogin();
@@ -258,6 +269,8 @@ define(["jquery",
                 // Initialize the player
                 annotationsTool.playerAdapter.load();
                 this.setLoadingProgress(50, "Initializing the player.");
+
+                annotationsTool.views.main = this;
                 
                 /**
                  * Loading the video dependant views
@@ -422,6 +435,24 @@ define(["jquery",
                     }
                 } else {
                     setTimeout(this.print, 1000);
+                }
+            },
+
+            layoutUpdate: function (event) {
+
+                var enabled = !$(event.target).hasClass("checked"),
+                    layoutElement = event.currentTarget.id.replace("opt-", "");
+
+                if (enabled) {
+                    $(event.target).addClass("checked");
+                } else {
+                    $(event.target).removeClass("checked");
+                }
+
+                if (layoutElement === "annotate-text") {
+                    this.annotateView.enableFreeTextLayout(enabled);
+                } else if (layoutElement === "annotate-categories") {
+                    this.annotateView.enableCategoriesLayout(enabled);
                 }
             },
 

@@ -59,7 +59,7 @@ module.exports = function (grunt) {
             demo: {
                 sources: '<source src=\"/annotations/resources/sinteltrailer.mp4\" type=\"video/mp4\" />\n \
                           <source src=\"/annotations/resources/sinteltrailer.ogv\" type=\"video/ogg\" /> ',
-                target : '<%= buildDir %>',
+                target : '/Users/xavierbutty/Sites/DEMO_ANNOT/ANNOT-97',
                 config : 'build/profiles/local/annotations-tool-configuration.js'
             }
         },
@@ -320,18 +320,6 @@ module.exports = function (grunt) {
                 files: {
                     '<%= currentProfile.target %>/index.html': ['index.html']
                 }
-            },         
-            demo: {
-                options: {
-                    data: {
-                        version: '<%= pkg.version %>',
-                        sources: '<%= currentProfile.sources %>'
-                    },
-                    process: true
-                },
-                files: {
-                    '<%= currentProfile.target %>/index.html': ['index.html']
-                }
             }
         },
 
@@ -350,6 +338,14 @@ module.exports = function (grunt) {
                     out                        : '<%= currentProfile.target %>/optimized.js'
                 }
             }
+        },
+
+        mkdir: {
+            demo: {
+                  options: {
+                    create: ['<%= currentProfile.target %>']
+                }
+            }
         }
     });
 
@@ -361,11 +357,12 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-connect');
     grunt.loadNpmTasks('grunt-contrib-handlebars');
     grunt.loadNpmTasks('grunt-contrib-requirejs');
+    grunt.loadNpmTasks('grunt-processhtml');
     grunt.loadNpmTasks('grunt-preprocess');
-    grunt.loadNpmTasks('assemble-less');
     grunt.loadNpmTasks('grunt-concurrent');
     grunt.loadNpmTasks('grunt-jsdoc');
-    grunt.loadNpmTasks('grunt-processhtml');
+    grunt.loadNpmTasks('grunt-mkdir');
+    grunt.loadNpmTasks('assemble-less');
 
 
     /** ================================================
@@ -375,7 +372,7 @@ module.exports = function (grunt) {
     // Default task
     grunt.registerTask('default', ['jshint:all', 'less:annotation', 'copy:local-all', 'copy:local-index']);
     grunt.registerTask('baseDEV', ['handlebars:all', 'less:annotation', 'copy:all', 'processhtml:dev', 'copy:config', 'concurrent:dev']);
-    grunt.registerTask('baseDEMO', ['handlebars:all', 'less:annotation', 'copy:demo', 'processhtml:dev', 'copy:config', 'concurrent:dev']);
+    grunt.registerTask('baseDEMO', ['mkdir:demo', 'handlebars:all', 'less:annotation', 'copy:demo', 'processhtml:dev', 'copy:config']);
     grunt.registerTask('baseBUILD', ['blanket_qunit', 'jsdoc', 'less:annotation', 'copy:build', 'processhtml:build', 'copy:config', 'requirejs']);
 
     grunt.registerTaskWithProfile = function (name, description, defaultProfile) {
@@ -383,8 +380,9 @@ module.exports = function (grunt) {
             var profileName = grunt.option('profile') || defaultProfile,
                 profileConfig;
 
-            if (grunt.option('v')) {
-                grunt.config.set('pkg.version', grunt.option('v'));
+            if (grunt.option('cv')) {
+                console.log('With version ' + grunt.option('cv'));
+                grunt.config.set('pkg.version', grunt.option('cv'));
             }
 
             // If no profile name given, use the default one
@@ -434,8 +432,6 @@ module.exports = function (grunt) {
             // If the watch target is multiple, 
             // we manage the tasks to run following the touched file extension
             var ext = filepath.split('.').pop();
-
-
 
             switch (ext) {
                 case 'js':
