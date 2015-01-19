@@ -1,8 +1,7 @@
 div#modal-track-selection{
 
     input[type="text"] {
-        width: 100%;
-        padding-right: 0px;
+        width: 60%;
     }
 
     .search-only {
@@ -10,7 +9,13 @@ div#modal-track-selection{
     }
 
     &.search-mode .search-only {
-            display: block;
+            display: inline-block;
+    }
+
+    button.search-only {
+        margin-top: -10px;
+        height: 26px;
+        margin-left: 0px;
     }
 
 
@@ -21,6 +26,7 @@ div#modal-track-selection{
         overflow: scroll;
         margin-left: 0px;
         max-height: 350px;
+        box-shadow: inset 1px 1px 3px @grayLight;
 
         li {
             padding: 2px 5px 2px 5px;
@@ -30,6 +36,7 @@ div#modal-track-selection{
             }
 
             &:hover {
+                cursor: pointer;
                 background-color: @grayLight;
             }
         }

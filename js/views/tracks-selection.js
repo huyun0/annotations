@@ -58,7 +58,8 @@ define(["jquery",
                     "click #confirm-selection": "confirm",
                     "click li"                : "select",
                     "click span input"        : "selectAll",
-                    "keyup #search-track"     : "search"
+                    "keyup #search-track"     : "search",
+                    "click button.search-only": "clear"
                 },
 
                 /**
@@ -70,6 +71,7 @@ define(["jquery",
                               "show",
                               "hide",
                               "cancel",
+                              "clear",
                               "confirm",
                               "search",
                               "select",
@@ -87,7 +89,7 @@ define(["jquery",
                 show: function () {
                     this.$el.empty();
                     this.$el.append(this.template({
-                        tracks: this.tracks.toJSON()
+                        users: this.tracks.getAllCreators()
                     }));
                     this.delegateEvents();
 
@@ -102,10 +104,27 @@ define(["jquery",
                     this.$el.modal("hide");
                 },
 
+                /**
+                 * Clear the search field
+                 * @alias module:views-tracks-selection.Alert#clear
+                 */
+                clear: function () {
+                    this.$el.find("#search-track").val("");
+                    this.search();
+                },
+
+                /**
+                 * Cancel the track selection
+                 * @alias module:views-tracks-selection.Alert#cancel
+                 */
                 cancel: function () {
                     this.hide();
                 },
 
+                /**
+                 * Confirm the track selection
+                 * @alias module:views-tracks-selection.Alert#confirm
+                 */
                 confirm: function () {
                     var selection = this.$el.find("ul li :checked"),
                         selectedIds = [];
@@ -114,24 +133,40 @@ define(["jquery",
                         selectedIds.push(el.value);
                     }, this);
 
-                    this.tracks.showTracksById(selectedIds);
+                    this.tracks.showTracksByCreators(selectedIds);
 
                     this.hide();
                 },
 
+                /**
+                 * Mark the target user as selected
+                 * @alias module:views-tracks-selection.Alert#select
+                 */
                 select: function (event) {
                     var $el = $(event.target).find("input");
 
                     $el.attr("checked", _.isUndefined($el.attr("checked")));
                 },
 
+                /**
+                 * Mark all the users selected or unselected
+                 * @alias module:views-tracks-selection.Alert#selectAll
+                 */
                 selectAll: function (event) {
                     var checked = !_.isUndefined($(event.target).attr("checked"));
                     this.$el.find("ul li input").attr("checked", checked);
                 },
 
+                /**
+                 * Search for users with the given chars in the search input
+                 * @alias module:views-tracks-selection.Alert#search
+                 */
                 search: function (event) {
-                    var text = event.target.value;
+                    var text = "";
+
+                    if (!_.isUndefined(event)) {
+                        text = event.target.value;
+                    }
 
                     this.$el.find(".list-group-item").hide();
 

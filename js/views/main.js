@@ -52,7 +52,6 @@ define(["jquery",
         "models/track",
         "models/video",
         "templates/categories-legend",
-        "templates/track-selector",
         "roles",
         "backbone",
         "handlebars",
@@ -62,7 +61,7 @@ define(["jquery",
         "tab"],
 
     function ($, PlayerAdapter, AnnotateView, ListView, TimelineView, LoginView, ScaleEditorView, TracksSelectionView,
-              Annotations, Users, Videos, User, Track, Video, CategoriesLegendTmpl, trackSelectorTmpl, ROLES, Backbone) {
+              Annotations, Users, Videos, User, Track, Video, CategoriesLegendTmpl, ROLES, Backbone) {
 
         "use strict";
 
@@ -105,9 +104,6 @@ define(["jquery",
             categoriesLegendTmpl: CategoriesLegendTmpl,
 
 
-            trackSelectorTmpl: trackSelectorTmpl,
-
-
             /**
              * Events to handle by the main view
              * @alias module:views-main.MainView#event
@@ -130,7 +126,6 @@ define(["jquery",
                                 "checkUserAndLogin",
                                 "createViews",
                                 "generateCategoriesLegend",
-                                "generateTracksSelector",
                                 "logout",
                                 "loadPlugins",
                                 "onDeletePressed",
@@ -183,7 +178,6 @@ define(["jquery",
                 annotationsTool.once(annotationsTool.EVENTS.READY, function () {
                     this.loadPlugins(annotationsTool.plugins);
                     this.generateCategoriesLegend(annotationsTool.video.get("categories").toExportJSON(true));
-                    this.generateTracksSelector();
                     this.updateTitle(annotationsTool.video);
 
                     if (!annotationsTool.isFreeTextEnabled()) {
@@ -232,28 +226,6 @@ define(["jquery",
              */
             generateCategoriesLegend: function (categories) {
                 this.$el.find("#categories-legend").html(this.categoriesLegendTmpl(categories));
-            },
-
-            generateTracksSelector: function () {
-                var selector = this.$el.find("div#select-tracks select"),
-                    tracks = annotationsTool.getTracks(),
-                    selection;
-
-                selector.html(this.trackSelectorTmpl(annotationsTool.getTracks()));
-                tracks.on("visiblity", function () {
-                    selector.html(this.trackSelectorTmpl(annotationsTool.getTracks()));
-                }, this);
-
-                selector.change(function () {
-                    if (_.isArray($(this).val()) && $(this).val().length > annotationsTool.MAX_VISIBLE_TRACKS) {
-                        console.warn("You can only choose " + annotationsTool.MAX_VISIBLE_TRACKS + "!");
-                        //selection.splice(0, 1);
-                        $(this).val(selection);
-                    } else {
-                        selection = $(this).val();
-                        tracks.showTracksById([selection]);
-                    }
-                });
             },
 
             /**
@@ -444,8 +416,7 @@ define(["jquery",
              * @alias module:views-main.MainView#tracksSelection
              */
             tracksSelection: function (event) {
-                var enabled = !$(event.target).hasClass("checked"),
-                    tracksFilter = event.currentTarget.id.replace("opt-tracks-", "");
+                var tracksFilter = event.currentTarget.id.replace("opt-tracks-", "");
 
                 if (tracksFilter === "public") {
                     annotationsTool.getTracks().showAllPublic();
@@ -460,10 +431,7 @@ define(["jquery",
                 }
 
                 $(".opt-tracks").removeClass("checked");
-                
-                if (enabled) {
-                    $(event.target).addClass("checked");
-                }
+                $(event.target).addClass("checked");
             },
 
             /**

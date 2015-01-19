@@ -4,22 +4,22 @@
 	  </div>
 
 	  <div class="modal-body">
-        Public tracks:
-
-        <input type="text" id="search-track" placeholder="Type here to search...">
-
+        Users with public annotations:
+        <div class="input-append">
+          <input class="span12" type="text" id="search-track" placeholder="Type here to search...">
+          <button class="btn search-only" type="button">Clear</button>
+        </div>
         <ul class="list-group">
-            {{#each tracks}}
+            {{#each users}}
             <li class="list-group-item">
-                <input type="checkbox" value="{{this.id}}" {{#if this.visible}}checked{{/if}}> {{this.name}} - {{this.created_by_nickname}}
+                <input type="checkbox" value="{{this.id}}" {{#if this.visible}}checked{{/if}}> {{this.nickname}}
                 <span class="search-fields">
                     {{#toUpperCase}}
-                    {{this.name}} {{this.created_by_nickname}} 
+                    {{this.nickname}}
                     {{/toUpperCase}}
                 </span>
             </li>
             {{/each}}
-            <li class="search-only">Show all track</li>
         </ul>
 
         <span>

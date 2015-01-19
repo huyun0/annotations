@@ -709,7 +709,12 @@ define(["jquery",
              */
             addTracksList: function (tracks) {
                 this.allItems = {};
-                _.each(tracks, this.addTrack, this);
+                if (tracks.length === 0) {
+                    this.filterItems();
+                    this.redraw();
+                } else {
+                    _.each(tracks, this.addTrack, this);
+                }
             },
 
             /**
