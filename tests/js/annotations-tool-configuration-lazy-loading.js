@@ -71,7 +71,7 @@ define(["jquery",
              * The maximal number of tracks visible in the timeline at the same time
              * @type {Number}
              */
-            MAX_VISIBLE_TRACKS: 1,
+            MAX_VISIBLE_TRACKS: 0,
 
             /**
              * Define if the localStorage should be used or not

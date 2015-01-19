@@ -35,6 +35,10 @@ define(["handlebars", "roles"], function (Handlebars, ROLES) {
         }
     });
 
+    Handlebars.registerHelper("toUpperCase", function (options) {
+        return options.fn(this).toUpperCase();
+    });
+
     /**
      * Handlebars helper to secure the text field
      * @alias module:Handlebars#time

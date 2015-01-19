@@ -44,6 +44,7 @@ define(["jquery",
         "views/timeline",
         "views/login",
         "views/scale-editor",
+        "views/tracks-selection",
         "collections/annotations",
         "collections/users",
         "collections/videos",
@@ -60,7 +61,7 @@ define(["jquery",
         "carousel",
         "tab"],
 
-    function ($, PlayerAdapter, AnnotateView, ListView, TimelineView, LoginView, ScaleEditorView,
+    function ($, PlayerAdapter, AnnotateView, ListView, TimelineView, LoginView, ScaleEditorView, TracksSelectionView,
               Annotations, Users, Videos, User, Track, Video, CategoriesLegendTmpl, trackSelectorTmpl, ROLES, Backbone) {
 
         "use strict";
@@ -450,6 +451,12 @@ define(["jquery",
                     annotationsTool.getTracks().showAllPublic();
                 } else if (tracksFilter === "mine") {
                     annotationsTool.getTracks().showMyTracks();
+                } else {
+                    if (_.isUndefined(this.tracksSelectionModal)) {
+                        this.tracksSelectionModal = new TracksSelectionView();
+                    }
+
+                    this.tracksSelectionModal.show();
                 }
 
                 $(".opt-tracks").removeClass("checked");

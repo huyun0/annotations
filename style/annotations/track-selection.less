@@ -1,0 +1,37 @@
+div#modal-track-selection{
+
+    input[type="text"] {
+        width: 100%;
+        padding-right: 0px;
+    }
+
+    .search-only {
+        display: none;
+    }
+
+    &.search-mode .search-only {
+            display: block;
+    }
+
+
+
+    ul.list-group {
+        list-style: none;
+        border: 1px solid @grayLight;
+        overflow: scroll;
+        margin-left: 0px;
+        max-height: 350px;
+
+        li {
+            padding: 2px 5px 2px 5px;
+
+            .search-fields {
+                display: none;
+            }
+
+            &:hover {
+                background-color: @grayLight;
+            }
+        }
+    }
+}
