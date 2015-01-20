@@ -111,7 +111,7 @@ define(["jquery",
                 "click"                         : "annotate",
                 "click i.delete"                : "onDeleteLabel",
                 "focusout .item-value"          : "onFocusOut",
-                "keydown .item-value"           : "onKeyDown",
+                "keydown .item-value"            : "onKeyDown",
                 "focusout .item-abbreviation"   : "onFocusOut",
                 "keydown .item-abbreviation"    : "onKeyDown",
                 "click .scaling li"             : "annnotateWithScaling"
@@ -139,6 +139,7 @@ define(["jquery",
                                 "onDeleteLabel",
                                 "annnotateWithScaling",
                                 "changeCategory",
+                                "updateAbbreviation",
                                 "updateInputWidth");
 
                 // Type use for delete operation
@@ -177,6 +178,14 @@ define(["jquery",
                 }
 
                 return this.render();
+            },
+
+            updateAbbreviation: function () {
+                var abbreviation = this.model.get("abbreviation");
+
+                if (_.isUndefined(abbreviation) || abbreviation === "") {
+                    this.$el.find("input.item-abbreviation").val(this.$el.find("input.item-value").val().substr(0, 3).toUpperCase());
+                }
             },
 
             /**
@@ -298,9 +307,11 @@ define(["jquery",
              * @alias module:views-annotate-label.LabelView#onFocusOut
              * @param {event} e Event related to this action
              */
-            onFocusOut: function (e) {
-                var attributeName = e.target.className.replace("item-", "").replace(" edit", "");
-                this.model.set(attributeName, _.escape(e.target.value), {silent: true});
+            onFocusOut: function () {
+                this.model.set({
+                    "value"        : _.escape(this.$el.find("input.item-value").val()),
+                    "abbreviation" : _.escape(this.$el.find("input.item-abbreviation").val())
+                });
                 this.model.save();
             },
 
@@ -312,9 +323,15 @@ define(["jquery",
             onKeyDown: function (e) {
                 e.stopImmediatePropagation();
 
+                if ($(e.target).hasClass("item-value")) {
+                    this.updateAbbreviation(e);
+                }
+
                 if (e.keyCode === 13) { // If "return" key
-                    var attributeName = e.target.className.replace("item-", "").replace(" edit", "");
-                    this.model.set(attributeName, _.escape(e.target.value));
+                    this.model.set({
+                        "value"        : _.escape(this.$el.find("input.item-value").val()),
+                        "abbreviation" : _.escape(this.$el.find("input.item-abbreviation").val())
+                    });
                     this.model.save();
                 } else if (e.keyCode === 39 && this.getCaretPosition(e.target) === e.target.value.length ||
                            e.keyCode === 37 && this.getCaretPosition(e.target) === 0) {

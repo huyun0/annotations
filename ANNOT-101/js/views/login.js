@@ -107,9 +107,9 @@ define(["jquery",
                  */
                 login: function () {
                     // Fields from the login form
-                    var userId          = annotationsTool.getUserExtId(),
-                        userNickname    = this.$el.find("#nickname"),
+                    var userNickname    = this.$el.find("#nickname"),
                         userEmail       = this.$el.find("#email"),
+                        userId          = annotationsTool.getUserExtId(userEmail.val()),
                         userRemember    = this.$el.find("#remember"),
                         userError       = this.$el.find(".alert"),
                         valid  = true, // Variable to keep the form status in memory

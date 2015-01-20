@@ -512,7 +512,10 @@ function ($, PlayerAdapter, Annotation, User, CommentsContainer, TmplCollapsed, 
                     if (!this.model.areCommentsLoaded()) {
                         this.model.fetchComments();
                     }
-                    this.$el.find("> div:last").after(this.commentContainer.render().$el);
+
+                    if (this.getState() === ListAnnotation.STATES.COMMENTS || this.model.get("comments").length > 0) {
+                        this.$el.find("> div:last").after(this.commentContainer.render().$el);
+                    }
                 }
 
                 this.delegateEvents(this.getState().events);

@@ -44,6 +44,7 @@ define(["jquery",
         "views/timeline",
         "views/login",
         "views/scale-editor",
+        "views/tracks-selection",
         "collections/annotations",
         "collections/users",
         "collections/videos",
@@ -51,7 +52,6 @@ define(["jquery",
         "models/track",
         "models/video",
         "templates/categories-legend",
-        "templates/track-selector",
         "roles",
         "backbone",
         "handlebars",
@@ -60,8 +60,8 @@ define(["jquery",
         "carousel",
         "tab"],
 
-    function ($, PlayerAdapter, AnnotateView, ListView, TimelineView, LoginView, ScaleEditorView,
-              Annotations, Users, Videos, User, Track, Video, CategoriesLegendTmpl, trackSelectorTmpl, ROLES, Backbone) {
+    function ($, PlayerAdapter, AnnotateView, ListView, TimelineView, LoginView, ScaleEditorView, TracksSelectionView,
+              Annotations, Users, Videos, User, Track, Video, CategoriesLegendTmpl, ROLES, Backbone) {
 
         "use strict";
 
@@ -104,9 +104,6 @@ define(["jquery",
             categoriesLegendTmpl: CategoriesLegendTmpl,
 
 
-            trackSelectorTmpl: trackSelectorTmpl,
-
-
             /**
              * Events to handle by the main view
              * @alias module:views-main.MainView#event
@@ -116,7 +113,7 @@ define(["jquery",
                 "click #logout"              : "logout",
                 "click #print"               : "print",
                 "click .opt-layout"          : "layoutUpdate",
-                "click .opt-tracks"          : "tracksSelection"
+                "click [class*='opt-tracks']": "tracksSelection"
             },
 
             /**
@@ -129,7 +126,6 @@ define(["jquery",
                                 "checkUserAndLogin",
                                 "createViews",
                                 "generateCategoriesLegend",
-                                "generateTracksSelector",
                                 "logout",
                                 "loadPlugins",
                                 "onDeletePressed",
@@ -182,7 +178,6 @@ define(["jquery",
                 annotationsTool.once(annotationsTool.EVENTS.READY, function () {
                     this.loadPlugins(annotationsTool.plugins);
                     this.generateCategoriesLegend(annotationsTool.video.get("categories").toExportJSON(true));
-                    this.generateTracksSelector();
                     this.updateTitle(annotationsTool.video);
 
                     if (!annotationsTool.isFreeTextEnabled()) {
@@ -231,28 +226,6 @@ define(["jquery",
              */
             generateCategoriesLegend: function (categories) {
                 this.$el.find("#categories-legend").html(this.categoriesLegendTmpl(categories));
-            },
-
-            generateTracksSelector: function () {
-                var selector = this.$el.find("div#select-tracks select"),
-                    tracks = annotationsTool.getTracks(),
-                    selection;
-
-                selector.html(this.trackSelectorTmpl(annotationsTool.getTracks()));
-                tracks.on("visiblity", function () {
-                    selector.html(this.trackSelectorTmpl(annotationsTool.getTracks()));
-                }, this);
-
-                selector.change(function () {
-                    if (_.isArray($(this).val()) && $(this).val().length > annotationsTool.MAX_VISIBLE_TRACKS) {
-                        console.warn("You can only choose " + annotationsTool.MAX_VISIBLE_TRACKS + "!");
-                        //selection.splice(0, 1);
-                        $(this).val(selection);
-                    } else {
-                        selection = $(this).val();
-                        tracks.showTracksById([selection]);
-                    }
-                });
             },
 
             /**
@@ -400,7 +373,6 @@ define(["jquery",
 
                 this.loadingBox.find(".bar").width("0%");
                 this.loadingBox.show();
-                this.loginView.show();
 
                 annotationsTool.users.each(function (user) {
 
@@ -415,8 +387,12 @@ define(["jquery",
 
                 });
 
+                annotationsTool.modelsInitialized = false;
+
                 if (annotationsTool.logoutUrl) {
                     document.location = annotationsTool.logoutUrl;
+                } else {
+                    location.reload();
                 }
             },
 
@@ -443,20 +419,22 @@ define(["jquery",
              * @alias module:views-main.MainView#tracksSelection
              */
             tracksSelection: function (event) {
-                var enabled = !$(event.target).hasClass("checked"),
-                    tracksFilter = event.currentTarget.id.replace("opt-tracks-", "");
+                var tracksFilter = event.currentTarget.className.replace("opt-tracks-", "");
 
                 if (tracksFilter === "public") {
                     annotationsTool.getTracks().showAllPublic();
                 } else if (tracksFilter === "mine") {
                     annotationsTool.getTracks().showMyTracks();
+                } else {
+                    if (_.isUndefined(this.tracksSelectionModal)) {
+                        this.tracksSelectionModal = new TracksSelectionView();
+                    }
+
+                    this.tracksSelectionModal.show();
                 }
 
-                $(".opt-tracks").removeClass("checked");
-                
-                if (enabled) {
-                    $(event.target).addClass("checked");
-                }
+                $("[class*='opt-tracks']").removeClass("checked");
+                $("." + event.target.className).addClass("checked");
             },
 
             /**
@@ -464,9 +442,18 @@ define(["jquery",
              * @alias module:views-main.MainView#layoutUpdate
              */
             layoutUpdate: function (event) {
-
                 var enabled = !$(event.target).hasClass("checked"),
-                    layoutElement = event.currentTarget.id.replace("opt-", "");
+                    layoutElement = event.currentTarget.id.replace("opt-", ""),
+                    checkMainLayout = function () {
+                        if (!annotationsTool.views.annotate.visible && !annotationsTool.views.list.visible) {
+                            $("#left-column").removeClass("span6");
+                            $("#left-column").addClass("span12");
+                        } else {
+                            $("#left-column").addClass("span6");
+                            $("#left-column").removeClass("span12");
+                        }
+                        annotationsTool.views.timeline.redraw();
+                    };
 
                 if (enabled) {
                     $(event.target).addClass("checked");
@@ -474,10 +461,22 @@ define(["jquery",
                     $(event.target).removeClass("checked");
                 }
 
-                if (layoutElement === "annotate-text") {
+                switch (layoutElement) {
+
+                case "annotate-text":
                     this.annotateView.enableFreeTextLayout(enabled);
-                } else if (layoutElement === "annotate-categories") {
+                    break;
+                case "annotate-categories":
                     this.annotateView.enableCategoriesLayout(enabled);
+                    break;
+                case "view-annotate":
+                    annotationsTool.views.annotate.toggleVisibility();
+                    checkMainLayout();
+                    break;
+                case "view-list":
+                    annotationsTool.views.list.toggleVisibility();
+                    checkMainLayout();
+                    break;
                 }
             },
 

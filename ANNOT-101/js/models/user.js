@@ -66,7 +66,7 @@ define(["jquery",
                 if (!attr.id) {
                     // If local storage, we set the cid as id
                     if (window.annotationsTool.localStorage) {
-                        attr.id = this.cid;
+                        attr.id = attr.user_extid;
                     }
                     this.toCreate = true;
                 }
@@ -177,10 +177,12 @@ define(["jquery",
              * @param {String} email the email address to check
              * @return {Boolean} true if the address is valid
              */
+            /*jshint -W101 */
             validateEmail: function (email) {
                 var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
                 return re.test(email);
             }
+            /*jshint +W101 */
         }
     );
         return User;

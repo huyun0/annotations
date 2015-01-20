@@ -162,6 +162,8 @@ define(["jquery",
                     categories : true
                 },
 
+                visible: true,
+
                 /**
                  * constructor
                  * @alias module:views-annotate.Category#initialize
@@ -195,6 +197,7 @@ define(["jquery",
                     this.freeTextElement = this.$el.find("#input-container");
                     this.categoriesElement = this.$el.find("#categories");
 
+                    
                     // Print selected track
                     this.trackDIV = this.$el.find("div.currentTrack span.content");
                     this.changeTrack(annotationsTool.selectedTrack);
@@ -205,6 +208,8 @@ define(["jquery",
 
                     if (annotationsTool.isStructuredAnnotationEnabled()) {
                         categories = annotationsTool.video.get("categories");
+
+                        annotationsTool.colorsManager.updateColors(categories.models);
 
                         _.each(DEFAULT_TABS, function (params) {
                             this.addTab(categories, params);
@@ -501,18 +506,9 @@ define(["jquery",
                  * @alias module:views-annotate.Annotate#toggleVisibility
                  * @param {Event} event Event object
                  */
-                toggleVisibility: function (event) {
-                    var mainContainer = this.$el.find(".control-group");
-
-                    if (mainContainer.css("display") === "none") {
-                        mainContainer.show();
-                        $("div#annotate-container").toggleClass("expanded");
-                        $(event.target).html("Collapse");
-                    } else {
-                        mainContainer.hide();
-                        $("div#annotate-container").toggleClass("expanded");
-                        $(event.target).html("Expand");
-                    }
+                toggleVisibility: function () {
+                    this.visible = !this.visible;
+                    this.$el.fadeToggle();
                     this.trigger("change-layout");
                 },
 

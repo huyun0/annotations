@@ -80,6 +80,8 @@ define(["jquery",
              */
             selectionUpdated: false,
 
+            visible: true,
+
             /**
              * Events to handle
              * @alias module:views-list.List#events
@@ -537,18 +539,9 @@ define(["jquery",
                 this.undelegateEvents();
             },
 
-            toggleVisibility: function (event) {
-                var mainContainer = this.$el.find("#content-list");
-
-                if (mainContainer.css("display") === "none") {
-                    mainContainer.show();
-                    $("div#list-container").toggleClass("expanded");
-                    $(event.target).html("Collapse");
-                } else {
-                    mainContainer.hide();
-                    $("div#list-container").toggleClass("expanded");
-                    $(event.target).html("Expand");
-                }
+            toggleVisibility: function () {
+                this.visible = !this.visible;
+                this.$el.fadeToggle();
                 this.trigger("change-layout");
             }
 

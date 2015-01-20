@@ -122,18 +122,21 @@ function program23(depth0,data) {
 
 function program25(depth0,data) {
   
-  
-  return " \n\n    ";
+  var buffer = "", stack1;
+  buffer += " \n            "
+    + escapeExpression(((stack1 = ((stack1 = (depth0 && depth0.label)),stack1 == null || stack1 === false ? stack1 : stack1.value)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "\n        ";
+  return buffer;
   }
 
 function program27(depth0,data) {
   
   var buffer = "", stack1, helper;
-  buffer += " \n    <span class=\"text freetext read-only\">\n        ";
+  buffer += " \n            ";
   if (helper = helpers.textReadOnly) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.textReadOnly); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n    </span>\n    ";
+  buffer += "\n        ";
   return buffer;
   }
 
@@ -181,10 +184,10 @@ function program27(depth0,data) {
   if (helper = helpers.id) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.id); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "\" class=\"text-container\">\n    ";
+    + "\" class=\"text-container\">\n    <span class=\"text freetext read-only\">\n        ";
   stack1 = helpers['if'].call(depth0, (depth0 && depth0.label), {hash:{},inverse:self.program(27, program27, data),fn:self.program(25, program25, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n</div>";
+  buffer += "\n    </span>\n</div>";
   return buffer;
   })
 

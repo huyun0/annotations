@@ -709,7 +709,12 @@ define(["jquery",
              */
             addTracksList: function (tracks) {
                 this.allItems = {};
-                _.each(tracks, this.addTrack, this);
+                if (tracks.length === 0) {
+                    this.filterItems();
+                    this.redraw();
+                } else {
+                    _.each(tracks, this.addTrack, this);
+                }
             },
 
             /**
@@ -1726,6 +1731,7 @@ define(["jquery",
                 links.events.removeListener(this.timeline, "timechanged", this.onTimelineMoved);
                 links.events.removeListener(this.timeline, "change", this.onTimelineItemChanged);
                 links.events.removeListener(this.timeline, "delete", this.onTimelineItemDeleted);
+                annotationsTool.removeTimeupdateListener(this.onPlayerTimeUpdate, 1);
                 $(window).unbind("resize", this.onWindowResize);
 
                 this.undelegateEvents();
@@ -1746,7 +1752,7 @@ define(["jquery",
                 // Remove all elements
                 this.allItems = {};
                 this.$el.find("#timeline").empty();
-                this.timeline.deleteAllItems();
+                //this.timeline.deleteAllItems();
                 this.timeline = null;
                 delete this.timeline;
                 this.filteredItems = [];

@@ -251,8 +251,8 @@ define(["jquery",
              * @alias module:annotations-tool-configuration.Configuration.getUserExtId
              * @return {string} user_extid
              */
-            getUserExtId: function () {
-                return "default";
+            getUserExtId: function (email) {
+                return email;
             },
 
             /**

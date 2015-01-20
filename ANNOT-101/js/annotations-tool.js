@@ -37,9 +37,10 @@ define(["jquery",
         "prototypes/player_adapter",
         "handlebarsHelpers",
         "FiltersManager",
-        "roles"],
+        "roles",
+        "colors"],
 
-        function ($, Backbone, AnnotationSync, Videos, MainView, AlertView, DeleteModalTmpl, DeleteContentTmpl, PlayerAdapter, Handlebars, FiltersManager, ROLES) {
+        function ($, Backbone, AnnotationSync, Videos, MainView, AlertView, DeleteModalTmpl, DeleteContentTmpl, PlayerAdapter, Handlebars, FiltersManager, ROLES, ColorsManager) {
 
             "use strict";
 
@@ -149,6 +150,8 @@ define(["jquery",
                                     "onTimeUpdate",
                                     "setSelection",
                                     "setSelectionById",
+                                    "addTimeupdateListener",
+                                    "removeTimeupdateListener",
                                     "updateSelectionOnTimeUpdate");
 
                     _.extend(this, config);
@@ -192,6 +195,8 @@ define(["jquery",
                             }
                         }
                     }, this);
+
+                    this.colorsManager = new ColorsManager();
 
                     this.filtersManager   = new FiltersManager();
                     this.tracksFiltersManager   = new FiltersManager();
@@ -343,10 +348,10 @@ define(["jquery",
                 },
 
                 /**
-                 * Add a timeupdate listener with a certain 
+                 * Add a timeupdate listener with the given interval
                  * @alias   annotationsTool.addTimeupdateListener
                  * @param {Object} callback the listener callback
-                 * @param {Integer} (interval) the interval between each timeupdate event
+                 * @param {Number} (interval) the interval between each timeupdate event
                  */
                 addTimeupdateListener: function (callback, interval) {
                     var timeupdateEvent = annotationsTool.EVENTS.TIMEUPDATE,
@@ -355,8 +360,9 @@ define(["jquery",
 
                     if (!_.isUndefined(interval)) {
                         timeupdateEvent += ":" + interval;
-                        this.listenTo(annotationsTool, annotationsTool.EVENTS.TIMEUPDATE, callback);
+                        //this.listenTo(annotationsTool, annotationsTool.EVENTS.TIMEUPDATE, callback);
 
+                        // Check if the interval needs to be added to list
                         for (i = 0; i < annotationsTool.timeupdateIntervals.length; i++) {
                             value = annotationsTool.timeupdateIntervals[i];
 
@@ -365,6 +371,7 @@ define(["jquery",
                             }
                         }
 
+                        // Add interval to list
                         annotationsTool.timeupdateIntervals.push({
                             interval: interval,
                             lastUpdate: 0
@@ -372,6 +379,22 @@ define(["jquery",
                     }
 
                     this.listenTo(annotationsTool, timeupdateEvent, callback);
+                },
+
+                /**
+                 * Remove the given timepudate listener
+                 * @alias   annotationsTool.removeTimeupdateListener
+                 * @param {Object} callback the listener callback
+                 * @param {Number} (interval) the interval between each timeupdate event
+                 */
+                removeTimeupdateListener: function (callback, interval) {
+                    var timeupdateEvent = annotationsTool.EVENTS.TIMEUPDATE;
+
+                    if (!_.isUndefined(interval)) {
+                        timeupdateEvent += ":" + interval;
+                    }
+
+                    this.stopListening(annotationsTool, timeupdateEvent, callback);
                 },
 
                 ///////////////////////////////////////////////
@@ -877,7 +900,7 @@ define(["jquery",
                             if (tracks.getMine().length === 0) {
                                 tracks.create({
                                         name        : "Default " + annotationsTool.user.get("nickname"),
-                                        description : "Default track for user " + annotationsTool.user.get("name")
+                                        description : "Default track for user " + annotationsTool.user.get("nickname")
                                     },
                                     {
                                         wait    : true,
