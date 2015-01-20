@@ -113,7 +113,7 @@ define(["jquery",
                 "click #logout"              : "logout",
                 "click #print"               : "print",
                 "click .opt-layout"          : "layoutUpdate",
-                "click .opt-tracks"          : "tracksSelection"
+                "click [class*='opt-tracks']": "tracksSelection"
             },
 
             /**
@@ -419,7 +419,7 @@ define(["jquery",
              * @alias module:views-main.MainView#tracksSelection
              */
             tracksSelection: function (event) {
-                var tracksFilter = event.currentTarget.id.replace("opt-tracks-", "");
+                var tracksFilter = event.currentTarget.className.replace("opt-tracks-", "");
 
                 if (tracksFilter === "public") {
                     annotationsTool.getTracks().showAllPublic();
@@ -433,8 +433,8 @@ define(["jquery",
                     this.tracksSelectionModal.show();
                 }
 
-                $(".opt-tracks").removeClass("checked");
-                $(event.target).addClass("checked");
+                $("[class*='opt-tracks']").removeClass("checked");
+                $("." + event.target.className).addClass("checked");
             },
 
             /**
@@ -442,9 +442,18 @@ define(["jquery",
              * @alias module:views-main.MainView#layoutUpdate
              */
             layoutUpdate: function (event) {
-
                 var enabled = !$(event.target).hasClass("checked"),
-                    layoutElement = event.currentTarget.id.replace("opt-", "");
+                    layoutElement = event.currentTarget.id.replace("opt-", ""),
+                    checkMainLayout = function () {
+                        if (!annotationsTool.views.annotate.visible && !annotationsTool.views.list.visible) {
+                            $("#left-column").removeClass("span6");
+                            $("#left-column").addClass("span12");
+                        } else {
+                            $("#left-column").addClass("span6");
+                            $("#left-column").removeClass("span12");
+                        }
+                        annotationsTool.views.timeline.redraw();
+                    };
 
                 if (enabled) {
                     $(event.target).addClass("checked");
@@ -452,10 +461,22 @@ define(["jquery",
                     $(event.target).removeClass("checked");
                 }
 
-                if (layoutElement === "annotate-text") {
+                switch (layoutElement) {
+
+                case "annotate-text":
                     this.annotateView.enableFreeTextLayout(enabled);
-                } else if (layoutElement === "annotate-categories") {
+                    break;
+                case "annotate-categories":
                     this.annotateView.enableCategoriesLayout(enabled);
+                    break;
+                case "view-annotate":
+                    annotationsTool.views.annotate.toggleVisibility();
+                    checkMainLayout();
+                    break;
+                case "view-list":
+                    annotationsTool.views.list.toggleVisibility();
+                    checkMainLayout();
+                    break;
                 }
             },
 

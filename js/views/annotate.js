@@ -162,6 +162,8 @@ define(["jquery",
                     categories : true
                 },
 
+                visible: true,
+
                 /**
                  * constructor
                  * @alias module:views-annotate.Category#initialize
@@ -501,18 +503,9 @@ define(["jquery",
                  * @alias module:views-annotate.Annotate#toggleVisibility
                  * @param {Event} event Event object
                  */
-                toggleVisibility: function (event) {
-                    var mainContainer = this.$el.find(".control-group");
-
-                    if (mainContainer.css("display") === "none") {
-                        mainContainer.show();
-                        $("div#annotate-container").toggleClass("expanded");
-                        $(event.target).html("Collapse");
-                    } else {
-                        mainContainer.hide();
-                        $("div#annotate-container").toggleClass("expanded");
-                        $(event.target).html("Expand");
-                    }
+                toggleVisibility: function () {
+                    this.visible = !this.visible;
+                    this.$el.fadeToggle();
                     this.trigger("change-layout");
                 },
 
