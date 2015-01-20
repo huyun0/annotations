@@ -398,8 +398,6 @@ define(["jquery",
 
                     timelineHeight = this.$timeline.height();
 
-                    console.log("Timeline height: " + timelineHeight);
-
                     _.each(annotationsTool.getTracks().slice(0, (timelineHeight / 60).toFixed()), function (track) {
                         tracks[track.get("id")] = true;
                     }, this);
@@ -430,7 +428,6 @@ define(["jquery",
                         $tracks.on("appear", _.debounce(function () {
                             var id = this.dataset.trackid;
                             if (!tracks[id]) {
-                                console.log("Add track " + id);
                                 tracks[id] = true;
                                 self.filteredItems = self.filterItems();
                                 self.redraw();
@@ -440,7 +437,6 @@ define(["jquery",
                         $tracks.on("disappear", _.debounce(function () {
                             var id = this.dataset.trackid;
                             if (tracks[id]) {
-                                console.log("Remove track " + id);
                                 tracks[id] = false;
                                 self.filteredItems = self.filterItems();
                                 self.redraw();
@@ -1028,7 +1024,6 @@ define(["jquery",
              * @param  {PlainObject} attr The plain object representing the updated filter
              */
             updateFiltersRender: function (attr) {
-                console.log("Change filter");
 
                 if (attr.active) {
                     this.$el.find("#filter-" + attr.id).addClass("checked");

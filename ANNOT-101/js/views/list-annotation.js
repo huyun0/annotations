@@ -182,15 +182,11 @@ function ($, PlayerAdapter, Annotation, User, CommentsContainer, TmplCollapsed, 
              * @param {State} fallbackState The fallback state if the new state is already set
              */
             setState: function (newState, fallbackState) {
-                console.log("From " + this.currentState.id + "...");
-
                 if (!_.isUndefined(fallbackState) && this.getState() === newState) {
                     this.currentState = fallbackState;
                 } else {
                     this.currentState = newState;
                 }
-
-                console.log("to " + this.currentState.id + ".");
             },
 
             /**
@@ -266,7 +262,6 @@ function ($, PlayerAdapter, Annotation, User, CommentsContainer, TmplCollapsed, 
              * @param  {event} event Event object
              */
             saveFreeText: function (event) {
-                console.log("SAVE");
                 var newValue = this.$el.find(".freetext textarea").val();
 
                 // If keydown event but not enter, value must not be saved
