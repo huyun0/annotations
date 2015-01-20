@@ -171,8 +171,8 @@ div.timeline-navigation{
     z-index: 4; 
     height: 22px; 
     border: none;
-    border-top: 2px solid @grayDark;
-    border-bottom: 2px solid @grayDark;
+    //border-top: 2px solid @grayDark;
+    //border-bottom: 2px solid @grayDark;
     border-radius: 0;
     background-color: @grayLight;  
     position: relative!important;
@@ -208,10 +208,10 @@ div.timeline-navigation{
 }
 
 div#timeline-custom-navigation{
-    height: 22px; 
+    height: 20px; 
     border: none;
-    border-top: 2px solid @grayDark;
-    border-bottom: 2px solid @grayDark;
+    border-top: 1px solid @grayDark;
+    //border-bottom: 2px solid @grayDark;
     border-radius: 0;
     background-color: @grayLight;  
     position: relative!important;
@@ -223,6 +223,18 @@ div#timeline-custom-navigation{
 
     .btn {
         font-weight: normal!important;
+        border-bottom: none;
+        border-top: none;
+
+    }
+
+    a.btn:first-child {
+            border-left:none;
+    }
+
+    #add-track {
+        border-left: none;
+        border-right: none;
     }
 
     div.dropup {

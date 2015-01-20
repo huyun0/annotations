@@ -129,7 +129,6 @@ define(["jquery",
 
             setState: function (state) {
                 this.currentState = state;
-                console.log("Change comments state to " + state);
             },
 
             toggleAddState: function (state) {
@@ -146,7 +145,6 @@ define(["jquery",
                 } else {
                     this.addState = !this.addState;
                 }
-                console.log("Change state to " + state);
             },
 
             /**
