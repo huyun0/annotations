@@ -373,7 +373,6 @@ define(["jquery",
 
                 this.loadingBox.find(".bar").width("0%");
                 this.loadingBox.show();
-                this.loginView.show();
 
                 annotationsTool.users.each(function (user) {
 
@@ -388,8 +387,12 @@ define(["jquery",
 
                 });
 
+                annotationsTool.modelsInitialized = false;
+
                 if (annotationsTool.logoutUrl) {
                     document.location = annotationsTool.logoutUrl;
+                } else {
+                    location.reload();
                 }
             },
 
