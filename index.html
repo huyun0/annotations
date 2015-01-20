@@ -111,7 +111,22 @@
                     <div id="timeline"></div>
                     
                     <div id="timeline-custom-navigation">
-                        <div class="timeline-bottom-controls"><a id="add-track" class="btn">+ Add track</a></div>
+                        <div class="timeline-bottom-controls">
+                          <div class="btn-group dropup">
+                             <!-- <button class="btn">Other annotations</button> -->
+                            <button class="btn dropdown-toggle" data-toggle="dropdown">
+                              Other annotations <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu">
+                                  <li><a id="opt-tracks-mine" class="opt-tracks" href="#"><i class="check icon-check"></i> My annotations only</a></li>
+                                  <li><a id="opt-select-annotations" class="opt-tracks" href="#"><i class="check icon-check"></i> Other public annotations...</a></li>
+                                  <li><a id="opt-tracks-public" class="opt-tracks" href="#"><i class="check icon-check"></i> All public annotations</a></li>
+                            </ul>
+                          </div>
+                          <a id="add-track" class="btn">+ Add track</a>
+                        </div>
+
+
                         <div class="timeline-bottom-controls" id="reset-zoom"><a class="btn"><i class="icon-eye-open"></i> Reset zoom</a></div>
                         <div class="timeline-bottom-controls" id="move-left"><a class="btn">&lt;</a></div>
                         <div class="timeline-bottom-controls" id="zoom-in"><a class="btn">+</a></div>
