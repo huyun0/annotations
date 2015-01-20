@@ -37,9 +37,10 @@ define(["jquery",
         "prototypes/player_adapter",
         "handlebarsHelpers",
         "FiltersManager",
-        "roles"],
+        "roles",
+        "colors"],
 
-        function ($, Backbone, AnnotationSync, Videos, MainView, AlertView, DeleteModalTmpl, DeleteContentTmpl, PlayerAdapter, Handlebars, FiltersManager, ROLES) {
+        function ($, Backbone, AnnotationSync, Videos, MainView, AlertView, DeleteModalTmpl, DeleteContentTmpl, PlayerAdapter, Handlebars, FiltersManager, ROLES, ColorsManager) {
 
             "use strict";
 
@@ -194,6 +195,8 @@ define(["jquery",
                             }
                         }
                     }, this);
+
+                    this.colorsManager = new ColorsManager();
 
                     this.filtersManager   = new FiltersManager();
                     this.tracksFiltersManager   = new FiltersManager();

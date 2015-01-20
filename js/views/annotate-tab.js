@@ -381,7 +381,7 @@ define(["jquery",
                 var attributes = {
                     name    : "NEW CATEGORY",
                     settings: {
-                        color   : this.DEFAULT_CAT_COLOR,
+                        color   : "#" + annotationsTool.colorsManager.getNextColor(),
                         hasScale: false
                     }
                 };

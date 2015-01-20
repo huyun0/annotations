@@ -54,11 +54,11 @@
 </div>
 
 <div id="text-container{{id}}" class="text-container">
-    {{#if label}} 
-
-    {{else}} 
     <span class="text freetext read-only">
-        {{{textReadOnly}}}
+        {{#if label}} 
+            {{label.value}}
+        {{else}} 
+            {{{textReadOnly}}}
+        {{/if}}
     </span>
-    {{/if}}
 </div>
