@@ -190,6 +190,8 @@ define(["jquery",
 
                 }, this);
 
+                this.$el.find(".opt-tracks-" + annotationsTool.getDefaultTracks().name).addClass("checked");
+
                 this.checkUserAndLogin();
             },
 
@@ -419,11 +421,11 @@ define(["jquery",
              * @alias module:views-main.MainView#tracksSelection
              */
             tracksSelection: function (event) {
-                var tracksFilter = event.currentTarget.className.replace("opt-tracks-", "");
+                var prefixFilter = "opt-tracks-";
 
-                if (tracksFilter === "public") {
+                if ($(event.target).hasClass(prefixFilter + "public")) {
                     annotationsTool.getTracks().showAllPublic();
-                } else if (tracksFilter === "mine") {
+                } else if ($(event.target).hasClass(prefixFilter + "mine")) {
                     annotationsTool.getTracks().showMyTracks();
                 } else {
                     if (_.isUndefined(this.tracksSelectionModal)) {

@@ -522,15 +522,19 @@ function ($, PlayerAdapter, Annotation, User, CommentsContainer, TmplCollapsed, 
              * Listener for click on this annotation
              * @alias module:views-list-annotation.ListAnnotation#onSelect
              */
-            onSelect: function () {
+            onSelect: _.debounce(function (force) {
+                console.log("SELECT");
+
                 // If annotation already selected
                 if (annotationsTool.hasSelection() && annotationsTool.getSelection()[0].get("id") === this.model.get("id")) {
-                    annotationsTool.setSelection();
-                    this.isSelected = false;
+                    if (!_.isBoolean(force) || (_.isBoolean(force) && !force)) {
+                        annotationsTool.setSelection();
+                        this.isSelected = false;
+                    }
                 } else {
                     annotationsTool.setSelection([this.model], true, true);
                 }
-            },
+            }, 200),
 
             /**
              * Stop the propagation of the given event
@@ -557,11 +561,7 @@ function ($, PlayerAdapter, Annotation, User, CommentsContainer, TmplCollapsed, 
 
                 if (this.isEditEnable) {
                     this.trigger("edit", this);
-
-
-                    if (!this.isSelected) {
-                        this.onSelect();
-                    }
+                    this.onSelect(true);
                 }
 
                 this.render();
@@ -574,7 +574,9 @@ function ($, PlayerAdapter, Annotation, User, CommentsContainer, TmplCollapsed, 
              * @param  {boolean} force Force to collapse state
              */
             toggleCollapsedState: function (event, force) {
-                event.stopImmediatePropagation();
+                if (!_.isUndefined(event) && !force) {
+                    event.stopImmediatePropagation();
+                }
 
                 this.commentContainer.setState(CommentsContainer.STATES.READ);
                 if (force) {
@@ -592,7 +594,9 @@ function ($, PlayerAdapter, Annotation, User, CommentsContainer, TmplCollapsed, 
              * @param  {boolean} force Force to expand state 
              */
             toggleExpandedState: function (event, force) {
-                event.stopImmediatePropagation();
+                if (!_.isUndefined(event) && !force) {
+                    event.stopImmediatePropagation();
+                }
 
                 this.commentContainer.setState(CommentsContainer.STATES.READ);
                 if (force) {

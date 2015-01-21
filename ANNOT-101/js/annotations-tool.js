@@ -908,7 +908,7 @@ define(["jquery",
                                     }
                                 );
                             } else {
-                                tracks.showTracks(tracks.first(annotationsTool.MAX_VISIBLE_TRACKS || Number.MAX_VALUE));
+                                tracks.showTracks(_.first(tracks.filter(annotationsTool.getDefaultTracks().filter), annotationsTool.MAX_VISIBLE_TRACKS || Number.MAX_VALUE));
                                 concludeInitialization();
                             }
                         };
