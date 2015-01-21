@@ -53,6 +53,28 @@ define(["jquery",
             },
 
             /**
+             * Possible tracks selection at startup
+             * @type {Object}
+             */
+            TRACKS: {
+                MINE   : "mine",
+                PUBLIC : "public"
+            },
+
+            /**
+             * The default tracks at startup
+             * @type {{@link this.TRACKS}}
+             */
+            getDefaultTracks: function () {
+                return {
+                    name: "mine",
+                    filter: function (track) {
+                        return track.get("isMine");
+                    }
+                };
+            },
+
+            /**
              * The minmal duration used for annotation representation on timeline
              * @alias module:annotations-tool-configuration.Configuration.MINIMAL_DURATION
              * @memberOf module:annotations-tool-configuration.Configuration
@@ -73,6 +95,7 @@ define(["jquery",
              * @type {Number}
              */
             MAX_VISIBLE_TRACKS: 0,
+
 
             /**
              * Define if the localStorage should be used or not

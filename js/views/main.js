@@ -190,6 +190,8 @@ define(["jquery",
 
                 }, this);
 
+                this.$el.find(".opt-tracks-" + annotationsTool.getDefaultTracks().name).addClass("checked");
+
                 this.checkUserAndLogin();
             },
 

@@ -55,6 +55,19 @@ define(["jquery",
                 },
 
                 /**
+                 * The default tracks at startup
+                 * @type {{@link this.TRACKS}}
+                 */
+                getDefaultTracks: function () {
+                    return {
+                        name: "mine",
+                        filter: function (track) {
+                            return track.get("isMine");
+                        }
+                    };
+                },
+
+                /**
                  * The minmal duration used for annotation representation on timeline
                  * @alias module:annotations-tool-configuration.Configuration.MINIMAL_DURATION
                  * @memberOf module:annotations-tool-configuration.Configuration
