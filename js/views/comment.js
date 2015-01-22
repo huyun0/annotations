@@ -75,6 +75,7 @@ define(["jquery",
                 "click i.delete-comment"    : "onDeleteComment",
                 "dblclick span.comment"     : "onEditComment",
                 "click i.edit-comment"      : "onEditComment",
+                "keyup textarea"            : "keyupInsertProxy",
                 "click button[type=submit]" : "onSubmit",
                 "click button[type=button]" : "onCancel"
             },
@@ -175,6 +176,18 @@ define(["jquery",
                 this.model.save();
 
                 this.cancel();
+            },
+
+            /**
+             * Proxy to insert comments by pressing the "return" key
+             * @alias module:views-comments-container.Comment#keyupInsertProxy
+             * @param  {event} event Event object
+             */
+            keyupInsertProxy: function (event) {
+                  // If enter is pressed and shit not, we insert a new annotation
+                if (event.keyCode === 13 && !event.shiftKey) {
+                    this.onSubmit();
+                }
             },
 
             /**

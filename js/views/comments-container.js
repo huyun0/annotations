@@ -77,7 +77,7 @@ define(["jquery",
              */
             events: {
                 "click a.add-comment"                      : "onAddComment",
-                "keyup textarea"                           : "keyupInsertProxy",
+                "keyup textarea.create"                    : "keyupInsertProxy",
                 "click button[type=submit].add-comment"    : "insert",
                 "click button[type=button].cancel-comment" : "onCancelComment"
             },
@@ -265,11 +265,7 @@ define(["jquery",
                     });
 
                 this.commentViews.push(commentModel);
-                // this.$el.find("div#comment-list" + this.annotationId).append(commentModel.render().$el);
 
-                // if (this.comments.length === 1) {
-                //     this.commentList.append(commentModel.render().$el);
-                // }
                 this.$el.parent().find(".comment-amount").text(this.comments.length);
 
                 this.$el.find("textarea").focus();
