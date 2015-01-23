@@ -172,7 +172,10 @@ define(["jquery",
                     return;
                 }
 
-                this.model.set("text", textValue);
+                this.model.set({
+                    "text"       : textValue,
+                    "updated_at" : new Date()
+                });
                 this.model.save();
 
                 this.cancel();
@@ -219,11 +222,11 @@ define(["jquery",
                 var modelJSON = this.model.toJSON(),
                     data = {
                         creator     : modelJSON.created_by_nickname,
-                        creationdate: new Date(modelJSON.created_at),
+                        creationdate: modelJSON.created_at,
                         text        : _.escape(modelJSON.text).replace(/\n/g, "<br/>"),
                         canEdit     : annotationsTool.user.get("id") === modelJSON.created_by
                     };
-                if (modelJSON.created_at !== modelJSON.updated_at) {
+                if (!_.isUndefined(modelJSON.updated_at) && modelJSON.created_at !== modelJSON.updated_at) {
                     data.updator = modelJSON.updated_by_nickname;
                     data.updateddate = new Date(modelJSON.updated_at);
                 }

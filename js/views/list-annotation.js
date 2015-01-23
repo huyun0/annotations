@@ -442,11 +442,11 @@ function ($, PlayerAdapter, Annotation, User, CommentsContainer, TmplCollapsed, 
                     return "";
                 }
 
-                modelJSON = this.model.toJSON();
-                modelJSON.track = this.track.get("name");
+                modelJSON              = this.model.toJSON();
+                modelJSON.track        = this.track.get("name");
                 modelJSON.textReadOnly = _.escape(modelJSON.text).replace(/\n/g, "<br/>");
-                modelJSON.duration = (modelJSON.duration || 0.0);
-                modelJSON.textHeight = $("span.freetext").height();
+                modelJSON.duration     = (modelJSON.duration || 0.0);
+                modelJSON.textHeight   = $("span.freetext").height();
 
                 if (modelJSON.isMine && this.scale && modelJSON.label.category.scale_id) {
                     category = annotationsTool.video.get("categories").get(this.model.get("label").category.id);
@@ -491,7 +491,12 @@ function ($, PlayerAdapter, Annotation, User, CommentsContainer, TmplCollapsed, 
                 if (this.isEditEnable) {
                     title += " edit-on";
                 }
-                this.$el.attr("title", title);
+
+                if (this.getState() === ListAnnotation.STATES.COLLAPSED) {
+                    this.$el.attr("title", title);
+                } else {
+                    this.$el.removeAttr("title");
+                }
 
 
                 // Hack for Firefox, add an button over it
@@ -530,6 +535,7 @@ function ($, PlayerAdapter, Annotation, User, CommentsContainer, TmplCollapsed, 
                         this.isSelected = false;
                     }
                 } else {
+                    this.isSelected = true;
                     annotationsTool.setSelection([this.model], true, true);
                 }
             }, 100),

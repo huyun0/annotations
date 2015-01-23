@@ -337,12 +337,13 @@ define(["jquery",
                             continue;
                         }
                         view.$el.addClass("selected");
-                        view.isSelected = true;
 
                         // Only scroll the list to the first item of the selection
-                        if (i === 0) {
+                        if (i === 0 && !view.isSelected) {
                             location.hash = "#" + view.id;
                         }
+
+                        view.isSelected = true;
                     }
 
                     this.selectionUpdated = false;

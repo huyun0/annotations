@@ -12,6 +12,7 @@
 #list-container{
 
     @min-height: 300px;
+    @content-padding: 5px;
 
     .iconStateSelected(@color1: fade(@black,20%),@color2: fade(@blue,70%),@cursor: pointer,@radius: 3px) {
         background-color: @color1;
@@ -103,9 +104,11 @@
                 background-color: darken(@grayLighter, 10%);
             }
 
-            border: 1px solid @red;      
-            border-bottom: 2px solid @red;    
-            border-top: 2px solid @red;    
+            box-shadow: inset 0px 0px 2px 1px red;
+
+            //border: 1px solid @red;      
+            //border-bottom: 2px solid @red;    
+            //border-top: 2px solid @red;    
         }
 
         .right {
@@ -183,7 +186,6 @@
             display: inline-block;
             position: relative;
             color: @black;
-            background-color: fade(@white,60%);
 
             &.no-duration {
                 display: none;
@@ -284,7 +286,7 @@
             
         span.text{
             display: block;
-            margin: 5px;
+            padding: @content-padding;
             background-color: white;
             word-wrap: break-word;
         }
@@ -296,18 +298,23 @@
             }
         }
        
-        span.track{
-            display:none;
-            background-color: lighten(#005580,20%);
-            color: white;
-            padding: 3px;
-            font-size: 0.90em;  
-        }
+        // span.track{
+        //     display:none;
+        //     background-color: lighten(#005580,20%);
+        //     color: white;
+        //     padding: 3px;
+        //     font-size: 0.90em;  
+        // }
         
-        span.user{
-            display:none;
-            font-style: italic;
-            font-weight: bold;
+        div.creator-info{
+            padding: @content-padding;
+            font-size: 10px;
+            width: 100%;
+            display: inline-block;
+
+            span.user, span.created, span.track {
+                font-style: italic;
+            }
         }
     }
 
@@ -320,13 +327,19 @@
 
 
     div.comments-container {
-      background-color: @grayLight;
+      //background-color: @grayLight;
       color: @black;
       clear: both;
+      padding-bottom: 2px;
 
       
       textarea { 
                 resize:vertical;  
+        }
+
+        div.title {
+            background-color: @grayLight;
+            padding: 2px;
         }
             
       
@@ -352,17 +365,10 @@
         .comment-list {
         
           font-size: 0.92em;
-          padding: 2px; 
 
                 > div[id^="comment"] {
-                    padding: 5px;
-
-                    &:nth-child(odd) {
-                        background-color:@grayLighter;
-                    }  
-                    &:nth-child(even) {
-                        background-color:@white;
-                    }                           
+                    padding: @content-padding;
+                        
                     span.header {
                         display: block;
                         font-size: 1em;
