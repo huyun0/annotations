@@ -442,11 +442,11 @@ function ($, PlayerAdapter, Annotation, User, CommentsContainer, TmplCollapsed, 
                     return "";
                 }
 
-                modelJSON = this.model.toJSON();
-                modelJSON.track = this.track.get("name");
+                modelJSON              = this.model.toJSON();
+                modelJSON.track        = this.track.get("name");
                 modelJSON.textReadOnly = _.escape(modelJSON.text).replace(/\n/g, "<br/>");
-                modelJSON.duration = (modelJSON.duration || 0.0);
-                modelJSON.textHeight = $("span.freetext").height();
+                modelJSON.duration     = (modelJSON.duration || 0.0);
+                modelJSON.textHeight   = $("span.freetext").height();
 
                 if (modelJSON.isMine && this.scale && modelJSON.label.category.scale_id) {
                     category = annotationsTool.video.get("categories").get(this.model.get("label").category.id);
@@ -491,7 +491,12 @@ function ($, PlayerAdapter, Annotation, User, CommentsContainer, TmplCollapsed, 
                 if (this.isEditEnable) {
                     title += " edit-on";
                 }
-                this.$el.attr("title", title);
+
+                if (this.getState() === ListAnnotation.STATES.COLLAPSED) {
+                    this.$el.attr("title", title);
+                } else {
+                    this.$el.removeAttr("title");
+                }
 
 
                 // Hack for Firefox, add an button over it
@@ -523,8 +528,6 @@ function ($, PlayerAdapter, Annotation, User, CommentsContainer, TmplCollapsed, 
              * @alias module:views-list-annotation.ListAnnotation#onSelect
              */
             onSelect: _.debounce(function (force) {
-                console.log("SELECT");
-
                 // If annotation already selected
                 if (annotationsTool.hasSelection() && annotationsTool.getSelection()[0].get("id") === this.model.get("id")) {
                     if (!_.isBoolean(force) || (_.isBoolean(force) && !force)) {
@@ -532,9 +535,10 @@ function ($, PlayerAdapter, Annotation, User, CommentsContainer, TmplCollapsed, 
                         this.isSelected = false;
                     }
                 } else {
+                    this.isSelected = true;
                     annotationsTool.setSelection([this.model], true, true);
                 }
-            }, 200),
+            }, 100),
 
             /**
              * Stop the propagation of the given event
@@ -655,8 +659,8 @@ function ($, PlayerAdapter, Annotation, User, CommentsContainer, TmplCollapsed, 
                         "click .proxy-anchor "       : "stopPropagation",
                         "click a.collapse"           : "toggleCollapsedState",
                         "click i.icon-comment-amount": "toggleCommentsState",
-                        "click i.icon-comment"       : "toggleCommentsState",
-                        "dblclick"                   : "toggleEditState"
+                        "click i.icon-comment"       : "toggleCommentsState"
+                        //"dblclick"                   : "toggleEditState"
                     }
                 },
                 EXPANDED: {
@@ -669,11 +673,11 @@ function ($, PlayerAdapter, Annotation, User, CommentsContainer, TmplCollapsed, 
                         "click a.collapse"           : "toggleCollapsedState",
                         "click i.icon-comment-amount": "toggleCommentsState",
                         "click i.icon-comment"       : "toggleCommentsState",
-                        "click .toggle-edit"         : "toggleEditState",
-                        "dblclick span.text"         : "toggleEditState",
-                        "dblclick span.start"        : "toggleEditState",
-                        "dblclick span.end"          : "toggleEditState",
-                        "dblclick span.category"     : "toggleEditState"
+                        "click .toggle-edit"         : "toggleEditState"
+                        //"dblclick span.text"         : "toggleEditState",
+                        //"dblclick span.start"        : "toggleEditState",
+                        //"dblclick span.end"          : "toggleEditState",
+                        //"dblclick span.category"     : "toggleEditState"
                     }
                 },
                 EDIT: {

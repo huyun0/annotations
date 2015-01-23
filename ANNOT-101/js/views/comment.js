@@ -75,6 +75,7 @@ define(["jquery",
                 "click i.delete-comment"    : "onDeleteComment",
                 "dblclick span.comment"     : "onEditComment",
                 "click i.edit-comment"      : "onEditComment",
+                "keyup textarea"            : "keyupInsertProxy",
                 "click button[type=submit]" : "onSubmit",
                 "click button[type=button]" : "onCancel"
             },
@@ -171,10 +172,25 @@ define(["jquery",
                     return;
                 }
 
-                this.model.set("text", textValue);
+                this.model.set({
+                    "text"       : textValue,
+                    "updated_at" : new Date()
+                });
                 this.model.save();
 
                 this.cancel();
+            },
+
+            /**
+             * Proxy to insert comments by pressing the "return" key
+             * @alias module:views-comments-container.Comment#keyupInsertProxy
+             * @param  {event} event Event object
+             */
+            keyupInsertProxy: function (event) {
+                  // If enter is pressed and shit not, we insert a new annotation
+                if (event.keyCode === 13 && !event.shiftKey) {
+                    this.onSubmit();
+                }
             },
 
             /**
@@ -206,11 +222,11 @@ define(["jquery",
                 var modelJSON = this.model.toJSON(),
                     data = {
                         creator     : modelJSON.created_by_nickname,
-                        creationdate: new Date(modelJSON.created_at),
+                        creationdate: modelJSON.created_at,
                         text        : _.escape(modelJSON.text).replace(/\n/g, "<br/>"),
                         canEdit     : annotationsTool.user.get("id") === modelJSON.created_by
                     };
-                if (modelJSON.created_at !== modelJSON.updated_at) {
+                if (!_.isUndefined(modelJSON.updated_at) && modelJSON.created_at !== modelJSON.updated_at) {
                     data.updator = modelJSON.updated_by_nickname;
                     data.updateddate = new Date(modelJSON.updated_at);
                 }
