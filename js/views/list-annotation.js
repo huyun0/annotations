@@ -523,8 +523,6 @@ function ($, PlayerAdapter, Annotation, User, CommentsContainer, TmplCollapsed, 
              * @alias module:views-list-annotation.ListAnnotation#onSelect
              */
             onSelect: _.debounce(function (force) {
-                console.log("SELECT");
-
                 // If annotation already selected
                 if (annotationsTool.hasSelection() && annotationsTool.getSelection()[0].get("id") === this.model.get("id")) {
                     if (!_.isBoolean(force) || (_.isBoolean(force) && !force)) {
@@ -534,7 +532,7 @@ function ($, PlayerAdapter, Annotation, User, CommentsContainer, TmplCollapsed, 
                 } else {
                     annotationsTool.setSelection([this.model], true, true);
                 }
-            }, 200),
+            }, 100),
 
             /**
              * Stop the propagation of the given event
@@ -655,8 +653,8 @@ function ($, PlayerAdapter, Annotation, User, CommentsContainer, TmplCollapsed, 
                         "click .proxy-anchor "       : "stopPropagation",
                         "click a.collapse"           : "toggleCollapsedState",
                         "click i.icon-comment-amount": "toggleCommentsState",
-                        "click i.icon-comment"       : "toggleCommentsState",
-                        "dblclick"                   : "toggleEditState"
+                        "click i.icon-comment"       : "toggleCommentsState"
+                        //"dblclick"                   : "toggleEditState"
                     }
                 },
                 EXPANDED: {
@@ -669,11 +667,11 @@ function ($, PlayerAdapter, Annotation, User, CommentsContainer, TmplCollapsed, 
                         "click a.collapse"           : "toggleCollapsedState",
                         "click i.icon-comment-amount": "toggleCommentsState",
                         "click i.icon-comment"       : "toggleCommentsState",
-                        "click .toggle-edit"         : "toggleEditState",
-                        "dblclick span.text"         : "toggleEditState",
-                        "dblclick span.start"        : "toggleEditState",
-                        "dblclick span.end"          : "toggleEditState",
-                        "dblclick span.category"     : "toggleEditState"
+                        "click .toggle-edit"         : "toggleEditState"
+                        //"dblclick span.text"         : "toggleEditState",
+                        //"dblclick span.start"        : "toggleEditState",
+                        //"dblclick span.end"          : "toggleEditState",
+                        //"dblclick span.category"     : "toggleEditState"
                     }
                 },
                 EDIT: {
