@@ -410,6 +410,8 @@ define(["jquery",
 
                 this.updateInputWidth();
 
+                this.delegateEvents(this.events);
+
                 return this;
             }
         });

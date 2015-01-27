@@ -358,11 +358,12 @@ define(["jquery",
                     tabId = tabId.replace(TAB_LINK_PREFIX, "");
 
                     $(event.currentTarget).one("shown", $.proxy(function () {
-                        this.categoriesTabs[tabId].render();
+                        //this.categoriesTabs[tabId].render();
                         this.categoriesTabs[tabId].initCarousel();
                     }, this));
 
                     $(event.currentTarget).tab("show");
+                    this.categoriesTabs[tabId].select();
                 },
 
                 /**
