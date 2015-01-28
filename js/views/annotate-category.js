@@ -286,7 +286,7 @@ define(["jquery",
             onCreateLabel: function () {
                 this.model.get("labels").create({
                     value       : "New",
-                    abbreviation: "",
+                    abbreviation: "NEW",
                     category    : this.model
                 },
                   {wait: true}
