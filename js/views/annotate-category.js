@@ -315,8 +315,8 @@ define(["jquery",
              * @alias module:views-annotate-category.CategoryView#onFocusOut
              */
             onFocusOut: function () {
-                this.model.set("name", _.escape(this.nameInput.val()), {silent: true});
-                this.model.save({silent: true});
+                this.model.set("name", _.escape(this.nameInput.val()), {wait: true});
+                this.model.save({wait: true});
             },
 
             /**
@@ -325,8 +325,8 @@ define(["jquery",
              */
             onKeyDown: function (e) {
                 if (e.keyCode === 13) { // If "return" key
-                    this.model.set("name", _.escape(this.nameInput.val()));
-                    this.model.save({silent: true});
+                    this.model.set("name", _.escape(this.nameInput.val()), {wait: true});
+                    this.model.save({wait: true});
                 } else if (e.keyCode === 39 && this.getCaretPosition(e.target) === e.target.value.length ||
                            e.keyCode === 37 && this.getCaretPosition(e.target) === 0) {
                     // Avoid scrolling through arrows keys
@@ -378,6 +378,7 @@ define(["jquery",
              */
             render: function () {
                 var modelJSON = this.model.toJSON();
+
                 modelJSON.notEdit = !this.editModus;
 
                 _.each(this.labelViews, function (view) {
