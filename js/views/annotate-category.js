@@ -324,6 +324,8 @@ define(["jquery",
              * @alias module:views-annotate-category.CategoryView#onKeyDown
              */
             onKeyDown: function (e) {
+                e.stopImmediatePropagation();
+
                 if (e.keyCode === 13) { // If "return" key
                     this.model.set("name", _.escape(this.nameInput.val()), {wait: true});
                     this.model.save({wait: true});
@@ -378,6 +380,8 @@ define(["jquery",
              */
             render: function () {
                 var modelJSON = this.model.toJSON();
+
+                this.undelegateEvents();
 
                 modelJSON.notEdit = !this.editModus;
 
