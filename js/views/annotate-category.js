@@ -291,8 +291,6 @@ define(["jquery",
                 },
                   {wait: true}
                 );
-
-              //  label.save();
             },
 
             /**
