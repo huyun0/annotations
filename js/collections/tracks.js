@@ -273,9 +273,14 @@ define(["jquery",
                         showTrack(track);
                     }, this);
 
-                    if (!_.isUndefined(selectedTrack) && !selectedTrack.get(Track.FIELDS.VISIBLE)) {
-                        annotationsTool.selectedTrack = this.visibleTracks[0];
+                    if (_.isUndefined(selectedTrack) || (!_.isUndefined(selectedTrack) && !selectedTrack.get(Track.FIELDS.VISIBLE))) {
+                        selectedTrack = _.find(this.visibleTracks, function (track) {
+                                            return track.get("isMine");
+                                        }, this);
+                        annotationsTool.selectTrack(selectedTrack);
                     }
+                    
+                    annotationsTool.selectTrack(selectedTrack);
 
                     this.trigger(EVENTS.VISIBILITY, this.visibleTracks);
                 },

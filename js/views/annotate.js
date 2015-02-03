@@ -301,11 +301,24 @@ define(["jquery",
                     // If the track is valid, we set it
                     if (track) {
                         this.input.attr("disabled", false);
+
+                        if (this.layout.freeText) {
+                            this.freeTextElement.show();
+                        }
+
+                        if (this.layout.categories) {
+                            this.categoriesElement.show();
+                        }
+
+                        this.$el.find(".no-track").hide();
                         this.trackDIV.html(track.get("name"));
                     } else {
                         // Otherwise, we disable the input and inform the user that no track is set
+                        this.freeTextElement.hide();
+                        this.categoriesElement.hide();
                         this.input.attr("disabled", true);
-                        this.trackDIV.html("<span class='notrack'>Select a track!</span>");
+                        this.$el.find(".no-track").show();
+                        this.trackDIV.html("<span>no track</span>");
                     }
                 },
 
