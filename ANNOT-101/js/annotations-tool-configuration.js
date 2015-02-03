@@ -55,7 +55,6 @@ define(["jquery",
 
             /**
              * The default tracks at startup
-             * @type {{@link this.TRACKS}}
              */
             getDefaultTracks: function () {
                 return {

@@ -124,6 +124,11 @@ define(["jquery",
                                                               nickname: userNickname.val(),
                                                               role: this.$el.find("#supervisor")[0].checked ? ROLES.SUPERVISOR : ROLES.USER},
                                                               {wait: true});
+                            if (this.$el.find("#supervisor")[0].checked) {
+                                annotationsTool.getUserRole = function () {
+                                    return ROLES.SUPERVISOR;
+                                };
+                            }
                         } else {
                             user = annotationsTool.users.create({user_extid: userId, nickname: userNickname.val()}, {wait: true});
                         }

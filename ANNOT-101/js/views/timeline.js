@@ -127,14 +127,14 @@ define(["jquery",
              * @type {map}
              */
             events: {
-                "click #add-track": "initTrackCreation",
-                "click #reset-zoom": "onTimelineResetZoom",
-                "click #zoom-in": "zoomIn",
-                "click #zoom-out": "zoomOut",
-                "click #move-right": "moveRight",
-                "click #move-left": "moveLeft",
-                "click #filter-none": "disableFilter",
-                "click .filter": "switchFilter"
+                "click #add-track"   : "initTrackCreation",
+                "click #reset-zoom"  : "onTimelineResetZoom",
+                "click #zoom-in"     : "zoomIn",
+                "click #zoom-out"    : "zoomOut",
+                "click #move-right"  : "moveRight",
+                "click #move-left"   : "moveLeft",
+                "click #filter-none" : "disableFilter",
+                "click .filter"      : "switchFilter"
             },
 
             /**
@@ -1458,8 +1458,7 @@ define(["jquery",
                     return;
                 }
 
-                annotationsTool.selectedTrack = track;
-                this.tracks.trigger("selected_track", track);
+                annotationsTool.selectTrack(track);
 
                 this.$el.find("div.selected").removeClass("selected");
                 this.$el.find(".timeline-group[data-id='" + trackId + "']").parent().addClass("selected");

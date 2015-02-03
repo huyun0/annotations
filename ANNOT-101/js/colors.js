@@ -89,9 +89,14 @@ define(["underscore"], function (_) {
          */
         this.updateColors = function (categories) {
             _.each(categories, function (category) {
-                var color = category.get("settings").color.replace("#", "");
-                if (!_.isUndefined(colors[color])) {
-                    colors[color]++;
+                var settings = category.get("setting"),
+                    color;
+
+                if (!_.isUndefined(settings) && !_.isUndefined(settings.color)) {
+                    color = settings.color.replace("#", "");
+                    if (!_.isUndefined(colors[color])) {
+                        colors[color]++;
+                    }
                 }
             }, self);
         };

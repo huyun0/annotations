@@ -111,7 +111,7 @@ define(["jquery",
                 "click"                         : "annotate",
                 "click i.delete"                : "onDeleteLabel",
                 "focusout .item-value"          : "onFocusOut",
-                "keydown .item-value"            : "onKeyDown",
+                "keydown .item-value"           : "onKeyDown",
                 "focusout .item-abbreviation"   : "onFocusOut",
                 "keydown .item-abbreviation"    : "onKeyDown",
                 "click .scaling li"             : "annnotateWithScaling"
@@ -181,9 +181,10 @@ define(["jquery",
             },
 
             updateAbbreviation: function () {
-                var abbreviation = this.model.get("abbreviation");
+                var abbreviation = this.model.get("abbreviation"),
+                    value = this.model.get("value");
 
-                if (_.isUndefined(abbreviation) || abbreviation === "") {
+                if (_.isUndefined(abbreviation) || abbreviation === "" || abbreviation === value.substr(0, 3).toUpperCase()) {
                     this.$el.find("input.item-abbreviation").val(this.$el.find("input.item-value").val().substr(0, 3).toUpperCase());
                 }
             },

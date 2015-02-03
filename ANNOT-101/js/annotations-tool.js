@@ -148,6 +148,7 @@ define(["jquery",
                                     "onMouseDown",
                                     "onMouseUp",
                                     "onTimeUpdate",
+                                    "selectTrack",
                                     "setSelection",
                                     "setSelectionById",
                                     "addTimeupdateListener",
@@ -685,6 +686,16 @@ define(["jquery",
                  */
                 getSelectedTrack: function () {
                     return this.selectedTrack;
+                },
+
+                /**
+                 * Select the given track
+                 * @alias   annotationsTool.selectTrack
+                 * @param  {Object} track the track to select
+                 */
+                selectTrack: function (track) {
+                    this.selectedTrack = track;
+                    this.video.get("tracks").trigger("selected_track", track);
                 },
 
                 /**

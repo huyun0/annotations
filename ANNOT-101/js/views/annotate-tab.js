@@ -209,6 +209,7 @@ define(["jquery",
 
                 // Set the current context for all these functions
                 _.bindAll(this,
+                  "select",
                   "addCategories",
                   "addCategory",
                   "onAddCategory",
@@ -286,6 +287,13 @@ define(["jquery",
                 this.carouselElement.carousel(0).carousel("pause");
 
                 return this;
+            },
+
+            select: function () {
+                console.log("Tab selected");
+                _.each(this.categoryViews, function (view) {
+                    view.updateInputWidth();
+                }, this);
             },
 
             /**
@@ -672,7 +680,7 @@ define(["jquery",
                 this.carouselPagination.find("li:not(:last,:first)").remove();
 
                 _.each(this.categoryViews, function (catView) {
-                    this.insertCategoryView(catView);
+                    this.insertCategoryView(catView.render());
                 }, this);
 
                 if (currentId) {
