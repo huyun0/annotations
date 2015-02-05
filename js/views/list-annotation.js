@@ -673,7 +673,8 @@ function ($, PlayerAdapter, Annotation, User, CommentsContainer, TmplCollapsed, 
                         "click a.collapse"           : "toggleCollapsedState",
                         "click i.icon-comment-amount": "toggleCommentsState",
                         "click i.icon-comment"       : "toggleCommentsState",
-                        "click .toggle-edit"         : "toggleEditState"
+                        "click .toggle-edit"         : "toggleEditState",
+                        "click i.delete"             : "deleteFull"
                         //"dblclick span.text"         : "toggleEditState",
                         //"dblclick span.start"        : "toggleEditState",
                         //"dblclick span.end"          : "toggleEditState",

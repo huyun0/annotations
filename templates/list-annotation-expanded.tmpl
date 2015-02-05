@@ -41,6 +41,10 @@
     </div>
 
     <div class="right">
+        {{#canBeDeleted}}
+        <i class="delete icon-trash" title="Delete annotation."></i>
+        {{/canBeDeleted}}
+
         {{#if isMine}}
         <i class="toggle-edit icon-pencil" title="Edit annotation."></i>
         {{/if}}
