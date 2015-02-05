@@ -222,7 +222,7 @@ define(["jquery",
                 var modelJSON = this.model.toJSON(),
                     data = {
                         creator     : modelJSON.created_by_nickname,
-                        creationdate: modelJSON.created_at,
+                        creationdate: new Date(modelJSON.created_at),
                         text        : _.escape(modelJSON.text).replace(/\n/g, "<br/>"),
                         canEdit     : annotationsTool.user.get("id") === modelJSON.created_by
                     };
