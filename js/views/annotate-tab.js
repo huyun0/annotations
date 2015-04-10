@@ -50,9 +50,9 @@ define(["jquery",
         "collections/labels",
         "collections/scalevalues",
         "views/annotate-category",
-        "text!templates/annotate-tab.tmpl",
+        "templates/annotate-tab",
         "default_scale_set",
-        "handlebars",
+        "handlebarsHelpers",
         "backbone",
         "access",
         "libs/Blob",
@@ -119,14 +119,14 @@ define(["jquery",
             /**
              * Tab template
              * @alias module:views-annotate-tab.AnnotateTab#template
-             * @type {Handlebars template}
+             * @type {HandlebarsTemplate}
              */
-            template: Handlebars.compile(Template),
+            template: Template,
 
             /**
              * Template for the carousel items
              * @alias module:views-annotate-tab.AnnotateTab#itemContainerTemplate
-             * @type {Handlebars template}
+             * @type {HandlebarsTemplate}
              */
             itemContainerTemplate: Handlebars.compile("<div class=\"item row-fluid\" id=\"item-{{number}}\">\
                                                         <div class=\"span12\">\
@@ -138,42 +138,42 @@ define(["jquery",
             /**
              * Template for pagination link
              * @alias module:views-annotate-tab.AnnotateTab#paginationBulletTemplate
-             * @type {Handlebars template}
+             * @type {HandlebarsTemplate}
              */
             paginationBulletTemplate: Handlebars.compile("<li><a href=\"#\" class=\"page-link\" title=\"{{frame}}\" id=\"page-{{number}}\">{{number}}</a></li>"),
 
             /**
              * Element containing the "carousel"
              * @alias module:views-annotate-tab.AnnotateTab#carouselElement
-             * @type {DOM Element}
+             * @type {DOMElement}
              */
             carouselElement: undefined,
 
             /**
              * Element containing the pagination
              * @alias module:views-annotate-tab.AnnotateTab#carouselPagination
-             * @type {DOM Element}
+             * @type {DOMElement}
              */
             carouselPagination: undefined,
 
             /**
              * Element containing the all the categories
              * @alias module:views-annotate-tab.AnnotateTab#categoriesContainer
-             * @type {DOM Element}
+             * @type {DOMElement}
              */
             categoriesContainer: undefined,
 
             /**
              * Current container for categories group in the carousel
              * @alias module:views-annotate-tab.AnnotateTab#itemsCurrentContainer
-             * @type {DOM Element}
+             * @type {DOMElement}
              */
             itemsCurrentContainer: undefined,
 
             /**
              * Element represeting the tab top link
              * @alias module:views-annotate-tab.AnnotateTab#titleLink
-             * @type {DOM Element}
+             * @type {DOMElement}
              */
             titleLink: undefined,
 
@@ -209,6 +209,7 @@ define(["jquery",
 
                 // Set the current context for all these functions
                 _.bindAll(this,
+                  "select",
                   "addCategories",
                   "addCategory",
                   "onAddCategory",
@@ -277,7 +278,7 @@ define(["jquery",
                 this.listenTo(this.categories, "remove", this.removeOne);
                 this.listenTo(this.categories, "destroy", this.removeOne);
 
-                this.listenTo(annotationsTool.video, "switchEditModus", this.onSwitchEditModus);
+                this.listenTo(annotationsTool, annotationsTool.EVENTS.ANNOTATE_TOGGLE_EDIT, this.onSwitchEditModus);
 
                 this.hasEditMode = _.contains(this.roles, annotationsTool.user.get("role"));
 
@@ -286,6 +287,13 @@ define(["jquery",
                 this.carouselElement.carousel(0).carousel("pause");
 
                 return this;
+            },
+
+            select: function () {
+                console.log("Tab selected");
+                _.each(this.categoryViews, function (view) {
+                    view.updateInputWidth();
+                }, this);
             },
 
             /**
@@ -361,11 +369,7 @@ define(["jquery",
                     }
                 }
                 // Save new category
-                newCategory.save();
-
-                if (annotationsTool.localStorage) {
-                    annotationsTool.video.save();
-                }
+                // newCategory.save({silent: true});
 
                 categoryView = new CategoryView({
                     category : newCategory,
@@ -385,7 +389,7 @@ define(["jquery",
                 var attributes = {
                     name    : "NEW CATEGORY",
                     settings: {
-                        color   : this.DEFAULT_CAT_COLOR,
+                        color   : "#" + annotationsTool.colorsManager.getNextColor(),
                         hasScale: false
                     }
                 };
@@ -412,13 +416,13 @@ define(["jquery",
             /**
              * Insert the given category in the carousel
              * @alias module:views-annotate-tab.AnnotateTab#insertCategoryView
-             * @param  {Category View} categoryView the view to insert
+             * @param  {CategoryView} categoryView the view to insert
              */
             insertCategoryView: function (categoryView) {
                 var itemsLength = this.categoriesContainer.find("div.category-item").length;
 
                 // Create a new carousel if the current one is full
-                if ((itemsLength % 12) === 0) {
+                if ((itemsLength % annotationsTool.CATEGORIES_PER_TAB) === 0) {
                     this.addCarouselItem();
                 }
 
@@ -426,10 +430,10 @@ define(["jquery",
                     this.initCarousel();
                 }
 
-                this.itemsCurrentContainer.append(categoryView.render().$el);
+                this.itemsCurrentContainer.append(categoryView.$el);
 
                 // Move the carousel to the container of the new item
-                this.carouselElement.carousel(parseInt(itemsLength / 12, 10)).carousel("pause");
+                this.carouselElement.carousel(parseInt(itemsLength / annotationsTool.CATEGORIES_PER_TAB, 10)).carousel("pause");
             },
 
             /**
@@ -438,13 +442,13 @@ define(["jquery",
              */
             addCarouselItem: function () {
                 var length = this.categoriesContainer.find("div.category-item").length,
-                    pageNumber = (length - (length % 12)) / 12;
+                    pageNumber = (length - (length % annotationsTool.CATEGORIES_PER_TAB)) / annotationsTool.CATEGORIES_PER_TAB;
 
                 this.categoriesContainer.append(this.itemContainerTemplate({number: (pageNumber + 1)}));
 
                 this.itemsCurrentContainer = this.categoriesContainer.find("div div div.row-fluid").last();
 
-                if (length >= 12) {
+                if (length >= annotationsTool.CATEGORIES_PER_TAB) {
                     this.carouselPagination.parent().css("display", "block");
                 }
 
@@ -471,7 +475,6 @@ define(["jquery",
                 if (!hasBeenInit) {
                     this.carouselElement.carousel(0);
                 }
-
             },
 
             /**
@@ -552,6 +555,10 @@ define(["jquery",
                 this.carouselPagination.find(".page-link").parent().removeClass("active");
                 this.carouselPagination.find("#page-" + numberStr).parent().addClass("active");
                 this.delegateEvents(this.events);
+
+                _.each(this.categoryViews, function (catView) {
+                    catView.updateInputWidth();
+                }, this);
             },
 
             /**
@@ -673,7 +680,7 @@ define(["jquery",
                 this.carouselPagination.find("li:not(:last,:first)").remove();
 
                 _.each(this.categoryViews, function (catView) {
-                    this.insertCategoryView(catView);
+                    this.insertCategoryView(catView.render());
                 }, this);
 
                 if (currentId) {

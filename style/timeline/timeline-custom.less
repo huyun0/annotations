@@ -18,6 +18,15 @@
 	
 	.navbar {
 		margin: 0;
+
+        span.time-header {
+            margin-left: 10px;
+
+            span.time {
+                font-size: bold;
+                color: white;
+            }
+        }
 	}
 }
 
@@ -76,7 +85,13 @@ div.timeline-groups-text{
         a:hover{
             text-decoration: none!important;
         }
-               
+        
+        a.content-overlay {
+            display: inline-block;
+            width: 150px;
+            height: 100%;
+        }
+
         div.content{
         	width: 105px;
             overflow: hidden;
@@ -88,6 +103,12 @@ div.timeline-groups-text{
             &:hover {
                 text-decoration: none!important;
             }
+
+            &.empty {
+                width: 150px;
+                color: grey;
+                text-transform: none;
+            }
         }
     }
 
@@ -96,19 +117,32 @@ div.timeline-groups-text{
     }
     
     &.selected {
-        background-color:  @grayLighter;
+        background-color: darken(@grayLighter, 10%);
         
         div.timeline-group:hover{
             background-color: inherit;
         }
     }
     
-    i.delete, i.visibility {
+    i.delete, i.update {
+        z-index: 4;
+        margin-right: 4px;
+        position: relative;
+        display: inline-block;
+        
+        &:hover {
+          .iconHover();
+        }
+    }
+
+    span.visibility {
+        font-size: 9pt;
         z-index: 4;
         margin-top: 5px;
         margin-right: 4px;
         position: relative;
         display: inline-block;
+        padding: 0px 2px 0px 2px;
         
         &:hover {
           .iconHover();
@@ -127,7 +161,7 @@ div.timeline-groups-text{
 }
 
 div.timeline-customtime {
-    z-index: 3;
+    z-index: 6;
     background-color: @red;
     width: 1px;
 }
@@ -137,8 +171,8 @@ div.timeline-navigation{
     z-index: 4; 
     height: 22px; 
     border: none;
-    border-top: 2px solid @grayDark;
-    border-bottom: 2px solid @grayDark;
+    //border-top: 2px solid @grayDark;
+    //border-bottom: 2px solid @grayDark;
     border-radius: 0;
     background-color: @grayLight;  
     position: relative!important;
@@ -174,10 +208,10 @@ div.timeline-navigation{
 }
 
 div#timeline-custom-navigation{
-    height: 22px; 
+    height: 20px; 
     border: none;
-    border-top: 2px solid @grayDark;
-    border-bottom: 2px solid @grayDark;
+    border-top: 1px solid @grayDark;
+    //border-bottom: 2px solid @grayDark;
     border-radius: 0;
     background-color: @grayLight;  
     position: relative!important;
@@ -189,6 +223,32 @@ div#timeline-custom-navigation{
 
     .btn {
         font-weight: normal!important;
+        border-bottom: none;
+        border-top: none;
+
+    }
+
+    a.btn:first-child {
+            border-left:none;
+    }
+
+    #add-track {
+        border-left: none;
+        border-right: none;
+    }
+
+    div.dropup {
+        float: left;
+
+        button {
+            .standard_border_radius();
+            color: @black;
+            text-shadow: none;
+            border-color: @btnBorder;
+            box-shadow: none;
+            font-weight: bold;
+            padding: 2px 6px;
+        }
     }
 }
 
@@ -321,6 +381,11 @@ div#timeline {
     overflow-x: hidden;
     overflow-y: auto!important;
     min-height: 55px!important;
+}
+
+div.timeline-frame > div:first-child > div:first-child {
+    background-color: white;
+    z-index: 5;
 }
 
 

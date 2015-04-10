@@ -9,7 +9,13 @@
         <link rel="stylesheet" href="../style/qunit.css">
         <script type="text/javascript" src="../js/libs/tests/qunit.js"></script>
         <script data-main="js/require/loop.js" src="../js/libs/require/require.js"></script>
-        <script src="../js/libs/tests/blanket.min.js" data-cover-flags="debug" data-cover-only="['./../js/views/','./../js/models','./../js/collections/']"></script>
+        <script src="js/require/loop.js" ></script>
+        <script src="../js/libs/tests/blanket.js" data-cover-flags="debug" data-cover-only="['./../js/views/','./../js/models','./../js/collections/']"></script>
+        <script>
+            if (location.href.match(/(\?|&)gruntReport($|&|=)/)) {
+                blanket.options("reporter", "reporter/grunt-reporter.js");
+            }
+        </script>
     </head>
     <body>
         <div id="qunit"></div>

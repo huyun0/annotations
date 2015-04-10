@@ -26,11 +26,11 @@ define(["jquery",
         "collections/loops",
         "prototypes/player_adapter",
         "backbone",
-        "text!templates/loop-control.tmpl",
+        "templates/loop-control",
         "handlebars",
         "slider"],
 
-        function ($, Loops, PlayerAdapter, Backbone, LoopTmpl, Handlebars) {
+        function ($, Loops, PlayerAdapter, Backbone, LoopTemplate, Handlebars) {
 
             "use strict";
 
@@ -86,10 +86,9 @@ define(["jquery",
                  * @type {String}
                  * @alias module:views-loop.Loop#LAYOUT_MENU_TMPL
                  */
-                LAYOUT_MENU_TMPL:   "<li class=\"divider\"></li>\
-                                     <li>\
+                LAYOUT_MENU_TMPL:   "<li>\
                                          <a id=\"enableLoops\" href=\"#\" class=\"checked\">\
-                                             <i class=\"check icon-check\"></i> Loop function\
+                                             <i class=\"check icon-check\"></i> Loop Controller\
                                          </a>\
                                      </li>",
 
@@ -105,9 +104,9 @@ define(["jquery",
                 /**
                  * Loop template
                  * @alias module:views-loop.Loop#loopTemplate
-                 * @type {Handlebars template}
+                 * @type {HandlebarsTemplate}
                  */
-                loopTemplate: Handlebars.compile(LoopTmpl),
+                loopTemplate: LoopTemplate,
 
                 /**
                  * Events to handle
@@ -139,7 +138,8 @@ define(["jquery",
                                     "toggle",
                                     "toggleVisibity",
                                     "typeLoopLength");
-                    var duration;
+                    var mainView,
+                        defaultVisiblity = annotationsTool.getLayoutConfiguration().loop;
 
                     this.playerAdapter = annotationsTool.playerAdapter;
                     this.loops = new Loops([], annotationsTool.video);
@@ -148,11 +148,10 @@ define(["jquery",
                     this.setElement($("#loop")[0]);
                     this.initSlider();
 
-                    if (!_.isUndefined(annotationsTool.views.annotate)) {
-                        var annotateView = annotationsTool.views.annotate,
-                            self = this;
-                        annotateView.$el.find(".dropdown-menu").append(this.LAYOUT_MENU_TMPL);
-                        annotateView.$el.find(".dropdown-menu #" + this.LAYOUT_MENU_CLASS).bind("click", this.toggleVisibity);
+                    if (!_.isUndefined(annotationsTool.views.main)) {
+                        mainView = annotationsTool.views.main;
+                        mainView.$el.find("#menu-plugins").append(this.LAYOUT_MENU_TMPL);
+                        mainView.$el.find("#menu-plugins #" + this.LAYOUT_MENU_CLASS).bind("click", this.toggleVisibity);
                     }
 
                     this.toggle(false);
@@ -160,6 +159,10 @@ define(["jquery",
                     annotationsTool.loopFunction = this;
 
                     annotationsTool.onWindowResize();
+
+                    if (!_.isUndefined(defaultVisiblity) && !defaultVisiblity) {
+                        this.toggleVisibity({target: mainView.$el.find("#menu-plugins #" + this.LAYOUT_MENU_CLASS)[0]});
+                    }
                 },
 
                 /**
@@ -181,7 +184,7 @@ define(["jquery",
 
                     if ($(event.target).hasClass("checked")) {
                         if (this.wasEnableBeforeDeactivate) {
-                            this.toggle(true)
+                            this.toggle(true);
                         }
                         this.$el.show();
                     } else {
@@ -205,7 +208,7 @@ define(["jquery",
                             formater: function (value) {
                                 return value + " s";
                             }
-                    });
+                        });
 
                     $("#slider").bind("slideStop", this.changeLoopLength);
                     this.$el.find("#loop-length").val(this.currentLoopLength);
@@ -227,7 +230,9 @@ define(["jquery",
                         $(this.playerAdapter).unbind(PlayerAdapter.EVENTS.TIMEUPDATE, this.checkLoop);
                         this.$el.addClass("disabled");
                         this.resetLoops();
-                        annotationsTool.views.timeline.redraw();
+                        if (annotationsTool.getLayoutConfiguration().timeline) {
+                            annotationsTool.views.timeline.redraw();
+                        }
                     }
 
                     this.isEnable = isEnable;
@@ -319,12 +324,17 @@ define(["jquery",
 
                 /**
                  * Set the given loop as the current one
-                 * @param {Object || Integer} loop The new loop object or its index
+                 * @param {Object | Integer} loop The new loop object or its index
                  * @param {Boolean} moveTo Define if yes or no the playhead must be moved at the beginning of the loop
                  * @alias module:views-loop.Loop#setCurrentLoop
                  */
                 setCurrentLoop: function (loop, moveTo) {
-                    var index = _.isNumber(loop) ? loop : this.loops.indexOf(loop);
+                    var index = _.isNumber(loop) ? loop : this.loops.indexOf(loop),
+                        isPlaying = this.playerAdapter.getStatus() === PlayerAdapter.STATUS.PLAYING;
+
+                    if (_.isBoolean(moveTo) && moveTo && isPlaying) {
+                        this.playerAdapter.pause();
+                    }
 
                     if (!_.isUndefined(this.currentLoop)) {
                         this.addTimelineItem(this.currentLoop, false);
@@ -347,6 +357,9 @@ define(["jquery",
 
                     if (_.isBoolean(moveTo) && moveTo) {
                         this.playerAdapter.setCurrentTime(this.currentLoop.get("start"));
+                        if (isPlaying) {
+                            this.playerAdapter.play();
+                        }
                     }
                 },
 
@@ -370,9 +383,9 @@ define(["jquery",
                 createLoops: function (loopLength) {
                     var duration    = this.playerAdapter.getDuration(),
                         currentTime = this.playerAdapter.getCurrentTime(),
-                        isLimit     = false,
                         endTime,
-                        startTime   = currentTime % loopLength;
+                        startTime   = currentTime % loopLength,
+                        loop;
 
                     if (loopLength >= duration) {
                         annotationsTool.alertInfo("Interval too long to create one loop!");
@@ -384,10 +397,10 @@ define(["jquery",
                     this.currentLoop = undefined;
 
                     if (startTime > 0) {
-                        this.loops.add({
+                        this.addTimelineItem(this.loops.create({
                             start: 0,
                             end  : startTime
-                        })
+                        }));
                     }
 
                     while (startTime < duration) {
@@ -398,17 +411,15 @@ define(["jquery",
                             endTime = startTime + loopLength;
                         }
 
-                        this.loops.add({
+                        loop = {
                             start: startTime,
-                            end  : endTime
-                        });
+                            end: endTime
+                        };
+
+                        this.addTimelineItem(this.loops.create(loop));
 
                         startTime += loopLength;
                     }
-
-                    this.loops.each(function (loop, index) {
-                        this.addTimelineItem(loop, false);
-                    }, this);
 
                     this.setCurrentLoop(this.findCurrentLoop());
                 },
@@ -420,6 +431,11 @@ define(["jquery",
                  * @alias module:views-loop.Loop#addTimelineItem
                  */
                 addTimelineItem: function (loop, isCurrent) {
+                    if (!annotationsTool.getLayoutConfiguration().timeline) {
+                        // Timeline is not enabled
+                        return;
+                    }
+
                     var timeline    = annotationsTool.views.timeline,
                         loopClass   = isCurrent ? "loop current" : "loop";
 
@@ -433,7 +449,7 @@ define(["jquery",
                             index: this.loops.indexOf(loop)
                         }),
                         editable: false
-                    });
+                    }, !isCurrent);
                 },
 
                 /**
@@ -441,11 +457,13 @@ define(["jquery",
                  * @alias module:views-loop.Loop#resetLoops
                  */
                 resetLoops: function () {
-                    this.loops.each(function (loop, index) {
-                        annotationsTool.views.timeline.removeItem("loop-" + loop.cid);
-                    });
+                    if (annotationsTool.getLayoutConfiguration().timeline) {
+                        this.loops.each(function (loop, index) {
+                            annotationsTool.views.timeline.removeItem("loop-" + loop.cid, (index + 1 == this.loops.length));
+                        }, this);
+                    }
 
-                    this.loops.each(function (loop, index) {
+                    this.loops.each(function (loop) {
                         loop.destroy();
                     });
 

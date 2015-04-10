@@ -76,7 +76,7 @@ define(["jquery",
                 if (!attr.id) {
                     // If local storage, we set the cid as id
                     if (window.annotationsTool.localStorage) {
-                        attr.id = this.cid;
+                        this.attributes.id = this.cid;
                     }
 
                     this.toCreate = true;
@@ -85,35 +85,35 @@ define(["jquery",
                 // If localStorage used, we have to save the video at each change on the children
                 if (window.annotationsTool.localStorage) {
                     if (!attr.created_by) {
-                        attr.created_by = annotationsTool.user.get("id");
-                        attr.created_by_nickname = annotationsTool.user.get("nickname");
+                        this.attributes.created_by = annotationsTool.user.get("id");
+                        this.attributes.created_by_nickname = annotationsTool.user.get("nickname");
                     }
                 }
 
                 if (attr.tags) {
-                    attr.tags = this.parseJSONString(attr.tags);
+                    this.attributes.tags = this.parseJSONString(attr.tags);
                 }
 
                 if (attr.settings) {
-                    attr.settings = this.parseJSONString(attr.settings);
-                    if (attr.settings.hasScale === undefined) {
-                        attr.settings.hasScale = true;
+                    this.attributes.settings = this.parseJSONString(attr.settings);
+                    if (this.attributes.settings.hasScale === undefined) {
+                        this.attributes.settings.hasScale = true;
                     }
                 } else {
-                    attr.settings = {hasScale: true};
+                    this.attributes.settings = {hasScale: true};
                 }
 
 
                 if (annotationsTool.user.get("id") === attr.created_by) {
-                    attr.isMine = true;
+                    this.attributes.isMine = true;
                 } else {
-                    attr.isMine = false;
+                    this.attributes.isMine = false;
                 }
 
                 if (attr.access === ACCESS.PUBLIC) {
-                    attr.isPublic = true;
+                    this.attributes.isPublic = true;
                 } else {
-                    attr.isPublic = false;
+                    this.attributes.isPublic = false;
                 }
 
                 if (attr.labels && _.isArray(attr.labels)) {
@@ -130,7 +130,7 @@ define(["jquery",
                     this.attributes.labels.fetch({async: false});
                 }
 
-                this.set(attr);
+                //this.set(attr);
             },
 
             /**
@@ -140,11 +140,28 @@ define(["jquery",
              * @return {object}  The object literal with the list of parsed model attribute.
              */
             parse: function (data) {
-                var attr = data.attributes ? data.attributes : data;
+                var attr = data.attributes ? data.attributes : data,
+                    parseDate = function (date) {
+                        if (_.isNumber(date)) {
+                            return new Date(date);
+                        } else if (_.isString) {
+                            return Date.parse(date);
+                        } else {
+                            return null;
+                        }
+                    };
 
-                attr.created_at = attr.created_at !== null ? Date.parse(attr.created_at): null;
-                attr.updated_at = attr.updated_at !== null ? Date.parse(attr.updated_at): null;
-                attr.deleted_at = attr.deleted_at !== null ? Date.parse(attr.deleted_at): null;
+                if (attr.created_at) {
+                    attr.created_at = parseDate(attr.created_at);
+                }
+
+                if (attr.updated_at) {
+                    attr.updated_at = parseDate(attr.updated_at);
+                }
+
+                if (attr.deleted_at) {
+                    attr.deleted_at = parseDate(attr.deleted_at);
+                }
 
                 if (attr.settings) {
                     attr.settings = this.parseJSONString(attr.settings);
@@ -160,15 +177,6 @@ define(["jquery",
                     attr.isPublic = true;
                 } else {
                     attr.isPublic = false;
-                }
-
-                // Parse tags if present
-                if (attr.tags) {
-                    attr.tags = this.parseJSONString(attr.tags);
-                }
-
-                if (attr.category) {
-                    attr.category = this.parseJSONString(attr.category.settings);
                 }
 
                 if (attr.tags) {
@@ -296,13 +304,22 @@ define(["jquery",
             /**
              * Override the default toJSON function to ensure complete JSONing.
              * @alias module:models-category.Category#toJSON
+             * @param {Boolean} stringifySub defines if the sub-object should be stringify
              * @return {JSON} JSON representation of the instance
              */
-            toJSON: function () {
+            toJSON: function (stringifySub) {
                 var json = Backbone.Model.prototype.toJSON.call(this);
-                if (json.tags) {
-                    json.tags = JSON.stringify(json.tags);
+                
+                if (stringifySub) {
+                    if (json.tags) {
+                        json.tags = JSON.stringify(json.tags);
+                    }
+
+                    if (json.settings && _.isObject(json.settings)) {
+                        json.settings = JSON.stringify(this.attributes.settings);
+                    }
                 }
+
                 delete json.labels;
 
                 if (this.attributes.scale) {
@@ -323,9 +340,10 @@ define(["jquery",
             /**
              * Prepare the model as JSON to export and return it
              * @alias module:models-category.Category#toExportJSON
+             * @param {boolean} withScales Define if the scale has to be included
              * @return {JSON} JSON representation of the model for export
              */
-            toExportJSON: function () {
+            toExportJSON: function (withScale) {
                 var json = {
                     name: this.attributes.name,
                     labels: this.attributes.labels.toExportJSON()
@@ -355,6 +373,14 @@ define(["jquery",
                     json.tags = this.attributes.tags;
                 }
 
+                if (!_.isUndefined(withScale) &&  withScale) {
+                    if (this.attributes.scale_id) {
+                        json.scale = annotationsTool.video.get("scales").get(this.attributes.scale_id).toExportJSON();
+                    } else if (this.attributes.scale) {
+                        json.scale = annotationsTool.video.get("scales").get(this.attributes.scale.get("id")).toExportJSON();
+                    }
+                }
+
                 return json;
             },
 
@@ -378,16 +404,6 @@ define(["jquery",
                 }
 
                 return parameter;
-            },
-
-            /**
-             * Override the default save function
-             * @alias module:models-category.Category#save
-             * @return {object} options The given options for the save operation
-             */
-            save: function (options) {
-                this.attributes.settings = JSON.stringify(this.attributes.settings);
-                Backbone.Model.prototype.save.call(this, options);
             }
         });
         return Category;

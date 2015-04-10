@@ -26,13 +26,13 @@
  */
 define(["jquery",
         "views/annotate-label",
-        "text!templates/annotate-category.tmpl",
-        "handlebars",
+        "templates/annotate-category",
+        "handlebarsHelpers",
         "jquery.colorPicker",
         "backbone"],
 
 
-    function ($, LabelView, Template, Handlebars) {
+    function ($, LabelView, Template) {
 
         "use strict";
 
@@ -83,9 +83,9 @@ define(["jquery",
             /**
              * View template
              * @alias module:views-annotate-category.Category#template
-             * @type {Handlebars template}
+             * @type {HandlebarsTemplate}
              */
-            template: Handlebars.compile(Template),
+            template: Template,
 
             /**
              * Events to handle by the annotate-category view
@@ -120,41 +120,18 @@ define(["jquery",
                   "addLabel",
                   "render",
                   "switchEditModus",
-                  "onSwitchEditModus",
                   "onChange",
                   "onFocusOut",
                   "onKeyDown",
                   "onColorChange",
                   "removeOne",
                   "onCreateLabel",
-                  "editScale");
+                  "editScale",
+                  "updateInputWidth");
 
 
                 // Define the colors (global setting for all color pickers)
-                $.fn.colorPicker.defaults.colors = ["ffff99",
-                                                  "ffd800",
-                                                  "ffcc99",
-                                                  "ffa800",
-                                                  "ff7800",
-                                                  "c36e00",
-                                                  "d5d602",
-                                                  "d9be6c",
-                                                  "ff99cc",
-                                                  "ff5d7c",
-                                                  "da0000",
-                                                  "d15c49",
-                                                  "969601",
-                                                  "adfded",
-                                                  "8fc7c7",
-                                                  "a4d2ff",
-                                                  "00ccff",
-                                                  "64b0e8",
-                                                  "61ae24",
-                                                  "9ded0a",
-                                                  "92ffaa",
-                                                  "c0adfd",
-                                                  "ac5bff",
-                                                  "6569ff"];
+                $.fn.colorPicker.defaults.colors = annotationsTool.colorsManager.getColors();
 
                 // Type use for delete operation
                 this.typeForDelete = annotationsTool.deleteOperation.targetTypes.CATEGORY;
@@ -168,6 +145,7 @@ define(["jquery",
                 this.el.id = this.ID_PREFIX + attr.category.get("id");
                 this.model = attr.category;
 
+                this.render();
                 this.addLabels(this.model.get("labels"));
 
                 labels = this.model.get("labels");
@@ -177,21 +155,40 @@ define(["jquery",
                 this.listenTo(this.model, "change", this.onChange);
 
                 if (_.contains(this.roles, annotationsTool.user.get("role"))) {
-                    this.listenTo(annotationsTool.video, "switchEditModus", this.onSwitchEditModus);
+                    this.listenTo(annotationsTool, annotationsTool.EVENTS.ANNOTATE_TOGGLE_EDIT, this.switchEditModus);
                 }
 
-                this.render();
+                $(window).bind("resize", this.updateInputWidth);
+
+                //this.render();
                 this.nameInput = this.$el.find(".catItem-header input");
                 return this;
             },
 
             /**
-             * Listener for edit modus switch.
-             * @alias module:views-annotate-category.CategoryView#onSwitchEditModus
-             * @param {boolean} status The new status
+             * Update the size of all the input for the label value
+             * alias module:views-annotate-category.CategoryView#updateInputWidth
              */
-            onSwitchEditModus: function (status) {
-                this.switchEditModus(status);
+            updateInputWidth: function () {
+                var $headerEl   = this.$el.find(".catItem-header"),
+                    titleWidth;
+
+                if (this.editModus) {
+                    titleWidth = $headerEl.width() - ($headerEl.find(".colorPicker-picker").outerWidth() +
+                                                    $headerEl.find(".delete").outerWidth() +
+                                                    $headerEl.find(".scale").outerWidth() +
+                                                    30);
+
+                    $headerEl.find("input").width(titleWidth);
+                }  else {
+                    $headerEl.find("input").width("100%");
+                }
+
+                _.each(this.labelViews, function (labelView) {
+                    labelView.updateInputWidth();
+                }, this);
+
+                this.delegateEvents(this.events);
             },
 
             /**
@@ -218,6 +215,9 @@ define(["jquery",
                 } else {
                     this.$el.find("input").attr("disabled", "disabled");
                 }
+                
+                // Wait that style are applied
+                setTimeout(this.updateInputWidth, 20);
             },
 
             /**
@@ -264,7 +264,7 @@ define(["jquery",
              * @param {Label} label  The label to add
              * @param {boolean} single Define if this is part of a list insertion (false) or a single insertion (true)
              */
-            addLabel: function (label, single) {
+            addLabel: function (label) {
                 var labelView = new LabelView({
                     label        : label,
                     editModus    : this.editModus,
@@ -274,10 +274,9 @@ define(["jquery",
 
                 this.labelViews.push(labelView);
 
-                // If unique label added, we redraw all the category view
-                if (single) {
-                    this.render();
-                }
+                this.$labelsContainer.append(labelView.render().$el);
+
+                labelView.updateInputWidth();
             },
 
             /**
@@ -285,20 +284,13 @@ define(["jquery",
              * @alias module:views-annotate-category.CategoryView#onCreateLabel
              */
             onCreateLabel: function () {
-                var label = this.model.get("labels").create({
-                    value       : "LB",
-                    abbreviation: "New",
+                this.model.get("labels").create({
+                    value       : "New",
+                    abbreviation: "NEW",
                     category    : this.model
                 },
                   {wait: true}
                 );
-
-                label.save();
-                this.model.save();
-
-                if (annotationsTool.localStorage) {
-                    annotationsTool.video.save();
-                }
             },
 
             /**
@@ -321,8 +313,8 @@ define(["jquery",
              * @alias module:views-annotate-category.CategoryView#onFocusOut
              */
             onFocusOut: function () {
-                this.model.set("name", _.escape(this.nameInput.val()), {silent: true});
-                this.model.save();
+                this.model.set("name", _.escape(this.nameInput.val()), {wait: true});
+                this.model.save({wait: true});
             },
 
             /**
@@ -330,9 +322,11 @@ define(["jquery",
              * @alias module:views-annotate-category.CategoryView#onKeyDown
              */
             onKeyDown: function (e) {
+                e.stopImmediatePropagation();
+
                 if (e.keyCode === 13) { // If "return" key
-                    this.model.set("name", _.escape(this.nameInput.val()));
-                    this.model.save();
+                    this.model.set("name", _.escape(this.nameInput.val()), {wait: true});
+                    this.model.save({wait: true});
                 } else if (e.keyCode === 39 && this.getCaretPosition(e.target) === e.target.value.length ||
                            e.keyCode === 37 && this.getCaretPosition(e.target) === 0) {
                     // Avoid scrolling through arrows keys
@@ -343,7 +337,7 @@ define(["jquery",
             /**
              * Get the position of the caret in the given input element
              * @alias module:views-annotate-category.CategoryView#getCaretPosition
-             * @param  {DOM Element} inputElement The given element with focus
+             * @param  {DOMElement} inputElement The given element with focus
              * @return {integer}              The posisiton of the carret
              */
             getCaretPosition: function (inputElement) {
@@ -374,7 +368,7 @@ define(["jquery",
              */
             onColorChange: function (id, newValue) {
                 this.model.setColor(newValue);
-                this.model.save();
+                this.model.save({silent: true});
             },
 
             /**
@@ -384,25 +378,47 @@ define(["jquery",
              */
             render: function () {
                 var modelJSON = this.model.toJSON();
+
+                this.undelegateEvents();
+
                 modelJSON.notEdit = !this.editModus;
+
+                _.each(this.labelViews, function (view) {
+                    view.$el.detach();
+                }, this);
 
                 this.$el.html(this.template(modelJSON));
 
+                this.$labelsContainer = this.$el.find(".catItem-labels");
+
                 _.each(this.labelViews, function (view) {
-                    this.$el.find(".catItem-labels").append(view.render().$el);
+                    this.$labelsContainer.append(view.$el);
+                    view.updateInputWidth();
                 }, this);
 
                 this.nameInput = this.$el.find(".catItem-header input");
+
+                if (_.isString(this.model.attributes.settings)) {
+                    this.model.attributes.settings = this.model.parseJSONString(this.model.attributes.settings);
+                }
 
                 this.$el.find(".colorpicker").colorPicker({
                     pickerDefault: this.model.attributes.settings.color.replace("#", ""),
                     onColorChange: this.onColorChange
                 });
+
                 this.$el.find(".colorPicker-picker").addClass("edit");
+
+                this.$el.width((100 / annotationsTool.CATEGORIES_PER_TAB) + "%");
+
+                this.updateInputWidth();
+
                 this.delegateEvents(this.events);
+
                 return this;
             }
         });
+
         return CategoryView;
     }
 );

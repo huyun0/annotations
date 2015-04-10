@@ -34,7 +34,7 @@ define(["jquery",
          * @constructor
          * @alias module:player-adapter-HTML5.PlayerAdapterHTML5
          * @augments {module:player-adapter.PlayerAdapter}
-         * @param {DOM Element} targetElement DOM Element representing the player
+         * @param {DOMElement} targetElement DOM Element representing the player
          */
         var PlayerAdapterHTML5 = function (targetElement) {
             var HTMLElement,
@@ -60,7 +60,7 @@ define(["jquery",
             /**
              * The HTML representation of the adapter, mainly used to thriggered event
              * @inner
-             * @type {DOM Element}
+             * @type {DOMElement}
              */
             this.htmlElement = null;
 
@@ -176,6 +176,9 @@ define(["jquery",
                 });
 
                 $(targetElement).bind("timeupdate", function () {
+                    if ((self.status == PlayerAdapter.STATUS.PAUSED || self.status == PlayerAdapter.STATUS.SEEKING) && !this.paused && !this.ended && this.currentTime > 0) {
+                        self.status = PlayerAdapter.STATUS.PLAYING;
+                    }
                     self.triggerEvent(PlayerAdapter.EVENTS.TIMEUPDATE);
                 });
 

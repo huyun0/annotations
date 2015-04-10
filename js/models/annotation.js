@@ -17,7 +17,7 @@
  * A module representing the annotation model
  * @module models-annotation
  * @requires jQuery
- * @requires underscore
+ * @requires collections-comments
  * @requires ACCESS
  * @requires backbone
  * @requires localstorage
@@ -48,7 +48,6 @@ define(["jquery",
              * @static
              */
             defaults: {
-                access  : ACCESS.PRIVATE,
                 start   : 0,
                 duration: 0
             },
@@ -59,7 +58,8 @@ define(["jquery",
              * @param {object} attr Object literal containing the model initialion attributes.
              */
             initialize: function (attr) {
-                var saveChange;
+                _.bindAll(this, "areCommentsLoaded",
+                                "fetchComments");
 
                 if (!attr || _.isUndefined(attr.start)) {
                     throw "\"start\" attribute is required";
@@ -68,9 +68,6 @@ define(["jquery",
                 // Check if the category has been initialized
                 if (!attr.id) {
                     // If local storage, we set the cid as id
-                    if (window.annotationsTool.localStorage) {
-                        attr.id = this.cid;
-                    }
                     this.toCreate = true;
                 }
 
@@ -84,8 +81,8 @@ define(["jquery",
                     delete attr.comments;
                 }
 
-                if (attr.id) {
-                    this.attributes.comments.fetch({async: false});
+                if (_.isUndefined(attr.access) && !_.isUndefined(attr.access)) {
+                    attr.access = this.collection.access;
                 }
 
                 // If localStorage used, we have to save the video at each change on the children
@@ -98,12 +95,15 @@ define(["jquery",
                         attr.created_by_nickname = annotationsTool.user.get("nickname");
                     }
 
-                    saveChange = function () {
-                        this.save();
-                    };
+                    if (!attr.created_at) {
+                        attr.created_at = new Date();
+                    }
+                }
 
-                    this.attributes.comments.bind("change", saveChange, this);
-                    this.attributes.comments.bind("remove", saveChange, this);
+                if (annotationsTool.user.get("id") === attr.created_by) {
+                    attr.isMine = true;
+                } else {
+                    attr.isMine = false;
                 }
 
                 if (attr.tags) {
@@ -124,14 +124,31 @@ define(["jquery",
              */
             parse: function (data) {
                 var attr = data.attributes ? data.attributes : data,
+                    parseDate = function (date) {
+                        if (_.isNumber(date)) {
+                            return new Date(date);
+                        } else if (_.isString) {
+                            return Date.parse(date);
+                        } else {
+                            return null;
+                        }
+                    },
                     tempSettings,
                     categories,
                     tempLabel,
                     label;
 
-                attr.created_at = attr.created_at !== null ? Date.parse(attr.created_at): null;
-                attr.updated_at = attr.updated_at !== null ? Date.parse(attr.updated_at): null;
-                attr.deleted_at = attr.deleted_at !== null ? Date.parse(attr.deleted_at): null;
+                if (attr.created_at) {
+                    attr.created_at = parseDate(attr.created_at);
+                }
+
+                if (attr.updated_at) {
+                    attr.updated_at = parseDate(attr.updated_at);
+                }
+
+                if (attr.deleted_at) {
+                    attr.deleted_at = parseDate(attr.deleted_at);
+                }
 
                 // Parse tags if present
                 if (attr.tags) {
@@ -198,7 +215,7 @@ define(["jquery",
              * @return {string}  If the validation failed, an error message will be returned.
              */
             validate: function (attr) {
-                var tmpCreated, comments;
+                var tmpCreated;
 
                 if (attr.id) {
                     if (this.get("id") !== attr.id) {
@@ -207,12 +224,6 @@ define(["jquery",
                         this.toCreate = false;
                         this.trigger("ready", this);
                         this.setUrl();
-
-                        comments = this.attributes.comments;
-
-                        if (comments && (comments.length) === 0) {
-                            comments.fetch({async: false});
-                        }
                     }
                 }
 
@@ -247,7 +258,7 @@ define(["jquery",
                 if (attr.created_at) {
                     if ((tmpCreated = this.get("created_at")) && tmpCreated !== attr.created_at) {
                         return "\"created_at\" attribute can not be modified after initialization!";
-                    } else if (!_.isNumber(attr.created_at)) {
+                    } else if (!_.isNumber(attr.created_at) && !_.isDate(attr.created_at)) {
                         return "\"created_at\" attribute must be a number!";
                     }
                 }
@@ -260,6 +271,43 @@ define(["jquery",
                     return "\"deleted_at\" attribute must be a number!";
                 }
 
+            },
+
+            /**
+             * Returns if comments are or not loaded
+             * @alias module:models-annotation.Annotation#areCommentsLoaded
+             */
+            areCommentsLoaded: function () {
+                return this.commentsFetched;
+            },
+
+            /**
+             * Load the list of comments from the server
+             * @param  {Function} [callback] Optional callback to call when comments are loaded 
+             * @alias module:models-annotation.Annotation#fetchComments
+             */
+            fetchComments: function (callback) {
+                var fetchCallback = _.bind(function () {
+                    this.commentsFetched = true;
+                    if (_.isFunction(callback)) {
+                        callback.apply(this);
+                    }
+                }, this);
+
+                if (this.areCommentsLoaded()) {
+                    fetchCallback();
+                } else {
+                    if (this.commentsFetched !== true) {
+                        if (_.isUndefined(this.attributes.id)) {
+                            this.once("ready", this.fetchComments);
+                        } else {
+                            this.attributes.comments.fetch({
+                                async   : true,
+                                success : fetchCallback
+                            });
+                        }
+                    }
+                }
             },
 
             /**
@@ -323,6 +371,7 @@ define(["jquery",
                 return json;
             }
         });
+
         return Annotation;
     }
 );

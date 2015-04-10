@@ -1,6 +1,10 @@
 // Base Styles
 // -------------------------
 
+//@import "../bootstrap/less/variables.less";
+//@import "../bootstrap/less/mixins.less";
+//@import "base_layout.less";
+
 body {
 	background: url("../img/annotation/background.png") @bodyBackground repeat; 
 }
@@ -16,6 +20,7 @@ body {
 // Sprite icons 
 // -------------------------
 @iconSpritePath:          "../img/annotation/icons.png";
+@iconDarkGreySpritePath:  "../img/annotation/icons-dark-grey.png";
 @iconGreySpritePath:     "../img/annotation/icons-grey.png";
 @iconWhiteSpritePath:     "../img/annotation/icons-white.png";
 
@@ -24,31 +29,41 @@ body {
   background-image: url("@{iconGreySpritePath}");
 }
 
+/* Additional icon color: Grey (#c4c4c4) */
+.icon-dark-grey {
+  background-image: url("@{iconDarkGreySpritePath}");
+}
+
 /* Change edit icon to pencil */
 .icon-edit             { background-position: 0      -72px; }
 
 /* Custom icons on new line starting on -168px  */
 
-.icon-empty-sign         { background-position: 0      -168px; }
-.icon-close              { background-position: -24px  -168px; }
-.icon-scroll-left        { background-position: -48px  -168px; }
-.icon-scroll-right       { background-position: -72px  -168px; }
-.icon-comment-amount     { background-position: -96px  -168px; width: 22px}
-.icon-window-minimize    { background-position: -120px -168px; }
-.icon-window-maximize    { background-position: -144px -168px; }
-.icon-layout-mixed       { background-position: -168px -168px; }
-.icon-layout-present     { background-position: -192px -168px; }
-.icon-layout-text        { background-position: -216px -168px; }
-.icon-likert-minusminus  { background-position: -240px -168px; }
-.icon-likert-minus       { background-position: -264px -168px; }
-.icon-likert-zero        { background-position: -288px -168px; }
-.icon-likert-plus        { background-position: -312px -168px; }
-.icon-likert-plusplus    { background-position: -336px -168px; }
-.icon-color-palette      { background-position: -360px -168px; }
-.icon-color-corner       { background-position: -384px -168px; }
-.icon-empty-slot         { background-position: -408px -168px; }
-.icon-empty-slot         { background-position: -432px -168px; }
-.icon-empty-slot         { background-position: -456px -168px; }
+.icon-empty-sign         { background-position: 0      -168px!important; }
+.icon-close              { background-position: -24px  -168px!important }
+.icon-scroll-left        { background-position: -48px  -168px!important;}
+.icon-scroll-right       { background-position: -72px  -168px!important;}
+.icon-comment-amount     { background-position: -96px  -168px!important; width: 22px!important;}
+.icon-comment            { background-position: -240px  -120px!important; width: 22px!important;}
+.icon-window-minimize    { background-position: -120px -168px!important;}
+.icon-window-maximize    { background-position: -144px -168px!important;}
+.icon-layout-mixed       { background-position: -168px -168px!important;}
+.icon-layout-present     { background-position: -192px -168px!important;}
+.icon-layout-text        { background-position: -216px -168px!important;}
+.icon-likert-minusminus  { background-position: -240px -168px!important;}
+.icon-likert-minus       { background-position: -264px -168px!important;}
+.icon-likert-zero        { background-position: -288px -168px!important;}
+.icon-likert-plus        { background-position: -312px -168px!important;}
+.icon-likert-plusplus    { background-position: -336px -168px!important;}
+.icon-color-palette      { background-position: -360px -168px!important;}
+.icon-color-corner       { background-position: -384px -168px!important;}
+.icon-public       		 { background-position: -96px -120px!important; height:15px!important; width: 23px!important;}
+.icon-private            { background-position: -120px -120px!important; height:15px!important; width: 23px!important;}
+.icon-empty-slot         { background-position: -408px -168px!important;}
+.icon-empty-slot         { background-position: -432px -168px!important;}
+.icon-empty-slot         { background-position: -456px -168px!important;}
+.icon-empty-slot         { background-position: -456px -168px!important;}
+.icon-empty-slot         { background-position: -456px -168px!important;}
 
 /* Some icons are bigger than 14x14px */
 
@@ -134,3 +149,6 @@ input, textarea, select, .uneditable-input {
 	.standard_border_radius();
 }
 
+#title-container, .print {
+	display: none;
+}

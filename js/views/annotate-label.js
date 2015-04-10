@@ -26,11 +26,11 @@
  */
 define(["jquery",
         "models/annotation",
-        "text!templates/annotate-label.tmpl",
-        "handlebars",
-        "backbone"],
+        "templates/annotate-label",
+        "backbone",
+        "handlebarsHelpers"],
 
-    function ($, Annotation, Template, Handlebars, Backbone) {
+    function ($, Annotation, Template, Backbone) {
 
         "use strict";
 
@@ -98,9 +98,9 @@ define(["jquery",
             /**
              * View template
              * @alias module:views-annotate-label.Category#template
-             * @type {Handlebars template}
+             * @type {HandlebarsTemplate}
              */
-            template: Handlebars.compile(Template),
+            template: Template,
 
             /**
              * Events to handle by the annotate-label view
@@ -138,7 +138,9 @@ define(["jquery",
                                 "onKeyDown",
                                 "onDeleteLabel",
                                 "annnotateWithScaling",
-                                "changeCategory");
+                                "changeCategory",
+                                "updateAbbreviation",
+                                "updateInputWidth");
 
                 // Type use for delete operation
                 this.typeForDelete = annotationsTool.deleteOperation.targetTypes.LABEL;
@@ -172,10 +174,19 @@ define(["jquery",
                 }
 
                 if (_.contains(this.roles, annotationsTool.user.get("role"))) {
-                    this.listenTo(annotationsTool.video, "switchEditModus", this.onSwitchEditModus);
+                    this.listenTo(annotationsTool, annotationsTool.EVENTS.ANNOTATE_TOGGLE_EDIT, this.onSwitchEditModus);
                 }
 
                 return this.render();
+            },
+
+            updateAbbreviation: function () {
+                var abbreviation = this.model.get("abbreviation"),
+                    value = this.model.get("value");
+
+                if (_.isUndefined(abbreviation) || abbreviation === "" || abbreviation === value.substr(0, 3).toUpperCase()) {
+                    this.$el.find("input.item-abbreviation").val(this.$el.find("input.item-value").val().substr(0, 3).toUpperCase());
+                }
             },
 
             /**
@@ -246,6 +257,10 @@ define(["jquery",
                     params.created_by_nickname = annotationsTool.user.get("nickname");
                 }
 
+                if (!annotationsTool.localStorage) {
+                    options.wait = true;
+                }
+
                 annotation = annotationsTool.selectedTrack.get("annotations").create(params, options);
                 annotationsTool.setSelection([annotation], true);
             },
@@ -266,12 +281,6 @@ define(["jquery",
              */
             switchEditModus: function (status) {
                 this.editModus = status;
-
-                if (status) {
-                    this.$el.find("input[disabled='disabled']").removeAttr("disabled");
-                } else {
-                    this.$el.find("input").attr("disabled", "disabled");
-                }
             },
 
             /**
@@ -299,9 +308,11 @@ define(["jquery",
              * @alias module:views-annotate-label.LabelView#onFocusOut
              * @param {event} e Event related to this action
              */
-            onFocusOut: function (e) {
-                var attributeName = e.target.className.replace("item-", "").replace(" edit", "");
-                this.model.set(attributeName, _.escape(e.target.value), {silent: true});
+            onFocusOut: function () {
+                this.model.set({
+                    "value"        : _.escape(this.$el.find("input.item-value").val()),
+                    "abbreviation" : _.escape(this.$el.find("input.item-abbreviation").val())
+                });
                 this.model.save();
             },
 
@@ -313,9 +324,15 @@ define(["jquery",
             onKeyDown: function (e) {
                 e.stopImmediatePropagation();
 
+                if ($(e.target).hasClass("item-value")) {
+                    this.updateAbbreviation(e);
+                }
+
                 if (e.keyCode === 13) { // If "return" key
-                    var attributeName = e.target.className.replace("item-", "").replace(" edit", "");
-                    this.model.set(attributeName, _.escape(e.target.value));
+                    this.model.set({
+                        "value"        : _.escape(this.$el.find("input.item-value").val()),
+                        "abbreviation" : _.escape(this.$el.find("input.item-abbreviation").val())
+                    });
                     this.model.save();
                 } else if (e.keyCode === 39 && this.getCaretPosition(e.target) === e.target.value.length ||
                            e.keyCode === 37 && this.getCaretPosition(e.target) === 0) {
@@ -327,7 +344,7 @@ define(["jquery",
             /**
              * Get the position of the caret in the given input element
              * @alias module:views-annotate-label.LabelView#getCaretPosition
-             * @param  {DOM Element} inputElement The given element with focus
+             * @param  {DOMElement} inputElement The given element with focus
              * @return {integer}              The posisiton of the carret
              */
             getCaretPosition: function (inputElement) {
@@ -367,6 +384,22 @@ define(["jquery",
             },
 
             /**
+             * Update the size of all the input for the label value
+             * alias module:views-annotate-category.CategoryView#updateInputWidth
+             */
+            updateInputWidth: function () {
+                var width = this.$el.width() - (this.$el.find("input.item-abbreviation").outerWidth() + 25);
+
+                if (this.editModus) {
+                    width -= this.$el.find("i.delete").outerWidth();
+                }
+                
+                this.$el.find("input.item-value").width(width);
+
+                this.delegateEvents(this.events);
+            },
+
+            /**
              * Draw the view
              * @alias module:views-annotate-label.LabelView#render
              * @return {LabelView} this label view
@@ -394,7 +427,7 @@ define(["jquery",
                     this.$el.addClass(this.CLASS_SCALE.DISABLED);
                 }
 
-                this.delegateEvents(this.events);
+                this.updateInputWidth();
                 return this;
             }
 

@@ -44,23 +44,24 @@ define(["jquery",
         "views/timeline",
         "views/login",
         "views/scale-editor",
+        "views/tracks-selection",
         "collections/annotations",
         "collections/users",
         "collections/videos",
         "models/user",
         "models/track",
         "models/video",
-        "backbone-annotations-sync",
+        "templates/categories-legend",
         "roles",
-        "FiltersManager",
         "backbone",
+        "handlebars",
         "localstorage",
         "bootstrap",
         "carousel",
         "tab"],
 
-    function ($, PlayerAdapter, AnnotateView, ListView, TimelineView, LoginView, ScaleEditorView,
-              Annotations, Users, Videos, User, Track, Video, AnnotationSync, ROLES, FiltersManager, Backbone) {
+    function ($, PlayerAdapter, AnnotateView, ListView, TimelineView, LoginView, ScaleEditorView, TracksSelectionView,
+              Annotations, Users, Videos, User, Track, Video, CategoriesLegendTmpl, ROLES, Backbone) {
 
         "use strict";
 
@@ -76,7 +77,7 @@ define(["jquery",
             /**
              * Main container of the appplication
              * @alias module:views-main.MainView#el
-             * @type {Dom Element}
+             * @type {DOMElement}
              */
             el: $("body"),
 
@@ -90,9 +91,18 @@ define(["jquery",
             /**
              * jQuery element for the loading box
              * @alias module:views-main.MainView#loadingBox
-             * @type {jQuery Object}
+             * @type {DOMElement}
              */
             loadingBox: $("div#loading"),
+
+
+            /**
+             * Template for the categories legend
+             * @alias module:views-main.MainView#categoriesLegendTmpl
+             * @type {HandlebarsTemplate}
+             */
+            categoriesLegendTmpl: CategoriesLegendTmpl,
+
 
             /**
              * Events to handle by the main view
@@ -100,8 +110,10 @@ define(["jquery",
              * @type {Map}
              */
             events: {
-                "click #logout": "logout",
-                "click #print" : "print"
+                "click #logout"              : "logout",
+                "click #print"               : "print",
+                "click .opt-layout"          : "layoutUpdate",
+                "click [class*='opt-tracks']": "tracksSelection"
             },
 
             /**
@@ -109,44 +121,39 @@ define(["jquery",
              * @alias module:views-main.MainView#initialize
              * @param {PlainObject} attr Object literal containing the view initialization attributes.
              */
-            initialize: function (playerAdapter) {
-                if ((annotationsTool.isBrowserIE9() && !(playerAdapter.__proto__ instanceof PlayerAdapter)) ||
-                    (!annotationsTool.isBrowserIE9() && !(playerAdapter instanceof PlayerAdapter))) {
-                    throw "The player adapter is not valid! It must has PlayerAdapter as prototype.";
-                }
-
-                _.bindAll(this, "checkUserAndLogin",
+            initialize: function () {
+                _.bindAll(this, "layoutUpdate",
+                                "checkUserAndLogin",
                                 "createViews",
-                                "initModels",
+                                "generateCategoriesLegend",
                                 "logout",
                                 "loadPlugins",
                                 "onDeletePressed",
                                 "onWindowResize",
                                 "print",
                                 "ready",
-                                "setLoadingProgress");
+                                "tracksSelection",
+                                "setLoadingProgress",
+                                "updateTitle");
+                var self = this;
+
+                annotationsTool.bind(annotationsTool.EVENTS.NOTIFICATION, function (message) {
+                    self.setLoadingProgress(this.loadingPercent, message);
+                }, this);
 
                 this.setLoadingProgress(10, "Starting tool.");
 
-                // Load the good storage module
-                if (window.annotationsTool.localStorage) {
-                    // Local storage module
-                    Backbone.sync = Backbone.localSync;
 
+                this.setLoadingProgress(20, "Get users saved locally.");
+                // Create a new users collection and get exciting local user
+                annotationsTool.users = new Users();
+
+                if (annotationsTool.localStorage) {
                     // Remove link for statistics exports, work only with backend implementation
                     this.$el.find("#export").parent().remove();
                 } else {
                     this.$el.find("#export").attr("href", annotationsTool.exportUrl);
-                    // REST annotations storage module
-                    Backbone.sync = AnnotationSync;
                 }
-
-                this.playerAdapter = playerAdapter;
-
-                this.setLoadingProgress(20, "Get users saved locally.");
-
-                // Create a new users collection and get exciting local user
-                annotationsTool.users = new Users();
 
                 Backbone.localSync("read", annotationsTool.users, {
                     success: function (data) {
@@ -160,27 +167,36 @@ define(["jquery",
                 this.loginView              = new LoginView();
                 annotationsTool.scaleEditor = new ScaleEditorView();
 
-                annotationsTool.dispatcher  = _.clone(Backbone.Events);
+                this.listenTo(annotationsTool, "deleteAnnotation", annotationsTool.deleteAnnotation);
 
-                this.listenTo(annotationsTool.users, "login", this.createViews);
-                this.listenTo(annotationsTool.dispatcher, "deleteAnnotation", this.deleteAnnotation);
-
-                this.checkUserAndLogin();
-
+                annotationsTool.onWindowResize = this.onWindowResize;
                 $(window).resize(this.onWindowResize);
                 $(window).bind("keydown", $.proxy(this.onDeletePressed, this));
 
-                annotationsTool.filtersManager   = new FiltersManager();
                 annotationsTool.importCategories = this.importCategories;
-                annotationsTool.dispatcher.once(annotationsTool.EVENTS.READY, function () {
+
+                annotationsTool.once(annotationsTool.EVENTS.READY, function () {
                     this.loadPlugins(annotationsTool.plugins);
+                    this.generateCategoriesLegend(annotationsTool.video.get("categories").toExportJSON(true));
+                    this.updateTitle(annotationsTool.video);
+
+                    if (!annotationsTool.isFreeTextEnabled()) {
+                        $("#opt-annotate-text").parent().hide();
+                    }
+
+                    if (!annotationsTool.isStructuredAnnotationEnabled()) {
+                        $("#opt-annotate-categories").parent().hide();
+                    }
+
                 }, this);
 
-                annotationsTool.onWindowResize = this.onWindowResize;
+                this.$el.find(".opt-tracks-" + annotationsTool.getDefaultTracks().name).addClass("checked");
+
+                this.checkUserAndLogin();
             },
 
             /**
-             * Load the given plugins
+             * Loads the given plugins
              * @param  {Array} plugins The array of plugins to load
              * @alias module:views-main.MainView#loadPlugins
              */
@@ -191,7 +207,31 @@ define(["jquery",
             },
 
             /**
-             * Create the views for the annotations
+             * Updates the title of the page for print mode
+             * @param  {object} video The video model
+             * @alias module:views-main.MainView#updateTitle
+             */
+            updateTitle: function (video) {
+                this.$el.find("#video-title").html(video.get("title"));
+                this.$el.find("#video-owner").html("Owner: " + video.get("src_owner"));
+                if (_.isUndefined(video.get("src_creation_date"))) {
+                    this.$el.find("#video-date").remove();
+                } else {
+                    this.$el.find("#video-date").html("Date: " + video.get("src_creation_date"));
+                }
+            },
+
+            /**
+             * Generates the legend for all the categories (for printing)
+             * @param  {array} categories The array containing all the categories
+             * @alias module:views-main.MainView#generateCategoriesLegend
+             */
+            generateCategoriesLegend: function (categories) {
+                this.$el.find("#categories-legend").html(this.categoriesLegendTmpl(categories));
+            },
+
+            /**
+             * Creates the views for the annotations
              * @alias module:views-main.MainView#createViews
              */
             createViews: function () {
@@ -201,57 +241,58 @@ define(["jquery",
 
                 this.setLoadingProgress(45, "Start loading video.");
 
-                this.initModels($.proxy(function () {
+                // Initialize the player
+                annotationsTool.playerAdapter.load();
+                this.setLoadingProgress(50, "Initializing the player.");
 
-                    /**
-                     * Loading the video dependant views
-                     */
-                    var loadVideoDependantView = $.proxy(function () {
-                        $(this.playerAdapter).off(PlayerAdapter.EVENTS.READY + " " + PlayerAdapter.EVENTS.PAUSE, loadVideoDependantView);
+                annotationsTool.views.main = this;
+                
+                /**
+                 * Loading the video dependant views
+                 */
+                var loadVideoDependantView = $.proxy(function () {
 
-                        this.setLoadingProgress(60, "Start creating views.");
-
-
-                        if (annotationsTool.getLayoutConfiguration().timeline) {
-                            // Create views with Timeline
-                            this.setLoadingProgress(70, "Creating timeline.");
-                            this.timelineView = new TimelineView({playerAdapter: this.playerAdapter});
-                            annotationsTool.views.timeline = this.timelineView;
-                        }
-
-                        if (annotationsTool.getLayoutConfiguration().annotate) {
-                            // Create view to annotate
-                            this.setLoadingProgress(80, "Creating annotate view.");
-                            this.annotateView = new AnnotateView({playerAdapter: this.playerAdapter});
-                            this.listenTo(this.annotateView, "change-layout", this.onWindowResize);
-                            this.annotateView.$el.show();
-                            annotationsTool.views.annotate = this.annotateView;
-                        }
-
-                        if (annotationsTool.getLayoutConfiguration().list) {
-                            // Create annotations list view
-                            this.setLoadingProgress(90, "Creating list view.");
-                            this.listView = new ListView();
-                            this.listenTo(this.listView, "change-layout", this.onWindowResize);
-                            this.listView.$el.show();
-                            annotationsTool.views.list = this.listView;
-                        }
-
-                        this.ready();
-                    }, this);
-
-                    this.playerAdapter.load();
-
-                    // Initialize the player
-                    this.loadingBox.find(".info").text("Initializing the player.");
-
-                    if (this.playerAdapter.getStatus() === PlayerAdapter.STATUS.PAUSED) {
-                        loadVideoDependantView();
-                    } else {
-                        $(this.playerAdapter).on(PlayerAdapter.EVENTS.READY + " " + PlayerAdapter.EVENTS.PAUSE, loadVideoDependantView);
+                    if (this.loadingPercent === 100) {
+                        return;
                     }
 
-                }, this));
+                    this.setLoadingProgress(60, "Start creating views.");
+
+                    if (annotationsTool.getLayoutConfiguration().timeline) {
+                        // Create views with Timeline
+                        this.setLoadingProgress(70, "Creating timeline.");
+                        this.timelineView = new TimelineView({playerAdapter: annotationsTool.playerAdapter});
+                        annotationsTool.views.timeline = this.timelineView;
+                    }
+
+                    if (annotationsTool.getLayoutConfiguration().annotate) {
+                        // Create view to annotate
+                        this.setLoadingProgress(80, "Creating annotate view.");
+                        this.annotateView = new AnnotateView({playerAdapter: annotationsTool.playerAdapter});
+                        this.listenTo(this.annotateView, "change-layout", this.onWindowResize);
+                        this.annotateView.$el.show();
+                        annotationsTool.views.annotate = this.annotateView;
+                    }
+
+                    if (annotationsTool.getLayoutConfiguration().list) {
+                        // Create annotations list view
+                        this.setLoadingProgress(90, "Creating list view.");
+                        this.listView = new ListView();
+                        this.listenTo(this.listView, "change-layout", this.onWindowResize);
+                        this.listView.$el.show();
+                        annotationsTool.views.list = this.listView;
+                    }
+
+                    this.ready();
+                }, this);
+
+
+                if (annotationsTool.playerAdapter.getStatus() === PlayerAdapter.STATUS.PAUSED) {
+                    loadVideoDependantView();
+                } else {
+                    $(annotationsTool.playerAdapter).one(PlayerAdapter.EVENTS.READY + " " + PlayerAdapter.EVENTS.PAUSE, loadVideoDependantView);
+                }
+                
             },
 
             /**
@@ -265,9 +306,12 @@ define(["jquery",
 
                 // Show logout button
                 $("a#logout").css("display", "block");
-                this.timelineView.redraw();
 
-                annotationsTool.dispatcher.trigger(annotationsTool.EVENTS.READY);
+                if (annotationsTool.getLayoutConfiguration().timeline) {
+                    this.timelineView.redraw();
+                }
+
+                annotationsTool.trigger(annotationsTool.EVENTS.READY);
             },
 
             /**
@@ -280,8 +324,16 @@ define(["jquery",
                 // If a user has been saved locally, we take it as current user
                 if (annotationsTool.users.length > 0) {
                     annotationsTool.user = annotationsTool.users.at(0);
-                    this.createViews();
+
+                    annotationsTool.trigger(annotationsTool.EVENTS.USER_LOGGED);
+
+                    if (annotationsTool.modelsInitialized) {
+                        this.createViews();
+                    } else {
+                        annotationsTool.once(annotationsTool.EVENTS.MODELS_INITIALIZED, this.createViews, this);
+                    }
                 } else {
+                    annotationsTool.once(annotationsTool.EVENTS.MODELS_INITIALIZED, this.createViews, this);
                     this.loginView.show();
                 }
             },
@@ -292,7 +344,7 @@ define(["jquery",
              */
             logout: function () {
                 // Stop the video
-                this.playerAdapter.pause();
+                annotationsTool.playerAdapter.pause();
 
                  // Hide logout button
                 $("a#logout").hide();
@@ -323,7 +375,6 @@ define(["jquery",
 
                 this.loadingBox.find(".bar").width("0%");
                 this.loadingBox.show();
-                this.loginView.show();
 
                 annotationsTool.users.each(function (user) {
 
@@ -338,8 +389,12 @@ define(["jquery",
 
                 });
 
+                annotationsTool.modelsInitialized = false;
+
                 if (annotationsTool.logoutUrl) {
                     document.location = annotationsTool.logoutUrl;
+                } else {
+                    location.reload();
                 }
             },
 
@@ -362,143 +417,69 @@ define(["jquery",
             },
 
             /**
-             * Get all the annotations for the current user
-             * @alias module:views-main.MainView#initModels
-             * @param {Function} callback Callback function
+             * Filter the tracks following the option selected in the menu
+             * @alias module:views-main.MainView#tracksSelection
              */
-            initModels: function (callback) {
-                var video,
-                    videos = new Videos(),
-                    tracks,
-                    annotations,
-                    selectedTrack,
-                    remindingFetchingTrack,
+            tracksSelection: function (event) {
+                var prefixFilter = "opt-tracks-";
 
-                    // function to conclude the retrive of annotations
-                    concludeInitialization = $.proxy(function () {
-
-                        // At least one private track should exist, we select the first one
-                        selectedTrack = tracks.getMine()[0];
-
-                        if (!selectedTrack.get("id")) {
-                            selectedTrack.bind("ready", function () {
-                                concludeInitialization();
-                                return;
-                            }, this);
-                        } else {
-                            annotationsTool.selectedTrack = selectedTrack;
-                        }
-
-                        // Use to know if all the tracks have been fetched
-                        remindingFetchingTrack = tracks.length;
-
-                        // Function to add the different listener to the annotations
-                        tracks.each(function (track) {
-                            annotations = track.get("annotations");
-                            this.listenTo(annotations, "add", this.onWindowResize);
-                            if (--remindingFetchingTrack === 0) {
-                                callback();
-                            }
-                        }, this);
-
-                    }, this),
-
-                    /**
-                     * Create a default track for the current user if no private track is present
-                     */
-                    createDefaultTrack = function () {
-
-                        tracks = annotationsTool.video.get("tracks");
-
-                        if (annotationsTool.localStorage) {
-                            tracks = tracks.getVisibleTracks();
-                        }
-
-                        if (tracks.getMine().length === 0) {
-                            tracks.create({name: "Default " + annotationsTool.user.get("nickname"), description: "Default track for user " + annotationsTool.user.get("name")}, {
-                                wait: true,
-                                success: concludeInitialization
-                            });
-                        } else {
-                            concludeInitialization();
-                        }
-                    };
-
-                // If we are using the localstorage
-                if (window.annotationsTool.localStorage) {
-                    videos.fetch();
-
-                    if (videos.length === 0) {
-                        video = videos.create({video_extid: annotationsTool.getVideoExtId()}, {wait: true});
-                    } else {
-                        video = videos.at(0);
+                if ($(event.target).hasClass(prefixFilter + "public")) {
+                    annotationsTool.getTracks().showAllPublic();
+                } else if ($(event.target).hasClass(prefixFilter + "mine")) {
+                    annotationsTool.getTracks().showMyTracks();
+                } else {
+                    if (_.isUndefined(this.tracksSelectionModal)) {
+                        this.tracksSelectionModal = new TracksSelectionView();
                     }
 
-                    annotationsTool.video = video;
-                    createDefaultTrack();
-                } else { // With Rest storage
-                    videos.add({video_extid: annotationsTool.getVideoExtId()});
-                    video = videos.at(0);
-                    annotationsTool.video = video;
-                    video.save();
-                    if (video.get("ready")) {
-                        createDefaultTrack();
-                    } else {
-                        video.once("ready", createDefaultTrack);
-                    }
+                    this.tracksSelectionModal.show();
                 }
+
+                $("[class*='opt-tracks']").removeClass("checked");
+                $("." + event.target.className).addClass("checked");
             },
 
             /**
-             * Import the given categories in the tool
-             * @alias module:views-main.MainView#importCategories
-             * @param {PlainObject} imported Object containing the .categories and .scales to insert in the tool
-             * @param {PlainObject} defaultCategoryAttributes The default attributes to use to insert the imported categories (like access)
+             * Set the layout of the tools following the option selected in the menu
+             * @alias module:views-main.MainView#layoutUpdate
              */
-            importCategories: function (imported, defaultCategoryAttributes) {
-                var videoCategories = annotationsTool.video.get("categories"),
-                    videoScales = annotationsTool.video.get("scales"),
-                    labelsToAdd,
-                    newCat,
-                    newScale,
-                    scaleValuesToAdd,
-                    scaleOldId,
-                    scalesIdMap = {};
+            layoutUpdate: function (event) {
+                var enabled = !$(event.target).hasClass("checked"),
+                    layoutElement = event.currentTarget.id.replace("opt-", ""),
+                    checkMainLayout = function () {
+                        if (!annotationsTool.views.annotate.visible && !annotationsTool.views.list.visible) {
+                            $("#left-column").removeClass("span6");
+                            $("#left-column").addClass("span12");
+                        } else {
+                            $("#left-column").addClass("span6");
+                            $("#left-column").removeClass("span12");
+                        }
+                        annotationsTool.views.timeline.redraw();
+                    };
 
-                if (!imported.categories || imported.categories.length === 0) {
-                    return;
+                if (enabled) {
+                    $(event.target).addClass("checked");
+                } else {
+                    $(event.target).removeClass("checked");
                 }
 
-                _.each(imported.scales, function (scale) {
-                    scaleOldId = scale.id;
-                    scaleValuesToAdd = scale.scaleValues;
-                    delete scale.id;
-                    delete scale.scaleValues;
+                switch (layoutElement) {
 
-                    newScale = videoScales.create(scale, {async: false});
-                    scalesIdMap[scaleOldId] = newScale.get("id");
-
-                    if (scaleValuesToAdd) {
-                        _.each(scaleValuesToAdd, function (scaleValue) {
-                            scaleValue.scale = newScale;
-                            newScale.get("scaleValues").create(scaleValue);
-                        });
-                    }
-                });
-
-                _.each(imported.categories, function (category) {
-                    labelsToAdd = category.labels;
-                    category.scale_id = scalesIdMap[category.scale_id];
-                    delete category.labels;
-                    newCat = videoCategories.create(_.extend(category, defaultCategoryAttributes));
-
-                    if (labelsToAdd) {
-                        _.each(labelsToAdd, function (label) {
-                            label.category = newCat;
-                            newCat.get("labels").create(label);
-                        });
-                    }
-                });
+                case "annotate-text":
+                    this.annotateView.enableFreeTextLayout(enabled);
+                    break;
+                case "annotate-categories":
+                    this.annotateView.enableCategoriesLayout(enabled);
+                    break;
+                case "view-annotate":
+                    annotationsTool.views.annotate.toggleVisibility();
+                    checkMainLayout();
+                    break;
+                case "view-list":
+                    annotationsTool.views.list.toggleVisibility();
+                    checkMainLayout();
+                    break;
+                }
             },
 
             /**
@@ -519,7 +500,7 @@ define(["jquery",
 
                     annotation = annotationsTool.getSelection()[0];
                     if (annotation) {
-                        annotationsTool.dispatcher.trigger("deleteAnnotation", annotation.get("id"), annotation.trackId);
+                        annotationsTool.trigger("deleteAnnotation", annotation.get("id"), annotation.trackId);
                     }
                 }
             },
@@ -557,18 +538,20 @@ define(["jquery",
             onWindowResize: function () {
                 var listContent,
                     windowHeight = $(window).height(),
-                    rest;
+                    annotationsContainerHeight = $("#annotate-container").height(),
+                    loopFunctionHeight = !_.isUndefined(annotationsTool.loopFunction) && annotationsTool.loopFunction.isVisible() ?
+                                            annotationsTool.loopFunction.$el.height() + 180 : 145,
+                    videoContainerHeight = $("#video-container").height();
+
 
                 // TODO: improve this part with a better layout management, more generic
-
                 if (this.annotateView && this.listView) {
-                    listContent = this.listView.$el.find("#content-list");
-                    listContent.css("max-height", windowHeight - $("#annotate-container").height() - 100);
+                    listContent = this.listView.$el.find("#content-list-scroll");
+                    listContent.css("max-height", windowHeight - annotationsContainerHeight - 120);
                 }
 
                 if (this.timelineView) {
-                    rest = !_.isUndefined(annotationsTool.loopFunction) && annotationsTool.loopFunction.isVisible() ? annotationsTool.loopFunction.$el.height() + 160 : 125;
-                    this.timelineView.$el.find("#timeline").css("max-height", windowHeight - ($("#video-container").height() + rest));
+                    this.timelineView.$el.find("#timeline").css("max-height", windowHeight - (videoContainerHeight + loopFunctionHeight));
                 }
             },
             /**
@@ -578,7 +561,9 @@ define(["jquery",
              * @param {string} current loading operation message
              */
             setLoadingProgress: function (percent, message) {
-                this.loadingBox.find(".bar").width(percent + "%");
+                this.loadingPercent = percent;
+
+                this.loadingBox.find(".bar").width(this.loadingPercent + "%");
                 this.loadingBox.find(".info").text(message);
             }
         });

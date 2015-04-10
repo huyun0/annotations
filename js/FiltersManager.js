@@ -19,7 +19,7 @@
  * @module filters-manager
  * @requires backbone
  */
-define(["backbone"], function (Backbone) {
+define(["backbone", "access"], function (Backbone, ACCESS) {
 
     "use strict";
 
@@ -31,6 +31,8 @@ define(["backbone"], function (Backbone) {
      */
     var FiltersManager = function (master) {
         _.extend(this, Backbone.Events);
+
+        this._cloneFilters();
 
         if (master instanceof FiltersManager) {
             this.master = master;
@@ -53,22 +55,91 @@ define(["backbone"], function (Backbone) {
          */
         filters: {
             mine: {
-                active: false,
-                filter: function (list) {
+                active   : false,
+                condition: function (item) {
+                    return _.isUndefined(item.model) || item.model.get("isMine");
+                },
+                filter   : function (list) {
                     return _.filter(list, function (item) {
-                        return _.isUndefined(item.model) || item.model.get("isMine");
+                        return this.condition(item);
                     }, this);
                 }
             },
             public: {
-                active: false,
-                filter: function (list) {
+                active   : false,
+                condition: function (item) {
+                    return _.isUndefined(item.model) || item.model.get("isPublic") || (item.model.get("access") === ACCESS.PUBLIC);
+                },
+                filter   : function (list) {
                     return _.filter(list, function (item) {
-                        return _.isUndefined(item.model) || item.model.get("isPublic");
+                        return this.condition(item);
+                    }, this);
+                }
+            },
+            timerange: {
+                active   : false,
+                start    : 0,
+                end      : 0,
+                condition: function (item) {
+                    if (!_.isUndefined(item.voidItem)) {
+                        return true;
+                    } else if (_.isUndefined(item.start) || _.isUndefined(item.end)) {
+                        return false;
+                    }
+
+                    return (item.start >= this.start && item.start < this.end) ||
+                           (item.start <= this.start && item.end >= this.end);
+                },
+                filter   : function (list) {
+                    return _.filter(list, function (item) {
+                        return this.condition(item);
                     }, this);
                 }
             }
+        },
 
+        /**
+         * Clone the default filters
+         * @return {Object} The cloned filters list
+         */
+        _cloneFilters: function () {
+            var filters = {};
+
+            _.each(this.filters, function (filter, id) {
+                filters[id] = _.clone(filter);
+            }, this);
+
+            this.filters = filters;
+
+            return filters;
+        },
+
+        /**
+         * Filter the given with all the active filter
+         * @param  {Object} list   The list of elements to filter
+         * @params {Object} (filters) The list of filters to use 
+         * @return {Object} the filtered list 
+         */
+        filterAll: function (list, filters) {
+            var activeFilters = _.map(_.isUndefined(filters) ? this.filters : filters,
+                                            function (item) {return item; },
+                                    this),
+                filterList = function (item) {
+                        var cFilter,
+                            i;
+
+                        for (i = 0; i < activeFilters.length; i++) {
+                            cFilter = activeFilters[i];
+                            if (cFilter.active && !cFilter.condition(item)) {
+                                return false;
+                            }
+                        }
+
+                        return true;
+                    };
+
+
+            return _.filter(list, filterList, this);
         },
 
         /**
@@ -99,6 +170,10 @@ define(["backbone"], function (Backbone) {
          * @param  {boolean} active Define if the filter must be active or not
          */
         _switchFilterLocally: function (id, active) {
+            if (_.isUndefined(this.filters[id])) {
+                return;
+            }
+            
             this.filters[id].active = active;
             this.trigger("switch", {id: id, active: active});
         },
@@ -127,7 +202,6 @@ define(["backbone"], function (Backbone) {
 
         /**
          * Bind this instance to its master
-         * @return {[type]} [description]
          */
         bindToMaster: function () {
             this.isBindedToMaster = true;

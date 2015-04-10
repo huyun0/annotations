@@ -125,13 +125,14 @@ define(["jquery",
             /**
              * Get the collection as array with the model in JSON, ready to be exported
              * @alias module:collections-categories.Categories#toExportJSON
+             * @param {boolean} withScales Define if the scales have to be included
              * @return {array} Array of json models
              */
-            toExportJSON: function () {
+            toExportJSON: function (withScales) {
                 var categoriesForExport = [];
 
                 this.each(function (category) {
-                    categoriesForExport.push(category.toExportJSON());
+                    categoriesForExport.push(category.toExportJSON(withScales));
                 });
 
                 return categoriesForExport;

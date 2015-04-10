@@ -38,17 +38,64 @@ define(["jquery",
 
             /**
              * List of possible layout configuration
+             * @alias module:annotations-tool-configuration.Configuration.LAYOUT_CONFIGURATION
              * @memberOf module:annotations-tool-configuration.Configuration
              * @type {Object}
              */
             LAYOUT_CONFIGURATION: {
                 /** default configuration */
                 DEFAULT: {
-                    timeline: true,
-                    list: true,
-                    annotate: true
+                    timeline : true,
+                    list     : true,
+                    annotate : true,
+                    loop     : false,
                 }
             },
+
+            /**
+             * Possible tracks selection at startup
+             * @type {Object}
+             */
+            TRACKS: {
+                MINE   : "mine",
+                PUBLIC : "public"
+            },
+
+            /**
+             * The default tracks at startup
+             * @type {{@link this.TRACKS}}
+             */
+            getDefaultTracks: function () {
+                return {
+                    name: "mine",
+                    filter: function (track) {
+                        return track.get("isMine");
+                    }
+                };
+            },
+
+            /**
+             * The minmal duration used for annotation representation on timeline
+             * @alias module:annotations-tool-configuration.Configuration.MINIMAL_DURATION
+             * @memberOf module:annotations-tool-configuration.Configuration
+             * @type {Object}
+             */
+            MINIMAL_DURATION: 5,
+
+            /**
+             * Define the number of categories pro tab in the annotate box. Bigger is number, thinner will be the columns for the categories.
+             * @alias module:annotations-tool-configuration.Configuration.CATEGORIES_PER_TAB
+             * @memberOf module:annotations-tool-configuration.Configuration
+             * @type {Number}
+             */
+            CATEGORIES_PER_TAB: 7,
+
+            /**
+             * The maximal number of tracks visible in the timeline at the same time
+             * @type {Number}
+             */
+            MAX_VISIBLE_TRACKS: 0,
+
 
             /**
              * Define if the localStorage should be used or not
@@ -73,7 +120,7 @@ define(["jquery",
              * @readOnly
              */
             plugins: {
-                Loop: function (callback) {
+                Loop: function () {
                         require(["views/loop"], function (Loop) {
                             annotationsTool.loopView = new Loop();
                         });
@@ -112,6 +159,29 @@ define(["jquery",
             playerAdapter: undefined,
 
             /**
+             * Array of tracks to import by default
+             * @type {module:player-adapter.tracksToImport}
+             */
+            tracksToImport: undefined,
+
+            /**
+             * Formats the given date in 
+             * @alias module:annotations-tool-configuration.Configuration.formatDate
+             * @type {module:player-adapter.formatDate}
+             */
+            formatDate: function (date) {
+                if (_.isNumber(date)) {
+                    date = new Date(date);
+                }
+
+                if (_.isDate(date)) {
+                    return date.getDate() + "." + (date.getMonth() + 1) + "." + date.getFullYear();
+                } else {
+                    return "Unvalid date";
+                }
+            },
+
+            /**
              * Get the tool layout configuration
              * @return {object} The tool layout configuration
              */
@@ -126,6 +196,15 @@ define(["jquery",
              */
             isStructuredAnnotationEnabled: function () {
                 return true;
+            },
+
+            /**
+             * Define if the private-only mode is enabled
+             * @alias module:annotations-tool-configuration.Configuration.isPrivateOnly
+             * @return {boolean} True if this mode is enabled
+             */
+            isPrivateOnly: function () {
+                return false;
             },
 
             /**
@@ -147,6 +226,50 @@ define(["jquery",
             },
 
             /**
+             * Returns the time interval between each timeupdate event to take into account.
+             * It can improve a bit the performance if the amount of annotations is important. 
+             * @alias module:annotations-tool-configuration.Configuration.getTimeupdateIntervalForTimeline
+             * @return {number} The interval
+             */
+            getTimeupdateIntervalForTimeline: function () {
+                // TODO Check if this function should be linear
+                return Math.max(500, annotationsTool.getAnnotations().length * 3);
+
+            },
+
+            /**
+             * Sets the behavior of the timeline. Enable it to follow the playhead.
+             * @alias module:annotations-tool-configuration.Configuration.timelineFollowPlayhead
+             * @type {Boolean}
+             */
+            timelineFollowPlayhead: true,
+
+            /**
+             * Get the external parameters related to video. The supported parameters are now the following:
+             *     - video_extid: Required! Same as the value returned by getVideoExtId
+             *     - title: The title of the video
+             *     - src_owner: The owner of the video in the system
+             *     - src_creation_date: The date of the course, when the video itself was created.
+             * @alias module:annotations-tool-configuration.Configuration.getVideoExtId
+             * @example
+             * {
+             *     video_extid: 123, // Same as the value returned by getVideoExtId
+             *     title: "Math lesson 4", // The title of the video
+             *     src_owner: "Professor X", // The owner of the video in the system
+             *     src_creation_date: "12-12-1023" // The date of the course, when the video itself was created.
+             * }
+             * @return {Object} The literal object containing all the parameters described in the example.
+             */
+            getVideoParameters: function () {
+                return {
+                    video_extid: this.getVideoExtId(),
+                    title: $("video")[0].currentSrc.split("/").pop().split(".")[0],
+                    src_owner: $("video").first().attr("data-owner"),
+                    src_creation_date:  $("video").first().attr("data-date")
+                };
+            },
+
+            /**
              * Get the user id from the current context (user_extid)
              * @alias module:annotations-tool-configuration.Configuration.getUserExtId
              * @return {string} user_extid
@@ -162,6 +285,15 @@ define(["jquery",
              */
             getUserRole: function () {
                 return ROLES.USER;
+            },
+
+            /**
+             * Get the name of the admin role
+             * @alias module:annotations-tool-configuration.Configuration.getAdminRoleName
+             * @return {ROLE} The name of the admin role
+             */
+            getAdminRoleName: function () {
+                return ROLES.ADMINISTRATOR;
             },
 
             /**
