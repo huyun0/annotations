@@ -47,9 +47,30 @@ define(["jquery",
                 DEFAULT: {
                     timeline : true,
                     list     : true,
-                    annotate : true
+                    annotate : true,
+                    loop     : false
                 }
             },
+
+
+            /**
+             * The default tracks at startup
+             * @type {{@link this.TRACKS}}
+             */
+            getDefaultTracks: function () {
+                return {
+                    name: "mine",
+                    filter: function (track) {
+                        return track.get("isMine");
+                    }
+                };
+            },
+
+            /**
+             * The maximal number of tracks visible in the timeline at the same time
+             * @type {Number}
+             */
+            MAX_VISIBLE_TRACKS: 0,
 
             /**
              * The minmal duration used for annotation representation on timeline
@@ -244,8 +265,8 @@ define(["jquery",
              * @alias module:annotations-tool-configuration.Configuration.getUserExtId
              * @return {string} user_extid
              */
-            getUserExtId: function () {
-                return "default";
+            getUserExtId: function (email) {
+                return email;
             },
 
             /**
