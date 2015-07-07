@@ -14,59 +14,61 @@
     <meta name="description" content="Video annotations tool">
     <meta name="author" content="">
     <meta name="viewport" content="width=device-width">
-    <link rel="stylesheet" href="style/style.css">
-    <!-- build:[data-main]:build optimized.js-->
-    <script src="js/libs/require/require.js" data-main="js/libs/require/config/config"></script>
-    <!-- /build -->
+    <link rel="stylesheet" href="../style/style.css">
+    <script data-main="js/require/config-loading" src="../js/libs/require/require.js"></script>
 </head>
 <body>
 <!--[if lt IE 7]><p class=chromeframe>Your browser is <em>ancient!</em> <a href="http://browsehappy.com/">Upgrade to a different browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to experience this site.</p><![endif]-->
 
     <div class="navbar navbar-fixed-top">
-      <div class="navbar-inner">
-        <div class="container-fluid">
-          <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </a>
-          <a class="brand" href="#">Annotating Academic video - 1.1.3 </a>
-          
-          <ul class="nav pull-right">
-              <li class="dropdown" id="view-options">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown">View <b class="caret"></b></a>
-                <ul class="dropdown-menu">
-                  <li class="menu-category">Annotate</li>
-                  <li><a id="opt-annotate-text" class="opt-layout checked" href="#"><i class="check icon-check"></i> Text annotations</a></li>
-                  <li><a id="opt-annotate-categories" class="opt-layout checked" href="#"><i class="check icon-check"></i> Structured annotations</a></li>
-                  <li role="presentation" class="divider"></li>
-                  <li class="menu-category">Views</li>
-                  <li><a id="opt-view-annotate" class="opt-layout checked" href="#"><i class="check icon-check"></i> Annotate view</a></li>
-                  <li><a id="opt-view-list" class="opt-layout checked" href="#"><i class="check icon-check"></i> List view</a></li>
-                  <li role="presentation" class="divider"></li>
-                  
-                  <span id="menu-plugins">
-                      <!-- Place to add the menu elements from the plugins -->
-                  </span>
-                  
-                  <li role="presentation" class="divider"></li>
-                  <li class="menu-category">Annotations visibility</li>
-                  <li><a class="opt-tracks-mine" href="#"><i class="check icon-check"></i> My annotations only</a></li>
-                  <li><a class="opt-tracks-select" href="#"><i class="check icon-check"></i> Other public annotations...</a></li>
-                  <li><a class="opt-tracks-public" href="#"><i class="check icon-check"></i> All public annotations</a></li>
-                  
 
+      <div class="navbar-inner">
+
+        <div class="container-fluid">
+        <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                  </a>
+                  <a class="brand" href="#">Annotating Academic video - Load testing <!-- <span id="fps"><span id="value">100</span> FPS</span> --></a>
+          
+                <ul class="nav pull-right">
+                    <li class="dropdown" id="view-options">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">View <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+
+                          <li><a id="opt-annotate-text" class="opt-layout checked" href="#"><i class="check icon-check"></i> Text annotations</a></li>
+                          <li><a id="opt-annotate-categories" class="opt-layout checked" href="#"><i class="check icon-check"></i> Structured annotations</a></li>
+                          <li role="presentation" class="divider"></li>
+                          
+                          <span id="menu-plugins">
+                              <!-- Place to add the menu elements from the plugins -->
+                          </span>
+
+                          <li role="presentation" class="divider"></li>
+                          <li><a id="opt-tracks-mine" class="opt-tracks" href="#"><i class="check icon-check"></i> My annotations only</a></li>
+                          <!-- <li><a id="opt-select-annotations" href="#"><i class="check icon-check"></i> Other public annotations...</a></li> -->
+                          <li><a id="opt-tracks-public" class="opt-tracks" href="#"><i class="check icon-check"></i> All public annotations</a></li>
+
+                        </ul>
+                    </li>
+                    <li><a href="#" id="export">Export for statistics</a></li>
+                    <li><a href="#" id="print">Print</a></li>
+                    <li><a href="#" id="logout">Logout</a></li>
                 </ul>
-              </li>
-              <li><a href="#" id="export">Export for statistics</a></li>
-              <li><a href="#" id="print">Print</a></li>
-              <li><a href="#" id="logout">Logout</a></li>
-          </ul>
         </div>
+
       </div>
+
     </div>
 
-    <div id="main-container" class="container-fluid">		
+
+
+    <div class="container-fluid" id="main-container">		
+
+    <div class="row-fluid">
+        <div class="span12 error" id="error-container"></div>
+    </div>
     
     <!-- Loading box -->
     <div class="hero-unit" id="loading">
@@ -82,7 +84,7 @@
 
     
     <div class="row-fluid">
-        <div class="span6" id="left-column"> 
+        <div class="span6"> 
 
             <div id="title-container">
                 <div id="video-title"></div>
@@ -93,10 +95,19 @@
             <!-- container for the video -->
             <div id="video-container" class="window" style="display:none">
                 <video id="example" style="width:100%" controls >
-                    <source src="/resources/aav1.mp4" type="video/mp4" />
-                           <source src="/resources/aav1.webm" type="video/webm" />
-                           <source src="/resources/aav1.ogv" type="video/ogg" /> 
+                    <source src="../resources/aav1.mp4" type="video/mp4" />
+                    <source src="../resources/aav1.webm" type="video/webm" />
+                    <source src="../resources/aav1.ogv" type="video/ogg" />
+                    <source src="../resources/aav2.ogv" type="video/ogg" />
                 </video>
+            </div>
+
+            <div class="window" id="select-tracks">
+                <div class="controls stop-fields">
+                    <label class="inline"> Active track
+                        <select name="tracks" size="0"></select>
+                    </label>
+                </div>
             </div>
             
             <!-- container for the timeline-->
@@ -105,29 +116,15 @@
                     <div class="navbar">
                         <div class="navbar-inner">
                           <div class="container-fluid">
-                            <span class="time"></span>
+                            <span class="window-title">Timeline</span>
+                            <span class="time-header">Current time: <span class="time"></span></span>
                           </div>
                         </div>
                     </div>
                     <div id="timeline"></div>
                     
                     <div id="timeline-custom-navigation">
-                        <div class="timeline-bottom-controls">
-                          <div class="btn-group dropup">
-                             <!-- <button class="btn">Other annotations</button> -->
-                            <button class="btn dropdown-toggle" data-toggle="dropdown">
-                              Other annotations <span class="caret"></span>
-                            </button>
-                            <ul class="dropdown-menu">
-                              <li><a class="opt-tracks-mine" href="#"><i class="check icon-check"></i> My annotations only</a></li>
-                              <li><a class="opt-tracks-select" href="#"><i class="check icon-check"></i> Other public annotations...</a></li>
-                              <li><a class="opt-tracks-public" href="#"><i class="check icon-check"></i> All public annotations</a></li>
-                            </ul>
-                          </div>
-                          <a id="add-track" class="btn">+ Add track</a>
-                        </div>
-
-
+                        <div class="timeline-bottom-controls"><a id="add-track" class="btn">+ Add track</a></div>
                         <div class="timeline-bottom-controls" id="reset-zoom"><a class="btn"><i class="icon-eye-open"></i> Reset zoom</a></div>
                         <div class="timeline-bottom-controls" id="move-left"><a class="btn">&lt;</a></div>
                         <div class="timeline-bottom-controls" id="zoom-in"><a class="btn">+</a></div>
@@ -139,12 +136,11 @@
 
         </div>
         
-        <div class="span6" id="right-column">
+        <div class="span6">
         
             <!-- container for the annotations insertion box -->
             <div>
                 <div class="window expanded" id="annotate-container" style="display:none">
-
                     <div class="navbar">
                         <div class="navbar-inner">
                           <div class="container">
@@ -153,13 +149,17 @@
                                <span class='title'>&nbsp;on</span>
                                <span class="content">No track selected</span>
                              </div>
+                            <ul class="nav pull-right">
+                                <li><a href="#" class="toggle-collapse">
+                                    Collapse</a></li>
+                            </ul>
                           </div>
                         </div>
                     </div>
     
                     <div class="control-group" id="annotate-form">
-                        <div class="no-track">Select a track to start annotating</div>
                         
+
                         <div id="input-container" class="insert-fields">
                             <textarea id="new-annotation" placeholder="Write a free text annotation. Use &raquo;shift + return&laquo; keys to create a new line." rows="3" title="Use &raquo;shift + return&laquo; keys to create a new line."></textarea>
                             <div class="controls stop-fields">
@@ -167,7 +167,7 @@
                                     <input id="pause-video" type="checkbox">Pause video during writing
                                 </label>
                             </div>
-                            <button id="insert" type="button" class="btn">Insert</button>                 
+                            <button id="insert" type="button" class="btn">Insert</button>                               
                         </div>
     
     
@@ -197,16 +197,19 @@
                         <div class="navbar-inner">
                           <div class="container">
                          
+                            <!-- Be sure to leave the brand out there if you want it shown -->
+                            <span class="window-title">List</span>
+                            
                             <ul class="nav pull-right">
-                                <li class="dropdown">
-                                  <a href="#" class="dropdown-toggle" data-toggle="dropdown">Items visiblity<b class="caret"></b></a>
-                                  <ul class="dropdown-menu">
-                                    <li><a href="#" class="collapse-all">Collapse All</a></i></li>
-                                    <li><a href="#" class="expand-all">Expand All</a></i></li>
-                                  </ul>
-                                </li>
+                                  <li class="dropdown">
+                                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Items visiblity<b class="caret"></b></a>
+                                    <ul class="dropdown-menu">
+                                      <li><a href="#" class="collapse-all">Collapse All</a></i></li>
+                                      <li><a href="#" class="expand-all">Expand All</a></i></li>
+                                    </ul>
+                                  </li>
+                                  <li><a href="#" class="toggle-collapse">Collapse</a></i></li>
                             </ul>
-
                           </div>
 
                         </div>
@@ -231,6 +234,5 @@
     <div class="modal" id="user-login" style="display:none"></div>
     <div class="modal" id="scale-editor" style="display:none"></div>
     <div class="modal" id="alert" style="display:none"></div>
-    <div class="modal" id="tracks-selection" style="display:none"></div>
 </body>
 </html>
